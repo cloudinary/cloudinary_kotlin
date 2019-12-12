@@ -128,13 +128,13 @@ open class Layer internal constructor(private val transformation: Transformation
 
         fun setBlendMode(blendMode: BlendMode) = apply { this.blendMode = blendMode }
 
-        internal fun setParam(name: String, key: String) = apply {
+        fun setParam(name: String, key: String) = apply {
             this.paramName = name
             this.paramKey = key
         }
 
-        fun setExtraParams(params: Collection<Param>) = apply { this.extraParams = params }
-        fun setFlagKey(flag: FlagKey) = apply { this.flag = flag }
+        internal fun setExtraParams(params: Collection<Param>) = apply { this.extraParams = params }
+        internal fun setFlagKey(flag: FlagKey) = apply { this.flag = flag }
 
         override fun build() =
             Layer(

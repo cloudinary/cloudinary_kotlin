@@ -13,7 +13,7 @@ import com.cloudinary.transformation.layer.BlendMode.SCREEN
 import com.cloudinary.transformation.layer.FontHinting
 import com.cloudinary.transformation.layer.FontWeight
 import com.cloudinary.transformation.layer.Layer.Companion.overlay
-import com.cloudinary.transformation.layer.LayerSource
+import com.cloudinary.transformation.layer.LayerSource.Companion.media
 import com.cloudinary.transformation.layer.LayerSource.Companion.text
 import com.cloudinary.transformation.layer.Stroke
 import com.cloudinary.transformation.resize.Resize.Companion.scale
@@ -22,7 +22,7 @@ import com.cloudinary.transformation.warp.Warp.Companion.distort
 import org.junit.Test
 
 class TransformationTest {
-    private val layer = LayerSource.media("sample")
+    private val layer = media("sample")
     private val sepiaTransformation = Transformation().effect(Effect.sepia())
     @Test
     fun testCutter() {
@@ -120,19 +120,19 @@ class TransformationTest {
     fun testDisplace() {
         cldAssertEqualsAsString(
             "l_radialize/e_displace,fl_layer_apply",
-            Transformation().displace(Displace.displace(LayerSource.media("radialize")))
+            Transformation().displace(Displace.displace(media("radialize")))
         )
 
         cldAssertEqualsAsString(
             "l_radialize/e_sepia/e_displace,fl_layer_apply",
-            Transformation().displace(LayerSource.media("radialize")) { setTransformation(sepiaTransformation) })
+            Transformation().displace(media("radialize")) { setTransformation(sepiaTransformation) })
     }
 
     @Test
     fun testStyleTransfer() {
         cldAssertEqualsAsString(
             "l_lighthouse/e_style_transfer:preserve_color,fl_layer_apply",
-            Transformation().styleTransfer(LayerSource.media("lighthouse")) { setPreserveColor(true) }
+            Transformation().styleTransfer(media("lighthouse")) { setPreserveColor(true) }
         )
     }
 
@@ -184,7 +184,7 @@ class TransformationTest {
                         named("red")
                     }
                 }
-                layer(overlay(layer) {
+                layer(overlay(media("sample")) {
                     setPosition {
                         setGravity(Gravity.direction(EAST))
                         setAllowOverflow(false)

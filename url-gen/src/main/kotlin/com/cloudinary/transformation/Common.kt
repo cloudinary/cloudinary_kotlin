@@ -2,13 +2,18 @@ package com.cloudinary.transformation
 
 import com.cloudinary.util.cldToString
 
-open class ParamValue(internal val values: List<Any>, private val separator: String = ":") : TransformationComponent {
+open class ParamValue(internal val values: List<Any>, protected val separator: String = ":") : TransformationComponent {
     constructor(value: Any) : this(listOf(value))
 
     override fun toString(): String {
-        // TODO ignore param value 'keys'? (e_preview:duration_20)
-        return values.joinToString(separator = separator, transform = { it.cldToString().cldNormalize() })
+        return values.joinToString(separator = separator, transform = {
+            if (it is ParamValue) it.toString() else it.cldToString().cldNormalize()
+        })
     }
+}
+
+class ParamPairValue(key: Any, value: Any, separator: String = ":") : ParamValue(listOf(key, value), separator) {
+    override fun toString() = "${values.first().cldToString()}${separator}${values[1].cldToString().cldNormalize()}"
 }
 
 open class Param(private val name: String, internal val key: String, internal val value: ParamValue) {

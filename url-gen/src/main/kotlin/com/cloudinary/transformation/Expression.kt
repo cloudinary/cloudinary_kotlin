@@ -1,7 +1,6 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.util.cldMergeToSingleUnderscore
-import com.cloudinary.util.cldToString
 import java.util.regex.Pattern
 
 val OPERATORS = mapOf(
@@ -47,12 +46,6 @@ val PATTERN = getPattern()
 
 class Expression(values: List<Any> = listOf()) : ParamValue(values, "_") {
     constructor(value: Any) : this(listOf(value))
-
-    override fun toString() = serialize()
-
-    private fun serialize(): String {
-        return super.toString().cldNormalize()
-    }
 
     fun gt(value: Any): Expression {
         return Expression(values + "gt" + value)
@@ -168,9 +161,6 @@ class Expression(values: List<Any> = listOf()) : ParamValue(values, "_") {
 
 internal fun Any.cldNormalize(): String {
     val expression = this
-    if (expression is Number) {
-        return expression.cldToString()
-    }
 
     var replacement: String
     val conditionStr = expression.toString().cldMergeToSingleUnderscore()
