@@ -1,7 +1,6 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.ParamValue
-import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.util.cldPrepend
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
@@ -42,8 +41,7 @@ class TextLayerSource(
         )
     ) {
 
-    class Builder(private val text: String, private val fontFamily: String, private val fontSize: Any) :
-        TransformationComponentBuilder {
+    class Builder(private val text: String, private val fontFamily: String, private val fontSize: Any) {
         constructor(text: String, fontFamily: String, fontSize: Int) : this(text, fontFamily, fontSize as Any)
 
         private var fontWeight: FontWeight? = null
@@ -68,7 +66,7 @@ class TextLayerSource(
         fun setLetterSpacing(letterSpacing: Float) = apply { this.letterSpacing = letterSpacing }
         fun setLineSpacing(lineSpacing: Float) = apply { this.lineSpacing = lineSpacing }
 
-        override fun build() = TextLayerSource(
+        fun build() = TextLayerSource(
             text,
             fontFamily, fontSize,
             fontWeight,

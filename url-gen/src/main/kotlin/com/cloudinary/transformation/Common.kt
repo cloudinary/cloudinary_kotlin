@@ -2,7 +2,10 @@ package com.cloudinary.transformation
 
 import com.cloudinary.util.cldToString
 
-open class ParamValue(internal val values: List<Any>, protected val separator: String = ":") : TransformationComponent {
+open class ParamValue(
+    internal val values: List<Any>,
+    protected val separator: String = ":"
+) /*: TransformationComponent*/ {
     constructor(value: Any) : this(listOf(value))
 
     override fun toString(): String {

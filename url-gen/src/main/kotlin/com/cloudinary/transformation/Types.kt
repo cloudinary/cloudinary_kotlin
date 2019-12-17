@@ -46,13 +46,13 @@ class ColorValue private constructor(values: List<Any?>) : ParamValue(values.fil
         }
     }
 
-    class Builder : TransformationComponentBuilder {
+    class Builder {
         private var values = mutableListOf<Any>()
 
         fun fromRGB(hex: String) = apply { values = mutableListOf("rgb", hex.cldRemovePound()) }
         fun named(name: String) = apply { values = mutableListOf(name) }
 
-        override fun build() = ColorValue(values)
+        fun build() = ColorValue(values)
     }
 }
 
