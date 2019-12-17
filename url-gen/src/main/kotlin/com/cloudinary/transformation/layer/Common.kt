@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.*
-import com.cloudinary.util.cldToString
+import com.cloudinary.transformation.Transformation.Builder
 
 class Position(params: Map<String, Param>) : Action<Position>(params) {
     class Builder : TransformationComponentBuilder {
@@ -82,10 +82,8 @@ abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(v
     }
 }
 
-open class Layer internal constructor(private val transformation: TransformationComponent) :
-    TransformationComponent {
-
-    override fun toString() = transformation.cldToString()
+open class Layer internal constructor(components: List<TransformationComponent>) :
+    Transformation(components) {
 
     companion object {
         fun overlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
@@ -102,7 +100,7 @@ open class Layer internal constructor(private val transformation: Transformation
     }
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
-        private var transformation: TransformationComponent? = null
+        private var transformation: Transformation? = null
         private var position: Position? = null
         private var blendMode: BlendMode? = null
         private var paramName: String = "layer"
@@ -110,9 +108,9 @@ open class Layer internal constructor(private val transformation: Transformation
         private var extraParams: Collection<Param> = emptyList()
         private var flag: FlagKey? = null
 
-        fun setTransformation(transformation: TransformationComponent) = apply { this.transformation = transformation }
+        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
-            val builder = Transformation.Builder()
+            val builder = Builder()
             builder.transformation()
             setTransformation(builder.build())
             return this
@@ -153,14 +151,14 @@ open class Layer internal constructor(private val transformation: Transformation
 
 internal fun buildLayerComponent(
     source: LayerSource,
-    transformation: TransformationComponent? = null,
+    transformation: Transformation? = null,
     position: Position? = null,
     blendMode: BlendMode? = null,
     paramName: String,
     paramKey: String,
     extraParams: Collection<Param> = emptyList(),
     flag: FlagKey? = null
-): Layer {
+): List<TransformationComponent> {
     // start with the layer param itself
     val layerParam = Param(paramName, paramKey, source)
 
@@ -173,16 +171,10 @@ internal fun buildLayerComponent(
     blendMode?.let { allParams.add(Param("effect", "e", ParamValue(it))) }
 
     // construct the position component (this needs to include the extra parameters and some of flags):
-    val positionComponent: TransformationComponent =
-        (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
-    val layerComponent = Transformation(GenericAction(layerParam))
-    return Layer(
-        if (transformation != null) {
-            layerComponent.add(transformation).add(positionComponent)
-        } else {
-            layerComponent.add(positionComponent)
-        }
-    )
+    val positionAction: Action<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
+    val layerAction = GenericAction(layerParam)
+
+    return listOfNotNull<TransformationComponent>(layerAction, transformation, positionAction)
 }
 
 enum class BlendMode(private val value: String) {

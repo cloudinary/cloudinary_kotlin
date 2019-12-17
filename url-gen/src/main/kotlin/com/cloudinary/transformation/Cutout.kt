@@ -1,20 +1,21 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.LayerSource
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.layer.buildLayerComponent
 
-class Cutout private constructor(component: TransformationComponent) : Layer(component) {
+class Cutout private constructor(components: List<TransformationComponent>) : Layer(components) {
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
-        private var transformation: TransformationComponent? = null
+        private var transformation: Transformation? = null
         private var position: Position? = null
 
-        fun setTransformation(transformation: TransformationComponent) = apply { this.transformation = transformation }
+        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
-            val builder = Transformation.Builder()
+            val builder = Builder()
             builder.transformation()
             setTransformation(builder.build())
             return this

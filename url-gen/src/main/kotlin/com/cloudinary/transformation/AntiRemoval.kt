@@ -1,5 +1,6 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.LayerSource
@@ -7,18 +8,18 @@ import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.util.cldRanged
 
-class AntiRemoval private constructor(component: TransformationComponent) : Layer(component) {
+class AntiRemoval private constructor(components: List<TransformationComponent>) : Layer(components) {
 
     class Builder(private var source: LayerSource) : TransformationComponentBuilder {
         private var level: Any? = null
-        private var transformation: TransformationComponent? = null
+        private var transformation: Transformation? = null
         private var position: Position? = null
 
         fun setLevel(level: Int) = apply { this.level = level }
         fun setLevel(level: Any) = apply { this.level = level }
-        fun setTransformation(transformation: TransformationComponent) = apply { this.transformation = transformation }
+        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
-            val builder = Transformation.Builder()
+            val builder = Builder()
             builder.transformation()
             setTransformation(builder.build())
             return this

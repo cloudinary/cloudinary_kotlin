@@ -1,21 +1,22 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.LayerSource
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.util.cldRanged
 
-class StyleTransfer private constructor(component: TransformationComponent) : Layer(component) {
+class StyleTransfer private constructor(components: List<TransformationComponent>) : Layer(components) {
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
-        private var transformation: TransformationComponent? = null
+        private var transformation: Transformation? = null
         private var preserveColor: Boolean = false
         private var strength: Int? = null
 
-        fun setTransformation(transformation: TransformationComponent) = apply { this.transformation = transformation }
+        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
-            val builder = Transformation.Builder()
+            val builder = Builder()
             builder.transformation()
             setTransformation(builder.build())
             return this
