@@ -27,8 +27,15 @@ internal fun pageParam(page: Any) = Param("page", "pg", ParamValue(page))
 class ColorValue private constructor(values: List<Any?>) : ParamValue(values.filterNotNull()) {
 
     internal fun asParam() = ColorParam(this)
-    internal fun removeRgbPrefix() =
-        if ("rgb" == values.first()) ColorValue(values.subList(1, values.size)) else this
+    internal fun withoutRgbPrefix(): ColorValue {
+        val valueContent = values.first()
+        return if (valueContent is NamedValue && valueContent.name == "rgb") ColorValue(
+            listOf(SimpleValue(valueContent.value)) + values.subList(
+                1,
+                values.size
+            )
+        ) else this
+    }
 
     companion object {
         fun parseString(color: String) = when {
@@ -49,7 +56,7 @@ class ColorValue private constructor(values: List<Any?>) : ParamValue(values.fil
     class Builder {
         private var values = mutableListOf<Any>()
 
-        fun fromRGB(hex: String) = apply { values = mutableListOf("rgb", hex.cldRemovePound()) }
+        fun fromRGB(hex: String) = apply { values = mutableListOf(NamedValue("rgb", hex.cldRemovePound())) }
         fun named(name: String) = apply { values = mutableListOf(name) }
 
         fun build() = ColorValue(values)

@@ -153,7 +153,7 @@ class Preview private constructor(seconds: Int? = null) :
             ParamValue(
                 listOfNotNull(
                     "preview",
-                    seconds?.let { ParamPairValue("duration", it, "_") })
+                    seconds?.let { NamedValue("duration", it, "_") })
             )
         )
     ) {

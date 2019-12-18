@@ -26,7 +26,7 @@ class Rotate private constructor(params: Map<String, Param>) :
 
         private fun buildParameters(values: List<Any>) =
             Rotate(
-                Param("angle", "a", ParamValue(values, ".")).let { mapOf(Pair(it.key, it)) }
+                Param("angle", "a", ParamValue(values.cldAsNonNullSimpleValues(), ".")).let { mapOf(Pair(it.key, it)) }
             )
     }
 }

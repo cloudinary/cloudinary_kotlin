@@ -137,7 +137,7 @@ class ReplaceColor private constructor(to: ColorValue?, from: ColorValue? = null
     Adjust(
         "replace_color",
 
-        listOfNotNull(to?.removeRgbPrefix(), tolerance?.cldRanged(0, 100), from?.removeRgbPrefix())
+        listOfNotNull(to?.withoutRgbPrefix(), tolerance?.cldRanged(0, 100), from?.withoutRgbPrefix())
     ) {
     class Builder : TransformationComponentBuilder {
         private var to: ColorValue? = null

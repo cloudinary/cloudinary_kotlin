@@ -3,6 +3,7 @@ package com.cloudinary.transformation.delivery
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.cldAsNonNullSimpleValues
 import com.cloudinary.util.cldRanged
 import com.cloudinary.util.cldToString
 
@@ -60,7 +61,7 @@ sealed class QualityType(values: List<Any>) : ParamValue(values) {
                     listOf(
                         "qmax",
                         maxQuantization.cldRanged(1, 100)
-                    ), "_"
+                    ).cldAsNonNullSimpleValues(), "_"
                 )
             )
         )

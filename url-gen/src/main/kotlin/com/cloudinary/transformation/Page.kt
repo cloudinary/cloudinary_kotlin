@@ -5,18 +5,16 @@ class Page private constructor(params: Map<String, Param>) :
     override fun create(params: Map<String, Param>) = Page(params)
 
     companion object {
-        //
         private fun buildParameters(value: ParamValue) =
             Page(Param("page", "pg", value).let { mapOf(Pair(it.key, it)) })
-//
-//        fun layers() = LayerNamesBuilder()
-//        fun numbers() = PageNumbersBuilder()
-//        fun embedded(name: String) = EmbeddedBuilder(name)
-//        fun embedded(index: Int) = EmbeddedBuilder(index)
     }
 
     class LayerNamesBuilder(private vararg val names: String) : TransformationComponentBuilder {
-        override fun build() = buildParameters(ParamValue(listOf("name", ParamValue(names.asList(), ";"))))
+        override fun build(): TransformationComponent {
+            val value =
+                ParamValue(listOf(NamedValue("name", ParamValue(names.asList().cldAsNonNullSimpleValues(), ";"))))
+            return buildParameters(value)
+        }
     }
 
     class EmbeddedBuilder private constructor(private val item: Any) : TransformationComponentBuilder {
@@ -33,7 +31,7 @@ class Page private constructor(params: Map<String, Param>) :
         fun page(page: Int) = apply { items.add(page) }
         fun page(from: Int?, to: Int?) = apply { items.add(Range(from, to)) }
 
-        override fun build() = buildParameters(ParamValue(items, ";"))
+        override fun build() = buildParameters(ParamValue(items.cldAsNonNullSimpleValues(), ";"))
     }
 }
 

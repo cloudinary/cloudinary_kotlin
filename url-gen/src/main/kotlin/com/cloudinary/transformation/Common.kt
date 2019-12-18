@@ -2,22 +2,29 @@ package com.cloudinary.transformation
 
 import com.cloudinary.util.cldToString
 
-open class ParamValue(
-    internal val values: List<Any>,
-    protected val separator: String = ":"
-) /*: TransformationComponent*/ {
-    constructor(value: Any) : this(listOf(value))
+interface ParamValueContent
+
+open class ParamValue(internal val values: List<ParamValueContent>, private val separator: String = ":") {
+    constructor(value: Any) : this(listOf(SimpleValue(value)))
+    constructor(values: List<Any>) : this(values.map { if (it is ParamValueContent) it else SimpleValue(it) })
 
     override fun toString(): String {
-        return values.joinToString(separator = separator, transform = {
-            if (it is ParamValue) it.toString() else it.cldToString().cldNormalize()
-        })
+        return values.joinToString(separator = separator, transform = { it.toString() })
     }
 }
 
-class ParamPairValue(key: Any, value: Any, separator: String = ":") : ParamValue(listOf(key, value), separator) {
-    override fun toString() = "${values.first().cldToString()}${separator}${values[1].cldToString().cldNormalize()}"
+class NamedValue(internal val name: String, internal val value: Any, private val separator: String = ":") :
+    ParamValueContent {
+
+    override fun toString() = "$name$separator${value.cldToString().cldNormalize()}"
 }
+
+class SimpleValue(internal val value: Any) : ParamValueContent {
+    override fun toString() = value.cldToString().cldNormalize()
+}
+
+internal fun List<*>.cldAsNonNullSimpleValues() = this.filterNotNull().map { SimpleValue(it) }
+
 
 open class Param(private val name: String, internal val key: String, internal val value: ParamValue) {
     constructor(name: String, key: String, value: Any) : this(name, key, ParamValue(value))

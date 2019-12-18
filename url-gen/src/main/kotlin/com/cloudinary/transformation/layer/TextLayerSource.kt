@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.cldAsNonNullSimpleValues
 import com.cloudinary.util.cldPrepend
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
@@ -35,7 +36,7 @@ class TextLayerSource(
                     stroke,
                     letterSpacing?.cldPrepend("letter_spacing_"),
                     lineSpacing?.cldPrepend("line_spacing_")
-                ), "_"
+                ).cldAsNonNullSimpleValues(), "_"
             ),
             encode(text)
         )
