@@ -12,19 +12,19 @@ class Cutter private constructor(components: List<TransformationComponent>) : La
         private var transformation: Transformation? = null
         private var position: Position? = null
 
-        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
             val builder = Builder()
             builder.transformation()
-            setTransformation(builder.build())
+            transformation(builder.build())
             return this
         }
 
-        fun setPosition(position: Position) = apply { this.position = position }
-        fun setPosition(position: (Position.Builder.() -> Unit)? = null): Builder {
+        fun position(position: Position) = apply { this.position = position }
+        fun position(position: (Position.Builder.() -> Unit)? = null): Builder {
             val builder = Position.Builder()
             position?.let { builder.it() }
-            setPosition(builder.build())
+            position(builder.build())
             return this
         }
 

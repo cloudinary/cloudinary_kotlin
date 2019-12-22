@@ -55,17 +55,17 @@ class TextLayerSource(
         private var letterSpacing: Any? = null
         private var lineSpacing: Any? = null
 
-        fun setFontWeight(fontWeight: FontWeight) = apply { this.fontWeight = fontWeight }
-        fun setFontStyle(fontStyle: FontStyle) = apply { this.fontStyle = fontStyle }
-        fun setFontAntialias(fontAntialias: FontAntialias) = apply { this.fontAntialias = fontAntialias }
-        fun setFontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
-        fun setTextDecoration(textDecoration: FontDecoration) = apply { this.textDecoration = textDecoration }
-        fun setTextAlign(textAlign: TextAlign) = apply { this.textAlign = textAlign }
-        fun setStroke(stroke: Stroke) = apply { this.stroke = stroke }
-        fun setLetterSpacing(letterSpacing: Any) = apply { this.letterSpacing = letterSpacing }
-        fun setLineSpacing(lineSpacing: Any) = apply { this.lineSpacing = lineSpacing }
-        fun setLetterSpacing(letterSpacing: Float) = apply { this.letterSpacing = letterSpacing }
-        fun setLineSpacing(lineSpacing: Float) = apply { this.lineSpacing = lineSpacing }
+        fun fontWeight(fontWeight: FontWeight) = apply { this.fontWeight = fontWeight }
+        fun fontStyle(fontStyle: FontStyle) = apply { this.fontStyle = fontStyle }
+        fun fontAntialias(fontAntialias: FontAntialias) = apply { this.fontAntialias = fontAntialias }
+        fun fontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
+        fun textDecoration(textDecoration: FontDecoration) = apply { this.textDecoration = textDecoration }
+        fun textAlign(textAlign: TextAlign) = apply { this.textAlign = textAlign }
+        fun stroke(stroke: Stroke) = apply { this.stroke = stroke }
+        fun letterSpacing(letterSpacing: Any) = apply { this.letterSpacing = letterSpacing }
+        fun lineSpacing(lineSpacing: Any) = apply { this.lineSpacing = lineSpacing }
+        fun letterSpacing(letterSpacing: Float) = apply { this.letterSpacing = letterSpacing }
+        fun lineSpacing(lineSpacing: Float) = apply { this.lineSpacing = lineSpacing }
 
         fun build() = TextLayerSource(
             text,

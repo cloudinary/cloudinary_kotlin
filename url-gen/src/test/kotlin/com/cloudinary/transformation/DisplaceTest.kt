@@ -10,8 +10,8 @@ class DisplaceTest {
     @Test
     fun testDisplace() {
         val source = LayerSource.media("radialize")
-        val t = Transformation().resize(Resize.scale { setWidth(200) })
-        val pos = Position.Builder().setGravity(Gravity.direction(Direction.NORTH)).setX(25).build()
+        val t = Transformation().resize(Resize.scale { width(200) })
+        val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(25).build()
         cldAssertEqualsAsString("l_radialize/e_displace,fl_layer_apply", Displace.displace(source))
         cldAssertEqualsAsString("l_radialize/c_scale,w_200/e_displace,fl_layer_apply", Displace.displace(source, t))
         cldAssertEqualsAsString(

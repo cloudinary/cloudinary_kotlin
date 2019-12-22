@@ -18,13 +18,13 @@ class VideoTest {
     @Test
     fun testLoop() {
         cldAssertEqualsAsString("e_loop", Video.loop())
-        cldAssertEqualsAsString("e_loop:2", Video.loop { setAdditionalLoops(2) })
+        cldAssertEqualsAsString("e_loop:2", Video.loop { additionalLoops(2) })
     }
 
     @Test
     fun testFade() {
         cldAssertEqualsAsString("e_fade", Video.fade())
-        cldAssertEqualsAsString("e_fade:2000", Video.fade { setMilliseconds(2000) })
+        cldAssertEqualsAsString("e_fade:2000", Video.fade { milliseconds(2000) })
     }
 
     @Test
@@ -48,8 +48,8 @@ class VideoTest {
 
     @Test
     fun testOffset() {
-        cldAssertEqualsAsString("eo_3.21,so_2.66", Video.offset { setStart(seconds(2.66f)).setEnd(seconds(3.21f)) })
-        cldAssertEqualsAsString("eo_70.0p,so_35.0p", Video.offset { setStart(percent(35f)).setEnd(percent(70f)) })
+        cldAssertEqualsAsString("eo_3.21,so_2.66", Video.offset { start(seconds(2.66f)).end(seconds(3.21f)) })
+        cldAssertEqualsAsString("eo_70.0p,so_35.0p", Video.offset { start(percent(35f)).end(percent(70f)) })
     }
 
     @Test
@@ -65,26 +65,26 @@ class VideoTest {
     @Test
     fun testPreview() {
         cldAssertEqualsAsString("e_preview", Video.preview())
-        cldAssertEqualsAsString("e_preview:duration_12", Video.preview { setSeconds(12) })
+        cldAssertEqualsAsString("e_preview:duration_12", Video.preview { seconds(12) })
     }
 
     @Test
     fun testNoise() {
         cldAssertEqualsAsString("e_noise", Video.noise())
-        cldAssertEqualsAsString("e_noise:10", Video.noise { setLevel(10) })
+        cldAssertEqualsAsString("e_noise:10", Video.noise { level(10) })
     }
 
     @Test
     fun testMakeTransparent() {
         val color = color { named("white") }
         cldAssertEqualsAsString("co_white,e_make_transparent", Video.makeTransparent(color))
-        cldAssertEqualsAsString("co_white,e_make_transparent:10", Video.makeTransparent(color) { setLevel(10) })
+        cldAssertEqualsAsString("co_white,e_make_transparent:10", Video.makeTransparent(color) { level(10) })
     }
 
     @Test
     fun testDeshake() {
         cldAssertEqualsAsString("e_deshake", Video.deshake())
-        cldAssertEqualsAsString("e_deshake:16", Video.deshake { setFactor(DeShakeFactor.PX_16) })
+        cldAssertEqualsAsString("e_deshake:16", Video.deshake { factor(DeShakeFactor.PX_16) })
     }
 
     @Test
@@ -95,6 +95,6 @@ class VideoTest {
     @Test
     fun accelerate() {
         cldAssertEqualsAsString("e_accelerate", Video.accelerate())
-        cldAssertEqualsAsString("e_accelerate:100", Video.accelerate { setPercent(100) })
+        cldAssertEqualsAsString("e_accelerate:100", Video.accelerate { percent(100) })
     }
 }

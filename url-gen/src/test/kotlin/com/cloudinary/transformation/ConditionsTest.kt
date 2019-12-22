@@ -45,7 +45,7 @@ class ConditionsTest {
             )
                 .effect(Effect.grayScale())
                 .ifElse()
-                .effect(Effect.sepia { setLevel(30) })
+                .effect(Effect.sepia { level(30) })
         )
     }
 }

@@ -30,8 +30,8 @@ class VideoCodec private constructor(codec: VideoCodecType, profile: String?, le
     class Builder(private val codec: VideoCodecType) : TransformationComponentBuilder {
         private var level: Any? = null
         private var profile: String? = null
-        fun setLevel(level: Float) = apply { this.level = level }
-        fun setProfile(profile: String) = apply { this.profile = profile }
+        fun level(level: Float) = apply { this.level = level }
+        fun profile(profile: String) = apply { this.profile = profile }
         override fun build() = VideoCodec(codec, profile, level)
     }
 }
@@ -51,9 +51,9 @@ class Fps private constructor(fixed: Any?, min: Any?, max: Any?) : Delivery(
         private var min: Any? = null
         private var max: Any? = null
 
-        fun setFixed(fps: Int) = apply { this.fixed = fps }
-        fun setMin(min: Int) = apply { this.min = min }
-        fun setMax(max: Int) = apply { this.max = max }
+        fun fixed(fps: Int) = apply { this.fixed = fps }
+        fun min(min: Int) = apply { this.min = min }
+        fun max(max: Int) = apply { this.max = max }
 
         override fun build() = Fps(fixed, min, max)
     }

@@ -25,21 +25,21 @@ class Position(params: Map<String, Param>) : Action<Position>(params) {
             ).cldToActionMap()
         )
 
-        fun setGravity(gravity: Gravity) = apply {
+        fun gravity(gravity: Gravity) = apply {
             this.gravity = gravity
         }
 
-        fun setX(x: Int) = apply { this.x = x }
+        fun x(x: Int) = apply { this.x = x }
 
-        fun setX(x: Any) = apply { this.x = x }
+        fun x(x: Any) = apply { this.x = x }
 
-        fun setY(y: Int) = apply { this.y = y }
+        fun y(y: Int) = apply { this.y = y }
 
-        fun setY(y: Any) = apply { this.y = y }
+        fun y(y: Any) = apply { this.y = y }
 
-        fun setTileMode(tileMode: TileMode) = apply { this.tileMode = tileMode }
+        fun tileMode(tileMode: TileMode) = apply { this.tileMode = tileMode }
 
-        fun setAllowOverflow(allowOverflow: Boolean) = apply {
+        fun allowOverflow(allowOverflow: Boolean) = apply {
             this.allowOverflow = allowOverflow
         }
     }
@@ -87,13 +87,13 @@ open class Layer internal constructor(components: List<TransformationComponent>)
 
     companion object {
         fun overlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
-            val builder = Builder(source).setParam("overlay", "l")
+            val builder = Builder(source).param("overlay", "l")
             options?.let { builder.options() }
             return builder.build()
         }
 
         fun underlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
-            val builder = Builder(source).setParam("underlay", "u")
+            val builder = Builder(source).param("underlay", "u")
             options?.let { builder.options() }
             return builder.build()
         }
@@ -108,31 +108,31 @@ open class Layer internal constructor(components: List<TransformationComponent>)
         private var extraParams: Collection<Param> = emptyList()
         private var flag: FlagKey? = null
 
-        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
             val builder = Builder()
             builder.transformation()
-            setTransformation(builder.build())
+            transformation(builder.build())
             return this
         }
 
-        fun setPosition(position: Position) = apply { this.position = position }
-        fun setPosition(position: (Position.Builder.() -> Unit)? = null): Builder {
+        fun position(position: Position) = apply { this.position = position }
+        fun position(position: (Position.Builder.() -> Unit)? = null): Builder {
             val builder = Position.Builder()
             position?.let { builder.it() }
-            setPosition(builder.build())
+            position(builder.build())
             return this
         }
 
-        fun setBlendMode(blendMode: BlendMode) = apply { this.blendMode = blendMode }
+        fun blendMode(blendMode: BlendMode) = apply { this.blendMode = blendMode }
 
-        fun setParam(name: String, key: String) = apply {
+        fun param(name: String, key: String) = apply {
             this.paramName = name
             this.paramKey = key
         }
 
-        internal fun setExtraParams(params: Collection<Param>) = apply { this.extraParams = params }
-        internal fun setFlagKey(flag: FlagKey) = apply { this.flag = flag }
+        internal fun extraParams(params: Collection<Param>) = apply { this.extraParams = params }
+        internal fun flagKey(flag: FlagKey) = apply { this.flag = flag }
 
         override fun build() =
             Layer(

@@ -12,9 +12,9 @@ class ClippingPath private constructor(params: Map<String, Param>) :
         private var path: String? = null
         private var evenOdd: Boolean = false
 
-        fun setPage(page: Int) = apply { this.page = page }
-        fun setPath(path: String) = apply { this.path = path }
-        fun setEvenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
+        fun page(page: Int) = apply { this.page = page }
+        fun path(path: String) = apply { this.path = path }
+        fun evenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
 
         override fun build() = ClippingPath(buildParams(page ?: path, evenOdd))
     }

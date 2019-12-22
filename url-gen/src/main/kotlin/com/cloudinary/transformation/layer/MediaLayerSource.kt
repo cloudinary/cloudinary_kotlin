@@ -16,9 +16,9 @@ class MediaLayerSource(publicId: String, resourceType: String? = null, type: Str
         private var type: String? = null
         private var format: String? = null
 
-        fun setResourceType(resourceType: String) = apply { this.resourceType = resourceType }
-        fun setType(type: String) = apply { this.type = type }
-        fun setFormat(format: String) = apply { this.format = format }
+        fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
+        fun type(type: String) = apply { this.type = type }
+        fun format(format: String) = apply { this.format = format }
 
         fun build() = MediaLayerSource(publicId, resourceType, type, format)
     }

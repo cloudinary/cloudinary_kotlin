@@ -14,16 +14,16 @@ class StyleTransfer private constructor(components: List<TransformationComponent
         private var preserveColor: Boolean = false
         private var strength: Int? = null
 
-        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun setTransformation(transformation: Transformation.Builder.() -> Unit): Builder {
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
             val builder = Builder()
             builder.transformation()
-            setTransformation(builder.build())
+            transformation(builder.build())
             return this
         }
 
-        fun setPreserveColor(preserveColor: Boolean) = apply { this.preserveColor = preserveColor }
-        fun setStrength(strength: Int) = apply { this.strength = strength }
+        fun preserveColor(preserveColor: Boolean) = apply { this.preserveColor = preserveColor }
+        fun strength(strength: Int) = apply { this.strength = strength }
 
         override fun build() =
             StyleTransfer(

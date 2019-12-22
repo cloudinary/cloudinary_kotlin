@@ -12,31 +12,33 @@ class OutlineTest {
             "e_outline,test_param",
             Transformation().outline(Outline.Builder().build().add(testParam))
         )
-        cldAssertEqualsAsString("e_outline:inner_fill", Transformation().outline { setMode(OutlineMode.INNER_FILL) })
+        cldAssertEqualsAsString("e_outline:inner_fill", Transformation().outline { mode(OutlineMode.INNER_FILL) })
         cldAssertEqualsAsString(
             "co_red,e_outline:inner_fill:5",
             Transformation().outline {
-                setMode(OutlineMode.INNER_FILL)
-                setWidth(5)
-                setColor(color { named("red") })
+                mode(OutlineMode.INNER_FILL)
+                width(5)
+                color {
+                    named("red")
+                }
             })
 
         cldAssertEqualsAsString(
             "co_red,e_outline:inner_fill:5:200",
             Transformation().outline {
-                setMode(OutlineMode.INNER_FILL)
-                setBlur(200)
-                setWidth(5)
-                setColor(color { named("red") })
+                mode(OutlineMode.INNER_FILL)
+                blur(200)
+                width(5)
+                color { named("red") }
             })
 
         cldAssertEqualsAsString(
             "co_red,e_outline:inner_fill:5:200",
             Transformation().outline {
-                setMode(OutlineMode.INNER_FILL)
-                setBlur(200)
-                setWidth(5)
-                setColor("red")
+                mode(OutlineMode.INNER_FILL)
+                blur(200)
+                width(5)
+                color("red")
             })
     }
 }

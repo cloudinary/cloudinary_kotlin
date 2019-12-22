@@ -14,7 +14,7 @@ class UrlTest {
 
     @Test
     fun testBasicFunctionality() {
-        val transformation = Transformation().effect(Effect.sepia { setLevel(90) })
+        val transformation = Transformation().effect(Effect.sepia { level(90) })
         val url =
             cloudinary.url(
                 format = "jpg",

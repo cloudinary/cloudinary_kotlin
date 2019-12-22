@@ -11,13 +11,13 @@ class Shadow private constructor(params: Map<String, Param>) : Action<Shadow>(pa
         private var x: Any? = null
         private var y: Any? = null
 
-        fun setStrength(strength: Any) = apply { this.strength = strength }
-        fun setStrength(strength: Int) = apply { this.strength = strength }
-        fun setColor(color: ColorValue?) = apply { this.color = color }
-        fun setX(x: Any) = apply { this.x = x }
-        fun setY(y: Any) = apply { this.y = y }
-        fun setX(x: Int) = apply { this.x = x }
-        fun setY(y: Int) = apply { this.y = y }
+        fun strength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun color(color: ColorValue?) = apply { this.color = color }
+        fun x(x: Any) = apply { this.x = x }
+        fun y(y: Any) = apply { this.y = y }
+        fun x(x: Int) = apply { this.x = x }
+        fun y(y: Int) = apply { this.y = y }
 
         override fun build(): Shadow {
             val values = listOfNotNull(strength?.cldRanged(0, 100))

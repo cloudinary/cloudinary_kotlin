@@ -114,10 +114,10 @@ class DeliveryTest {
         )
         cldAssertEqualsAsString("vc_h264:baseline", Delivery.videoCodec(
             VideoCodecType.H264
-        ) { setProfile("baseline") })
+        ) { profile("baseline") })
         cldAssertEqualsAsString("vc_h264:baseline:3.1", Delivery.videoCodec(
             VideoCodecType.H264
-        ) { setProfile("baseline").setLevel(3.1f) })
+        ) { profile("baseline").level(3.1f) })
     }
 
     @Test

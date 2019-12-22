@@ -9,35 +9,35 @@ import org.junit.Test
 
 class LayerTest {
     private val layer = MediaLayerSource("sample")
-    private val t = Transformation().resize(Resize.scale { setWidth(100) })
-    private val pos = Position.Builder().setGravity(direction(NORTH)).setX(25).build()
+    private val t = Transformation().resize(Resize.scale { width(100) })
+    private val pos = Position.Builder().gravity(direction(NORTH)).x(25).build()
     private val blendMode = BlendMode.MULTIPLY
 
     @Test
     fun testLayerPosition() {
         val noOverflow =
-            Position.Builder().setGravity(direction(NORTH)).setX(10).setY(20).setAllowOverflow(false).build()
+            Position.Builder().gravity(direction(NORTH)).x(10).y(20).allowOverflow(false).build()
         cldAssertEqualsAsString("fl_no_overflow,g_north,x_10,y_20", noOverflow)
         cldAssertEqualsAsString(
             "g_north,x_10,y_20",
-            Position.Builder().setGravity(direction(NORTH)).setX(10).setY(20).setAllowOverflow(true).build()
+            Position.Builder().gravity(direction(NORTH)).x(10).y(20).allowOverflow(true).build()
         )
         val tiled =
-            Position.Builder().setGravity(direction(NORTH)).setX(10).setY(20).setTileMode(TileMode.TILED).build()
+            Position.Builder().gravity(direction(NORTH)).x(10).y(20).tileMode(TileMode.TILED).build()
         cldAssertEqualsAsString("fl_tiled,g_north,x_10,y_20", tiled)
 
         cldAssertEqualsAsString(
             "g_north,x_10,y_20",
-            Position.Builder().setGravity(direction(NORTH)).setX(10).setY(20).setTileMode(TileMode.NONE).build()
+            Position.Builder().gravity(direction(NORTH)).x(10).y(20).tileMode(TileMode.NONE).build()
         )
 
         cldAssertEqualsAsString(
             "l_sample/fl_layer_apply.no_overflow,g_north,x_10,y_20",
-            Layer.overlay(layer) { setPosition(noOverflow) })
+            Layer.overlay(layer) { position(noOverflow) })
 
         cldAssertEqualsAsString(
             "l_sample/fl_layer_apply.tiled,g_north,x_10,y_20",
-            Layer.overlay(layer) { setPosition(tiled) })
+            Layer.overlay(layer) { position(tiled) })
     }
 
     @Test
@@ -45,28 +45,28 @@ class LayerTest {
         cldAssertEqualsAsString("l_sample/fl_layer_apply", Layer.overlay(layer))
         cldAssertEqualsAsString(
             "l_sample/e_multiply,fl_layer_apply",
-            Layer.overlay(layer) { setBlendMode(blendMode) }
+            Layer.overlay(layer) { blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "l_sample/c_scale,w_100/fl_layer_apply",
-            Layer.overlay(layer) { setTransformation(t) }
+            Layer.overlay(layer) { transformation(t) }
         )
-        cldAssertEqualsAsString("l_sample/fl_layer_apply,g_north,x_25", Layer.overlay(layer) { setPosition(pos) })
+        cldAssertEqualsAsString("l_sample/fl_layer_apply,g_north,x_25", Layer.overlay(layer) { position(pos) })
         cldAssertEqualsAsString(
             "l_sample/c_scale,w_100/fl_layer_apply,g_north,x_25",
-            Layer.overlay(layer) { setTransformation(t).setPosition(pos) }
+            Layer.overlay(layer) { transformation(t).position(pos) }
         )
         cldAssertEqualsAsString(
             "l_sample/c_scale,w_100/e_multiply,fl_layer_apply",
-            Layer.overlay(layer) { setTransformation(t).setBlendMode(blendMode) }
+            Layer.overlay(layer) { transformation(t).blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "l_sample/e_multiply,fl_layer_apply,g_north,x_25",
-            Layer.overlay(layer) { setPosition(pos).setBlendMode(blendMode) }
+            Layer.overlay(layer) { position(pos).blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "l_sample/c_scale,w_100/e_multiply,fl_layer_apply,g_north,x_25",
-            Layer.overlay(layer) { setTransformation(t).setPosition(pos).setBlendMode(blendMode) }
+            Layer.overlay(layer) { transformation(t).position(pos).blendMode(blendMode) }
         )
     }
 
@@ -75,28 +75,28 @@ class LayerTest {
         cldAssertEqualsAsString("u_sample/fl_layer_apply", Layer.underlay(layer))
         cldAssertEqualsAsString(
             "u_sample/e_multiply,fl_layer_apply",
-            Layer.underlay(layer) { setBlendMode(blendMode) }
+            Layer.underlay(layer) { blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "u_sample/c_scale,w_100/fl_layer_apply",
-            Layer.underlay(layer) { setTransformation(t) }
+            Layer.underlay(layer) { transformation(t) }
         )
-        cldAssertEqualsAsString("u_sample/fl_layer_apply,g_north,x_25", Layer.underlay(layer) { setPosition(pos) })
+        cldAssertEqualsAsString("u_sample/fl_layer_apply,g_north,x_25", Layer.underlay(layer) { position(pos) })
         cldAssertEqualsAsString(
             "u_sample/c_scale,w_100/fl_layer_apply,g_north,x_25",
-            Layer.underlay(layer) { setTransformation(t).setPosition(pos) }
+            Layer.underlay(layer) { transformation(t).position(pos) }
         )
         cldAssertEqualsAsString(
             "u_sample/c_scale,w_100/e_multiply,fl_layer_apply",
-            Layer.underlay(layer) { setTransformation(t).setBlendMode(blendMode) }
+            Layer.underlay(layer) { transformation(t).blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "u_sample/e_multiply,fl_layer_apply,g_north,x_25",
-            Layer.underlay(layer) { setPosition(pos).setBlendMode(blendMode) }
+            Layer.underlay(layer) { position(pos).blendMode(blendMode) }
         )
         cldAssertEqualsAsString(
             "u_sample/c_scale,w_100/e_multiply,fl_layer_apply,g_north,x_25",
-            Layer.underlay(layer) { setTransformation(t).setPosition(pos).setBlendMode(blendMode) }
+            Layer.underlay(layer) { transformation(t).position(pos).blendMode(blendMode) }
         )
     }
 
@@ -112,15 +112,15 @@ class LayerTest {
                 "arial",
                 20
             ) {
-                setFontWeight(FontWeight.BOLD)
-                setFontStyle(FontStyle.ITALIC)
-                setFontAntialias(FontAntialias.BEST)
-                setFontHinting(FontHinting.FULL)
-                setTextDecoration(FontDecoration.UNDERLINE)
-                setTextAlign(TextAlign.LEFT)
-                setStroke(Stroke.STROKE)
-                setLetterSpacing(12f)
-                setLineSpacing(2f)
+                fontWeight(FontWeight.BOLD)
+                fontStyle(FontStyle.ITALIC)
+                fontAntialias(FontAntialias.BEST)
+                fontHinting(FontHinting.FULL)
+                textDecoration(FontDecoration.UNDERLINE)
+                textAlign(TextAlign.LEFT)
+                stroke(Stroke.STROKE)
+                letterSpacing(12f)
+                lineSpacing(2f)
             }
         )
 
@@ -151,11 +151,11 @@ class LayerTest {
     fun testFetchLayer() {
         cldAssertEqualsAsString(
             "fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png",
-            LayerSource.fetch("https://res.cloudinary.com/demo/image/upload/sample") { setFormat("png") }
+            LayerSource.fetch("https://res.cloudinary.com/demo/image/upload/sample") { format("png") }
         )
         cldAssertEqualsAsString(
             "video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n",
-            LayerSource.fetch("https://res.cloudinary.com/demo/video/upload/dog") { setResourceType("video") }
+            LayerSource.fetch("https://res.cloudinary.com/demo/video/upload/dog") { resourceType("video") }
         )
 
         cldAssertEqualsAsString(
@@ -172,11 +172,11 @@ class LayerTest {
     fun testMediaLayer() {
         cldAssertEqualsAsString(
             "video:dog.mp4",
-            LayerSource.media("dog") { setFormat("mp4").setResourceType("video").setType("upload") })
+            LayerSource.media("dog") { format("mp4").resourceType("video").type("upload") })
         cldAssertEqualsAsString("sample", LayerSource.media("sample"))
         cldAssertEqualsAsString(
             "sample.png",
-            LayerSource.media("sample") { setFormat("png").setResourceType("image").setType("upload") })
+            LayerSource.media("sample") { format("png").resourceType("image").type("upload") })
 
         cldAssertEqualsAsString("video:dog.mp4", MediaLayerSource("dog", "video", "upload", "mp4"))
         cldAssertEqualsAsString("sample", MediaLayerSource("sample"))

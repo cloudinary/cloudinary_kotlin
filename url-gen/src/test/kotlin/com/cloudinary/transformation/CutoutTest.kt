@@ -9,8 +9,8 @@ import org.junit.Test
 class CutoutTest {
     @Test
     fun testCutout() {
-        val pos = Position.Builder().setGravity(Gravity.direction(Direction.NORTH)).setX(100).build()
-        val tr = Transformation().resize(Resize.scale { setWidth(200).setHeight(200) })
+        val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(100).build()
+        val tr = Transformation().resize(Resize.scale { width(200).height(200) })
             .cornersRadius { max() }
 
         cldAssertEqualsAsString(
@@ -19,14 +19,14 @@ class CutoutTest {
 
         cldAssertEqualsAsString(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply",
-            Transformation().cutout(MediaLayerSource("ring2")) { setTransformation(tr) }
+            Transformation().cutout(MediaLayerSource("ring2")) { transformation(tr) }
         )
 
         cldAssertEqualsAsString(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply,g_north,x_100",
             Transformation().cutout(MediaLayerSource("ring2")) {
-                setTransformation(tr)
-                setPosition(pos)
+                transformation(tr)
+                position(pos)
             }
         )
     }

@@ -15,13 +15,18 @@ class Outline private constructor(params: Map<String, Param>) :
     ) : TransformationComponentBuilder {
         constructor() : this(null)
 
-        fun setMode(mode: OutlineMode) = apply { this.mode = mode }
-        fun setColor(color: ColorValue) = apply { this.color = color }
+        fun mode(mode: OutlineMode) = apply { this.mode = mode }
+        fun color(color: ColorValue) = apply { this.color = color }
+        fun color(color: ColorValue.Builder.() -> Unit) = apply {
+            val builder = ColorValue.Builder()
+            builder.color()
+            color(builder.build())
+        }
 
-        fun setColor(color: String) = apply { this.color = ColorValue.parseString(color) }
-        fun setWidth(width: Int) = apply { this.width = width }
+        fun color(color: String) = apply { this.color = ColorValue.parseString(color) }
+        fun width(width: Int) = apply { this.width = width }
 
-        fun setBlur(blur: Int) = apply { this.blur = blur }
+        fun blur(blur: Int) = apply { this.blur = blur }
         override fun build(): Outline {
             val values = listOfNotNull(mode, width?.cldRanged(1, 100), blur?.cldRanged(0, 200))
             val params = listOfNotNull(color?.asParam())

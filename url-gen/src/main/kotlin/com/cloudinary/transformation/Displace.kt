@@ -27,15 +27,15 @@ class Displace private constructor(components: List<TransformationComponent>) : 
     ) : TransformationComponentBuilder {
         constructor(layerSource: LayerSource) : this(layerSource, null, null)
 
-        fun setTransformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun setPosition(position: (Position.Builder.() -> Unit)? = null): Builder {
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun position(position: (Position.Builder.() -> Unit)? = null): Builder {
             val builder = Position.Builder()
             position?.let { builder.it() }
-            setPosition(builder.build())
+            position(builder.build())
             return this
         }
 
-        fun setPosition(position: Position) = apply { this.position = position }
+        fun position(position: Position) = apply { this.position = position }
         override fun build() = displace(source, transformation, position)
     }
 }

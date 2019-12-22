@@ -9,13 +9,13 @@ class Border private constructor(params: Map<String, Param>) :
         private var color: ColorValue? = null
         private var type = "solid"
 
-        fun setWidth(width: Int) = apply { this.width = width }
-        fun setWidth(width: Any) = apply { this.width = width }
-        fun setColor(color: ColorValue) = apply { this.color = color }
-        fun setColor(color: ColorValue.Builder.() -> Unit) = apply {
+        fun width(width: Int) = apply { this.width = width }
+        fun width(width: Any) = apply { this.width = width }
+        fun color(color: ColorValue) = apply { this.color = color }
+        fun color(color: ColorValue.Builder.() -> Unit) = apply {
             val builder = ColorValue.Builder()
             builder.color()
-            setColor(builder.build())
+            color(builder.build())
         }
 
         override fun build() = Border(

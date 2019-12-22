@@ -24,10 +24,10 @@ open class Delivery(params: Map<String, Param>) : Action<Delivery>(params) {
             return builder.build()
         }
 
-        fun fps(fps: Int) = Fps.Builder().setFixed(fps).build()
+        fun fps(fps: Int) = Fps.Builder().fixed(fps).build()
         fun fps(min: Int, max: Int?): Fps {
-            val builder = Fps.Builder().setMin(min)
-            max?.let { builder.setMax(max) }
+            val builder = Fps.Builder().min(min)
+            max?.let { builder.max(max) }
             return builder.build()
         }
 

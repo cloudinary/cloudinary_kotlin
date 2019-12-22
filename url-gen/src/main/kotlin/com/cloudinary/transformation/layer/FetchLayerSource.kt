@@ -15,8 +15,8 @@ class FetchLayerSource(remoteUrl: String, resourceType: String? = null, format: 
         private var resourceType: String? = null
         private var format: String? = null
 
-        fun setResourceType(resourceType: String) = apply { this.resourceType = resourceType }
-        fun setFormat(format: String) = apply { this.format = format }
+        fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
+        fun format(format: String) = apply { this.format = format }
 
         fun build() = FetchLayerSource(remoteUrl, resourceType, format)
     }

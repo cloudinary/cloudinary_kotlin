@@ -27,7 +27,7 @@ class Loop private constructor(additionalLoops: Int? = null) :
     ) {
     class Builder : TransformationComponentBuilder {
         private var additionalLoops: Int? = null
-        fun setAdditionalLoops(loops: Int) = apply { this.additionalLoops = loops }
+        fun additionalLoops(loops: Int) = apply { this.additionalLoops = loops }
         override fun build() = Loop(additionalLoops)
     }
 }
@@ -41,7 +41,7 @@ class Fade private constructor(milliseconds: Int? = null) : Video(
 ) {
     class Builder : TransformationComponentBuilder {
         private var milliseconds: Int? = null
-        fun setMilliseconds(milliseconds: Int) = apply { this.milliseconds = milliseconds }
+        fun milliseconds(milliseconds: Int) = apply { this.milliseconds = milliseconds }
         override fun build() = Fade(milliseconds)
     }
 }
@@ -114,8 +114,8 @@ class Offset private constructor(start: OffsetValue? = null, end: OffsetValue? =
     class Builder : TransformationComponentBuilder {
         private var start: OffsetValue? = null
         private var end: OffsetValue? = null
-        fun setStart(offset: OffsetValue) = apply { this.start = offset }
-        fun setEnd(offset: OffsetValue) = apply { this.end = offset }
+        fun start(offset: OffsetValue) = apply { this.start = offset }
+        fun end(offset: OffsetValue) = apply { this.end = offset }
 
         override fun build() = Offset(start, end)
     }
@@ -159,7 +159,7 @@ class Preview private constructor(seconds: Int? = null) :
     ) {
     class Builder : TransformationComponentBuilder {
         private var seconds: Int? = null
-        fun setSeconds(seconds: Int) = apply { this.seconds = seconds }
+        fun seconds(seconds: Int) = apply { this.seconds = seconds }
         override fun build() = Preview(seconds)
     }
 }
@@ -179,7 +179,7 @@ class Noise private constructor(level: Int? = null) :
     ) {
     class Builder : TransformationComponentBuilder {
         private var level: Int? = null
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
         override fun build() = Noise(level)
     }
 }
@@ -192,7 +192,7 @@ class MakeTransparent private constructor(color: ColorValue, level: Int? = null)
     ) {
     class Builder(private val color: ColorValue) : TransformationComponentBuilder {
         private var level: Int? = null
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
         override fun build() = MakeTransparent(color, level)
     }
 }
@@ -207,7 +207,7 @@ class Deshake private constructor(factor: DeShakeFactor? = null) :
     ) {
     class Builder : TransformationComponentBuilder {
         private var factor: DeShakeFactor? = null
-        fun setFactor(factor: DeShakeFactor?) = apply { this.factor = factor }
+        fun factor(factor: DeShakeFactor?) = apply { this.factor = factor }
         override fun build() = Deshake(factor)
     }
 }
@@ -235,7 +235,7 @@ class Accelerate private constructor(percent: Int? = null) :
     ) {
     class Builder : TransformationComponentBuilder {
         private var percent: Int? = null
-        fun setPercent(percent: Int) = apply { this.percent = percent }
+        fun percent(percent: Int) = apply { this.percent = percent }
         override fun build() = Accelerate(percent)
     }
 }

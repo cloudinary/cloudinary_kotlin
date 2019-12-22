@@ -11,7 +11,7 @@ class Sepia private constructor(level: Any? = null) :
 
     class Builder : TransformationComponentBuilder {
         private var level: Any? = null
-        fun setLevel(level: Int?) = apply { this.level = level }
+        fun level(level: Int?) = apply { this.level = level }
         override fun build() = Sepia(level)
     }
 }
@@ -37,11 +37,11 @@ class Colorize private constructor(
         override fun build(): Colorize =
             Colorize(level = level, color = color)
 
-        fun setLevel(level: Any) = apply { this.level = level }
+        fun level(level: Any) = apply { this.level = level }
 
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
 
-        fun setColor(color: ColorValue) = apply { this.color = color }
+        fun color(color: ColorValue) = apply { this.color = color }
     }
 }
 
@@ -63,11 +63,11 @@ class AssistColorBlind private constructor(
         override fun build(): AssistColorBlind =
             AssistColorBlind(strength = strength, type = type)
 
-        fun setStrength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
 
-        fun setStrength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Any) = apply { this.strength = strength }
 
-        fun setType(type: AssistColorBlindType) = apply { this.type = type }
+        fun type(type: AssistColorBlindType) = apply { this.type = type }
     }
 }
 
@@ -79,7 +79,7 @@ class SimulateColorblind private constructor(condition: Any? = null) :
         override fun build(): SimulateColorblind =
             SimulateColorblind(condition = condition)
 
-        fun setCondition(condition: ColorBlindCondition) = apply {
+        fun condition(condition: ColorBlindCondition) = apply {
             this.condition = condition
         }
     }
@@ -117,31 +117,31 @@ class Vectorize private constructor(
                 = paths, corners = corners
             )
 
-        fun setColors(colors: Int) = apply { this.colors = colors }
+        fun colors(colors: Int) = apply { this.colors = colors }
 
-        fun setColors(colors: Any) = apply { this.colors = colors }
+        fun colors(colors: Any) = apply { this.colors = colors }
 
-        fun setColors(colors: Float) = apply { this.colors = colors }
+        fun colors(colors: Float) = apply { this.colors = colors }
 
-        fun setDetail(detail: Int) = apply { this.detail = detail }
+        fun detail(detail: Int) = apply { this.detail = detail }
 
-        fun setDetail(detail: Float) = apply { this.detail = detail }
+        fun detail(detail: Float) = apply { this.detail = detail }
 
-        fun setDetail(detail: Any) = apply { this.detail = detail }
+        fun detail(detail: Any) = apply { this.detail = detail }
 
-        fun setDespeckle(despeckle: Int) = apply { this.despeckle = despeckle }
+        fun despeckle(despeckle: Int) = apply { this.despeckle = despeckle }
 
-        fun setDespeckle(despeckle: Float) = apply { this.despeckle = despeckle }
+        fun despeckle(despeckle: Float) = apply { this.despeckle = despeckle }
 
-        fun setDespeckle(despeckle: Any) = apply { this.despeckle = despeckle }
+        fun despeckle(despeckle: Any) = apply { this.despeckle = despeckle }
 
-        fun setPaths(paths: Int) = apply { this.paths = paths }
+        fun paths(paths: Int) = apply { this.paths = paths }
 
-        fun setPaths(paths: Any) = apply { this.paths = paths }
+        fun paths(paths: Any) = apply { this.paths = paths }
 
-        fun setCorners(corners: Int) = apply { this.corners = corners }
+        fun corners(corners: Int) = apply { this.corners = corners }
 
-        fun setCorners(corners: Any) = apply { this.corners = corners }
+        fun corners(corners: Any) = apply { this.corners = corners }
     }
 }
 
@@ -170,27 +170,27 @@ class Cartoonify private constructor(
                 blackwhite = blackwhite
             )
 
-        fun setLineStrength(lineStrength: Int) = apply {
+        fun lineStrength(lineStrength: Int) = apply {
             this.lineStrength =
                 lineStrength
         }
 
-        fun setLineStrength(lineStrength: Any) = apply {
+        fun lineStrength(lineStrength: Any) = apply {
             this.lineStrength =
                 lineStrength
         }
 
-        fun setColorReduction(colorReduction: Int) = apply {
+        fun colorReduction(colorReduction: Int) = apply {
             this.colorReduction =
                 colorReduction
         }
 
-        fun setColorReduction(colorReduction: Any) = apply {
+        fun colorReduction(colorReduction: Any) = apply {
             this.colorReduction =
                 colorReduction
         }
 
-        fun setBlackwhite(blackwhite: Boolean) = apply { this.blackwhite = blackwhite }
+        fun blackwhite(blackwhite: Boolean) = apply { this.blackwhite = blackwhite }
     }
 }
 
@@ -201,9 +201,9 @@ class Artistic private constructor(filter: Any? = null) : Effect("art", filter) 
         override fun build(): Artistic =
             Artistic(filter = filter)
 
-        fun setFilter(filter: ArtisticFilter): Builder = apply { this.filter = filter }
+        fun filter(filter: ArtisticFilter): Builder = apply { this.filter = filter }
 
-        fun setFilter(filter: Any): Builder = apply { this.filter = filter }
+        fun filter(filter: Any): Builder = apply { this.filter = filter }
     }
 }
 
@@ -215,9 +215,9 @@ class MakeTransparent private constructor(level: Any? = null) :
         override fun build(): MakeTransparent =
             MakeTransparent(level = level)
 
-        fun setLevel(level: Any) = apply { this.level = level }
+        fun level(level: Any) = apply { this.level = level }
 
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
     }
 }
 
@@ -236,17 +236,17 @@ class Trim private constructor(
                 colorOverride = colorOverride
             )
 
-        fun setColorSimilarity(colorSimilarity: Int) = apply {
+        fun colorSimilarity(colorSimilarity: Int) = apply {
             this.colorSimilarity =
                 colorSimilarity
         }
 
-        fun setColorSimilarity(colorSimilarity: Any) = apply {
+        fun colorSimilarity(colorSimilarity: Any) = apply {
             this.colorSimilarity =
                 colorSimilarity
         }
 
-        fun setColorOverride(colorOverride: ColorValue) = apply {
+        fun colorOverride(colorOverride: ColorValue) = apply {
             this.colorOverride =
                 colorOverride
         }
@@ -262,9 +262,9 @@ class OilPaint private constructor(level: Any? = null) :
         override fun build(): OilPaint =
             OilPaint(level = level)
 
-        fun setLevel(level: Any) = apply { this.level = level }
+        fun level(level: Any) = apply { this.level = level }
 
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
     }
 }
 
@@ -280,9 +280,9 @@ class Vignette private constructor(level: Any? = null) :
         override fun build(): Vignette =
             Vignette(level = level)
 
-        fun setLevel(level: Any) = apply { this.level = level }
+        fun level(level: Any) = apply { this.level = level }
 
-        fun setLevel(level: Int) = apply { this.level = level }
+        fun level(level: Int) = apply { this.level = level }
     }
 }
 
@@ -294,9 +294,9 @@ class Pixelate private constructor(squareSize: Any? = null) :
         override fun build(): Pixelate =
             Pixelate(squareSize = squareSize)
 
-        fun setSquareSize(squareSize: Any) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Any) = apply { this.squareSize = squareSize }
 
-        fun setSquareSize(squareSize: Int) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Int) = apply { this.squareSize = squareSize }
     }
 }
 
@@ -317,11 +317,11 @@ class PixelateRegion private constructor(
                 region = region
             )
 
-        fun setSquareSize(squareSize: Any) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Any) = apply { this.squareSize = squareSize }
 
-        fun setSquareSize(squareSize: Int) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Int) = apply { this.squareSize = squareSize }
 
-        fun setRegion(region: Region) = apply { this.region = region }
+        fun region(region: Region) = apply { this.region = region }
     }
 }
 
@@ -333,9 +333,9 @@ class PixelateFaces private constructor(squareSize: Any? = null) :
         override fun build(): PixelateFaces =
             PixelateFaces(squareSize = squareSize)
 
-        fun setSquareSize(squareSize: Any) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Any) = apply { this.squareSize = squareSize }
 
-        fun setSquareSize(squareSize: Int) = apply { this.squareSize = squareSize }
+        fun squareSize(squareSize: Int) = apply { this.squareSize = squareSize }
     }
 }
 
@@ -347,9 +347,9 @@ class Blur private constructor(strength: Any? = null) :
         override fun build(): Blur =
             Blur(strength = strength)
 
-        fun setStrength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Any) = apply { this.strength = strength }
 
-        fun setStrength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
     }
 }
 
@@ -367,11 +367,11 @@ class BlurRegion private constructor(
         override fun build(): BlurRegion =
             BlurRegion(strength = strength, region = region)
 
-        fun setStrength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Any) = apply { this.strength = strength }
 
-        fun setStrength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
 
-        fun setRegion(region: Region) = apply { this.region = region }
+        fun region(region: Region) = apply { this.region = region }
     }
 }
 
@@ -382,9 +382,9 @@ class BlurFaces private constructor(strength: Any? = null) : Effect("blur_faces"
         override fun build(): BlurFaces =
             BlurFaces(strength = strength)
 
-        fun setStrength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Any) = apply { this.strength = strength }
 
-        fun setStrength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
     }
 
 }
@@ -396,7 +396,7 @@ class OrderedDither private constructor(filter: Any? = null) : Effect("ordered_d
         override fun build(): OrderedDither =
             OrderedDither(filter = filter)
 
-        fun setFilter(filter: DitherFilter) = apply { this.filter = filter }
-        fun setFilter(filter: Any) = apply { this.filter = filter }
+        fun filter(filter: DitherFilter) = apply { this.filter = filter }
+        fun filter(filter: Any) = apply { this.filter = filter }
     }
 }
