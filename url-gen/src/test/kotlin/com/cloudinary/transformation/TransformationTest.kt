@@ -29,7 +29,7 @@ class TransformationTest {
         cldAssertEqualsAsString("l_sample/fl_cutter.layer_apply", Transformation().cutter(layer))
         cldAssertEqualsAsString(
             "l_sample/e_sepia/fl_cutter.layer_apply",
-            Transformation().cutter(layer) { setTransformation(sepiaTransformation) })
+            Transformation().cutter(layer) { transformation(sepiaTransformation) })
     }
 
     @Test
@@ -37,7 +37,7 @@ class TransformationTest {
         cldAssertEqualsAsString("l_sample/e_anti_removal,fl_layer_apply", Transformation().antiRemoval(layer))
         cldAssertEqualsAsString(
             "l_sample/e_sepia/e_anti_removal,fl_layer_apply",
-            Transformation().antiRemoval(layer) { setTransformation(sepiaTransformation) })
+            Transformation().antiRemoval(layer) { transformation(sepiaTransformation) })
 
     }
 
@@ -49,8 +49,8 @@ class TransformationTest {
             Transformation().cutout(Cutout.Builder(layer).build())
         )
         cldAssertEqualsAsString("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer) {
-            setPosition {
-                setAllowOverflow(true)
+            position {
+                allowOverflow(true)
             }
         })
     }
@@ -58,7 +58,7 @@ class TransformationTest {
     @Test
     fun testClip() {
         cldAssertEqualsAsString("fl_clip", Transformation().clip())
-        cldAssertEqualsAsString("fl_clip_evenodd", Transformation().clip { setEvenOdd(true) })
+        cldAssertEqualsAsString("fl_clip_evenodd", Transformation().clip { evenOdd(true) })
     }
 
     @Test
@@ -100,7 +100,7 @@ class TransformationTest {
 
     @Test
     fun testGradientFade() {
-        cldAssertEqualsAsString("e_gradient_fade:3", Transformation().gradientFade { setStrength(3) })
+        cldAssertEqualsAsString("e_gradient_fade:3", Transformation().gradientFade { strength(3) })
         cldAssertEqualsAsString("e_gradient_fade", Transformation().gradientFade())
     }
 
@@ -109,8 +109,8 @@ class TransformationTest {
         cldAssertEqualsAsString(
             "bo_4px_solid_black",
             Transformation().border {
-                setWidth(4)
-                setColor {
+                width(4)
+                color {
                     named("black")
                 }
             })
@@ -125,31 +125,31 @@ class TransformationTest {
 
         cldAssertEqualsAsString(
             "l_radialize/e_sepia/e_displace,fl_layer_apply",
-            Transformation().displace(media("radialize")) { setTransformation(sepiaTransformation) })
+            Transformation().displace(media("radialize")) { transformation(sepiaTransformation) })
     }
 
     @Test
     fun testStyleTransfer() {
         cldAssertEqualsAsString(
             "l_lighthouse/e_style_transfer:preserve_color,fl_layer_apply",
-            Transformation().styleTransfer(media("lighthouse")) { setPreserveColor(true) }
+            Transformation().styleTransfer(media("lighthouse")) { preserveColor(true) }
         )
     }
 
     @Test
     fun testEffect() {
-        Transformation().effect(Effect.colorize { setLevel(50) })
+        Transformation().effect(Effect.colorize { level(50) })
         cldAssertEqualsAsString("e_sepia", Transformation().effect(Effect.sepia()))
     }
 
     @Test
     fun testResize() {
-        cldAssertEqualsAsString("c_scale,w_100", Transformation().resize(scale { setWidth(100) }))
+        cldAssertEqualsAsString("c_scale,w_100", Transformation().resize(scale { width(100) }))
     }
 
     @Test
     fun testAdjust() {
-        cldAssertEqualsAsString("e_gamma:50", Transformation().adjust(Adjust.gamma { setLevel(50) }))
+        cldAssertEqualsAsString("e_gamma:50", Transformation().adjust(Adjust.gamma { level(50) }))
     }
 
     @Test
@@ -176,36 +176,36 @@ class TransformationTest {
     fun textComplexTransformation() {
         val transformation =
             transformation {
-                gradientFade { setStrength(3) }
+                gradientFade { strength(3) }
                 adjust(opacity(80))
                 border {
-                    setWidth(4)
-                    setColor {
+                    width(4)
+                    color {
                         named("red")
                     }
                 }
                 layer(overlay(media("sample")) {
-                    setPosition {
-                        setGravity(Gravity.direction(EAST))
-                        setAllowOverflow(false)
+                    position {
+                        gravity(Gravity.direction(EAST))
+                        allowOverflow(false)
                     }
-                    setBlendMode(SCREEN)
-                    setTransformation {
+                    blendMode(SCREEN)
+                    transformation {
                         resize(scale {
-                            setWidth(100)
+                            width(100)
                         })
                     }
                 })
                 layer(overlay(
                     text("hello world", "Arial", 21) {
-                        setFontWeight(FontWeight.BOLD)
-                        setFontHinting(FontHinting.FULL)
-                        setStroke(Stroke.STROKE)
-                        setLetterSpacing(12f)
+                        fontWeight(FontWeight.BOLD)
+                        fontHinting(FontHinting.FULL)
+                        stroke(Stroke.STROKE)
+                        letterSpacing(12f)
                     }
                 ) {
-                    setPosition {
-                        setGravity(Gravity.direction(WEST))
+                    position {
+                        gravity(Gravity.direction(WEST))
                     }
                 })
                 rotate { angle(25) }
