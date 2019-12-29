@@ -8,7 +8,7 @@ import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.util.cldRanged
 
-class AntiRemoval private constructor(components: List<TransformationComponent>) : Layer(components) {
+class AntiRemoval private constructor(components: List<Action>) : Layer(components) {
 
     class Builder(private var source: LayerSource) : TransformationComponentBuilder {
         private var level: Any? = null

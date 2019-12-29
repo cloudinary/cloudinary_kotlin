@@ -1,12 +1,12 @@
 package com.cloudinary.transformation.video
 
-import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.ColorValue
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.util.cldToString
 
-open class Video constructor(params: Map<String, Param>) : Action<Video>(params) {
+open class Video constructor(params: Map<String, Param>) : ParamsAction<Video>(params) {
     constructor(param: Param) : this(mapOf(Pair(param.key, param)))
 
     override fun create(params: Map<String, Param>) =

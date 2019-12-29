@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 class Rotate private constructor(params: Map<String, Param>) :
-    Action<Rotate>(params) {
+    ParamsAction<Rotate>(params) {
     override fun create(params: Map<String, Param>) = Rotate(params)
 
     enum class Mode(private val value: String) {

@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 class Page private constructor(params: Map<String, Param>) :
-    Action<Page>(params) {
+    ParamsAction<Page>(params) {
     override fun create(params: Map<String, Param>) = Page(params)
 
     companion object {
@@ -10,7 +10,7 @@ class Page private constructor(params: Map<String, Param>) :
     }
 
     class LayerNamesBuilder(private vararg val names: String) : TransformationComponentBuilder {
-        override fun build(): TransformationComponent {
+        override fun build(): Action {
             val value =
                 ParamValue(listOf(NamedValue("name", ParamValue(names.asList().cldAsNonNullSimpleValues(), ";"))))
             return buildParameters(value)

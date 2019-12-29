@@ -7,7 +7,7 @@ class InfrastructureTest {
     @Test
     fun testRawComponents() {
         cldAssertEqualsAsString("raw_component", Transformation().add("raw_component"))
-        cldAssertEqualsAsString("raw_component", Transformation().add(StringComponent("raw_component")))
+        cldAssertEqualsAsString("raw_component", Transformation().add(RawAction("raw_component")))
     }
 
     @Test

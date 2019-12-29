@@ -9,17 +9,14 @@ import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.video.Video
 import com.cloudinary.transformation.warp.Warp
 
-open class Transformation(private val components: List<TransformationComponent> = emptyList()) :
-    TransformationComponent {
-    constructor(component: TransformationComponent) : this(listOf(component))
+open class Transformation(private val components: List<Action> = emptyList()) : Action {
+    constructor(component: Action) : this(listOf(component))
 
-    override fun toString(): String {
-        return components.joinToString("/")
-    }
+    override fun toString() = components.joinToString("/")
 
-    fun add(component: TransformationComponent) = Transformation(components + component)
+    fun add(component: Action) = Transformation(components + component)
 
-    fun add(component: String) = Transformation(components + StringComponent(component))
+    fun add(component: String) = Transformation(components + RawAction(component))
 
     fun cutter(cutter: Cutter) = add(cutter)
     fun cutter(source: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
@@ -117,10 +114,9 @@ open class Transformation(private val components: List<TransformationComponent> 
         return add(builder.build())
     }
 
-    class Builder(private val components: MutableList<TransformationComponent> = mutableListOf()) :
-        TransformationComponentBuilder {
-        fun add(component: TransformationComponent) = apply { components.add(component) }
-        fun add(component: String) = add(StringComponent(component))
+    class Builder(private val components: MutableList<Action> = mutableListOf()) {
+        fun add(component: Action) = apply { components.add(component) }
+        fun add(component: String) = add(RawAction(component))
 
         fun cutter(cutter: Cutter) = add(cutter)
         fun cutter(layerSource: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
@@ -201,13 +197,13 @@ open class Transformation(private val components: List<TransformationComponent> 
             return add(builder.build())
         }
 
-        override fun build() = Transformation(components)
+        fun build() = Transformation(components)
     }
 }
 
 @TransformationDsl
 interface TransformationComponentBuilder {
-    fun build(): TransformationComponent
+    fun build(): Action
 }
 
 fun transformation(t: Transformation.Builder.() -> Unit): Transformation {

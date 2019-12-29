@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 class Background private constructor(params: Map<String, Param>) :
-    Action<Background>(params) {
+    ParamsAction<Background>(params) {
     override fun create(params: Map<String, Param>) = Background(params)
 
     companion object {

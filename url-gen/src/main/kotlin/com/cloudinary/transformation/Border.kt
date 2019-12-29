@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 class Border private constructor(params: Map<String, Param>) :
-    Action<Border>(params) {
+    ParamsAction<Border>(params) {
     override fun create(params: Map<String, Param>) = Border(params)
 
     class Builder : TransformationComponentBuilder {

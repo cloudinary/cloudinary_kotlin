@@ -4,7 +4,12 @@ import com.cloudinary.util.cldToString
 
 interface ParamValueContent
 
-open class ParamValue(internal val values: List<ParamValueContent>, private val separator: String = ":") {
+internal const val DEFAULT_VALUES_SEPARATOR = ":"
+
+open class ParamValue(
+    internal val values: List<ParamValueContent>,
+    private val separator: String = DEFAULT_VALUES_SEPARATOR
+) {
     constructor(value: Any) : this(listOf(SimpleValue(value)))
     constructor(values: List<Any>) : this(values.map { if (it is ParamValueContent) it else SimpleValue(it) })
 
@@ -13,7 +18,11 @@ open class ParamValue(internal val values: List<ParamValueContent>, private val 
     }
 }
 
-class NamedValue(internal val name: String, internal val value: Any, private val separator: String = ":") :
+class NamedValue(
+    internal val name: String,
+    internal val value: Any,
+    private val separator: String = DEFAULT_VALUES_SEPARATOR
+) :
     ParamValueContent {
 
     override fun toString() = "$name$separator${value.cldToString().cldNormalize()}"
@@ -25,7 +34,6 @@ class SimpleValue(internal val value: Any) : ParamValueContent {
 
 internal fun List<*>.cldAsNonNullSimpleValues() = this.filterNotNull().map { SimpleValue(it) }
 
-
 open class Param(private val name: String, internal val key: String, internal val value: ParamValue) {
     constructor(name: String, key: String, value: Any) : this(name, key, ParamValue(value))
 
@@ -36,12 +44,12 @@ open class Param(private val name: String, internal val key: String, internal va
     internal open val hashKey get() = key
 }
 
-interface TransformationComponent
+interface Action
 
 @DslMarker
 annotation class TransformationDsl
 
-abstract class Action<T>(internal val params: Map<String, Param>) : TransformationComponent {
+abstract class ParamsAction<T>(internal val params: Map<String, Param>) : Action {
     abstract fun create(params: Map<String, Param>): T
 
     fun add(param: Param) = create(params + Pair(param.hashKey, param))
@@ -76,13 +84,13 @@ abstract class Action<T>(internal val params: Map<String, Param>) : Transformati
     }
 }
 
-open class GenericAction(params: Map<String, Param>) : Action<GenericAction>(params) {
+open class GenericAction(params: Map<String, Param>) : ParamsAction<GenericAction>(params) {
     constructor(param: Param) : this(mapOf(Pair(param.key, param)))
 
     override fun create(params: Map<String, Param>) = GenericAction(params)
 }
 
-class StringComponent(private val value: String) : TransformationComponent {
+class RawAction(private val value: String) : Action {
     override fun toString() = value
 }
 

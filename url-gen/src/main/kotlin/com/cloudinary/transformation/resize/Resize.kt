@@ -18,7 +18,7 @@ private const val MINIMUM_PAD = "mpad"
 private const val FILL_PAD = "fill_pad"
 private const val THUMB = "thumb"
 
-open class Resize protected constructor(params: Map<String, Param>) : Action<Resize>(params) {
+open class Resize protected constructor(params: Map<String, Param>) : ParamsAction<Resize>(params) {
     constructor(params: Collection<Param>) : this(params.cldToActionMap()) {
         if (!(this.params.containsKey("w") || this.params.containsKey("h"))) {
             inputError(this.params)

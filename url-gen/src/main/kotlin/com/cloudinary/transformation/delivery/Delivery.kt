@@ -1,13 +1,13 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.transformation.cldAsNonNullSimpleValues
 import com.cloudinary.util.cldRanged
 import com.cloudinary.util.cldToString
 
-open class Delivery(params: Map<String, Param>) : Action<Delivery>(params) {
+open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params) {
     constructor(param: Param) : this(mapOf(Pair(param.key, param)))
 
     override fun create(params: Map<String, Param>) =

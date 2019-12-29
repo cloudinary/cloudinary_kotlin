@@ -7,7 +7,7 @@ import com.cloudinary.transformation.layer.LayerSource
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.util.cldRanged
 
-class StyleTransfer private constructor(components: List<TransformationComponent>) : Layer(components) {
+class StyleTransfer private constructor(components: List<Action>) : Layer(components) {
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
         private var transformation: Transformation? = null

@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.util.cldRanged
 
-class Shadow private constructor(params: Map<String, Param>) : Action<Shadow>(params) {
+class Shadow private constructor(params: Map<String, Param>) : ParamsAction<Shadow>(params) {
     override fun create(params: Map<String, Param>) = Shadow(params)
 
     class Builder : TransformationComponentBuilder {

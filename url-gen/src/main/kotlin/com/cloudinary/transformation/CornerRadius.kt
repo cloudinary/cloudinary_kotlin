@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 class CornerRadius private constructor(params: Map<String, Param>) :
-    Action<CornerRadius>(params) {
+    ParamsAction<CornerRadius>(params) {
 
     constructor(values: List<Any>) : this(Param("radius", "r", ParamValue(values)).let { mapOf(Pair(it.key, it)) })
 

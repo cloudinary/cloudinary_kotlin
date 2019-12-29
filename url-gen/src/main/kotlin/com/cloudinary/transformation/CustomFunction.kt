@@ -5,7 +5,7 @@ import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldToUrlSafeBase64
 
 class CustomFunction private constructor(params: Map<String, Param>) :
-    Action<CustomFunction>(params) {
+    ParamsAction<CustomFunction>(params) {
     override fun create(params: Map<String, Param>) = CustomFunction(params)
 
     class Builder(private val source: String) : TransformationComponentBuilder {

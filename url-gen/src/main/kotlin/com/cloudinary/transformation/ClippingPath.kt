@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 
 class ClippingPath private constructor(params: Map<String, Param>) :
-    Action<ClippingPath>(params) {
+    ParamsAction<ClippingPath>(params) {
     private constructor(page: Param? = null, evenOdd: Boolean = false) : this(buildParams(page, evenOdd))
 
     override fun create(params: Map<String, Param>) = ClippingPath(params)

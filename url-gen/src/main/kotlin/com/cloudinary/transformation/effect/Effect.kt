@@ -3,7 +3,7 @@ package com.cloudinary.transformation.effect
 import com.cloudinary.transformation.*
 import com.cloudinary.util.cldToString
 
-open class Effect(params: Map<String, Param>) : Action<Effect>(params) {
+open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
     constructor(params: Collection<Param>) : this(params.cldToActionMap())
     constructor (
         name: String,

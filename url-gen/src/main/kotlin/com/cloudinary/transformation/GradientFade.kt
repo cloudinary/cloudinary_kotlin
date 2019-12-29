@@ -3,7 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.util.cldRanged
 
 class GradientFade private constructor(params: Map<String, Param>) :
-    Action<GradientFade>(params) {
+    ParamsAction<GradientFade>(params) {
     override fun create(params: Map<String, Param>) = GradientFade(params)
 
     class Builder : TransformationComponentBuilder {

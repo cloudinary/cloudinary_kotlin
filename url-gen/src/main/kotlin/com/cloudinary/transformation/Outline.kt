@@ -3,7 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.util.cldRanged
 
 class Outline private constructor(params: Map<String, Param>) :
-    Action<Outline>(params) {
+    ParamsAction<Outline>(params) {
 
     override fun create(params: Map<String, Param>) = Outline(params)
 

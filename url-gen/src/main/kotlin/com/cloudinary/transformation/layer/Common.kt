@@ -3,7 +3,7 @@ package com.cloudinary.transformation.layer
 import com.cloudinary.transformation.*
 import com.cloudinary.transformation.Transformation.Builder
 
-class Position(params: Map<String, Param>) : Action<Position>(params) {
+class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
     class Builder : TransformationComponentBuilder {
         private var gravity: Gravity? = null
 
@@ -82,8 +82,8 @@ abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(v
     }
 }
 
-open class Layer internal constructor(components: List<TransformationComponent>) :
-    Transformation(components) {
+open class Layer internal constructor(private val components: List<Action>) :
+    Action {
 
     companion object {
         fun overlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
@@ -98,6 +98,8 @@ open class Layer internal constructor(components: List<TransformationComponent>)
             return builder.build()
         }
     }
+
+    override fun toString() = components.joinToString("/")
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
@@ -158,7 +160,7 @@ internal fun buildLayerComponent(
     paramKey: String,
     extraParams: Collection<Param> = emptyList(),
     flag: FlagKey? = null
-): List<TransformationComponent> {
+): List<Action> {
     // start with the layer param itself
     val layerParam = Param(paramName, paramKey, source)
 
@@ -171,10 +173,10 @@ internal fun buildLayerComponent(
     blendMode?.let { allParams.add(Param("effect", "e", ParamValue(it))) }
 
     // construct the position component (this needs to include the extra parameters and some of flags):
-    val positionAction: Action<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
+    val positionAction: ParamsAction<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
     val layerAction = GenericAction(layerParam)
 
-    return listOfNotNull<TransformationComponent>(layerAction, transformation, positionAction)
+    return listOfNotNull(layerAction, transformation, positionAction)
 }
 
 enum class BlendMode(private val value: String) {
