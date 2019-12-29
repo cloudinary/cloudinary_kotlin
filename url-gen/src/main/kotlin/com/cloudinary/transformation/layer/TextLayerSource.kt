@@ -1,8 +1,8 @@
 package com.cloudinary.transformation.layer
 
+import com.cloudinary.transformation.NamedValue
 import com.cloudinary.transformation.ParamValue
 import com.cloudinary.transformation.cldAsNonNullSimpleValues
-import com.cloudinary.util.cldPrepend
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
@@ -29,13 +29,13 @@ class TextLayerSource(
                     fontSize,
                     fontWeight,
                     fontStyle,
-                    fontAntialias?.cldPrepend("antialias_"),
-                    fontHinting?.cldPrepend("hinting_"),
+                    fontAntialias?.let { NamedValue("antialias", fontAntialias, "_") },
+                    fontHinting?.let { NamedValue("hinting", fontHinting, "_") },
                     textDecoration,
                     textAlign,
                     stroke,
-                    letterSpacing?.cldPrepend("letter_spacing_"),
-                    lineSpacing?.cldPrepend("line_spacing_")
+                    letterSpacing?.let { NamedValue("letter_spacing", letterSpacing, "_") },
+                    lineSpacing?.let { NamedValue("line_spacing", lineSpacing, "_") }
                 ).cldAsNonNullSimpleValues(), "_"
             ),
             encode(text)

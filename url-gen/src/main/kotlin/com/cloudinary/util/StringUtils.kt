@@ -13,11 +13,6 @@ internal fun Any.cldToString(): String {
 }
 
 /**
- * Returns this string prepended with prefix.
- */
-internal fun Any.cldPrepend(prefix: String) = prefix + this
-
-/**
  * If the param is null the original string is returned unchanged.
  */
 internal fun String.cldJoin(separator: String, toJoin: Any?): String? {

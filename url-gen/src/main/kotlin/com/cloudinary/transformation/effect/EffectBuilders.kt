@@ -1,8 +1,8 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.ColorValue
+import com.cloudinary.transformation.NamedValue
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.util.cldPrepend
 import com.cloudinary.util.cldRanged
 
 
@@ -93,11 +93,11 @@ class Vectorize private constructor(
     corners: Any? = null
 ) : Effect(
     "vectorize", listOfNotNull(
-        colors?.cldRanged(2, 30)?.cldPrepend("colors:"),
-        detail?.cldRanged(0, 1000)?.cldPrepend("detail:"),
-        despeckle?.cldRanged(0, 100)?.cldPrepend("despeckle:"),
-        paths?.cldRanged(0, 100)?.cldPrepend("paths:"),
-        corners?.cldRanged(0, 100)?.cldPrepend("corners:")
+        colors?.let { NamedValue("colors", colors.cldRanged(2, 30)) },
+        detail?.let { NamedValue("detail", detail.cldRanged(0, 1000)) },
+        despeckle?.let { NamedValue("despeckle", despeckle.cldRanged(0, 100)) },
+        paths?.let { NamedValue("paths", paths.cldRanged(0, 100)) },
+        corners?.let { NamedValue("corners", corners.cldRanged(0, 100)) }
     )
 ) {
     class Builder : TransformationComponentBuilder {
@@ -220,7 +220,6 @@ class MakeTransparent private constructor(level: Any? = null) :
         fun level(level: Int) = apply { this.level = level }
     }
 }
-
 
 class Trim private constructor(
     colorSimilarity: Any? = null, colorOverride: Any? = null
