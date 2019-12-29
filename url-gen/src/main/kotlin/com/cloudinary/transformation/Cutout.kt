@@ -2,12 +2,9 @@ package com.cloudinary.transformation
 
 import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.effect.Effect
-import com.cloudinary.transformation.layer.Layer
-import com.cloudinary.transformation.layer.LayerSource
-import com.cloudinary.transformation.layer.Position
-import com.cloudinary.transformation.layer.buildLayerComponent
+import com.cloudinary.transformation.layer.*
 
-class Cutout private constructor(components: List<Action>) : Layer(components) {
+class Cutout private constructor(components: LayerComponents) : Layer(components) {
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
         private var transformation: Transformation? = null

@@ -9,7 +9,7 @@ import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.video.Video
 import com.cloudinary.transformation.warp.Warp
 
-open class Transformation(private val components: List<Action> = emptyList()) : Action {
+open class Transformation(private val components: List<Action> = emptyList()) {
     constructor(component: Action) : this(listOf(component))
 
     override fun toString() = components.joinToString("/")
@@ -117,6 +117,7 @@ open class Transformation(private val components: List<Action> = emptyList()) : 
     class Builder(private val components: MutableList<Action> = mutableListOf()) {
         fun add(component: Action) = apply { components.add(component) }
         fun add(component: String) = add(RawAction(component))
+        fun merge(transformation: Transformation) = apply { components.addAll(transformation.components) }
 
         fun cutter(cutter: Cutter) = add(cutter)
         fun cutter(layerSource: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =

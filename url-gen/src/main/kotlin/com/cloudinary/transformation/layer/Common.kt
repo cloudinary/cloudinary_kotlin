@@ -82,7 +82,7 @@ abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(v
     }
 }
 
-open class Layer internal constructor(private val components: List<Action>) :
+open class Layer internal constructor(private val components: LayerComponents) :
     Action {
 
     companion object {
@@ -99,7 +99,11 @@ open class Layer internal constructor(private val components: List<Action>) :
         }
     }
 
-    override fun toString() = components.joinToString("/")
+    override fun toString() = listOfNotNull(
+        GenericAction(components.layerParam),
+        components.transformation,
+        components.position
+    ).joinToString("/")
 
     class Builder(private val source: LayerSource) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
@@ -160,7 +164,7 @@ internal fun buildLayerComponent(
     paramKey: String,
     extraParams: Collection<Param> = emptyList(),
     flag: FlagKey? = null
-): List<Action> {
+): LayerComponents {
     // start with the layer param itself
     val layerParam = Param(paramName, paramKey, source)
 
@@ -174,10 +178,15 @@ internal fun buildLayerComponent(
 
     // construct the position component (this needs to include the extra parameters and some of flags):
     val positionAction: ParamsAction<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
-    val layerAction = GenericAction(layerParam)
 
-    return listOfNotNull(layerAction, transformation, positionAction)
+    return LayerComponents(layerParam, transformation, positionAction)
 }
+
+internal class LayerComponents(
+    internal val layerParam: Param,
+    internal val transformation: Transformation? = null,
+    internal val position: Action
+)
 
 enum class BlendMode(private val value: String) {
     SCREEN("screen"),
