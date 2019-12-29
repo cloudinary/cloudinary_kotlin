@@ -13,12 +13,10 @@ class CustomFunction private constructor(params: Map<String, Param>) :
 
         fun type(type: Type) = apply { this.type = type }
 
-        override fun build(): CustomFunction {
-            return when (type) {
-                PRE_PROCESS -> buildParameters(listOf("pre", "remote", source.cldToUrlSafeBase64()))
-                REMOTE -> buildParameters(listOf("remote", source.cldToUrlSafeBase64()))
-                WASM -> buildParameters(listOf("wasm", source.cldEncodePublicId()))
-            }
+        override fun build() = when (type) {
+            PRE_PROCESS -> buildParameters(listOf("pre", "remote", source.cldToUrlSafeBase64()))
+            REMOTE -> buildParameters(listOf("remote", source.cldToUrlSafeBase64()))
+            WASM -> buildParameters(listOf("wasm", source.cldEncodePublicId()))
         }
 
         private fun buildParameters(values: List<Any>) =
