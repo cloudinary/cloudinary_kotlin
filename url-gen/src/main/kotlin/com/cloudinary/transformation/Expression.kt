@@ -44,7 +44,7 @@ val PREDEFINED_VARS = mapOf(
 
 val PATTERN = getPattern()
 
-class Expression(values: List<Any> = listOf()) : ParamValue(values.cldAsNonNullSimpleValues(), "_") {
+class Expression(values: List<Any> = listOf()) : ParamValue(values.cldAsParamValueContent(), "_") {
     constructor(value: Any) : this(listOf(value))
 
     fun gt(value: Any): Expression {

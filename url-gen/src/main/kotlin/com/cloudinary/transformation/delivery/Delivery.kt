@@ -61,7 +61,7 @@ sealed class QualityType(values: List<Any>) : ParamValue(values) {
                             maxQuantization.cldRanged(1, 100),
                             "_"
                         )
-                    ).cldAsNonNullSimpleValues(), "_"
+                    ).cldAsParamValueContent(), "_"
                 )
             )
         )

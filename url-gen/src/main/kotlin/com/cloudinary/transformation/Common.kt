@@ -32,7 +32,8 @@ class SimpleValue(internal val value: Any) : ParamValueContent {
     override fun toString() = value.cldToString().cldNormalize()
 }
 
-internal fun List<*>.cldAsNonNullSimpleValues() = this.filterNotNull().map { SimpleValue(it) }
+internal fun List<*>.cldAsParamValueContent() =
+    this.filterNotNull().map { if (it is ParamValueContent) it else SimpleValue(it) }
 
 open class Param(private val name: String, internal val key: String, internal val value: ParamValue) {
     constructor(name: String, key: String, value: Any) : this(name, key, ParamValue(value))

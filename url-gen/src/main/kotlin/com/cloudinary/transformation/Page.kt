@@ -12,7 +12,7 @@ class Page private constructor(params: Map<String, Param>) :
     class LayerNamesBuilder(private vararg val names: String) : TransformationComponentBuilder {
         override fun build(): Action {
             val value =
-                ParamValue(listOf(NamedValue("name", ParamValue(names.asList().cldAsNonNullSimpleValues(), ";"))))
+                ParamValue(listOf(NamedValue("name", ParamValue(names.asList().cldAsParamValueContent(), ";"))))
             return buildParameters(value)
         }
     }
@@ -31,7 +31,7 @@ class Page private constructor(params: Map<String, Param>) :
         fun page(page: Int) = apply { items.add(page) }
         fun page(from: Int?, to: Int?) = apply { items.add(Range(from, to)) }
 
-        override fun build() = buildParameters(ParamValue(items.cldAsNonNullSimpleValues(), ";"))
+        override fun build() = buildParameters(ParamValue(items.cldAsParamValueContent(), ";"))
     }
 }
 

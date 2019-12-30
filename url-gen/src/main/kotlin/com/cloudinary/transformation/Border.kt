@@ -22,7 +22,7 @@ class Border private constructor(params: Map<String, Param>) :
             Param(
                 "border",
                 "bo",
-                ParamValue(listOf("${width}px", type, color).cldAsNonNullSimpleValues(), "_")
+                ParamValue(listOf("${width}px", type, color).cldAsParamValueContent(), "_")
             ).let { mapOf(Pair(it.key, it)) })
 
     }

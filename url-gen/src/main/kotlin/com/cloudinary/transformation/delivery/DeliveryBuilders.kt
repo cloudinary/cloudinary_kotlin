@@ -3,7 +3,7 @@ package com.cloudinary.transformation.delivery
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.cldAsNonNullSimpleValues
+import com.cloudinary.transformation.cldAsParamValueContent
 import com.cloudinary.util.cldRealPositive
 
 
@@ -41,7 +41,7 @@ class Fps private constructor(fixed: Any?, min: Any?, max: Any?) : Delivery(
         "fps",
         "fps",
         ParamValue(
-            (if (fixed != null) listOf(fixed) else listOfNotNull(min, max ?: "")).cldAsNonNullSimpleValues(),
+            (if (fixed != null) listOf(fixed) else listOfNotNull(min, max ?: "")).cldAsParamValueContent(),
             "-"
         )
     )

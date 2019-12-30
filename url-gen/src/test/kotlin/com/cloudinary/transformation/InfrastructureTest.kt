@@ -14,10 +14,10 @@ class InfrastructureTest {
     fun testParamValue() {
         cldAssertEqualsAsString("val1", ParamValue("val1"))
         cldAssertEqualsAsString("val1:val2", ParamValue(listOf("val1", "val2")))
-        cldAssertEqualsAsString("val1_val2", ParamValue(listOf("val1", "val2").cldAsNonNullSimpleValues(), "_"))
+        cldAssertEqualsAsString("val1_val2", ParamValue(listOf("val1", "val2").cldAsParamValueContent(), "_"))
         cldAssertEqualsAsString(
             "val1:val2:val3_val4",
-            ParamValue(listOf("val1", "val2", ParamValue(listOf("val3", "val4").cldAsNonNullSimpleValues(), "_")))
+            ParamValue(listOf("val1", "val2", ParamValue(listOf("val3", "val4").cldAsParamValueContent(), "_")))
         )
     }
 
