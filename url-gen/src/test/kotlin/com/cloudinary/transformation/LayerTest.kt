@@ -130,20 +130,21 @@ class LayerTest {
         cldAssert("text:arial_20:test\$(var)", TextLayerSource("test\$(var)", "arial", 20))
         cldAssert(
             "text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12.0_line_spacing_2.0:test",
-            TextLayerSource(
+            LayerSource.text(
                 "test",
                 "arial",
-                20,
-                FontWeight.BOLD,
-                FontStyle.ITALIC,
-                FontAntialias.BEST,
-                FontHinting.FULL,
-                FontDecoration.UNDERLINE,
-                TextAlign.LEFT,
-                Stroke.STROKE,
-                12f,
-                2f
-            )
+                20
+            ) {
+                fontWeight(FontWeight.BOLD)
+                fontStyle(FontStyle.ITALIC)
+                fontAntialias(FontAntialias.BEST)
+                fontHinting(FontHinting.FULL)
+                textDecoration(FontDecoration.UNDERLINE)
+                textAlign(TextAlign.LEFT)
+                stroke(Stroke.STROKE)
+                letterSpacing(12f)
+                lineSpacing(2f)
+            }
         )
     }
 

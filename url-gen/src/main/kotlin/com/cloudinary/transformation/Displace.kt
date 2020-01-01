@@ -14,7 +14,6 @@ class Displace private constructor(components: LayerComponents) : Layer(componen
                     ).params.values
                 )
             )
-
     }
 
     class Builder private constructor(

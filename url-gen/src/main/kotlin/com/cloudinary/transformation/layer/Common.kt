@@ -65,19 +65,23 @@ abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(v
             text: String,
             fontFamily: String,
             fontSize: Int,
-            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
+            textStyle: (TextStyle.Builder.() -> Unit)? = null
         ) =
-            text(text, fontFamily, fontSize as Any, textLayer)
+            text(text, fontFamily, fontSize as Any, textStyle)
 
         fun text(
             text: String,
             fontFamily: String,
             fontSize: Any,
-            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
+            textStyle: (TextStyle.Builder.() -> Unit)? = null
         ): TextLayerSource {
-            val builder = TextLayerSource.Builder(text, fontFamily, fontSize)
-            textLayer?.let { builder.textLayer() }
-            return builder.build()
+            val style = textStyle?.run {
+                val builder = TextStyle.Builder()
+                builder.textStyle()
+                builder.build()
+            }
+
+            return TextLayerSource(text, fontFamily, fontSize, style)
         }
     }
 }

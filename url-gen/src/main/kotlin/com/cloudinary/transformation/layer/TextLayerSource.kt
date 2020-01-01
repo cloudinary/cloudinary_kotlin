@@ -10,6 +10,23 @@ class TextLayerSource(
     text: String,
     fontFamily: String,
     fontSize: Any,
+    style: TextStyle? = null
+) :
+    LayerSource(
+        listOfNotNull(
+            "text",
+            ParamValue(
+                listOfNotNull(
+                    fontFamily,
+                    fontSize,
+                    style
+                ).cldAsParamValueContent(), "_"
+            ),
+            encode(text)
+        )
+    )
+
+class TextStyle(
     fontWeight: FontWeight? = null,
     fontStyle: FontStyle? = null,
     fontAntialias: FontAntialias? = null,
@@ -19,32 +36,21 @@ class TextLayerSource(
     stroke: Stroke? = null,
     letterSpacing: Any? = null,
     lineSpacing: Any? = null
-) :
-    LayerSource(
-        listOfNotNull(
-            "text",
-            ParamValue(
-                listOfNotNull(
-                    fontFamily,
-                    fontSize,
-                    fontWeight,
-                    fontStyle,
-                    fontAntialias?.let { NamedValue("antialias", fontAntialias, "_") },
-                    fontHinting?.let { NamedValue("hinting", fontHinting, "_") },
-                    textDecoration,
-                    textAlign,
-                    stroke,
-                    letterSpacing?.let { NamedValue("letter_spacing", letterSpacing, "_") },
-                    lineSpacing?.let { NamedValue("line_spacing", lineSpacing, "_") }
-                ).cldAsParamValueContent(), "_"
-            ),
-            encode(text)
-        )
-    ) {
+) : ParamValue(
+    listOfNotNull(
+        fontWeight,
+        fontStyle,
+        fontAntialias?.let { NamedValue("antialias", fontAntialias, "_") },
+        fontHinting?.let { NamedValue("hinting", fontHinting, "_") },
+        textDecoration,
+        textAlign,
+        stroke,
+        letterSpacing?.let { NamedValue("letter_spacing", letterSpacing, "_") },
+        lineSpacing?.let { NamedValue("line_spacing", lineSpacing, "_") }
+    ).cldAsParamValueContent(), "_"
+) {
 
-    class Builder(private val text: String, private val fontFamily: String, private val fontSize: Any) {
-        constructor(text: String, fontFamily: String, fontSize: Int) : this(text, fontFamily, fontSize as Any)
-
+    class Builder {
         private var fontWeight: FontWeight? = null
         private var fontStyle: FontStyle? = null
         private var fontAntialias: FontAntialias? = null
@@ -67,9 +73,7 @@ class TextLayerSource(
         fun letterSpacing(letterSpacing: Float) = apply { this.letterSpacing = letterSpacing }
         fun lineSpacing(lineSpacing: Float) = apply { this.lineSpacing = lineSpacing }
 
-        fun build() = TextLayerSource(
-            text,
-            fontFamily, fontSize,
+        fun build() = TextStyle(
             fontWeight,
             fontStyle,
             fontAntialias,
