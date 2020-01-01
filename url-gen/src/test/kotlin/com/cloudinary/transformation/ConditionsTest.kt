@@ -1,6 +1,6 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Expression.Companion.aspectRatio
 import com.cloudinary.transformation.Expression.Companion.faceCount
 import com.cloudinary.transformation.Expression.Companion.height
@@ -21,19 +21,19 @@ class ConditionsTest {
                 "_w_gte_0" +
                 "/e_grayscale"
 
-        cldAssertEqualsAsString(
+        cldAssert(
             allOperators,
             Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
                 .effect(Effect.grayScale())
         )
 
-        cldAssertEqualsAsString(
+        cldAssert(
             allOperators,
             Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
                 .effect(Effect.grayScale())
         )
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "$allOperators/if_else/e_sepia:30",
             Transformation().ifCondition(
                 width().eq(0)

@@ -1,8 +1,9 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Direction.EAST
 import com.cloudinary.transformation.Direction.WEST
+import com.cloudinary.transformation.Page.Companion.pages
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
 import com.cloudinary.transformation.delivery.AudioCodecType
@@ -26,16 +27,16 @@ class TransformationTest {
     private val sepiaTransformation = Transformation().effect(Effect.sepia())
     @Test
     fun testCutter() {
-        cldAssertEqualsAsString("l_sample/fl_cutter.layer_apply", Transformation().cutter(layer))
-        cldAssertEqualsAsString(
+        cldAssert("l_sample/fl_cutter.layer_apply", Transformation().cutter(layer))
+        cldAssert(
             "l_sample/e_sepia/fl_cutter.layer_apply",
             Transformation().cutter(layer) { transformation(sepiaTransformation) })
     }
 
     @Test
     fun testAntiRemoval() {
-        cldAssertEqualsAsString("l_sample/e_anti_removal,fl_layer_apply", Transformation().antiRemoval(layer))
-        cldAssertEqualsAsString(
+        cldAssert("l_sample/e_anti_removal,fl_layer_apply", Transformation().antiRemoval(layer))
+        cldAssert(
             "l_sample/e_sepia/e_anti_removal,fl_layer_apply",
             Transformation().antiRemoval(layer) { transformation(sepiaTransformation) })
 
@@ -43,12 +44,12 @@ class TransformationTest {
 
     @Test
     fun testCutout() {
-        cldAssertEqualsAsString("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer))
-        cldAssertEqualsAsString(
+        cldAssert("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer))
+        cldAssert(
             "l_sample/e_cut_out,fl_layer_apply",
             Transformation().cutout(Cutout.Builder(layer).build())
         )
-        cldAssertEqualsAsString("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer) {
+        cldAssert("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer) {
             position {
                 allowOverflow(true)
             }
@@ -57,56 +58,56 @@ class TransformationTest {
 
     @Test
     fun testClip() {
-        cldAssertEqualsAsString("fl_clip", Transformation().clip())
-        cldAssertEqualsAsString("fl_clip_evenodd", Transformation().clip { evenOdd(true) })
+        cldAssert("fl_clip", Transformation().clip())
+        cldAssert("fl_clip_evenodd", Transformation().clip { evenOdd(true) })
     }
 
     @Test
     fun testCustomFunction() {
-        cldAssertEqualsAsString("fn_wasm:wasm", Transformation().customFunction(wasm("wasm")))
+        cldAssert("fn_wasm:wasm", Transformation().customFunction(wasm("wasm")))
     }
 
     @Test
     fun testRotate() {
-        cldAssertEqualsAsString("a_50", Transformation().rotate { angle(50) })
+        cldAssert("a_50", Transformation().rotate { angle(50) })
     }
 
     @Test
     fun testExtract() {
-        cldAssertEqualsAsString("pg_1", Transformation().extract(pages(1)))
+        cldAssert("pg_1", Transformation().extract(pages(1)))
     }
 
     @Test
     fun testBackground() {
-        cldAssertEqualsAsString("b_white", Transformation().background(Background.color { named("white") }))
-        cldAssertEqualsAsString("b_white", Transformation().background(color { named("white") }))
+        cldAssert("b_white", Transformation().background(Background.color { named("white") }))
+        cldAssert("b_white", Transformation().background(color { named("white") }))
     }
 
     @Test
     fun testOutline() {
-        cldAssertEqualsAsString("e_outline", Transformation().outline())
+        cldAssert("e_outline", Transformation().outline())
     }
 
     @Test
     fun testShadow() {
-        cldAssertEqualsAsString("e_shadow", Transformation().shadow())
+        cldAssert("e_shadow", Transformation().shadow())
     }
 
     @Test
     fun testCornersRadius() {
-        cldAssertEqualsAsString("r_3:56:7:8", Transformation().cornersRadius { pixels(3, 56, 7, 8) })
-        cldAssertEqualsAsString("r_max", Transformation().cornersRadius { max() })
+        cldAssert("r_3:56:7:8", Transformation().cornersRadius { pixels(3, 56, 7, 8) })
+        cldAssert("r_max", Transformation().cornersRadius { max() })
     }
 
     @Test
     fun testGradientFade() {
-        cldAssertEqualsAsString("e_gradient_fade:3", Transformation().gradientFade { strength(3) })
-        cldAssertEqualsAsString("e_gradient_fade", Transformation().gradientFade())
+        cldAssert("e_gradient_fade:3", Transformation().gradientFade { strength(3) })
+        cldAssert("e_gradient_fade", Transformation().gradientFade())
     }
 
     @Test
     fun testBorder() {
-        cldAssertEqualsAsString(
+        cldAssert(
             "bo_4px_solid_black",
             Transformation().border {
                 width(4)
@@ -118,19 +119,19 @@ class TransformationTest {
 
     @Test
     fun testDisplace() {
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_radialize/e_displace,fl_layer_apply",
             Transformation().displace(Displace.displace(media("radialize")))
         )
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_radialize/e_sepia/e_displace,fl_layer_apply",
             Transformation().displace(media("radialize")) { transformation(sepiaTransformation) })
     }
 
     @Test
     fun testStyleTransfer() {
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_lighthouse/e_style_transfer:preserve_color,fl_layer_apply",
             Transformation().styleTransfer(media("lighthouse")) { preserveColor(true) }
         )
@@ -139,37 +140,37 @@ class TransformationTest {
     @Test
     fun testEffect() {
         Transformation().effect(Effect.colorize { level(50) })
-        cldAssertEqualsAsString("e_sepia", Transformation().effect(Effect.sepia()))
+        cldAssert("e_sepia", Transformation().effect(Effect.sepia()))
     }
 
     @Test
     fun testResize() {
-        cldAssertEqualsAsString("c_scale,w_100", Transformation().resize(scale { width(100) }))
+        cldAssert("c_scale,w_100", Transformation().resize(scale { width(100) }))
     }
 
     @Test
     fun testAdjust() {
-        cldAssertEqualsAsString("e_gamma:50", Transformation().adjust(Adjust.gamma { level(50) }))
+        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma { level(50) }))
     }
 
     @Test
     fun testDelivery() {
-        cldAssertEqualsAsString("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodecType.MP3)))
+        cldAssert("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodecType.MP3)))
     }
 
     @Test
     fun testVideo() {
-        cldAssertEqualsAsString("e_boomerang", Transformation().video(Video.boomerang()))
+        cldAssert("e_boomerang", Transformation().video(Video.boomerang()))
     }
 
     @Test
     fun testWarp() {
-        cldAssertEqualsAsString("e_distort:arc:10", Transformation().warp(distort(10)))
+        cldAssert("e_distort:arc:10", Transformation().warp(distort(10)))
     }
 
     @Test
     fun testLayer() {
-        cldAssertEqualsAsString("l_sample/fl_layer_apply", Transformation().layer(overlay(layer)))
+        cldAssert("l_sample/fl_layer_apply", Transformation().layer(overlay(layer)))
     }
 
     @Test
@@ -212,7 +213,7 @@ class TransformationTest {
                 delivery(format("png"))
             }
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                     "e_screen,fl_layer_apply.no_overflow,g_east/" +
                     "l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +

@@ -6,7 +6,7 @@ import com.cloudinary.transformation.layer.*;
 import com.cloudinary.transformation.resize.Scale;
 import org.junit.Test;
 
-import static com.cloudinary.TestUtilsKt.cldAssertEqualsAsString;
+import static com.cloudinary.TestUtilsKt.cldAssert;
 import static com.cloudinary.transformation.Gravity.Companion;
 
 public class TransformationTestJava {
@@ -39,7 +39,7 @@ public class TransformationTestJava {
                         .rotate(new Rotate.Builder().angle(25).build())
                         .delivery(Delivery.Companion.format("png"));
 
-        cldAssertEqualsAsString(
+        cldAssert(
                 "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                         "e_screen,fl_layer_apply.no_overflow,g_east/" +
                         "l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +

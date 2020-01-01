@@ -1,6 +1,6 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.transformation.layer.MediaLayerSource
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.resize.Resize
@@ -13,16 +13,16 @@ class CutoutTest {
         val tr = Transformation().resize(Resize.scale { width(200).height(200) })
             .cornersRadius { max() }
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_ring2/e_cut_out,fl_layer_apply", Transformation().cutout(MediaLayerSource("ring2"))
         )
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply",
             Transformation().cutout(MediaLayerSource("ring2")) { transformation(tr) }
         )
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply,g_north,x_100",
             Transformation().cutout(MediaLayerSource("ring2")) {
                 transformation(tr)

@@ -1,14 +1,14 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.testParam
 import org.junit.Test
 
 class CustomFunctionTest {
     @Test
     fun testWasmFunction() {
-        cldAssertEqualsAsString("fn_wasm:my_example.wasm", wasm("my_example.wasm"))
-        cldAssertEqualsAsString(
+        cldAssert("fn_wasm:my_example.wasm", wasm("my_example.wasm"))
+        cldAssert(
             "fn_wasm:my_example.wasm,test_param",
             wasm("my_example.wasm").add(testParam)
         )
@@ -16,7 +16,7 @@ class CustomFunctionTest {
 
     @Test
     fun testRemoteFunction() {
-        cldAssertEqualsAsString(
+        cldAssert(
             "fn_remote:aHR0cHM6Ly9teS5leGFtcGxlLmN1c3RvbS9mdW5jdGlvbg==",
             remote("https://my.example.custom/function")
         )
@@ -24,7 +24,7 @@ class CustomFunctionTest {
 
     @Test
     fun testPreProcessRemoteFunction() {
-        cldAssertEqualsAsString(
+        cldAssert(
             "fn_pre:remote:aHR0cHM6Ly9teS5leGFtcGxlLmN1c3RvbS9mdW5jdGlvbg==",
             preProcess("https://my.example.custom/function")
         )

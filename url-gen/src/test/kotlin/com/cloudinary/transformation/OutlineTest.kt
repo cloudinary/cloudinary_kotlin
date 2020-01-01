@@ -1,19 +1,19 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.testParam
 import org.junit.Test
 
 class OutlineTest {
     @Test
     fun testOutline() {
-        cldAssertEqualsAsString("e_outline", Transformation().outline())
-        cldAssertEqualsAsString(
+        cldAssert("e_outline", Transformation().outline())
+        cldAssert(
             "e_outline,test_param",
             Transformation().outline(Outline.Builder().build().add(testParam))
         )
-        cldAssertEqualsAsString("e_outline:inner_fill", Transformation().outline { mode(OutlineMode.INNER_FILL) })
-        cldAssertEqualsAsString(
+        cldAssert("e_outline:inner_fill", Transformation().outline { mode(OutlineMode.INNER_FILL) })
+        cldAssert(
             "co_red,e_outline:inner_fill:5",
             Transformation().outline {
                 mode(OutlineMode.INNER_FILL)
@@ -23,7 +23,7 @@ class OutlineTest {
                 }
             })
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Transformation().outline {
                 mode(OutlineMode.INNER_FILL)
@@ -32,7 +32,7 @@ class OutlineTest {
                 color { named("red") }
             })
 
-        cldAssertEqualsAsString(
+        cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Transformation().outline {
                 mode(OutlineMode.INNER_FILL)

@@ -5,6 +5,20 @@ class Page private constructor(params: Map<String, Param>) :
     override fun create(params: Map<String, Param>) = Page(params)
 
     companion object {
+        fun pages(pages: PageNumbersBuilder.() -> Unit): Page {
+            val newBuilder = PageNumbersBuilder()
+            newBuilder.pages()
+            return newBuilder.build()
+        }
+
+        fun pages(vararg pages: Int) = PageNumbersBuilder().apply { pages.forEach { this.page(it) } }.build()
+
+        fun layers(vararg names: String) = LayerNamesBuilder(*names).build()
+
+        fun embedded(index: Int): Page = EmbeddedBuilder(index).build()
+
+        fun embedded(name: String) = EmbeddedBuilder(name).build()
+
         private fun buildParameters(value: ParamValue) =
             Page(Param("page", "pg", value).let { mapOf(Pair(it.key, it)) })
     }
@@ -35,17 +49,4 @@ class Page private constructor(params: Map<String, Param>) :
     }
 }
 
-fun pages(pages: Page.PageNumbersBuilder.() -> Unit): Page {
-    val newBuilder = Page.PageNumbersBuilder()
-    newBuilder.pages()
-    return newBuilder.build()
-}
-
-fun pages(vararg pages: Int) = Page.PageNumbersBuilder().apply { pages.forEach { this.page(it) } }.build()
-
-fun layers(vararg names: String) = Page.LayerNamesBuilder(*names).build()
-
-fun embedded(index: Int): Page = Page.EmbeddedBuilder(index).build()
-
-fun embedded(name: String) = Page.EmbeddedBuilder(name).build()
 

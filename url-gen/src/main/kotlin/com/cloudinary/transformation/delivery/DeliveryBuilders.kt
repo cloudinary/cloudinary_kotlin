@@ -1,9 +1,7 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.ParamValue
-import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.cldAsParamValueContent
+import com.cloudinary.transformation.*
+import com.cloudinary.util.cldRanged
 import com.cloudinary.util.cldRealPositive
 
 
@@ -19,7 +17,7 @@ class StreamingProfile private constructor(profile: String) : Delivery(
     }
 }
 
-class VideoCodec private constructor(codec: VideoCodecType, profile: String?, level: Any?) :
+class VideoCodec private constructor(codec: VideoCodecType, profile: VideoCodecProfile?, level: Any?) :
     Delivery(
         Param(
             "video_codec",
@@ -29,9 +27,9 @@ class VideoCodec private constructor(codec: VideoCodecType, profile: String?, le
     ) {
     class Builder(private val codec: VideoCodecType) : TransformationComponentBuilder {
         private var level: Any? = null
-        private var profile: String? = null
+        private var profile: VideoCodecProfile? = null
         fun level(level: Float) = apply { this.level = level }
-        fun profile(profile: String) = apply { this.profile = profile }
+        fun profile(profile: VideoCodecProfile) = apply { this.profile = profile }
         override fun build() = VideoCodec(codec, profile, level)
     }
 }
@@ -99,17 +97,52 @@ class Format private constructor(format: String) :
     }
 }
 
-class Quality private constructor(quality: QualityType) :
+class Quality private constructor(value: ParamValue, flag: FlagKey? = null) :
     Delivery(
-        Param(
-            "quality",
-            "q",
-            quality
-        )
+        listOfNotNull(
+            Param("quality", "q", value),
+            flag?.asParam()
+        ).cldToActionMap()
     ) {
 
-    class Builder(private val quality: QualityType) : TransformationComponentBuilder {
-        override fun build() = Quality(quality)
+    class Builder internal constructor(private val level: Any? = null, private val type: QualityType? = null) :
+        TransformationComponentBuilder {
+        constructor(level: Int) : this(level, null)
+        constructor(type: QualityType) : this(null, type)
+
+        private var maxQuantization: Any? = null // Int
+        private var chromaSubSampling: ChromaSubSampling? = null
+        private var preset: AutoQuality? = null
+        private var anyFormat: Boolean? = null
+
+//        fun level(level: Int) = apply { this.level = level.cldRanged(1, 100) }
+//        fun setLevel(level: Any) = apply { this.level = level.cldRanged(1, 100) }
+
+        fun maxQuantization(maxQuantization: Any) =
+            apply { this.maxQuantization = maxQuantization.cldRanged(1, 100) }
+
+        fun maxQuantization(maxQuantization: Int) =
+            apply { this.maxQuantization = maxQuantization.cldRanged(1, 100) }
+
+
+        fun chromaSubSampling(chromaSubSampling: ChromaSubSampling) =
+            apply { this.chromaSubSampling = chromaSubSampling }
+
+        fun preset(preset: AutoQuality) = apply { this.preset = preset }
+
+        fun anyFormat(anyFormat: Boolean) = apply { this.anyFormat = anyFormat }
+
+        override fun build() = Quality(
+            ParamValue(
+                listOfNotNull(
+                    type,
+                    level,
+                    maxQuantization?.let { NamedValue("qmax", maxQuantization!!, "_") },
+                    chromaSubSampling,
+                    preset
+                )
+            ), if (anyFormat == true) FlagKey.ANY_FORMAT() else null
+        )
     }
 }
 

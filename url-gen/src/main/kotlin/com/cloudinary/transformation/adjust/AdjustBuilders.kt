@@ -87,8 +87,6 @@ class Vibrance private constructor(level: Any? = null) :
     Adjust("vibrance", level?.cldRanged(-100, 100)) {
     class Builder : TransformationComponentBuilder {
         private var level: Any? = null
-
-
         fun level(level: Int) = apply { this.level = level }
         override fun build() = Vibrance(level)
     }
@@ -175,7 +173,7 @@ class Sharpen private constructor(strength: Any? = null) :
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
 
-        fun level(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
         override fun build() = Sharpen(strength)
     }
 }

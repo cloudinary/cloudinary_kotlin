@@ -53,20 +53,23 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
 
         fun blackWhite(): BlackWhite = BlackWhite()
 
-        fun blur(blur: (Blur.Builder.() -> Unit)? = null): Blur {
+        fun blur(strength: Int? = null, blur: (Blur.Builder.() -> Unit)? = null): Blur {
             val builder = Blur.Builder()
+            strength?.let { builder.strength(it) }
             blur?.let { builder.it() }
             return builder.build()
         }
 
-        fun sepia(sepia: (Sepia.Builder.() -> Unit)? = null): Sepia {
+        fun sepia(level: Int? = null, sepia: (Sepia.Builder.() -> Unit)? = null): Sepia {
             val builder = Sepia.Builder()
+            level?.let { builder.level(it) }
             sepia?.let { builder.it() }
             return builder.build()
         }
 
-        fun vignette(vignette: (Vignette.Builder.() -> Unit)? = null): Vignette {
+        fun vignette(level: Int? = null, vignette: (Vignette.Builder.() -> Unit)? = null): Vignette {
             val builder = Vignette.Builder()
+            level?.let { builder.level(it) }
             vignette?.let { builder.it() }
             return builder.build()
         }
@@ -118,16 +121,18 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
 
         fun grayScale(): GrayScale = GrayScale()
 
-        fun oilPaint(oilPaint: (OilPaint.Builder.() -> Unit)? = null): OilPaint {
+        fun oilPaint(level: Int? = null, oilPaint: (OilPaint.Builder.() -> Unit)? = null): OilPaint {
             val builder = OilPaint.Builder()
+            level?.let { builder.level(it) }
             oilPaint?.let { builder.it() }
             return builder.build()
         }
 
         fun advRedEye(): AdvRedEye = AdvRedEye()
 
-        fun pixelate(pixelate: (Pixelate.Builder.() -> Unit)? = null): Pixelate {
+        fun pixelate(squareSize: Int? = null, pixelate: (Pixelate.Builder.() -> Unit)? = null): Pixelate {
             val builder = Pixelate.Builder()
+            squareSize?.let { builder.squareSize(it) }
             pixelate?.let { builder.it() }
             return builder.build()
         }

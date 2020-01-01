@@ -1,21 +1,21 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import org.junit.Test
 
 class FlagsTest {
     @Test
     fun testFlags() {
-        cldAssertEqualsAsString("fl_progressive", GenericAction(FlagsParam(FlagKey.PROGRESSIVE())))
-        cldAssertEqualsAsString(
+        cldAssert("fl_progressive", GenericAction(FlagsParam(FlagKey.PROGRESSIVE())))
+        cldAssert(
             "fl_progressive:none",
             GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.NONE)))
         )
-        cldAssertEqualsAsString(
+        cldAssert(
             "fl_progressive:semi",
             GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.SEMI)))
         )
-        cldAssertEqualsAsString(
+        cldAssert(
             "fl_progressive:steep",
             GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.STEEP)))
         )

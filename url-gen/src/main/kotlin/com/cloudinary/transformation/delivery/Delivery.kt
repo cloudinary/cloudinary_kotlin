@@ -1,7 +1,8 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.*
-import com.cloudinary.util.cldRanged
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.util.cldToString
 
 open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params) {
@@ -34,7 +35,17 @@ open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params)
 
         fun format(format: String) = Format.Builder(format).build()
 
-        fun quality(quality: QualityType) = Quality.Builder(quality).build()
+        fun quality(type: QualityType, quality: (Quality.Builder.() -> Unit)? = null): Quality {
+            val builder = Quality.Builder(type)
+            quality?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun quality(level: Int, quality: (Quality.Builder.() -> Unit)? = null): Quality {
+            val builder = Quality.Builder(level)
+            quality?.let { builder.it() }
+            return builder.build()
+        }
 
         fun defaultImage(publicId: String) = DefaultImage.Builder(publicId).build()
 
@@ -44,27 +55,11 @@ open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params)
     }
 }
 
-sealed class QualityType(values: List<Any>) : ParamValue(values) {
-    class Auto(level: AutoQuality? = null) : QualityType(listOfNotNull("auto", level))
-    class JpegMini : QualityType(listOf("jpegmini"))
-    class Fixed(quality: Int, subSampling: ChromaSubSampling? = null) :
-        QualityType(listOfNotNull(quality.cldRanged(0, 100), subSampling))
+enum class QualityType(private val value: String) {
+    AUTO("auto"),
+    JPEG_MINI("jpegmini");
 
-    class FixedVideo(quality: Int, maxQuantization: Int) :
-        QualityType(
-            listOfNotNull(
-                quality.cldRanged(0, 100),
-                ParamValue(
-                    listOf(
-                        NamedValue(
-                            "qmax",
-                            maxQuantization.cldRanged(1, 100),
-                            "_"
-                        )
-                    ).cldAsParamValueContent(), "_"
-                )
-            )
-        )
+    override fun toString() = value
 }
 
 enum class ChromaSubSampling(private val value: String) {
@@ -91,6 +86,16 @@ enum class VideoCodecType(private val value: String) {
     H265("h265"),
     THEORA("theora"),
     AUTO("auto");
+
+    override fun toString(): String {
+        return value
+    }
+}
+
+enum class VideoCodecProfile(private val value: String) {
+    VCP_BASELINE("baseline"),
+    VCP_MAIN("main"),
+    VCP_HIGH("high");
 
     override fun toString(): String {
         return value
@@ -140,5 +145,4 @@ sealed class ColorSpaceType(value: Any) : ParamValue(value) {
     class CS_ICC(publicId: String) : ColorSpaceType(
         ParamValue(listOfNotNull("icc", publicId))
     )
-
 }

@@ -14,20 +14,21 @@ open class Video constructor(params: Map<String, Param>) : ParamsAction<Video>(p
 
     companion object {
         fun delay(milliseconds: Int) = Delay.Builder(milliseconds).build()
-        fun loop() = Loop.Builder().build()
-        fun loop(loop: (Loop.Builder.() -> Unit)? = null): Loop {
+
+        fun loop(additionalLoops: Int? = null, loop: (Loop.Builder.() -> Unit)? = null): Loop {
             val newBuilder = Loop.Builder()
+            additionalLoops?.let { newBuilder.additionalLoops(it) }
             loop?.let { newBuilder.it() }
             return newBuilder.build()
         }
 
-        fun fade(fade: (Fade.Builder.() -> Unit)? = null): Fade {
+        fun fade(milliseconds: Int? = null, fade: (Fade.Builder.() -> Unit)? = null): Fade {
             val newBuilder = Fade.Builder()
+            milliseconds?.let { newBuilder.milliseconds(it) }
             fade?.let { newBuilder.it() }
             return newBuilder.build()
         }
 
-        // video from here..?
         fun startOffset(offset: OffsetValue) = StartOffset.Builder(offset).build()
 
         fun startOffsetAuto() = StartOffsetAuto.Builder().build()
@@ -43,14 +44,16 @@ open class Video constructor(params: Map<String, Param>) : ParamsAction<Video>(p
         fun reverse() = Reverse.Builder().build()
         fun boomerang() = Boomerang.Builder().build()
 
-        fun preview(preview: (Preview.Builder.() -> Unit)? = null): Preview {
+        fun preview(seconds: Int? = null, preview: (Preview.Builder.() -> Unit)? = null): Preview {
             val newBuilder = Preview.Builder()
+            seconds?.let { newBuilder.seconds(it) }
             preview?.let { newBuilder.it() }
             return newBuilder.build()
         }
 
-        fun noise(noise: (Noise.Builder.() -> Unit)? = null): Noise {
+        fun noise(level: Int? = null, noise: (Noise.Builder.() -> Unit)? = null): Noise {
             val newBuilder = Noise.Builder()
+            level?.let { newBuilder.level(it) }
             noise?.let { newBuilder.it() }
             return newBuilder.build()
         }
@@ -64,16 +67,18 @@ open class Video constructor(params: Map<String, Param>) : ParamsAction<Video>(p
             return newBuilder.build()
         }
 
-        fun deshake(deshake: (Deshake.Builder.() -> Unit)? = null): Deshake {
+        fun deshake(factor: DeShakeFactor? = null, deshake: (Deshake.Builder.() -> Unit)? = null): Deshake {
             val newBuilder = Deshake.Builder()
+            factor?.let { newBuilder.factor(it) }
             deshake?.let { newBuilder.it() }
             return newBuilder.build()
         }
 
         fun waveform() = Waveform.Builder().build()
 
-        fun accelerate(accelerate: (Accelerate.Builder.() -> Unit)? = null): Accelerate {
+        fun accelerate(percent: Int? = null, accelerate: (Accelerate.Builder.() -> Unit)? = null): Accelerate {
             val newBuilder = Accelerate.Builder()
+            percent?.let { newBuilder.percent(it) }
             accelerate?.let { newBuilder.it() }
             return newBuilder.build()
         }

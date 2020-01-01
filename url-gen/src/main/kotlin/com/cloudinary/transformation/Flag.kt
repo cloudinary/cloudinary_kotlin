@@ -52,6 +52,8 @@ sealed class FlagKey(vararg items: Any?) : ParamValue(items.toList().filterNotNu
     class SPLICE : FlagKey("splice")
     class TRUNCATE_TS : FlagKey("truncate_ts")
     class WAVEFORM : FlagKey("waveform")
+
+    fun asParam() = FlagsParam(this)
 }
 
 enum class ProgressiveMode(private val value: String) {

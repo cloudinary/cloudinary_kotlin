@@ -28,47 +28,54 @@ open class Adjust private constructor(params: Map<String, Param>) : ParamsAction
             return builder.build()
         }
 
-        fun improve(improve: (Improve.Builder.() -> Unit)? = null): Improve {
+        fun improve(blend: Int? = null, improve: (Improve.Builder.() -> Unit)? = null): Improve {
             val builder = Improve.Builder()
+            blend?.let { builder.blend(it) }
             improve?.let { builder.it() }
             return builder.build()
         }
 
-        fun vibrance(vibrance: (Vibrance.Builder.() -> Unit)? = null): Vibrance {
+        fun vibrance(level: Int? = null, vibrance: (Vibrance.Builder.() -> Unit)? = null): Vibrance {
             val builder = Vibrance.Builder()
+            level?.let { builder.level(it) }
             vibrance?.let { builder.it() }
             return builder.build()
         }
 
-        fun autoColor(autoColor: (AutoColor.Builder.() -> Unit)? = null): AutoColor {
+        fun autoColor(level: Int? = null, autoColor: (AutoColor.Builder.() -> Unit)? = null): AutoColor {
             val builder = AutoColor.Builder()
+            level?.let { builder.level(it) }
             autoColor?.let { builder.it() }
             return builder.build()
         }
 
-        fun autoBrightness(autoBrightness: (AutoBrightness.Builder.() -> Unit)? = null):
+        fun autoBrightness(level: Int? = null, autoBrightness: (AutoBrightness.Builder.() -> Unit)? = null):
                 AutoBrightness {
             val builder = AutoBrightness.Builder()
+            level?.let { builder.level(it) }
             autoBrightness?.let { builder.it() }
             return builder.build()
         }
 
-        fun brightness(brightness: (Brightness.Builder.() -> Unit)? = null): Brightness {
+        fun brightness(level: Int? = null, brightness: (Brightness.Builder.() -> Unit)? = null): Brightness {
             val builder = Brightness.Builder()
+            level?.let { builder.level(it) }
             brightness?.let { builder.it() }
             return builder.build()
         }
 
-        fun autoContrast(autoContrast: (AutoContrast.Builder.() -> Unit)? = null):
+        fun autoContrast(level: Int? = null, autoContrast: (AutoContrast.Builder.() -> Unit)? = null):
                 AutoContrast {
             val builder = AutoContrast.Builder()
+            level?.let { builder.level(it) }
             autoContrast?.let { builder.it() }
             return builder.build()
         }
 
-        fun unsharpMask(unsharpMask: (UnsharpMask.Builder.() -> Unit)? = null):
+        fun unsharpMask(level: Int? = null, unsharpMask: (UnsharpMask.Builder.() -> Unit)? = null):
                 UnsharpMask {
             val builder = UnsharpMask.Builder()
+            level?.let { builder.level(it) }
             unsharpMask?.let { builder.it() }
             return builder.build()
         }
@@ -76,9 +83,10 @@ open class Adjust private constructor(params: Map<String, Param>) : ParamsAction
         fun viesusCorrect(): ViesusCorrect =
             ViesusCorrect()
 
-        fun brightnessHSB(brightnessHSB: (BrightnessHSB.Builder.() -> Unit)? = null):
+        fun brightnessHSB(level: Int? = null, brightnessHSB: (BrightnessHSB.Builder.() -> Unit)? = null):
                 BrightnessHSB {
             val builder = BrightnessHSB.Builder()
+            level?.let { builder.level(it) }
             brightnessHSB?.let { builder.it() }
             return builder.build()
         }
@@ -90,59 +98,69 @@ open class Adjust private constructor(params: Map<String, Param>) : ParamsAction
             return builder.build()
         }
 
-        fun hue(hue: (Hue.Builder.() -> Unit)? = null): Hue {
+        fun hue(level: Int? = null, hue: (Hue.Builder.() -> Unit)? = null): Hue {
             val builder = Hue.Builder()
+            level?.let { builder.level(it) }
             hue?.let { builder.it() }
             return builder.build()
         }
 
-        fun gamma(gamma: (Gamma.Builder.() -> Unit)? = null): Gamma {
+        fun gamma(level: Int? = null, gamma: (Gamma.Builder.() -> Unit)? = null): Gamma {
             val builder = Gamma.Builder()
+            level?.let { builder.level(it) }
             gamma?.let { builder.it() }
             return builder.build()
         }
 
-        fun contrast(contrast: (Contrast.Builder.() -> Unit)? = null): Contrast {
+        fun contrast(level: Int? = null, contrast: (Contrast.Builder.() -> Unit)? = null): Contrast {
             val builder = Contrast.Builder()
+            level?.let { builder.level(it) }
             contrast?.let { builder.it() }
             return builder.build()
         }
 
-        fun blue(blue: (Blue.Builder.() -> Unit)? = null): Blue {
+        fun blue(level: Int? = null, blue: (Blue.Builder.() -> Unit)? = null): Blue {
             val builder = Blue.Builder()
+            level?.let { builder.level(it) }
             blue?.let { builder.it() }
             return builder.build()
         }
 
         fun opacityThreshold(
+            level: Int? = null,
             opacityThreshold: (OpacityThreshold.Builder.() -> Unit)? =
                 null
         ): OpacityThreshold {
             val builder = OpacityThreshold.Builder()
+            level?.let { builder.level(it) }
             opacityThreshold?.let { builder.it() }
             return builder.build()
         }
 
-        fun green(green: (Green.Builder.() -> Unit)? = null): Green {
+        fun green(level: Int? = null, green: (Green.Builder.() -> Unit)? = null): Green {
             val builder = Green.Builder()
+            level?.let { builder.level(it) }
             green?.let { builder.it() }
             return builder.build()
         }
 
-        fun saturation(saturation: (Saturation.Builder.() -> Unit)? = null): Saturation {
+        fun saturation(level: Int? = null, saturation: (Saturation.Builder.() -> Unit)? = null): Saturation {
             val builder = Saturation.Builder()
+            level?.let { builder.level(it) }
             saturation?.let { builder.it() }
             return builder.build()
         }
 
-        fun red(red: (Red.Builder.() -> Unit)? = null): Red {
+        fun red(level: Int? = null, red: (Red.Builder.() -> Unit)? = null): Red {
             val builder = Red.Builder()
+            level?.let { builder.level(it) }
             red?.let { builder.it() }
             return builder.build()
         }
 
-        fun sharpen(sharpen: (Sharpen.Builder.() -> Unit)? = null): Sharpen {
+        fun sharpen(strength: Int? = null, sharpen: (Sharpen.Builder.() -> Unit)? = null): Sharpen {
             val builder = Sharpen.Builder()
+            strength?.let { builder.strength(it) }
             sharpen?.let { builder.it() }
             return builder.build()
         }

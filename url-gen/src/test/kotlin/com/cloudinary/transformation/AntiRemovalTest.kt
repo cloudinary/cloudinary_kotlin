@@ -1,6 +1,6 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.transformation.layer.MediaLayerSource
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.resize.Resize
@@ -13,20 +13,20 @@ class AntiRemovalTest {
 
     @Test
     fun testAntiRemoval() {
-        cldAssertEqualsAsString("l_sample/e_anti_removal,fl_layer_apply", AntiRemoval.Builder(layer).build())
-        cldAssertEqualsAsString(
+        cldAssert("l_sample/e_anti_removal,fl_layer_apply", AntiRemoval.Builder(layer).build())
+        cldAssert(
             "l_sample/e_anti_removal:50,fl_layer_apply",
             AntiRemoval.Builder(layer).level(50).build()
         )
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_sample/c_scale,w_100/e_anti_removal,fl_layer_apply",
             AntiRemoval.Builder(layer).transformation(t).build()
         )
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_sample/e_anti_removal,fl_layer_apply,g_north,x_25",
             AntiRemoval.Builder(layer).position(pos).build()
         )
-        cldAssertEqualsAsString(
+        cldAssert(
             "l_sample/c_scale,w_100/e_anti_removal,fl_layer_apply,g_north,x_25",
             AntiRemoval.Builder(layer).transformation(t).position(pos).build()
         )

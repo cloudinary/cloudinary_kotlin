@@ -1,6 +1,6 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.cldAssertEqualsAsString
+import com.cloudinary.cldAssert
 import com.cloudinary.transformation.layer.LayerSource
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.layer.TileMode
@@ -25,8 +25,8 @@ class CutterTest {
             transformation(Transformation().resize(scale))
         }
 
-        cldAssertEqualsAsString(expected, actualFromBuilder)
-        cldAssertEqualsAsString(expected, actualFromDsl)
+        cldAssert(expected, actualFromBuilder)
+        cldAssert(expected, actualFromDsl)
 
         val position = Position.Builder().x(50).tileMode(TileMode.TILED).build()
         val crop = Resize.crop { width(100).height(50) }
@@ -41,7 +41,7 @@ class CutterTest {
         }
 
         expected = "l_hexagon_sample/c_crop,h_50,w_100/fl_cutter.layer_apply.tiled,x_50"
-        cldAssertEqualsAsString(expected, actualFromBuilder)
-        cldAssertEqualsAsString(expected, actualFromDsl)
+        cldAssert(expected, actualFromBuilder)
+        cldAssert(expected, actualFromDsl)
     }
 }
