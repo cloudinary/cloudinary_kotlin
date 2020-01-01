@@ -17,7 +17,7 @@ class Background private constructor(params: Map<String, Param>) :
         override fun build() = buildParameters(color)
         private fun buildParameters(value: ParamValue) =
             Background(
-                Param("background", "b", value).let { mapOf(Pair(it.key, it)) }
+                backgroundParam(value).let { mapOf(Pair(it.key, it)) }
             )
     }
 }

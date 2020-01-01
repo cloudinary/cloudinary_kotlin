@@ -102,85 +102,125 @@ class LayerTest {
 
     @Test
     fun testTextLayer() {
-        cldAssert("text:arial_20:test", LayerSource.text("test", "arial", 20))
-        cldAssert("text:arial_20:t%20est", LayerSource.text("t est", "arial", 20))
-        cldAssert("text:arial_20:test\$(var)", LayerSource.text("test\$(var)", "arial", 20))
+        cldAssert("l_text:arial_20:test/fl_layer_apply", Layer.overlay(LayerSource.text("test", "arial", 20)))
+        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", Layer.overlay(LayerSource.text("t est", "arial", 20)))
         cldAssert(
-            "text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12.0_line_spacing_2.0:test",
-            LayerSource.text(
+            "l_text:arial_20:test\$(var)/fl_layer_apply",
+            Layer.overlay(LayerSource.text("test\$(var)", "arial", 20))
+        )
+        cldAssert(
+            "l_text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12.0_line_spacing_2.0:test/fl_layer_apply",
+            Layer.overlay(LayerSource.text(
                 "test",
                 "arial",
                 20
             ) {
-                fontWeight(FontWeight.BOLD)
-                fontStyle(FontStyle.ITALIC)
-                fontAntialias(FontAntialias.BEST)
-                fontHinting(FontHinting.FULL)
-                textDecoration(FontDecoration.UNDERLINE)
-                textAlign(TextAlign.LEFT)
-                stroke(Stroke.STROKE)
-                letterSpacing(12f)
-                lineSpacing(2f)
+                style {
+                    fontWeight(FontWeight.BOLD)
+                    fontStyle(FontStyle.ITALIC)
+                    fontAntialias(FontAntialias.BEST)
+                    fontHinting(FontHinting.FULL)
+                    textDecoration(FontDecoration.UNDERLINE)
+                    textAlign(TextAlign.LEFT)
+                    stroke(Stroke.STROKE)
+                    letterSpacing(12f)
+                    lineSpacing(2f)
+                }
             }
-        )
+            ))
 
 
-        cldAssert("text:arial_20:test", TextLayerSource("test", "arial", 20))
-        cldAssert("text:arial_20:t%20est", TextLayerSource("t est", "arial", 20))
-        cldAssert("text:arial_20:test\$(var)", TextLayerSource("test\$(var)", "arial", 20))
+        cldAssert("l_text:arial_20:test/fl_layer_apply", Layer.overlay(LayerSource.text("test", "arial", 20)))
+        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", Layer.overlay(LayerSource.text("t est", "arial", 20)))
         cldAssert(
-            "text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12.0_line_spacing_2.0:test",
-            LayerSource.text(
+            "l_text:arial_20:test\$(var)/fl_layer_apply",
+            Layer.overlay(LayerSource.text("test\$(var)", "arial", 20))
+        )
+        cldAssert(
+            "l_text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12_line_spacing_2:test/fl_layer_apply",
+            Layer.overlay(LayerSource.text(
                 "test",
                 "arial",
                 20
             ) {
-                fontWeight(FontWeight.BOLD)
-                fontStyle(FontStyle.ITALIC)
-                fontAntialias(FontAntialias.BEST)
-                fontHinting(FontHinting.FULL)
-                textDecoration(FontDecoration.UNDERLINE)
-                textAlign(TextAlign.LEFT)
-                stroke(Stroke.STROKE)
-                letterSpacing(12f)
-                lineSpacing(2f)
+                style {
+                    fontWeight(FontWeight.BOLD)
+                    fontStyle(FontStyle.ITALIC)
+                    fontAntialias(FontAntialias.BEST)
+                    fontHinting(FontHinting.FULL)
+                    textDecoration(FontDecoration.UNDERLINE)
+                    textAlign(TextAlign.LEFT)
+                    stroke(Stroke.STROKE)
+                    letterSpacing(12)
+                    lineSpacing(2)
+                }
             }
-        )
+            ))
+
     }
 
     @Test
     fun testFetchLayer() {
         cldAssert(
-            "fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png",
-            LayerSource.fetch("https://res.cloudinary.com/demo/image/upload/sample") { format("png") }
+            "l_fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png/fl_layer_apply",
+            Transformation().layer(
+                Layer.overlay(
+                    LayerSource.fetch("https://res.cloudinary.com/demo/image/upload/sample") { format("png") })
+            )
         )
         cldAssert(
-            "video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n",
-            LayerSource.fetch("https://res.cloudinary.com/demo/video/upload/dog") { resourceType("video") }
+            "l_video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n/fl_layer_apply",
+            Transformation().layer(Layer.overlay(LayerSource.fetch("https://res.cloudinary.com/demo/video/upload/dog") {
+                resourceType(
+                    "video"
+                )
+            }))
         )
 
         cldAssert(
-            "fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png",
-            FetchLayerSource("https://res.cloudinary.com/demo/image/upload/sample", format = "png")
+            "l_fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png/fl_layer_apply",
+            Transformation().layer(
+                Layer.overlay(
+                    FetchLayerSource(
+                        "https://res.cloudinary.com/demo/image/upload/sample",
+                        format = "png"
+                    )
+                )
+            )
         )
+
         cldAssert(
-            "video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n",
-            FetchLayerSource("https://res.cloudinary.com/demo/video/upload/dog", "video")
+            "l_video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n/fl_layer_apply",
+            Transformation().layer(
+                Layer.overlay(
+                    FetchLayerSource(
+                        "https://res.cloudinary.com/demo/video/upload/dog",
+                        "video"
+                    )
+                )
+            )
         )
     }
 
     @Test
     fun testMediaLayer() {
         cldAssert(
-            "video:dog.mp4",
-            LayerSource.media("dog") { format("mp4").resourceType("video").type("upload") })
-        cldAssert("sample", LayerSource.media("sample"))
-        cldAssert(
-            "sample.png",
-            LayerSource.media("sample") { format("png").resourceType("image").type("upload") })
+            "l_video:dog.mp4/fl_layer_apply",
+            Transformation().layer(Layer.overlay((LayerSource.media("dog") {
+                format("mp4").resourceType("video").type("upload")
+            })))
+        )
 
-        cldAssert("video:dog.mp4", MediaLayerSource("dog", "video", "upload", "mp4"))
-        cldAssert("sample", MediaLayerSource("sample"))
-        cldAssert("sample.png", MediaLayerSource("sample", "image", "upload", "png"))
+        cldAssert("l_sample/fl_layer_apply", Layer.overlay(LayerSource.media("sample")))
+        cldAssert(
+            "l_sample.png/fl_layer_apply",
+            Layer.overlay(LayerSource.media("sample") {
+                format("png").resourceType("image").type("upload")
+            })
+        )
+
+        cldAssert("l_video:dog.mp4/fl_layer_apply", Layer.overlay(MediaLayerSource("dog", "video", "upload", "mp4")))
+        cldAssert("l_sample/fl_layer_apply", Layer.overlay(MediaLayerSource("sample")))
+        cldAssert("l_sample.png/fl_layer_apply", Layer.overlay(MediaLayerSource("sample", "image", "upload", "png")))
     }
 }

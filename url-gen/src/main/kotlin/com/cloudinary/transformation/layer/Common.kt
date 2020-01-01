@@ -47,7 +47,7 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
     override fun create(params: Map<String, Param>) = Position(params)
 }
 
-abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(value) {
+abstract class LayerSource internal constructor(val values: List<Any>, val params: List<Param> = emptyList()) {
     companion object {
         fun fetch(remoteUrl: String, fetch: (FetchLayerSource.Builder.() -> Unit)? = null): FetchLayerSource {
             val builder = FetchLayerSource.Builder(remoteUrl)
@@ -65,23 +65,19 @@ abstract class LayerSource internal constructor(value: List<Any>) : ParamValue(v
             text: String,
             fontFamily: String,
             fontSize: Int,
-            textStyle: (TextStyle.Builder.() -> Unit)? = null
+            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
         ) =
-            text(text, fontFamily, fontSize as Any, textStyle)
+            text(text, fontFamily, fontSize as Any, textLayer)
 
         fun text(
             text: String,
             fontFamily: String,
             fontSize: Any,
-            textStyle: (TextStyle.Builder.() -> Unit)? = null
+            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
         ): TextLayerSource {
-            val style = textStyle?.run {
-                val builder = TextStyle.Builder()
-                builder.textStyle()
-                builder.build()
-            }
-
-            return TextLayerSource(text, fontFamily, fontSize, style)
+            val builder = TextLayerSource.Builder(text, fontFamily, fontSize)
+            textLayer?.let { builder.textLayer() }
+            return builder.build()
         }
     }
 }
@@ -104,7 +100,7 @@ open class Layer internal constructor(private val components: LayerComponents) :
     }
 
     override fun toString() = listOfNotNull(
-        GenericAction(components.layerParam),
+        components.layerParamAction,
         components.transformation,
         components.position
     ).joinToString("/")
@@ -170,7 +166,8 @@ internal fun buildLayerComponent(
     flag: FlagKey? = null
 ): LayerComponents {
     // start with the layer param itself
-    val layerParam = Param(paramName, paramKey, source)
+    val firstComponentParams =
+        GenericAction((source.params + Param(paramName, paramKey, ParamValue(source.values))).cldToActionMap())
 
     // layer apply flag + optional flags
     val allParams = mutableListOf<Param>(FlagsParam(FlagKey.LAYER_APPLY()))
@@ -183,11 +180,11 @@ internal fun buildLayerComponent(
     // construct the position component (this needs to include the extra parameters and some of flags):
     val positionAction: ParamsAction<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
 
-    return LayerComponents(layerParam, transformation, positionAction)
+    return LayerComponents(firstComponentParams, transformation, positionAction)
 }
 
 internal class LayerComponents(
-    internal val layerParam: Param,
+    internal val layerParamAction: Action,
     internal val transformation: Transformation? = null,
     internal val position: Action
 )

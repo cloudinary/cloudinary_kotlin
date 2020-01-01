@@ -31,7 +31,7 @@ public class TransformationTestJava {
                                         .fontHinting(FontHinting.FULL)
                                         .stroke(Stroke.STROKE)
                                         .letterSpacing(12f)
-                                        .build()))
+                                        .build(), null, null))
                                 .position(new Position.Builder()
                                         .gravity(Companion.direction(Direction.WEST)).build())
                                 .param("overlay", "l")

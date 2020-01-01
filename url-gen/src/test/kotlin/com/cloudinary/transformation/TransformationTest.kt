@@ -199,10 +199,14 @@ class TransformationTest {
                 })
                 layer(overlay(
                     text("hello world", "Arial", 21) {
-                        fontWeight(FontWeight.BOLD)
-                        fontHinting(FontHinting.FULL)
-                        stroke(Stroke.STROKE)
-                        letterSpacing(12f)
+                        style {
+                            fontWeight(FontWeight.BOLD)
+                            fontHinting(FontHinting.FULL)
+                            stroke(Stroke.STROKE)
+                            letterSpacing(12f)
+                        }
+                        background { named("red") }
+                        textColor { named("blue") }
                     }
                 ) {
                     position {
@@ -216,7 +220,7 @@ class TransformationTest {
         cldAssert(
             "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                     "e_screen,fl_layer_apply.no_overflow,g_east/" +
-                    "l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +
+                    "b_red,co_blue,l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +
                     "fl_layer_apply,g_west/a_25/f_png",
             transformation
         )

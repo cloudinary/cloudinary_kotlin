@@ -69,6 +69,14 @@ fun color(color: ColorValue.Builder.() -> Unit): ColorValue {
     return builder.build()
 }
 
+internal fun backgroundParam(value: ParamValue) = Param("background", "b", value)
+
+internal fun backgroundParam(color: ColorValue.Builder.() -> Unit): Param {
+    val builder = ColorValue.Builder()
+    builder.color()
+    return backgroundParam(builder.build())
+}
+
 class ColorParam(color: ColorValue) : Param("color", "co", color)
 
 internal class Range(private val from: Int? = null, private val to: Int? = null) {

@@ -1,8 +1,6 @@
 package com.cloudinary.transformation.layer
 
-import com.cloudinary.transformation.NamedValue
-import com.cloudinary.transformation.ParamValue
-import com.cloudinary.transformation.cldAsParamValueContent
+import com.cloudinary.transformation.*
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
@@ -10,7 +8,9 @@ class TextLayerSource(
     text: String,
     fontFamily: String,
     fontSize: Any,
-    style: TextStyle? = null
+    style: TextStyle? = null,
+    background: ColorValue? = null,
+    textColor: ColorValue? = null
 ) :
     LayerSource(
         listOfNotNull(
@@ -23,8 +23,47 @@ class TextLayerSource(
                 ).cldAsParamValueContent(), "_"
             ),
             encode(text)
+        ),
+        listOfNotNull(
+            background?.let { backgroundParam(it) },
+            textColor?.let { ColorParam(it) }
         )
-    )
+    ) {
+    class Builder(
+        private val text: String,
+        private val fontFamily: String,
+        private val fontSize: Any
+    ) {
+
+        private var style: TextStyle? = null
+        private var background: ColorValue? = null
+        private var textColor: ColorValue? = null
+
+        fun style(style: TextStyle) = apply { this.style = style }
+        fun style(style: TextStyle.Builder.() -> Unit) = apply {
+            val builder = TextStyle.Builder()
+            builder.style()
+            style(builder.build())
+        }
+
+        fun background(background: ColorValue) = apply { this.background = background }
+        fun textColor(textColor: ColorValue) = apply { this.textColor = textColor }
+
+        fun background(color: ColorValue.Builder.() -> Unit): Builder {
+            val builder = ColorValue.Builder()
+            builder.color()
+            return background(builder.build())
+        }
+
+        fun textColor(color: ColorValue.Builder.() -> Unit): Builder {
+            val builder = ColorValue.Builder()
+            builder.color()
+            return textColor(builder.build())
+        }
+
+        fun build() = TextLayerSource(text, fontFamily, fontSize, style, background, textColor)
+    }
+}
 
 class TextStyle(
     fontWeight: FontWeight? = null,
