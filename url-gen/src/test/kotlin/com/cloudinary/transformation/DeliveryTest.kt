@@ -67,12 +67,11 @@ class DeliveryTest {
     @Test
     fun testFps() {
         cldAssert("fps_5", Delivery.fps(5))
-    }
-
-    @Test
-    fun testFpsRange() {
-        cldAssert("fps_5-", Delivery.fps(5, max = null))
+        cldAssert("fps_5-", Delivery.fps(5, null))
         cldAssert("fps_5-10", Delivery.fps(5, 10))
+
+        cldAssert("fps_5.2-", Delivery.fps(5.2, max = null))
+        cldAssert("fps_5.2-10", Delivery.fps(5.2, 10))
     }
 
     @Test

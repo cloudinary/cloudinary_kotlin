@@ -2,6 +2,9 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.testParam
+import com.cloudinary.transformation.CustomFunction.Companion.preProcess
+import com.cloudinary.transformation.CustomFunction.Companion.remote
+import com.cloudinary.transformation.CustomFunction.Companion.wasm
 import org.junit.Test
 
 class CustomFunctionTest {

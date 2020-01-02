@@ -23,11 +23,15 @@ open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params)
         }
 
         fun fps(fps: Int) = Fps.Builder().fixed(fps).build()
-        fun fps(min: Int, max: Int?): Fps {
+
+        fun fps(min: Any, max: Any?): Fps {
             val builder = Fps.Builder().min(min)
             max?.let { builder.max(max) }
             return builder.build()
         }
+
+        fun fps(min: Int, max: Int?) = fps(min as Any, max)
+        fun fps(min: Float, max: Float?) = fps(min as Any, max)
 
         fun audioCodec(codec: AudioCodecType) = AudioCodec.Builder(codec).build()
 

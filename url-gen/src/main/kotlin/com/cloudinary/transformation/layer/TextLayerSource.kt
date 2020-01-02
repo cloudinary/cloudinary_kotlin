@@ -5,7 +5,7 @@ import com.cloudinary.transformation.layer.BaseTextLayerSource.Builder
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
-interface ITextLayerBuilder {
+internal interface ITextLayerBuilder {
     var style: TextStyle?
     var background: ColorValue?
     var textColor: ColorValue?
@@ -20,7 +20,7 @@ interface ITextLayerBuilder {
     fun build(): BaseTextLayerSource
 }
 
-open class BaseTextLayerSource(
+open class BaseTextLayerSource internal constructor(
     type: String,
     value: String,
     fontFamily: String? = null,
@@ -39,7 +39,7 @@ open class BaseTextLayerSource(
                     style
                 ).cldAsParamValueContent(), "_"
             ),
-            encode(value)
+            value
         ),
         listOfNotNull(
             background?.let { backgroundParam(it) },
@@ -97,12 +97,12 @@ class TextLayerSource(
     style: TextStyle? = null,
     background: ColorValue? = null,
     textColor: ColorValue? = null
-) : BaseTextLayerSource("text", text, fontFamily, fontSize, style, background, textColor) {
+) : BaseTextLayerSource("text", encode(text), fontFamily, fontSize, style, background, textColor) {
     class Builder internal constructor(
         text: String,
         fontFamily: String,
         fontSize: Any,
-        b: BaseTextLayerSource.Builder = Builder("text", text)
+        b: BaseTextLayerSource.Builder = Builder("text", encode(text))
     ) : ITextLayerBuilder by b {
         init {
             b.font(fontFamily, fontSize)

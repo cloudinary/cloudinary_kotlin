@@ -41,7 +41,7 @@ open class Transformation(private val components: List<Action> = emptyList()) {
     fun rotate(rotate: Rotate) = add(rotate)
     fun rotate(rotate: (Rotate.Builder.() -> Unit)? = null) = addWithBuilder(Rotate.Builder(), rotate)
 
-    fun extract(page: Page) = add(page)
+    fun extract(extract: Extract) = add(extract)
 
     fun background(background: Background) = add(background)
     fun background(color: ColorValue, background: (Background.Builder.() -> Unit)? = null) =
@@ -135,7 +135,7 @@ open class Transformation(private val components: List<Action> = emptyList()) {
         fun rotate(rotate: Rotate) = add(rotate)
         fun rotate(rotate: (Rotate.Builder.() -> Unit)? = null) = addWithBuilder(Rotate.Builder(), rotate)
 
-        fun extract(page: Page) = add(page)
+        fun extract(extract: Extract) = add(extract)
 
         fun background(background: Background) = add(background)
         fun background(color: ColorValue, background: (Background.Builder.() -> Unit)? = null) =

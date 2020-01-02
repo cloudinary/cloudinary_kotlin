@@ -1,9 +1,10 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.CustomFunction.Companion.wasm
 import com.cloudinary.transformation.Direction.EAST
 import com.cloudinary.transformation.Direction.WEST
-import com.cloudinary.transformation.Page.Companion.pages
+import com.cloudinary.transformation.Extract.Companion.pages
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
 import com.cloudinary.transformation.delivery.AudioCodecType
@@ -38,7 +39,9 @@ class TransformationTest {
         cldAssert("l_sample/e_anti_removal,fl_layer_apply", Transformation().antiRemoval(layer))
         cldAssert(
             "l_sample/e_sepia/e_anti_removal,fl_layer_apply",
-            Transformation().antiRemoval(layer) { transformation(sepiaTransformation) })
+            Transformation().antiRemoval(layer) {
+                transformation(sepiaTransformation)
+            })
 
     }
 

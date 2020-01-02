@@ -49,9 +49,13 @@ class Fps private constructor(fixed: Any?, min: Any?, max: Any?) : Delivery(
         private var min: Any? = null
         private var max: Any? = null
 
-        fun fixed(fps: Int) = apply { this.fixed = fps }
+        internal fun fixed(fps: Int) = apply { this.fixed = fps }
         fun min(min: Int) = apply { this.min = min }
         fun max(max: Int) = apply { this.max = max }
+        fun min(min: Float) = apply { this.min = min }
+        fun max(max: Float) = apply { this.max = max }
+        fun min(min: Any) = apply { this.min = min }
+        fun max(max: Any) = apply { this.max = max }
 
         override fun build() = Fps(fixed, min, max)
     }

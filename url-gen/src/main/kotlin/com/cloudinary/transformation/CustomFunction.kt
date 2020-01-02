@@ -8,7 +8,13 @@ class CustomFunction private constructor(params: Map<String, Param>) :
     ParamsAction<CustomFunction>(params) {
     override fun create(params: Map<String, Param>) = CustomFunction(params)
 
-    class Builder(private val source: String) : TransformationComponentBuilder {
+    companion object {
+        fun wasm(publicId: String) = Builder(publicId).type(WASM).build()
+        fun remote(url: String) = Builder(url).type(REMOTE).build()
+        fun preProcess(url: String) = Builder(url).type(PRE_PROCESS).build()
+    }
+
+    private class Builder(private val source: String) : TransformationComponentBuilder {
         private var type: Type = WASM
 
         fun type(type: Type) = apply { this.type = type }
@@ -31,7 +37,3 @@ class CustomFunction private constructor(params: Map<String, Param>) :
         WASM
     }
 }
-
-fun wasm(publicId: String) = CustomFunction.Builder(publicId).type(WASM).build()
-fun remote(url: String) = CustomFunction.Builder(url).type(REMOTE).build()
-fun preProcess(url: String) = CustomFunction.Builder(url).type(PRE_PROCESS).build()
