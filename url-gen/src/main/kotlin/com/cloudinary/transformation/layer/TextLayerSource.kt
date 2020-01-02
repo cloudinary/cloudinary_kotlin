@@ -1,8 +1,94 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.layer.BaseTextLayerSource.Builder
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
+
+interface ITextLayerBuilder {
+    var style: TextStyle?
+    var background: ColorValue?
+    var textColor: ColorValue?
+    fun font(fontFamily: String, size: Int): Builder
+    fun font(fontFamily: String, size: Any): Builder
+    fun style(style: TextStyle): Builder
+    fun style(style: TextStyle.Builder.() -> Unit): Builder
+    fun background(background: ColorValue): Builder
+    fun textColor(textColor: ColorValue): Builder
+    fun background(color: ColorValue.Builder.() -> Unit): Builder
+    fun textColor(color: ColorValue.Builder.() -> Unit): Builder
+    fun build(): BaseTextLayerSource
+}
+
+open class BaseTextLayerSource(
+    type: String,
+    value: String,
+    fontFamily: String? = null,
+    fontSize: Any? = null,
+    style: TextStyle? = null,
+    background: ColorValue? = null,
+    textColor: ColorValue? = null
+) :
+    LayerSource(
+        listOfNotNull(
+            type,
+            ParamValue(
+                listOfNotNull(
+                    fontFamily,
+                    fontSize,
+                    style
+                ).cldAsParamValueContent(), "_"
+            ),
+            encode(value)
+        ),
+        listOfNotNull(
+            background?.let { backgroundParam(it) },
+            textColor?.let { ColorParam(it) }
+        )
+    ) {
+
+    class Builder(
+        private val type: String,
+        private val value: String
+    ) : ITextLayerBuilder {
+
+        var fontFamily: String? = null
+        var fontSize: Any? = null
+        override var style: TextStyle? = null
+        override var background: ColorValue? = null
+        override var textColor: ColorValue? = null
+
+        override fun font(fontFamily: String, size: Int) = font(fontFamily, size as Any)
+        override fun font(fontFamily: String, size: Any) = apply {
+            this.fontFamily = fontFamily
+            this.fontSize = size
+        }
+
+        override fun style(style: TextStyle) = apply { this.style = style }
+        override fun style(style: TextStyle.Builder.() -> Unit) = apply {
+            val builder = TextStyle.Builder()
+            builder.style()
+            style(builder.build())
+        }
+
+        override fun background(background: ColorValue) = apply { this.background = background }
+        override fun textColor(textColor: ColorValue) = apply { this.textColor = textColor }
+
+        override fun background(color: ColorValue.Builder.() -> Unit): Builder {
+            val builder = ColorValue.Builder()
+            builder.color()
+            return background(builder.build())
+        }
+
+        override fun textColor(color: ColorValue.Builder.() -> Unit): Builder {
+            val builder = ColorValue.Builder()
+            builder.color()
+            return textColor(builder.build())
+        }
+
+        override fun build() = BaseTextLayerSource(type, value, fontFamily, fontSize, style, background, textColor)
+    }
+}
 
 class TextLayerSource(
     text: String,
@@ -11,59 +97,31 @@ class TextLayerSource(
     style: TextStyle? = null,
     background: ColorValue? = null,
     textColor: ColorValue? = null
-) :
-    LayerSource(
-        listOfNotNull(
-            "text",
-            ParamValue(
-                listOfNotNull(
-                    fontFamily,
-                    fontSize,
-                    style
-                ).cldAsParamValueContent(), "_"
-            ),
-            encode(text)
-        ),
-        listOfNotNull(
-            background?.let { backgroundParam(it) },
-            textColor?.let { ColorParam(it) }
-        )
-    ) {
-    class Builder(
-        private val text: String,
-        private val fontFamily: String,
-        private val fontSize: Any
-    ) {
-
-        private var style: TextStyle? = null
-        private var background: ColorValue? = null
-        private var textColor: ColorValue? = null
-
-        fun style(style: TextStyle) = apply { this.style = style }
-        fun style(style: TextStyle.Builder.() -> Unit) = apply {
-            val builder = TextStyle.Builder()
-            builder.style()
-            style(builder.build())
+) : BaseTextLayerSource("text", text, fontFamily, fontSize, style, background, textColor) {
+    class Builder internal constructor(
+        text: String,
+        fontFamily: String,
+        fontSize: Any,
+        b: BaseTextLayerSource.Builder = Builder("text", text)
+    ) : ITextLayerBuilder by b {
+        init {
+            b.font(fontFamily, fontSize)
         }
-
-        fun background(background: ColorValue) = apply { this.background = background }
-        fun textColor(textColor: ColorValue) = apply { this.textColor = textColor }
-
-        fun background(color: ColorValue.Builder.() -> Unit): Builder {
-            val builder = ColorValue.Builder()
-            builder.color()
-            return background(builder.build())
-        }
-
-        fun textColor(color: ColorValue.Builder.() -> Unit): Builder {
-            val builder = ColorValue.Builder()
-            builder.color()
-            return textColor(builder.build())
-        }
-
-        fun build() = TextLayerSource(text, fontFamily, fontSize, style, background, textColor)
     }
 }
+
+class SubtitlesLayerSource(
+    publicId: String,
+    style: TextStyle? = null,
+    background: ColorValue? = null,
+    textColor: ColorValue? = null
+) : BaseTextLayerSource("subtitles", publicId, null, null, style, background, textColor) {
+    class Builder internal constructor(
+        private val publicId: String,
+        b: BaseTextLayerSource.Builder = Builder("subtitles", publicId)
+    ) : ITextLayerBuilder by b
+}
+
 
 class TextStyle(
     fontWeight: FontWeight? = null,

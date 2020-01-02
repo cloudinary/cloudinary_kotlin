@@ -74,9 +74,18 @@ abstract class LayerSource internal constructor(val values: List<Any>, val param
             fontFamily: String,
             fontSize: Any,
             textLayer: (TextLayerSource.Builder.() -> Unit)? = null
-        ): TextLayerSource {
+        ): BaseTextLayerSource {
             val builder = TextLayerSource.Builder(text, fontFamily, fontSize)
-            textLayer?.let { builder.textLayer() }
+            textLayer?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun subtitles(
+            publicId: String,
+            subtitles: (SubtitlesLayerSource.Builder.() -> Unit)? = null
+        ): BaseTextLayerSource {
+            val builder = SubtitlesLayerSource.Builder(publicId)
+            subtitles?.let { builder.it() }
             return builder.build()
         }
     }
