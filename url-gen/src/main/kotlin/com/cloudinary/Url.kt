@@ -4,12 +4,13 @@ package com.cloudinary
 import com.cloudinary.config.Configuration
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.delivery.Delivery.Companion.format
-import com.cloudinary.util.cldHasVersionString
-import com.cloudinary.util.cldIsHttpUrl
-import com.cloudinary.util.cldMergeSlashedInUrl
-import com.cloudinary.util.cldSmartUrlEncode
+import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
+import java.net.URL
 import java.net.URLDecoder
+import java.nio.charset.Charset
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
@@ -20,152 +21,225 @@ private const val DEFAULT_TYPE = "upload"
 
 data class Url(
     private val config: Configuration,
-    private val cloudName: String = config.cloudName,
+    val cloudName: String = config.cloudName,
     private val publicId: String? = null,
-    private val type: String? = null,
-    private val resourceType: String = DEFAULT_RESOURCE_TYPE,
+    val type: String? = null,
+    val resourceType: String = DEFAULT_RESOURCE_TYPE,
     private val format: String? = null,
-    private val version: String? = null,
-    private val transformation: Transformation? = null,
+    val version: String? = null,
+    val transformation: Transformation? = null,
+    private val signUrl: Boolean = false,
+    val authToken: AuthToken? = config.authToken,
     private val source: String? = null,
     private val urlSuffix: String? = null,
-    private val useRootPath: Boolean = config.useRootPath,
-    private val forceVersion: Boolean = true,
+    val useRootPath: Boolean = config.useRootPath,
+    val forceVersion: Boolean = true,
     private val secureDistribution: String? = config.secureDistribution,
-    private val privateCdn: Boolean = config.privateCdn,
-    private val shorten: Boolean = config.shorten
+    val privateCdn: Boolean = config.privateCdn,
+    val shorten: Boolean = config.shorten,
+    val secure: Boolean = config.secure,
+    val cname: String? = config.cname
 ) {
+
     fun generate(source: String? = null): String? {
-        var computedSource: String = source ?: this.source ?: this.publicId ?: return null
+        require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
+        var mutableSource = source ?: publicId ?: this.source ?: return null
+        var mutableTransformation = transformation ?: Transformation()
+        var mutableFormat = format
 
-        val isHttpSource = computedSource.cldIsHttpUrl()
-        if (isHttpSource && (type == "asset" || type.isNullOrBlank())) {
-            return computedSource
+        val httpSource = mutableSource.cldIsHttpUrl()
+
+        if (httpSource && (type.isNullOrBlank() || type == "asset")) {
+            return mutableSource
         }
 
-        var transformation = this.transformation
-        var format = this.format
-        if (type == "fetch" && !format.isNullOrBlank()) {
-            transformation = (transformation ?: Transformation()).delivery(format(format))
-            format = null
+        if (type == "fetch" && !mutableFormat.isNullOrBlank()) {
+            mutableTransformation = mutableTransformation.delivery(format(mutableFormat))
+            mutableFormat = null
         }
 
-        val finalizedSource = finalizeSource(computedSource, format, urlSuffix)
-        computedSource = finalizedSource.first
-        val sourceToSign = finalizedSource.second
+        val transformationStr = mutableTransformation.toString()
+        var signature = ""
 
-        var version =
-            if (forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
-                !isHttpSource && version.isNullOrBlank()
-            ) "1" else ""
+        val finalizedSource = finalizeSource(mutableSource, mutableFormat, urlSuffix)
+        mutableSource = finalizedSource.source
+        val sourceToSign = finalizedSource.sourceToSign
 
-        if (version != "") version = "v$version"
+        var mutableVersion = version
+        if (forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
+            !httpSource && mutableVersion.isNullOrBlank()
+        ) {
+            mutableVersion = "1"
+        }
 
-        val finalResourceType = finalizeResourceType()
-        val prefix = unsignedDownloadUrlPrefix()
+        mutableVersion = if (mutableVersion == null) "" else "v$mutableVersion"
 
-        return listOfNotNull(prefix, finalResourceType, transformation, version, computedSource).joinToString("/")
-            .cldMergeSlashedInUrl()
-    }
+        if (signUrl && (authToken == null || authToken == NULL_AUTH_TOKEN)) {
+            val md: MessageDigest?
+            md = try {
+                MessageDigest.getInstance("SHA-1")
+            } catch (e: NoSuchAlgorithmException) {
+                throw RuntimeException("Unexpected exception", e)
+            }
 
-    private fun finalizeSource(source: String, format: String?, urlSuffix: String?): Pair<String, String> {
-        var computedSource = source
-        computedSource = computedSource.cldMergeSlashedInUrl()
-        var sourceToSign: String
-        if (computedSource.cldIsHttpUrl()) {
-            computedSource = computedSource.cldSmartUrlEncode()
-            sourceToSign = computedSource
+            val toSign = listOf(transformationStr, sourceToSign)
+                .joinToString("/")
+                .cldRemoveStartingChars('/')
+                .cldMergeSlashedInUrl()
+            val digest = md.digest((toSign + config.apiSecret!!).toByteArray(Charset.forName("UTF-8")))
+            signature = Base64Coder.encodeURLSafeString(digest)
+            signature = "s--" + signature.substring(0, 8) + "--"
+        }
+
+        val finalizedResourceType = finalizeResourceType(resourceType, type, urlSuffix, useRootPath, shorten)
+
+        val prefix = unsignedDownloadUrlPrefix2(
+            cloudName,
+            privateCdn,
+            cname,
+            secure,
+            secureDistribution
+        )
+
+        val url =
+            listOfNotNull(
+                prefix,
+                finalizedResourceType,
+                signature,
+                transformationStr,
+                mutableVersion,
+                mutableSource
+            ).joinToString("/").cldMergeSlashedInUrl()
+
+        return if (signUrl && authToken != null && authToken != NULL_AUTH_TOKEN) {
+            val token = authToken.generate(URL(url).path)
+            "$url?$token"
         } else {
-            try {
-                computedSource = URLDecoder.decode(computedSource.replace("+", "%2B"), "UTF-8").cldSmartUrlEncode()
-            } catch (e: UnsupportedEncodingException) {
-                throw RuntimeException(e)
-            }
-
-            sourceToSign = computedSource
-            if (!urlSuffix.isNullOrBlank()) {
-                require(!urlSuffix.run { contains(".") || contains("/") }) { "url_suffix should not include . or /" }
-                computedSource = "$computedSource/$urlSuffix"
-            }
-            if (!format.isNullOrBlank()) {
-                computedSource = "$computedSource.$format"
-                sourceToSign = "$sourceToSign.$format"
-            }
+            url
         }
-
-        return Pair(computedSource, sourceToSign)
-    }
-
-    private fun finalizeResourceType(): String? {
-        var computedResourceType: String? = resourceType
-
-        var computedType = type
-        if (computedType == null) {
-            computedType = DEFAULT_TYPE
-        }
-
-        if (!urlSuffix.isNullOrBlank()) {
-            if (computedResourceType == "image" && computedType == "upload") {
-                computedResourceType = "images"
-                computedType = null
-            } else if (computedResourceType == "image" && computedType == "private") {
-                computedResourceType = "private_images"
-                computedType = null
-            } else if (computedResourceType == "image" && computedType == "authenticated") {
-                computedResourceType = "authenticated_images"
-                computedType = null
-            } else if (computedResourceType == "raw" && computedType == "upload") {
-                computedResourceType = "files"
-                computedType = null
-            } else if (computedResourceType == "video" && computedType == "upload") {
-                computedResourceType = "videos"
-                computedType = null
-            } else {
-                throw IllegalArgumentException("URL Suffix only supported for image/upload, image/private, raw/upload, image/authenticated  and video/upload")
-            }
-        }
-        if (useRootPath) {
-            if (computedResourceType == "image" && computedType == "upload" || computedResourceType == "images" && computedType.isNullOrBlank()) {
-                computedResourceType = null
-                computedType = null
-            } else {
-                throw IllegalArgumentException("Root path only supported for image/upload")
-            }
-        }
-        if (shorten && computedResourceType == "image" && computedType == "upload") {
-            computedResourceType = "iu"
-            computedType = null
-        }
-        var result = computedResourceType
-        if (computedType != null) {
-            result += "/$computedType"
-        }
-        return result
-    }
-
-    private fun unsignedDownloadUrlPrefix(): String {
-        var localSecureDistribution: String? = secureDistribution
-        if (cloudName.startsWith("/")) {
-            return "/res$cloudName"
-        }
-        var sharedDomain = !privateCdn
-
-        if (localSecureDistribution.isNullOrBlank() || localSecureDistribution == OLD_AKAMAI_SHARED_CDN) {
-            localSecureDistribution =
-                if (privateCdn) "$cloudName-res.cloudinary.com" else SHARED_CDN
-        }
-
-        if (!sharedDomain) {
-            sharedDomain = localSecureDistribution == SHARED_CDN
-        }
-
-        var prefix = "https://$localSecureDistribution"
-
-        if (sharedDomain) {
-            prefix += "/$cloudName"
-        }
-
-        return prefix
     }
 }
 
+private fun finalizeSource(
+    source: String,
+    format: String?,
+    urlSuffix: String?
+): FinalizedSource {
+    var mutableSource = source.cldMergeSlashedInUrl()
+    var sourceToSign: String
+    if (mutableSource.cldIsHttpUrl()) {
+        mutableSource = mutableSource.cldSmartUrlEncode()
+        sourceToSign = mutableSource
+    } else {
+        mutableSource = try {
+            URLDecoder.decode(mutableSource.replace("+", "%2B"), "UTF-8").cldSmartUrlEncode()
+        } catch (e: UnsupportedEncodingException) {
+            throw RuntimeException(e)
+        }
+        sourceToSign = mutableSource
+        if (!urlSuffix.isNullOrBlank()) {
+            require(!(urlSuffix.contains(".") || urlSuffix.contains("/"))) { "url_suffix should not include . or /" }
+            mutableSource = "$mutableSource/$urlSuffix"
+        }
+        if (!format.isNullOrBlank()) {
+            mutableSource = "$mutableSource.$format"
+            sourceToSign = "$sourceToSign.$format"
+        }
+    }
+
+    return FinalizedSource(mutableSource, sourceToSign)
+}
+
+fun finalizeResourceType(
+    resourceType: String?,
+    type: String?,
+    urlSuffix: String?,
+    useRootPath: Boolean,
+    shorten: Boolean
+): String? {
+    var mutableResourceType: String? = resourceType ?: "image"
+    var mutableType: String? = type ?: "upload"
+
+    if (!urlSuffix.isNullOrBlank()) {
+        if (mutableResourceType == "image" && mutableType == "upload") {
+            mutableResourceType = "images"
+            mutableType = null
+        } else if (mutableResourceType == "image" && mutableType == "private") {
+            mutableResourceType = "private_images"
+            mutableType = null
+        } else if (mutableResourceType == "image" && mutableType == "authenticated") {
+            mutableResourceType = "authenticated_images"
+            mutableType = null
+        } else if (mutableResourceType == "raw" && mutableType == "upload") {
+            mutableResourceType = "files"
+            mutableType = null
+        } else if (mutableResourceType == "video" && mutableType == "upload") {
+            mutableResourceType = "videos"
+            mutableType = null
+        } else {
+            throw IllegalArgumentException("URL Suffix only supported for image/upload, image/private, raw/upload, image/authenticated  and video/upload")
+        }
+    }
+    if (useRootPath) {
+        if (mutableResourceType == "image" && mutableType == "upload" || mutableResourceType == "images" && mutableType.isNullOrBlank()) {
+            mutableResourceType = null
+            mutableType = null
+        } else {
+            throw IllegalArgumentException("Root path only supported for image/upload")
+        }
+    }
+    if (shorten && mutableResourceType == "image" && mutableType == "upload") {
+        mutableResourceType = "iu"
+        mutableType = null
+    }
+    var result = mutableResourceType
+    if (mutableType != null) {
+        result += "/$mutableType"
+    }
+
+    return result
+}
+
+fun unsignedDownloadUrlPrefix2(
+    cloudName: String?,
+    privateCdn: Boolean,
+    cname: String?,
+    secure: Boolean,
+    secureDistribution: String?
+): String? {
+    var mutableCloudName = cloudName
+    var mutableSecureDistribution = secureDistribution
+    mutableCloudName?.let {
+        if (it.startsWith("/")) return "/res$mutableCloudName"
+    }
+
+    var sharedDomain: Boolean = !privateCdn
+    var prefix: String
+    if (secure) {
+        if (mutableSecureDistribution.isNullOrBlank() || mutableSecureDistribution == OLD_AKAMAI_SHARED_CDN) {
+            mutableSecureDistribution =
+                if (privateCdn) mutableCloudName.toString() + "-res.cloudinary.com" else SHARED_CDN
+        }
+        if (!sharedDomain) {
+            sharedDomain = mutableSecureDistribution == SHARED_CDN
+        }
+
+        prefix = "https://$mutableSecureDistribution"
+    } else if (!cname.isNullOrBlank()) {
+        prefix = "http://$cname"
+    } else {
+        val protocol = "http://"
+        mutableCloudName = if (privateCdn) "$mutableCloudName-" else ""
+        val res = "res"
+        val domain = ".cloudinary.com"
+        prefix = protocol + mutableCloudName + res + domain
+    }
+    if (sharedDomain) {
+        // use original cloud name here:
+        prefix += "/$cloudName"
+    }
+
+    return prefix
+}
+
+private class FinalizedSource(val source: String, val sourceToSign: String)

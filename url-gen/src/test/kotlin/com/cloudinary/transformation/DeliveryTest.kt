@@ -36,7 +36,7 @@ class DeliveryTest {
 
         cldAssert(
             "cs_icc:file.extension",
-            Delivery.colorSpace(ColorSpaceType.CS_ICC("file.extension"))
+            Delivery.colorSpace(ColorSpaceType.CsIcc("file.extension"))
         )
     }
 

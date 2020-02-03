@@ -91,3 +91,5 @@ internal class Range(private val from: Int? = null, private val to: Int? = null)
         fun single(num: Int) = Range(num, num)
     }
 }
+
+class EagerTransformation(val transformation: Transformation, val format: String? = null)

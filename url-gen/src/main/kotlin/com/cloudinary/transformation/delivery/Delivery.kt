@@ -141,12 +141,12 @@ enum class AudioFrequencyType(private val frequency: Int) {
 sealed class ColorSpaceType(value: Any) : ParamValue(value) {
     constructor(value: String) : this(ParamValue(value))
 
-    object SRGB : ColorSpaceType("srgb")
-    object TINYSRGB : ColorSpaceType("tinysrgb")
+    object Srgb : ColorSpaceType("srgb")
+    object TinySrgb : ColorSpaceType("tinysrgb")
     object CMYK : ColorSpaceType("cmyk")
-    object NO_CMYK : ColorSpaceType("no_cmyk")
-    object KEEP_CMYK : ColorSpaceType("keep_cmyk")
-    class CS_ICC(publicId: String) : ColorSpaceType(
+    object NoCmyk : ColorSpaceType("no_cmyk")
+    object KeepCmyk : ColorSpaceType("keep_cmyk")
+    class CsIcc(publicId: String) : ColorSpaceType(
         ParamValue(listOfNotNull("icc", publicId))
     )
 }

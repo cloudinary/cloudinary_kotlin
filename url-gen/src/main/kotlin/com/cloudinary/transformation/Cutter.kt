@@ -33,7 +33,7 @@ class Cutter private constructor(components: LayerComponents) : Layer(components
                     position,
                     paramName = "layer",
                     paramKey = "l",
-                    flag = FlagKey.CUTTER()
+                    flag = FlagKey.Cutter()
                 )
             )
     }
