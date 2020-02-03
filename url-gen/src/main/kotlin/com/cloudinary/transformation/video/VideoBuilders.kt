@@ -213,7 +213,7 @@ class Deshake private constructor(factor: DeShakeFactor? = null) :
 }
 
 class Waveform private constructor() : Video(
-    FlagsParam(FlagKey.WAVEFORM())
+    FlagsParam(FlagKey.Waveform())
 ) {
     class Builder : TransformationComponentBuilder {
         override fun build() = Waveform()

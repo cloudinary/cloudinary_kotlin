@@ -95,6 +95,13 @@ open class Resize protected constructor(params: Map<String, Param>) : ParamsActi
             return builder.build()
         }
 
+        fun pad(width: Int, pad: (Pad.Builder.() -> Unit)? = null): Pad {
+            val builder = Pad.Builder()
+            builder.width(width)
+            pad?.let { builder.it() }
+            return builder.build()
+        }
+
         fun pad(pad: (Pad.Builder.() -> Unit)? = null): Pad {
             val builder = Pad.Builder()
             pad?.let { builder.it() }
@@ -117,8 +124,8 @@ open class Resize protected constructor(params: Map<String, Param>) : ParamsActi
 }
 
 enum class ResizeMode(private val flagKey: FlagKey) {
-    RELATIVE(FlagKey.RELATIVE()),
-    REGION_RELATIVE(FlagKey.REGION_RELATIVE());
+    RELATIVE(FlagKey.Relative()),
+    REGION_RELATIVE(FlagKey.RegionRelative());
 
     internal fun asFlag() = FlagsParam(this.flagKey)
 }

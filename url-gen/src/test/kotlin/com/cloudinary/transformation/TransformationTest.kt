@@ -25,6 +25,7 @@ import org.junit.Test
 
 class TransformationTest {
     private val layer = media("sample")
+
     private val sepiaTransformation = Transformation().effect(Effect.sepia())
     @Test
     fun testCutter() {

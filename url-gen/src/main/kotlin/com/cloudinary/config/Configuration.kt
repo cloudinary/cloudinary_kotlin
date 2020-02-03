@@ -1,5 +1,6 @@
 package com.cloudinary.config
 
+import com.cloudinary.AuthToken
 import java.net.URI
 
 private const val DEFAULT_CHUNK_SIZE = 20_000_000L
@@ -8,13 +9,13 @@ private const val DEFAULT_CONNECT_TIMEOUT = 0L
 
 
 data class Configuration(
-    internal val accountConfig: AccountConfig,
-    internal val urlConfig: UrlConfig,
-    internal val apiConfig: ApiConfig
+    val accountConfig: AccountConfig,
+    val urlConfig: UrlConfig,
+    val apiConfig: ApiConfig
 ) : IUrlConfig by urlConfig, IAccountConfig by accountConfig, IApiConfig by apiConfig {
 
     companion object {
-        internal fun fromUri(uri: String): Configuration {
+        fun fromUri(uri: String): Configuration {
 
             val params = parseConfigUrl(uri)
 
@@ -29,7 +30,10 @@ data class Configuration(
                 cdnSubdomain = params["cdn_subdomain"] as? Boolean ?: DEFAULT_CDN_SUBDOMAIN,
                 shorten = params["shorten"] as? Boolean ?: DEFAULT_SHORTEN,
                 secureCdnSubdomain = params["secure_cdn_subdomain"] as? Boolean ?: DEFAULT_SECURE_CDN_SUBDOMAIN,
-                useRootPath = params["use_root_path"] as? Boolean ?: DEFAULT_USE_ROOT_PATH
+                useRootPath = params["use_root_path"] as? Boolean ?: DEFAULT_USE_ROOT_PATH,
+                cname = params["cname"] as? String,
+                secure = params["secure"] as? Boolean ?: DEFAULT_SECURE,
+                authToken = params["auth_token"]?.let { if (it is Map<*, *>) AuthToken.fromParams(it) else null }
             )
             val uploadConfig = ApiConfig(
                 uploadPrefix = params["upload_prefix"] as? String,
@@ -48,6 +52,9 @@ data class Configuration(
 }
 
 private fun parseConfigUrl(cloudinaryUrl: String): Map<String, Any> {
+    require(cloudinaryUrl.isNotBlank()) { "Cloudinary url must not be blank" }
+    require(cloudinaryUrl.startsWith("cloudinary://")) { "Cloudinary url must start with 'cloudinary://'" }
+
     val params = mutableMapOf<String, Any>()
     val uri = URI.create(cloudinaryUrl)
     params["cloud_name"] = uri.host
@@ -76,7 +83,7 @@ private fun updateMapFromQuery(params: MutableMap<String, Any>, query: String) {
 }
 
 private fun putNestedValue(params: MutableMap<String, Any>, key: String, value: String) {
-    val chain = key.split("[\\[\\]]+".toRegex())
+    val chain = key.split("[", "]").filter { it.isNotEmpty() }
     var outer = params
     var innerKey = chain[0]
     var i = 0

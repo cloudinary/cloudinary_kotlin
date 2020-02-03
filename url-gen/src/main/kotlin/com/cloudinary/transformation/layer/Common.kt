@@ -21,7 +21,7 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
                 x?.cldAsX(),
                 y?.cldAsY(),
                 tileMode?.asFlag(),
-                if (!allowOverflow) FlagsParam(FlagKey.NO_OVERFLOW()) else null
+                if (!allowOverflow) FlagsParam(FlagKey.NoOverflow()) else null
             ).cldToActionMap()
         )
 
@@ -179,7 +179,7 @@ internal fun buildLayerComponent(
         GenericAction((source.params + Param(paramName, paramKey, ParamValue(source.values))).cldToActionMap())
 
     // layer apply flag + optional flags
-    val allParams = mutableListOf<Param>(FlagsParam(FlagKey.LAYER_APPLY()))
+    val allParams = mutableListOf<Param>(FlagsParam(FlagKey.LayerApply()))
     flag?.let { allParams.add(FlagsParam(it)) }
     allParams.addAll(extraParams)
 
@@ -212,5 +212,5 @@ enum class TileMode {
     NONE,
     TILED;
 
-    fun asFlag() = if (this == TILED) FlagsParam(FlagKey.TILED()) else null
+    fun asFlag() = if (this == TILED) FlagsParam(FlagKey.Tiled()) else null
 }

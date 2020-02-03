@@ -9,6 +9,13 @@ class ResizeTest {
 
     @Test
     fun testScale() {
+
+        val resize: Resize = Resize.scale {
+            width(100)
+            dpr(2.5f)
+        }
+
+        Transformation().resize(resize)
         cldAssert("c_scale,test_param,w_100", Resize.scale { width(100) }.add(testParam))
         cldAssert("c_scale,w_100", Resize.scale { width(100) })
         cldAssert("c_scale,w_1.0", Resize.scale { width(1f) })

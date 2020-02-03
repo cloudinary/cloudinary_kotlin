@@ -6,18 +6,18 @@ import org.junit.Test
 class FlagsTest {
     @Test
     fun testFlags() {
-        cldAssert("fl_progressive", GenericAction(FlagsParam(FlagKey.PROGRESSIVE())))
+        cldAssert("fl_progressive", GenericAction(FlagsParam(FlagKey.Progressive())))
         cldAssert(
             "fl_progressive:none",
-            GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.NONE)))
+            GenericAction(FlagsParam(FlagKey.Progressive(ProgressiveMode.None)))
         )
         cldAssert(
             "fl_progressive:semi",
-            GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.SEMI)))
+            GenericAction(FlagsParam(FlagKey.Progressive(ProgressiveMode.Semi)))
         )
         cldAssert(
             "fl_progressive:steep",
-            GenericAction(FlagsParam(FlagKey.PROGRESSIVE(ProgressiveMode.STEEP)))
+            GenericAction(FlagsParam(FlagKey.Progressive(ProgressiveMode.Steep)))
         )
     }
 }

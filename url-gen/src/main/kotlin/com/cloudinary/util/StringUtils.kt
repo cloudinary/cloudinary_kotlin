@@ -4,6 +4,9 @@ import com.cloudinary.util.Base64Coder.encodeString
 import com.cloudinary.util.Base64Coder.encodeURLSafeString
 import java.net.URI
 import java.net.URLEncoder
+import java.nio.charset.Charset
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 internal fun Any.cldToString(): String {
     return when (this) {
@@ -32,12 +35,12 @@ internal fun String.cldHasVersionString(): Boolean {
     var inVersion = false
     for (i in 0 until length) {
         val c = get(i)
-        if (c == 'v') {
-            inVersion = true
+        inVersion = if (c == 'v') {
+            true
         } else if (Character.isDigit(c) && inVersion) {
             return true
         } else {
-            inVersion = false
+            false
         }
     }
 
@@ -58,14 +61,14 @@ internal fun String.cldMergeSlashedInUrl(): String {
             builder.append(c)
         } else {
             if (c == '/') {
-                if (prevIsColon) {
+                inMerge = if (prevIsColon) {
                     builder.append(c)
-                    inMerge = false
+                    false
                 } else {
                     if (!inMerge) {
                         builder.append(c)
                     }
-                    inMerge = true
+                    true
                 }
             } else {
                 inMerge = false
@@ -133,3 +136,81 @@ internal fun String.cldToUrlSafeBase64() = encodeURLSafeString(this)
  * Encodes public id to be used in urls (such as wasm asset or layers)
  */
 internal fun String.cldEncodePublicId() = replace('/', ':')
+
+/**
+ * Replaces the unsafe characters in url with url-encoded values.
+ * This is based on [java.net.URLEncoder.encode]
+ * @param unsafe Regex pattern of unsafe caracters
+ * @param charset
+ * @return An encoded url string
+ */
+internal fun String.cldUrlEncode(unsafe: Pattern, charset: Charset?): String {
+    val sb = StringBuffer(length)
+    val matcher = unsafe.matcher(this)
+    while (matcher.find()) {
+        val str = matcher.group(0)
+        val bytes = str.toByteArray(charset!!)
+        val escaped = java.lang.StringBuilder(str.length * 3)
+        for (aByte in bytes) {
+            escaped.append('%')
+            var ch = Character.forDigit(((aByte.toInt()) shr 4 and 0xF), 16)
+            escaped.append(ch)
+            ch = Character.forDigit((aByte.toInt() and 0xF), 16)
+            escaped.append(ch)
+        }
+        matcher.appendReplacement(sb, Matcher.quoteReplacement(escaped.toString().toLowerCase()))
+    }
+    matcher.appendTail(sb)
+    return sb.toString()
+}
+
+internal fun String.cldHexStringToByteArray(): ByteArray {
+    val len: Int = this.length
+    val data = ByteArray(len / 2)
+
+    require(len % 2 == 0) { "Length of string to parse must be even." }
+
+    var i = 0
+    while (i < len) {
+        data[i / 2] = ((Character.digit(get(i), 16) shl 4) + Character.digit(
+            get(i + 1),
+            16
+        )).toByte()
+        i += 2
+    }
+
+    return data
+}
+
+private val HEX_ARRAY = "0123456789abcdef".toCharArray()
+private val camelCaseRegex = Regex("""[A-Z]""")
+
+fun ByteArray.toHex(): String {
+    val hexChars = CharArray(size * 2)
+    for (j in indices) {
+        val v = get(j).toInt() and 0xFF
+        hexChars[j * 2] = HEX_ARRAY[v.ushr(4)]
+        hexChars[j * 2 + 1] = HEX_ARRAY[v and 0x0F]
+    }
+
+    return String(hexChars)
+}
+
+/**
+ * Remove all consecutive chars c from the beginning of the string
+ * @param c Char to search for
+ * @return The string stripped from the starting chars.
+ */
+fun String.cldRemoveStartingChars(c: Char): String {
+    var lastToRemove = -1
+    for (i in indices) {
+        if (this[i] == c) {
+            lastToRemove = i
+            continue
+        }
+        if (this[i] != c) {
+            break
+        }
+    }
+    return if (lastToRemove < 0) this else substring(lastToRemove + 1)
+}

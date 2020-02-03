@@ -1,9 +1,12 @@
 package com.cloudinary.config
 
+import com.cloudinary.AuthToken
+
 internal const val DEFAULT_PRIVATE_CDN = false
 internal const val DEFAULT_CDN_SUBDOMAIN = false
 internal const val DEFAULT_SHORTEN = false
 internal const val DEFAULT_USE_ROOT_PATH = false
+internal const val DEFAULT_SECURE = false
 internal const val DEFAULT_SECURE_CDN_SUBDOMAIN = false
 
 interface IUrlConfig {
@@ -13,6 +16,9 @@ interface IUrlConfig {
     val shorten: Boolean
     val secureCdnSubdomain: Boolean
     val useRootPath: Boolean
+    val cname: String?
+    val secure: Boolean
+    val authToken: AuthToken?
 }
 
 data class UrlConfig(
@@ -21,5 +27,8 @@ data class UrlConfig(
     override val cdnSubdomain: Boolean = DEFAULT_CDN_SUBDOMAIN,
     override val shorten: Boolean = DEFAULT_SHORTEN,
     override val secureCdnSubdomain: Boolean = DEFAULT_SECURE_CDN_SUBDOMAIN,
-    override val useRootPath: Boolean = DEFAULT_USE_ROOT_PATH
+    override val useRootPath: Boolean = DEFAULT_USE_ROOT_PATH,
+    override val cname: String? = null,
+    override val secure: Boolean = DEFAULT_SECURE,
+    override val authToken: AuthToken? = null
 ) : IUrlConfig

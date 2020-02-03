@@ -145,7 +145,7 @@ class Quality private constructor(value: ParamValue, flag: FlagKey? = null) :
                     chromaSubSampling,
                     preset
                 )
-            ), if (anyFormat == true) FlagKey.ANY_FORMAT() else null
+            ), if (anyFormat == true) FlagKey.AnyFormat() else null
         )
     }
 }

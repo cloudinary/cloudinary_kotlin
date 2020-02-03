@@ -9,6 +9,7 @@ import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.video.Video
 import com.cloudinary.transformation.warp.Warp
 
+@TransformationDsl
 open class Transformation(private val components: List<Action> = emptyList()) {
     constructor(component: Action) : this(listOf(component))
 
@@ -26,10 +27,8 @@ open class Transformation(private val components: List<Action> = emptyList()) {
     fun cutout(source: LayerSource, cutout: (Cutout.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutout.Builder(source), cutout)
 
-    // TODO add tests
     fun antiRemoval(antiRemoval: AntiRemoval) = add(antiRemoval)
 
-    // TODO add tests
     fun antiRemoval(source: LayerSource, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
         addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
 
