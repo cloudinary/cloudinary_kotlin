@@ -50,13 +50,13 @@ class UploadRequest internal constructor(
             uploadLarge
         )
 
-        constructor(stream: InputStream, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        internal constructor(stream: InputStream, uploader: Uploader, uploadLarge: Boolean = false) : this(
             StreamPayload(stream),
             uploader,
             uploadLarge
         )
 
-        constructor(byteArray: ByteArray, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        internal constructor(byteArray: ByteArray, uploader: Uploader, uploadLarge: Boolean = false) : this(
             BytesPayload(
                 byteArray
             ), uploader, uploadLarge

@@ -3,11 +3,6 @@ package com.cloudinary.config
 import com.cloudinary.AuthToken
 import java.net.URI
 
-private const val DEFAULT_CHUNK_SIZE = 20_000_000L
-private const val DEFAULT_READ_TIMEOUT = 0L
-private const val DEFAULT_CONNECT_TIMEOUT = 0L
-
-
 data class Configuration(
     val accountConfig: AccountConfig,
     val urlConfig: UrlConfig,
@@ -37,9 +32,9 @@ data class Configuration(
             )
             val uploadConfig = ApiConfig(
                 uploadPrefix = params["upload_prefix"] as? String,
-                chunkSize = params["chunk_size"] as? Long ?: DEFAULT_CHUNK_SIZE,
-                readTimeout = params["read_timeout"] as? Long ?: DEFAULT_READ_TIMEOUT,
-                connectTimeout = params["connect_timeout"] as? Long ?: DEFAULT_CONNECT_TIMEOUT
+                chunkSize = params["chunk_size"] as? Int ?: DEFAULT_CHUNK_SIZE,
+                readTimeout = params["read_timeout"] as? Int ?: DEFAULT_READ_TIMEOUT,
+                connectTimeout = params["connect_timeout"] as? Int ?: DEFAULT_CONNECT_TIMEOUT
             )
 
             return Configuration(

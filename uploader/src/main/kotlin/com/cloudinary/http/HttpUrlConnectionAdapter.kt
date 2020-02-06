@@ -1,5 +1,6 @@
 package com.cloudinary.http
 
+import com.cloudinary.config.ApiConfig
 import com.cloudinary.util.randomPublicId
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
@@ -10,13 +11,15 @@ import java.net.URL
 
 private const val bufferSize = 4096
 
-class HttpUrlConnectionAdapter(private val userAgent: String) : HttpClient {
+class HttpUrlConnectionAdapter(private val userAgent: String, private val config: ApiConfig) : HttpClient {
     private val lineFeed = "\r\n"
     private val boundary: String = randomPublicId()
 
     override fun get(url: URL, headers: Map<String, String>): HttpResponse? {
         val httpConn = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = HttpGet.METHOD_NAME
+            readTimeout = config.readTimeout * 1000
+            connectTimeout = config.connectTimeout * 1000
             setRequestProperty("User-Agent", userAgent)
             headers.entries.forEach { setRequestProperty(it.key, it.value) }
         }
@@ -40,6 +43,8 @@ class HttpUrlConnectionAdapter(private val userAgent: String) : HttpClient {
             requestMethod = HttpPost.METHOD_NAME
             doOutput = true
             doInput = true
+            readTimeout = config.readTimeout * 1000
+            connectTimeout = config.connectTimeout * 1000
             setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
             setRequestProperty("User-Agent", userAgent)
@@ -72,7 +77,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String) : HttpClient {
         when (part.value) {
             is String -> addFormField(writer, part.name, part.value, charset)
             is File -> FileInputStream(part.value).use { addFilePart(writer, outputStream, "file", it, part.name) }
-            is InputStream -> part.value.use { addFilePart(writer, outputStream, "file", it, part.name) }
+            is ByteArray -> part.value.inputStream().use { addFilePart(writer, outputStream, "file", it, part.name) }
         }
     }
 
