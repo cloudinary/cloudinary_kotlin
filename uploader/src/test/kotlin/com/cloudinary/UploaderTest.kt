@@ -24,6 +24,8 @@ import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.BeforeClass
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.FileInputStream
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -40,19 +42,50 @@ private val sdkTestTag = "cloudinary_kotlin_test_$suffix"
 private val archiveTag = "${sdkTestTag}_archive"
 private val uploaderTag = "${sdkTestTag}_uploader"
 private val defaultTags = listOf(sdkTestTag, uploaderTag)
-const val remoteTestImageUrl = "http://cloudinary.com/images/old_logo.png"
+const val remoteTestImageUrlString = "http://cloudinary.com/images/old_logo.png"
 
 private val srcTestImage = UploaderTest::class.java.getResource("/old_logo.png").file
 const val SRC_TEST_IMAGE_W = 241
 const val SRC_TEST_IMAGE_H = 51
 
+enum class NetworkLayer {
+    OkHttp,
+    ApacheHttpClient,
+    UrlConnection
+}
 
-class UploaderTest {
-
+@RunWith(Parameterized::class)
+class UploaderTest(networkLayer: NetworkLayer) {
     private val cloudinary = Cloudinary()
-    private val uploader = cloudinary.uploader()
+
+    private val uploader = when (networkLayer) {
+        NetworkLayer.OkHttp -> Uploader(
+            cloudinary,
+            OkHttpClientFactory(cloudinary.userAgent, cloudinary.config.apiConfig)
+        )
+        NetworkLayer.ApacheHttpClient -> Uploader(
+            cloudinary,
+            ApacheHttpClient45Factory(cloudinary.userAgent, cloudinary.config.apiConfig)
+        )
+        NetworkLayer.UrlConnection -> Uploader(
+            cloudinary,
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig)
+        )
+    }
+
+    private val remoteTestImageUrl = URL(remoteTestImageUrlString)
 
     companion object {
+        @JvmStatic
+        @Parameterized.Parameters
+        fun data(): Collection<Any> {
+            return listOf(
+                NetworkLayer.UrlConnection,
+                NetworkLayer.OkHttp,
+                NetworkLayer.ApacheHttpClient
+            )
+        }
+
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
@@ -90,13 +123,13 @@ class UploaderTest {
         @AfterClass
         @JvmStatic
         fun tearDownClass() {
-            // TODO cleanup w/o admin API
+
         }
     }
 
     @Test
     fun testUtf8Upload() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        var response = uploader.upload(srcTestImage) {
             params {
                 colors = true
                 tags = defaultTags
@@ -105,7 +138,7 @@ class UploaderTest {
         }
 
         Assert.assertNotNull(response.data)
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         Assert.assertNotNull(result.publicId)
         assertEquals(result.width, SRC_TEST_IMAGE_W)
@@ -114,17 +147,31 @@ class UploaderTest {
         Assert.assertNotNull(result.predominant)
 
         validateSignature(result)
+
+        response = uploader.upload(srcTestImage) {
+            params {
+                publicId = "Plattenkreiss_ñg-é"
+                tags = defaultTags
+            }
+        }
+
+        assertEquals(response.data?.publicId, "Plattenkreiss_ñg-é")
+    }
+
+    @Test
+    fun testUploadUTF8() {
+
     }
 
     @Test
     fun testUpload() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 colors = true
                 tags = defaultTags
             }
         }
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         assertEquals(result.width, SRC_TEST_IMAGE_W)
         assertEquals(result.height, SRC_TEST_IMAGE_H)
@@ -157,26 +204,26 @@ class UploaderTest {
 
     @Test
     fun testUploadUrl() {
-        val response = cloudinary.uploader().upload(remoteTestImageUrl) {
+        val response = uploader.upload(remoteTestImageUrl) {
             params {
                 colors = true
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals(result.width, SRC_TEST_IMAGE_W)
     }
 
     @Test
     fun testUploadLargeUrl() {
-        val response = cloudinary.uploader().uploadLarge(remoteTestImageUrl) {
+        val response = uploader.uploadLarge(remoteTestImageUrl) {
             params {
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals(result.width, SRC_TEST_IMAGE_W)
         assertEquals(result.height, SRC_TEST_IMAGE_H)
         validateSignature(result)
@@ -187,13 +234,13 @@ class UploaderTest {
         val data =
             "data:image/png;base64,iVBORw0KGgoAA\nAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0l\nEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6\nP9/AFGGFyjOXZtQAAAAAElFTkSuQmCC"
 
-        val response = cloudinary.uploader().upload(data) {
+        val response = uploader.upload(data) {
             params {
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         assertEquals(result.width, 16)
         assertEquals(result.height, 16)
@@ -201,30 +248,18 @@ class UploaderTest {
     }
 
     @Test
-    fun testUploadUTF8() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
-            params {
-                publicId = "Plattenkreiss_ñg-é"
-                tags = defaultTags
-            }
-        }
-
-        assertEquals(response.data?.publicId, "Plattenkreiss_ñg-é")
-    }
-
-    @Test
     fun testUniqueFilename() {
-        var response = cloudinary.uploader().upload(srcTestImage) {
+        var response = uploader.upload(srcTestImage) {
             params {
                 useFilename = true
                 tags = defaultTags
             }
         }
 
-        var result = response.data!!
+        var result = response.resultOrThrow()
         assertTrue(result.publicId!!.matches("old_logo_[a-z0-9]{6}".toRegex()))
 
-        response = cloudinary.uploader().upload(srcTestImage) {
+        response = uploader.upload(srcTestImage) {
             params {
                 useFilename = true
                 uniqueFilename = false
@@ -232,21 +267,21 @@ class UploaderTest {
             }
         }
 
-        result = response.data!!
+        result = response.resultOrThrow()
         assertEquals(result.publicId, "old_logo")
     }
 
     @Test
     fun testEager() {
         val transformation = Transformation().resize(scale { width(2.0) })
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 eager = listOf(EagerTransformation(transformation, "png"))
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         val eager = result.eager?.first()
         assertNotNull(eager)
         assertEquals("png", eager.format)
@@ -257,14 +292,14 @@ class UploaderTest {
     fun testUploadAsync() {
         val transformation = Transformation().resize(scale { width(2.0) })
 
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 this.transformation = transformation
                 async = true
                 tags = defaultTags
             }
         }
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         assertEquals(result.status, "pending")
     }
@@ -272,7 +307,7 @@ class UploaderTest {
     @Test
     fun testHeaders() {
         // TODO remove? this test is not relevant anymore
-        cloudinary.uploader().upload(srcTestImage) {
+        uploader.upload(srcTestImage) {
             params {
                 tags = defaultTags
             }
@@ -286,14 +321,14 @@ class UploaderTest {
     fun testAllowedFormats() {
         //should allow whitelisted formats if allowed_formats
         val formats = listOf("png")
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 allowedFormats = formats
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals(result.format, "png")
     }
 
@@ -302,7 +337,7 @@ class UploaderTest {
         //should prevent non whitelisted formats from being uploaded if allowed_formats is specified
         val formats = listOf("jpg")
 
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 allowedFormats = formats
                 tags = defaultTags
@@ -318,7 +353,7 @@ class UploaderTest {
         //should allow non whitelisted formats if type is specified and convert to that type
         val formats = listOf("jpg")
 
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 allowedFormats = formats
                 format = "jpg"
@@ -326,7 +361,7 @@ class UploaderTest {
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals("jpg", result.format)
     }
 
@@ -335,7 +370,7 @@ class UploaderTest {
         val rect1 = Rectangle(121, 31, 110, 51)
         val rect2 = Rectangle(120, 30, 109, 51)
         val coordinates = Coordinates(rect1, rect2)
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 faceCoordinates = coordinates
                 faces = true
@@ -343,7 +378,7 @@ class UploaderTest {
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         val resultFaces = result.faces!!
         assertEquals(2, resultFaces.coordinates.size)
@@ -355,14 +390,14 @@ class UploaderTest {
     fun testCustomCoordinates() {
         //should allow sending face coordinates
         val coordinates = Coordinates("121,31,300,151")
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 customCoordinates = coordinates
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals(
             Coordinates(Rectangle(121, 31, SRC_TEST_IMAGE_W, SRC_TEST_IMAGE_H)),
             result.coordinates?.values?.first()
@@ -372,14 +407,14 @@ class UploaderTest {
     @Test
     fun testModerationRequest() {
         //should support requesting manual moderation
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 moderation = "manual"
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         assertEquals("manual", result.moderation?.first()?.kind)
         assertEquals("pending", result.moderation?.first()?.status)
@@ -388,7 +423,7 @@ class UploaderTest {
     @Test
     fun testRawConvertRequest() {
         //should support requesting raw conversion
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 rawConvert = "illegal"
                 tags = defaultTags
@@ -401,7 +436,7 @@ class UploaderTest {
     @Test
     fun testCategorizationRequest() {
         //should support requesting categorization
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 categorization = "illegal"
                 tags = defaultTags
@@ -414,7 +449,7 @@ class UploaderTest {
     @Test
     fun testDetectionRequest() {
         //should support requesting detection
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 detection = "illegal"
                 tags = defaultTags
@@ -424,7 +459,7 @@ class UploaderTest {
         assertErrorMessage("Detection is invalid", response)
     }
 
-    @Test
+    //    @Test
     fun testUploadLarge() {
         // support uploading large files
         val temp = generateFile()
@@ -432,7 +467,7 @@ class UploaderTest {
 
         val uploadLargeTags = listOf("upload_large_tag_$suffix", sdkTestTag, uploaderTag)
 
-        var response = cloudinary.uploader().uploadLarge(temp) {
+        var response = uploader.uploadLarge(temp) {
             params {
                 useFilename = true
                 tags = uploadLargeTags
@@ -443,14 +478,14 @@ class UploaderTest {
             }
         }
 
-        var result = response.data!!
+        var result = response.resultOrThrow()
 
         assertEquals(uploadLargeTags, result.tags)
 
         assertEquals("raw", result.resourceType)
         Assert.assertTrue(result.publicId?.startsWith("cldupload") ?: false)
 
-        response = cloudinary.uploader().uploadLarge(FileInputStream(temp)) {
+        response = uploader.uploadLarge(FileInputStream(temp)) {
             params {
                 tags = uploadLargeTags
             }
@@ -459,13 +494,13 @@ class UploaderTest {
             }
         }
 
-        result = response.data!!
+        result = response.resultOrThrow()
         assertEquals(uploadLargeTags, result.tags)
         assertEquals("image", result.resourceType)
         assertEquals(1400, result.width)
         assertEquals(1400, result.height)
 
-        response = cloudinary.uploader().uploadLarge(temp) {
+        response = uploader.uploadLarge(temp) {
             params {
                 tags = uploadLargeTags
             }
@@ -474,7 +509,7 @@ class UploaderTest {
             }
         }
 
-        result = response.data!!
+        result = response.resultOrThrow()
 
         assertEquals(uploadLargeTags, result.tags)
 
@@ -483,7 +518,7 @@ class UploaderTest {
         assertEquals(1400, result.width)
         assertEquals(1400, result.height)
 
-        response = cloudinary.uploader().uploadLarge(temp) {
+        response = uploader.uploadLarge(temp) {
             params {
                 tags = uploadLargeTags
             }
@@ -492,7 +527,7 @@ class UploaderTest {
             }
         }
 
-        result = response.data!!
+        result = response.resultOrThrow()
 
         assertEquals(uploadLargeTags, result.tags)
 
@@ -505,7 +540,7 @@ class UploaderTest {
     @Test
     fun testUnsignedUpload() {
         // should support unsigned uploading using presets
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 uploadPreset = "sdk-test-upload-preset"
                 tags = defaultTags
@@ -514,14 +549,14 @@ class UploaderTest {
                 unsigned = true
             }
         }
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         assertTrue(result.publicId?.matches("^upload_folder/[a-z0-9]+$".toRegex()) ?: false)
     }
 
     @Test
     fun testFilenameOption() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 tags = defaultTags
             }
@@ -530,7 +565,7 @@ class UploaderTest {
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         assertEquals("emanelif", result.originalFilename)
     }
 
@@ -546,14 +581,14 @@ class UploaderTest {
         )
 
         // A single breakpoint
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 responsiveBreakpoints = listOf(breakpoint)
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         val breakpointsResponse = result.responsiveBreakpoints!!
         val br = breakpointsResponse.first()
 
@@ -564,15 +599,15 @@ class UploaderTest {
 
     @Test
     fun testCreateArchive() {
-        var response = cloudinary.uploader()
+        var response = uploader
             .createArchive {
                 params {
                     tags = listOf(archiveTag)
                 }
             }
 
-        assertEquals(2, response.data!!.fileCount)
-        response = cloudinary.uploader()
+        assertEquals(2, response.resultOrThrow().fileCount)
+        response = uploader
             .createArchive {
                 params {
                     tags = listOf(archiveTag)
@@ -583,13 +618,13 @@ class UploaderTest {
                 }
             }
 
-        assertEquals(4, response.data!!.fileCount)
+        assertEquals(4, response.resultOrThrow().fileCount)
     }
 
     @Test
     fun testCreateArchiveRaw() {
 
-        val response = cloudinary.uploader()
+        val response = uploader
             .createArchive {
                 params {
                     tags = listOf(archiveTag)
@@ -599,8 +634,8 @@ class UploaderTest {
                 }
             }
 
-        assertEquals(1, response.data!!.fileCount)
-        assertEquals(1, response.data!!.fileCount)
+        assertEquals(1, response.resultOrThrow().fileCount)
+        assertEquals(1, response.resultOrThrow().fileCount)
     }
 
     @Test
@@ -610,14 +645,14 @@ class UploaderTest {
         val token = AccessControlRule.token()
         val acl = AccessControlRule.anonymous(start, null)
 
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 accessControl = listOf(acl, token)
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         val accessControlResponse = result.accessControl!!
 
@@ -634,27 +669,27 @@ class UploaderTest {
 
     @Test
     fun testQualityAnalysis() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 qualityAnalysis = true
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         Assert.assertNotNull(result.qualityAnalysis)
     }
 
     @Test
     fun testCinemagraphAnalysisUpload() {
-        val response = cloudinary.uploader().upload(srcTestImage) {
+        val response = uploader.upload(srcTestImage) {
             params {
                 cinemagraphAnalysis = true
                 tags = defaultTags
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
         Assert.assertNotNull(result.cinemagraphAnalysis)
     }
 
@@ -666,7 +701,7 @@ class UploaderTest {
             }
         }
 
-        val publicId = uploadResponse.data!!.publicId!!
+        val publicId = uploadResponse.resultOrThrow().publicId!!
 
         val response = uploader.destroy(publicId)
         assertEquals("ok", response.data?.result)
@@ -680,7 +715,7 @@ class UploaderTest {
             }
         }
 
-        val publicId = uploadResponse.data!!.publicId!!
+        val publicId = uploadResponse.resultOrThrow().publicId!!
 
         val toPublicId = "rename_${publicId}_${suffix}"
         val response = uploader.rename(publicId, toPublicId)
@@ -747,14 +782,14 @@ class UploaderTest {
     @Test
     fun testSprite() {
         val spriteTestTag = String.format("sprite_test_tag_%d", Date().time)
-        cloudinary.uploader().upload(srcTestImage) {
+        uploader.upload(srcTestImage) {
             params {
                 tags = defaultTags + spriteTestTag
                 publicId = "sprite_test_tag_1$suffix"
             }
         }
 
-        cloudinary.uploader().upload(srcTestImage) {
+        uploader.upload(srcTestImage) {
             params {
                 tags = defaultTags + spriteTestTag
                 publicId = "sprite_test_tag_2$suffix"
@@ -795,8 +830,8 @@ class UploaderTest {
         val multiTestTag = "multi_test_tag$suffix"
         val multiTestTags = defaultTags + multiTestTag
 
-        cloudinary.uploader().upload(srcTestImage) { params { tags = multiTestTags } }
-        cloudinary.uploader().upload(srcTestImage) { params { tags = multiTestTags } }
+        uploader.upload(srcTestImage) { params { tags = multiTestTags } }
+        uploader.upload(srcTestImage) { params { tags = multiTestTags } }
 
         val response = uploader.multi(multiTestTag) {
             transformation {
@@ -823,11 +858,11 @@ class UploaderTest {
 
     @Test
     fun testTags() {
-        var uploaderResponse = cloudinary.uploader().upload(srcTestImage)
+        var uploaderResponse = uploader.upload(srcTestImage)
         var uploadResult = uploaderResponse.data!!
         val publicId1 = uploadResult.publicId!!
 
-        uploaderResponse = cloudinary.uploader().upload(srcTestImage)
+        uploaderResponse = uploader.upload(srcTestImage)
         uploadResult = uploaderResponse.data!!
         val publicId2 = uploadResult.publicId!!
 
@@ -836,34 +871,38 @@ class UploaderTest {
         val tag3 = randomPublicId()
         val tag4 = randomPublicId()
 
-        cloudinary.uploader().addTag(tag1, listOf(publicId1, publicId2))
-        cloudinary.uploader().addTag(tag2, listOf(publicId1, publicId2))
-        cloudinary.uploader().addTag(tag3, listOf(publicId1, publicId2))
+        uploader.addTag(tag1, listOf(publicId1, publicId2))
+        uploader.addTag(tag2, listOf(publicId1, publicId2))
+        uploader.addTag(tag3, listOf(publicId1, publicId2))
 
-        cloudinary.uploader().removeTag(tag2, listOf(publicId2))
+        uploader.removeTag(tag2, listOf(publicId2))
 
         var url = URL(cloudinary.url(publicId = "$tag1.json", type = "list").generate())
-        var jsonUrl = HttpUrlConnectionFactory(cloudinary).getClient().get(url)?.content!!
+        var jsonUrl =
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
         assertTrue(jsonUrl.contains(publicId1))
         assertTrue(jsonUrl.contains(publicId2))
 
         url = URL(cloudinary.url(publicId = "$tag2.json", type = "list").generate())
-        jsonUrl = HttpUrlConnectionFactory(cloudinary).getClient().get(url)?.content!!
+        jsonUrl =
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
         assertFalse(jsonUrl.contains(publicId2))
 
-        cloudinary.uploader().removeAllTags(listOf(publicId2))
+        uploader.removeAllTags(listOf(publicId2))
 
         url = URL(cloudinary.url(publicId = "$tag3.json", type = "list").generate())
-        jsonUrl = HttpUrlConnectionFactory(cloudinary).getClient().get(url)?.content!!
+        jsonUrl =
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
         assertFalse(jsonUrl.contains(publicId2))
 
-        cloudinary.uploader().replaceTag(tag4, listOf(publicId1))
+        uploader.replaceTag(tag4, listOf(publicId1))
         url = URL(cloudinary.url(publicId = "$tag4.json", type = "list").generate())
-        jsonUrl = HttpUrlConnectionFactory(cloudinary).getClient().get(url)?.content!!
+        jsonUrl =
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
     }
@@ -922,10 +961,11 @@ class UploaderTest {
     @Test
     fun testAdapters() {
         val uploaderUrlConnection =
-            Uploader(cloudinary, HttpUrlConnectionFactory(cloudinary))
-        val uploaderOkHttp = Uploader(cloudinary, OkHttpClientFactory(cloudinary))
+            Uploader(cloudinary, HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig))
+        val uploaderOkHttp =
+            Uploader(cloudinary, OkHttpClientFactory(cloudinary.userAgent, cloudinary.config.apiConfig))
         val uploaderApache45 =
-            Uploader(cloudinary, ApacheHttpClient45Factory(cloudinary))
+            Uploader(cloudinary, ApacheHttpClient45Factory(cloudinary.userAgent, cloudinary.config.apiConfig))
 
         verifySuccess(uploaderUrlConnection)
         verifyError(uploaderUrlConnection, cloudinary)
@@ -989,4 +1029,9 @@ class UploaderTest {
             response.error?.error?.message?.contains(expectedMessage) ?: false
         )
     }
+
+}
+
+private fun <T> UploaderResponse<T>.resultOrThrow(): T {
+    return data ?: error("Error result: ${error?.error?.message ?: "Unknown error"}")
 }

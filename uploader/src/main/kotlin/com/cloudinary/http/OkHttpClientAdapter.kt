@@ -2,10 +2,9 @@ package com.cloudinary.http
 
 import okhttp3.*
 import java.io.File
-import java.io.InputStream
 import java.net.URL
-import javax.naming.OperationNotSupportedException
 
+val APPLICATION_OCTET_STREAM = MediaType.parse("application/octet-stream")
 
 class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
 
@@ -53,11 +52,15 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
     private fun addPart(builder: MultipartBody.Builder, part: MultipartEntity.Part) {
         when (part.value) {
             is String -> builder.addFormDataPart(part.name, part.value)
+            is URL -> builder.addFormDataPart(part.name, part.value.toString())
             is File -> builder.addFormDataPart(
-                "file", part.name,
-                RequestBody.create(MediaType.parse("application/octet-stream"), part.value)
+                "file",
+                part.name,
+                RequestBody.create(APPLICATION_OCTET_STREAM, part.value)
             )
-            is InputStream -> throw OperationNotSupportedException("OkHttp does not support stream multipart")
+            is ByteArray -> builder.addFormDataPart(
+                "file", part.name, RequestBody.create(APPLICATION_OCTET_STREAM, part.value)
+            )
         }
     }
 }

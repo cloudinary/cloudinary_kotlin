@@ -49,9 +49,6 @@ class Uploader internal constructor(
     fun uploadLarge(file: InputStream, request: (UploadRequest.Builder.() -> Unit)? = null) =
         buildAndExecute(UploadRequest.Builder(file, this, true), request)
 
-    fun uploadLarge(file: ByteArray, request: (UploadRequest.Builder.() -> Unit)? = null) =
-        buildAndExecute(UploadRequest.Builder(file, this, true), request)
-
     fun destroy(
         publicId: String,
         request: (DestroyRequest.Builder.() -> Unit)? = null
@@ -223,19 +220,19 @@ class Uploader internal constructor(
         val value = payload.value
         if (value is String && value.cldIsRemoteUrl()) return callApi(request, "upload", ::toUploadResult)
 
-        val input: InputStream = payload.asInputStream()
-
-        return uploadLargeParts(
-            input,
-            request.params,
-            request.options.resourceType,
-            request.options.filename ?: payload.name,
-            request.options.chunkSize,
-            payload.length,
-            request.options.offset,
-            uniqueUploadId,
-            request.progressCallback
-        )
+        payload.asInputStream().use {
+            return uploadLargeParts(
+                it,
+                request.params,
+                request.options.resourceType,
+                request.options.filename ?: payload.name,
+                request.options.chunkSize,
+                payload.length,
+                request.options.offset,
+                uniqueUploadId,
+                request.progressCallback
+            )
+        }
     }
 
     private fun uploadLargeParts(
@@ -291,15 +288,15 @@ class Uploader internal constructor(
                 )
                 extraHeaders["Content-Range"] = range
 
-                val builder = UploaderOptions.Builder().apply {
+                val optionsBuilder = UploaderOptions.Builder().apply {
                     headers = extraHeaders
                     fileName?.let { this.filename = it }
                 }
 
                 val partRequest = UploadRequest.Builder(buffer, this).apply {
                     params = uploadParams
-                    resourceType?.let { builder.resourceType = it }
-                    options = builder.build()
+                    resourceType?.let { optionsBuilder.resourceType = it }
+                    options = optionsBuilder.build()
                 }
 
                 // wrap the callback with another callback to account for multiple parts
