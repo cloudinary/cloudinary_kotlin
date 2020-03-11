@@ -8,15 +8,15 @@ class ClippingPath private constructor(params: Map<String, Param>) :
     override fun create(params: Map<String, Param>) = ClippingPath(params)
 
     class Builder : TransformationComponentBuilder {
-        private var page: Int? = null
+        private var index: Int? = null
         private var path: String? = null
         private var evenOdd: Boolean = false
 
-        fun page(page: Int) = apply { this.page = page }
+        fun index(index: Int) = apply { this.index = index }
         fun path(path: String) = apply { this.path = path }
         fun evenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
 
-        override fun build() = ClippingPath(buildParams(page ?: path, evenOdd))
+        override fun build() = ClippingPath(buildParams(index ?: path, evenOdd))
     }
 }
 

@@ -12,6 +12,11 @@ import static com.cloudinary.transformation.Gravity.Companion;
 public class TransformationTestJava {
     @Test
     public void textComplexTransformation() {
+        Transformation t = new Transformation()
+                .gradientFade(new GradientFade.Builder().strength(3).build())
+                .adjust(new Opacity.Builder(80).build())
+                .border(new Border.Builder().width(4).color(new ColorValue.Builder().named("red").build()).build());
+
         Transformation transformation =
                 new Transformation()
                         .gradientFade(new GradientFade.Builder().strength(3).build())
