@@ -10,34 +10,115 @@ import com.cloudinary.transformation.video.Video
 import com.cloudinary.transformation.warp.Warp
 
 @TransformationDsl
-open class Transformation(private val components: List<Action> = emptyList()) {
-    constructor(component: Action) : this(listOf(component))
+open class Transformation(private val actions: List<Action> = emptyList()) {
+    constructor(action: Action) : this(listOf(action))
 
-    override fun toString() = components.joinToString("/")
+    override fun toString() = actions.joinToString("/")
 
-    fun add(component: Action) = Transformation(components + component)
+    /**
+     * Adds (chains) a transformation action.
+     *
+     * @param action The transformation action to add.
+     *
+     * @return TODO DOC new transformation
+     */
+    fun add(action: Action) = Transformation(actions + action)
 
-    fun add(component: String) = Transformation(components + RawAction(component))
+    /**
+     * Adds (chains) a transformation action.
+     *
+     * @param action The transformation action to add.
+     *
+     * @return TODO DOC new transformation
+     */
+    fun add(action: String) = Transformation(actions + RawAction(action))
 
+    /**
+     * Trims pixels according to the transparency levels of a given overlay image.
+     *
+     * Whenever the overlay image is opaque, the original is shown, and wherever the overlay is transparent,
+     * the result will be transparent as well.
+     *
+     * @param cutter The cutter action to add
+     * @return TODO DOC new transformation
+     */
     fun cutter(cutter: Cutter) = add(cutter)
+
+    /**
+     * Trims pixels according to the transparency levels of a given overlay image.
+     *
+     * Whenever the overlay image is opaque, the original is shown, and wherever the overlay is transparent,
+     * the result will be transparent as well.
+     *
+     * @param source The overlay image to use
+     * @param cutter The cutter action to add TODO DOC builder receiver param
+     * @return TODO DOC new transformation
+     */
     fun cutter(source: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutter.Builder(source), cutter)
 
+    // TODO doc
     fun cutout(cutout: Cutout) = add(cutout)
+
+    // TODO doc
     fun cutout(source: LayerSource, cutout: (Cutout.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutout.Builder(source), cutout)
 
+    /**
+     * Add an overlay image blended using the 'anti-removal' blend mode.
+     *
+     * In this mode, the overlay is slightly distorted to prevent easy removal.
+     *
+     * @return TODO DOC new transformation
+     */
     fun antiRemoval(antiRemoval: AntiRemoval) = add(antiRemoval)
 
+    /**
+     * Add an overlay image blended using the 'anti-removal' blend mode.
+     *
+     * In this mode, the overlay is slightly distorted to prevent easy removal.
+     *
+     * @param source The overlay image to use
+     * @param antiRemoval The anti-removal action to add TODO DOC builder receiver param
+     * @return TODO DOC new transformation
+     */
     fun antiRemoval(source: LayerSource, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
         addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
 
+
+    /**
+     * Trims the pixels of a PSD image according to a Photoshop clipping path that is stored in the image's metadata.
+     *
+     * @param path The clipping path to use
+     * @return TODO DOC new transformation
+     */
     fun clip(path: ClippingPath? = null) = add(path ?: clippingPath())
+
+    /**
+     * Trims the pixels of a PSD image according to a Photoshop clipping path that is stored in the image's metadata.
+     *
+     * @param clip The clip action to add TODO DOC builder receiver param
+     * @return TODO DOC new transformation
+     */
     fun clip(clip: (ClippingPath.Builder.() -> Unit)) = addWithBuilder(ClippingPath.Builder(), clip)
 
+    /**
+     * Inject a custom function into the image transformation pipeline.
+     *
+     * @param customFunction The custom function source
+     * @return TODO DOC new transformation
+     */
     fun customFunction(customFunction: CustomFunction) = add(customFunction)
 
+    /**
+     * Rotates the asset by the given angle. //
+     *
+     * @param rotate  The rotation object. TODO DOC builder receiver param
+     *
+     * @return TODO DOC new transformation
+     */
     fun rotate(rotate: Rotate) = add(rotate)
+
     fun rotate(rotate: (Rotate.Builder.() -> Unit)? = null) = addWithBuilder(Rotate.Builder(), rotate)
 
     fun extract(extract: Extract) = add(extract)
@@ -116,7 +197,7 @@ open class Transformation(private val components: List<Action> = emptyList()) {
     class Builder(private val components: MutableList<Action> = mutableListOf()) {
         fun add(component: Action) = apply { components.add(component) }
         fun add(component: String) = add(RawAction(component))
-        fun merge(transformation: Transformation) = apply { components.addAll(transformation.components) }
+        fun merge(transformation: Transformation) = apply { components.addAll(transformation.actions) }
 
         fun cutter(cutter: Cutter) = add(cutter)
         fun cutter(layerSource: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =

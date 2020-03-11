@@ -177,6 +177,7 @@ class TransformationTest {
         cldAssert("l_sample/fl_layer_apply", Transformation().layer(overlay(layer)))
     }
 
+
     @Test
     fun textComplexTransformation() {
         val transformation =
