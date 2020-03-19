@@ -159,11 +159,6 @@ class UploaderTest(networkLayer: NetworkLayer) {
     }
 
     @Test
-    fun testUploadUTF8() {
-
-    }
-
-    @Test
     fun testUpload() {
         val response = uploader.upload(srcTestImage) {
             params {
@@ -213,20 +208,6 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val result = response.resultOrThrow()
         assertEquals(result.width, SRC_TEST_IMAGE_W)
-    }
-
-    @Test
-    fun testUploadLargeUrl() {
-        val response = uploader.uploadLarge(remoteTestImageUrl) {
-            params {
-                tags = defaultTags
-            }
-        }
-
-        val result = response.resultOrThrow()
-        assertEquals(result.width, SRC_TEST_IMAGE_W)
-        assertEquals(result.height, SRC_TEST_IMAGE_H)
-        validateSignature(result)
     }
 
     @Test
@@ -459,18 +440,18 @@ class UploaderTest(networkLayer: NetworkLayer) {
         assertErrorMessage("Detection is invalid", response)
     }
 
-    //    @Test
-    fun testUploadLarge() {
+    @Test
+    fun testUploadLargeFile() {
         // support uploading large files
         val temp = generateFile()
         assertEquals(5880138, temp.length())
 
-        val uploadLargeTags = listOf("upload_large_tag_$suffix", sdkTestTag, uploaderTag)
+        val uploadTags = listOf("upload_large_tag_$suffix", sdkTestTag, uploaderTag)
 
-        var response = uploader.uploadLarge(temp) {
+        var response = uploader.upload(temp) {
             params {
                 useFilename = true
-                tags = uploadLargeTags
+                tags = uploadTags
             }
             options {
                 chunkSize = 5243000
@@ -480,14 +461,14 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         var result = response.resultOrThrow()
 
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
 
         assertEquals("raw", result.resourceType)
         Assert.assertTrue(result.publicId?.startsWith("cldupload") ?: false)
 
-        response = uploader.uploadLarge(FileInputStream(temp)) {
+        response = uploader.upload(FileInputStream(temp)) {
             params {
-                tags = uploadLargeTags
+                tags = uploadTags
             }
             options {
                 chunkSize = 5243000
@@ -495,14 +476,14 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }
 
         result = response.resultOrThrow()
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
         assertEquals("image", result.resourceType)
         assertEquals(1400, result.width)
         assertEquals(1400, result.height)
 
-        response = uploader.uploadLarge(temp) {
+        response = uploader.upload(temp) {
             params {
-                tags = uploadLargeTags
+                tags = uploadTags
             }
             options {
                 chunkSize = 5880138
@@ -511,16 +492,16 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         result = response.resultOrThrow()
 
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
 
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
         assertEquals("image", result.resourceType)
         assertEquals(1400, result.width)
         assertEquals(1400, result.height)
 
-        response = uploader.uploadLarge(temp) {
+        response = uploader.upload(temp) {
             params {
-                tags = uploadLargeTags
+                tags = uploadTags
             }
             options {
                 chunkSize = 5880138
@@ -529,9 +510,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         result = response.resultOrThrow()
 
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
 
-        assertEquals(uploadLargeTags, result.tags)
+        assertEquals(uploadTags, result.tags)
         assertEquals("image", result.resourceType)
         assertEquals(1400, result.width)
         assertEquals(1400, result.height)
