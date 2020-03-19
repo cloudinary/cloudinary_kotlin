@@ -7,14 +7,12 @@ import com.cloudinary.upload.request.params.UploadParams
 import com.cloudinary.upload.response.UploadResult
 import com.cloudinary.util.cldIsRemoteUrl
 import com.cloudinary.util.toMap
-import com.cloudinary.util.toUploadResult
 import java.io.File
 import java.io.InputStream
 import java.net.URL
 
 
 class UploadRequest internal constructor(
-    private val uploadLarge: Boolean,
     internal val params: UploadParams,
     uploader: Uploader,
     options: UploaderOptions,
@@ -23,43 +21,37 @@ class UploadRequest internal constructor(
     progressCallback: ProgressCallback?
 ) : AbstractUploaderRequest<UploadResult>(uploader, options, configuration, payload, progressCallback) {
     override fun buildParams() = params.toMap()
-    override fun execute() =
-        if (uploadLarge) uploader.doUploadLarge(this) else uploader.callApi(this, "upload", ::toUploadResult)
+    override fun execute() = uploader.doUpload(this)
 
     class Builder private constructor(
         private val payload: Payload<*>,
-        uploader: Uploader,
-        private val uploadLarge: Boolean
+        uploader: Uploader
     ) :
         UploaderRequestsBuilder<UploadRequest>(uploader) {
-        constructor(file: File, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        constructor(file: File, uploader: Uploader) : this(
             FilePayload(file),
-            uploader,
-            uploadLarge
+            uploader
         )
 
         constructor(
             file: String,
-            uploader: Uploader,
-            uploadLarge: Boolean = false
-        ) : this(if (file.cldIsRemoteUrl()) UrlPayload(file) else FilePayload(File(file)), uploader, uploadLarge)
+            uploader: Uploader
+        ) : this(if (file.cldIsRemoteUrl()) UrlPayload(file) else FilePayload(File(file)), uploader)
 
-        constructor(url: URL, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        constructor(url: URL, uploader: Uploader) : this(
             UrlPayload(url.toString()),
-            uploader,
-            uploadLarge
+            uploader
         )
 
-        internal constructor(stream: InputStream, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        internal constructor(stream: InputStream, uploader: Uploader) : this(
             StreamPayload(stream),
-            uploader,
-            uploadLarge
+            uploader
         )
 
-        internal constructor(byteArray: ByteArray, uploader: Uploader, uploadLarge: Boolean = false) : this(
+        internal constructor(byteArray: ByteArray, uploader: Uploader) : this(
             BytesPayload(
                 byteArray
-            ), uploader, uploadLarge
+            ), uploader
         )
 
         var params = UploadParams()
@@ -72,7 +64,6 @@ class UploadRequest internal constructor(
         }
 
         override fun build() = UploadRequest(
-            uploadLarge,
             params,
             uploader,
             options,

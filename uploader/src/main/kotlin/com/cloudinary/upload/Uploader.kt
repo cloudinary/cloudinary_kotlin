@@ -13,6 +13,7 @@ import java.util.*
 
 private const val DEFAULT_PREFIX = "https://api.cloudinary.com"
 private const val API_VERSION = "v1_1"
+private const val MIN_CHUNK_SIZE = 5000000
 
 private typealias StringToResult<T> = (String) -> T?
 
@@ -36,18 +37,6 @@ class Uploader internal constructor(
 
     fun upload(file: ByteArray, request: (UploadRequest.Builder.() -> Unit)? = null) =
         buildAndExecute(UploadRequest.Builder(file, this), request)
-
-    fun uploadLarge(file: File, request: (UploadRequest.Builder.() -> Unit)? = null) =
-        buildAndExecute(UploadRequest.Builder(file, this, true), request)
-
-    fun uploadLarge(file: URL, request: (UploadRequest.Builder.() -> Unit)? = null) =
-        buildAndExecute(UploadRequest.Builder(file, this, true), request)
-
-    fun uploadLarge(file: String, request: (UploadRequest.Builder.() -> Unit)? = null) =
-        buildAndExecute(UploadRequest.Builder(file, this, true), request)
-
-    fun uploadLarge(file: InputStream, request: (UploadRequest.Builder.() -> Unit)? = null) =
-        buildAndExecute(UploadRequest.Builder(file, this, true), request)
 
     fun destroy(
         publicId: String,
@@ -211,14 +200,20 @@ class Uploader internal constructor(
         return processResponse(post, adapter)
     }
 
-    internal fun doUploadLarge(
+    internal fun doUpload(
         request: UploadRequest,
         uniqueUploadId: String = randomPublicId()
     ): UploaderResponse<UploadResult> {
         // payload can't be null in upload request:
         val payload = request.payload!!
         val value = payload.value
-        if (value is String && value.cldIsRemoteUrl()) return callApi(request, "upload", ::toUploadResult)
+
+        // if it's a remote url or the total size is known and smaller than the minimum chunk size we fallback to
+        // a regular upload api (no need for chunks)
+        if ((value is String && value.cldIsRemoteUrl()) || (payload.length in 1 until request.options.chunkSize)) {
+
+            return callApi(request, "upload", ::toUploadResult)
+        }
 
         payload.asInputStream().use {
             return uploadLargeParts(
