@@ -1,8 +1,8 @@
 package com.cloudinary.upload.request
 
 import com.cloudinary.config.Configuration
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
-import com.cloudinary.transformation.delivery.Delivery.Companion.format
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.response.GenerateSpriteResult
 import com.cloudinary.util.buildGenerateSpriteParams
@@ -13,7 +13,7 @@ class GenerateSpriteRequest(
     private val transformation: Transformation?,
     private val notificationUrl: String?,
     private val async: Boolean,
-    private val format: String?,
+    private val format: Format?,
     uploader: Uploader,
     options: UploaderOptions,
     configuration: Configuration
@@ -23,7 +23,7 @@ class GenerateSpriteRequest(
             if (format == null)
                 transformation
             else
-                (transformation ?: Transformation()).delivery(format(format))
+                (transformation ?: Transformation()).format(format)
 
         return buildGenerateSpriteParams(
             tag,
@@ -40,7 +40,7 @@ class GenerateSpriteRequest(
         var transformation: Transformation? = null
         var notificationUrl: String? = null
         var async: Boolean = false
-        var format: String? = null
+        var format: Format? = null
 
         fun transformation(transform: Transformation.Builder.() -> Unit) {
             val builder = Transformation.Builder()

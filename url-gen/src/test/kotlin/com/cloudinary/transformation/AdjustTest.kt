@@ -14,17 +14,17 @@ class AdjustTest {
     }
 
     @Test
-    fun testAutoBrightness() {
-        cldAssert("e_auto_brightness", Adjust.autoBrightness())
-        cldAssert("e_auto_brightness:70", Adjust.autoBrightness(70))
-        cldAssert("e_auto_brightness:70", Adjust.autoBrightness { level(70) })
-    }
-
-    @Test
     fun testBrightness() {
         cldAssert("e_brightness", Adjust.brightness())
         cldAssert("e_brightness:70", Adjust.brightness(70))
         cldAssert("e_brightness:70", Adjust.brightness { level(70) })
+    }
+
+    @Test
+    fun testAutoBrightness() {
+        cldAssert("e_auto_brightness", Adjust.autoBrightness())
+        cldAssert("e_auto_brightness:70", Adjust.autoBrightness(70))
+        cldAssert("e_auto_brightness:70", Adjust.autoBrightness { level(70) })
     }
 
     @Test
@@ -133,11 +133,6 @@ class AdjustTest {
     }
 
     @Test
-    fun viesusCorrect() {
-        cldAssert("e_viesus_correct", Adjust.viesusCorrect())
-    }
-
-    @Test
     fun sharpen() {
         cldAssert("e_sharpen", Adjust.sharpen())
         cldAssert("e_sharpen:400", Adjust.sharpen(400))
@@ -185,5 +180,10 @@ class AdjustTest {
     @Test
     fun opacity() {
         cldAssert("o_30", Adjust.opacity(30))
+    }
+
+    @Test
+    fun viesusCorrect() {
+        cldAssert("e_viesus_correct", Adjust.viesusCorrect())
     }
 }

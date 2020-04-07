@@ -4,8 +4,19 @@ import com.cloudinary.transformation.ColorValue
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
 import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.effect.ImproveMode
 import com.cloudinary.util.cldRanged
+
+class Brightness private constructor(level: Any? = null) :
+    Adjust("brightness", level?.cldRanged(-99, 100)) {
+    class Builder : TransformationComponentBuilder {
+        private var level: Any? = null
+
+        fun level(level: Int) = apply { this.level = level }
+        override fun build() = Brightness(level)
+    }
+}
 
 class AutoBrightness private constructor(level: Any? = null) :
     Adjust("auto_brightness", level?.cldRanged(0, 100)) {
@@ -14,17 +25,6 @@ class AutoBrightness private constructor(level: Any? = null) :
 
         fun level(level: Int) = apply { this.level = level }
         override fun build() = AutoBrightness(level)
-    }
-}
-
-class Brightness private constructor(level: Any? = null) :
-    Adjust("brightness", level?.cldRanged(-99, 100)) {
-    class Builder : TransformationComponentBuilder {
-        private var level: Any? = null
-
-
-        fun level(level: Int) = apply { this.level = level }
-        override fun build() = Brightness(level)
     }
 }
 
@@ -166,8 +166,6 @@ class Improve private constructor(mode: ImproveMode? = null, blend: Int? = null)
 }
 
 
-class ViesusCorrect : Adjust("viesus_correct")
-
 class Sharpen private constructor(strength: Any? = null) :
     Adjust("sharpen", strength?.cldRanged(1, 2000)) {
     class Builder : TransformationComponentBuilder {
@@ -234,3 +232,5 @@ class Opacity private constructor(level: Any) : Adjust(
         override fun build() = Opacity(level)
     }
 }
+
+class ViesusCorrect : Adjust("viesus_correct")

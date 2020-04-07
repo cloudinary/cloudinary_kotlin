@@ -67,8 +67,8 @@ class Fit internal constructor(params: Map<String, Param>) : Resize(params) {
     }
 }
 
-class LimitFit internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<LimitFit>() {
+class Limit internal constructor(params: Map<String, Param>) : Resize(params) {
+    class Builder : BaseBuilder<Limit>() {
 
         fun width(width: Int) = apply { this.width = width }
         fun height(height: Int) = apply { this.height = height }
@@ -80,7 +80,7 @@ class LimitFit internal constructor(params: Map<String, Param>) : Resize(params)
         fun dpr(dpr: Any) = apply { this.dpr = dpr }
         fun mode(mode: ResizeMode) = apply { this.mode = mode }
 
-        override fun build() = LimitFit(buildParameters("limit"))
+        override fun build() = Limit(buildParameters("limit"))
     }
 }
 

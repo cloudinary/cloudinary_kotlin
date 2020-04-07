@@ -3,8 +3,8 @@ package com.cloudinary.transformation.layer
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldJoin
 
-class MediaLayerSource(publicId: String, resourceType: String? = null, type: String? = null, format: String? = null) :
-    LayerSource(
+class MediaLayer(publicId: String, resourceType: String? = null, type: String? = null, format: String? = null) :
+    Layer(
         listOfNotNull(
             if (resourceType != "image") resourceType else null,
             if (type != "upload") type else null,
@@ -20,7 +20,7 @@ class MediaLayerSource(publicId: String, resourceType: String? = null, type: Str
         fun type(type: String) = apply { this.type = type }
         fun format(format: String) = apply { this.format = format }
 
-        fun build() = MediaLayerSource(publicId, resourceType, type, format)
+        fun build() = MediaLayer(publicId, resourceType, type, format)
     }
 }
 

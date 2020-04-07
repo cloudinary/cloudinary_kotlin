@@ -3,6 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.effect.*
 import org.junit.Test
+import com.cloudinary.testParam
 
 class EffectTest {
     @Test
@@ -19,7 +20,7 @@ class EffectTest {
 
     @Test
     fun testGrayScale() {
-        cldAssert("e_grayscale", Effect.grayScale())
+        cldAssert("e_grayscale", Effect.grayscale())
     }
 
     @Test
@@ -39,17 +40,17 @@ class EffectTest {
 
     @Test
     fun testAssistColorBlind() {
-        cldAssert("e_assist_colorblind", Effect.assistColorBlind())
-        cldAssert("e_assist_colorblind:8", Effect.assistColorBlind { strength(8) })
+        cldAssert("e_assist_colorblind", Effect.assistColorblind())
+        cldAssert("e_assist_colorblind:8", Effect.assistColorblind { strength(8) })
         cldAssert(
-            "e_assist_colorblind:xray", Effect.assistColorBlind { type(AssistColorBlindType.XRay()) })
+            "e_assist_colorblind:xray", Effect.assistColorblind { type(AssistColorBlindType.XRay()) })
 
         cldAssert(
             "e_assist_colorblind:xray",
-            Effect.assistColorBlind { type(AssistColorBlindType.XRay()).strength("\$var") })
+            Effect.assistColorblind { type(AssistColorBlindType.XRay()).strength("\$var") })
         cldAssert(
             "e_assist_colorblind:\$var1",
-            Effect.assistColorBlind { type(AssistColorBlindType.Stripes("\$var1")).strength("\$var2") })
+            Effect.assistColorblind { type(AssistColorBlindType.Stripes("\$var1")).strength("\$var2") })
     }
 
     @Test
@@ -110,12 +111,12 @@ class EffectTest {
 
     @Test
     fun testRedEye() {
-        cldAssert("e_redeye", Effect.redEye())
+        cldAssert("e_redeye", Effect.redeye())
     }
 
     @Test
     fun testAdvRedEye() {
-        cldAssert("e_adv_redeye", Effect.advRedEye())
+        cldAssert("e_adv_redeye", Effect.advRedeye())
     }
 
     @Test
@@ -148,7 +149,7 @@ class EffectTest {
     fun testBlur() {
         cldAssert("e_blur", Effect.blur())
         cldAssert("e_blur:300", Effect.blur(300))
-        cldAssert("e_blur:300", Effect.blur { strength(300) })
+        cldAssert("e_blur:300", Effect.blur { level(300) })
     }
 
     @Test
@@ -169,5 +170,19 @@ class EffectTest {
         cldAssert(
             "e_ordered_dither:0",
             Effect.orderedDither { filter(DitherFilter.THRESHOLD_1X1_NON_DITHER) })
+    }
+
+    @Test
+    fun testShadow() {
+        cldAssert("e_shadow,test_param",Shadow.Builder().build().add(testParam))
+        cldAssert("e_shadow", Effect.shadow())
+        cldAssert("e_shadow:50", Effect.shadow { strength(50) })
+        cldAssert(
+            "co_green,e_shadow:50",
+            Effect.shadow { strength(50).color(color { named("green") }) })
+        cldAssert(
+            "co_green,e_shadow:50,x_20,y_-20",
+            Effect.shadow { strength(50).color(color { named("green") }).x(20).y(-20) }
+        )
     }
 }

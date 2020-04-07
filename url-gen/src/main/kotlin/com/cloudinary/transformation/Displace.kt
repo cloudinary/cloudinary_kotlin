@@ -3,10 +3,10 @@ package com.cloudinary.transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 
-class Displace private constructor(components: LayerComponents) : Layer(components) {
+class Displace private constructor(components: LayerComponents) : LayerContainer(components) {
 
     companion object {
-        fun displace(source: LayerSource, transformation: Transformation? = null, position: Position? = null) =
+        fun displace(source: Layer, transformation: Transformation? = null, position: Position? = null) =
             Displace(
                 buildLayerComponent(
                     source, transformation, position, paramName = "layer", paramKey = "l", extraParams = Effect(
@@ -17,11 +17,11 @@ class Displace private constructor(components: LayerComponents) : Layer(componen
     }
 
     class Builder private constructor(
-        private val source: LayerSource,
+        private val source: Layer,
         private var transformation: Transformation? = null,
         private var position: Position? = null
     ) : TransformationComponentBuilder {
-        constructor(layerSource: LayerSource) : this(layerSource, null, null)
+        constructor(layer: Layer) : this(layer, null, null)
 
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun position(position: (Position.Builder.() -> Unit)? = null): Builder {

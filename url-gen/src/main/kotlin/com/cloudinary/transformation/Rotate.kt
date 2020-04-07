@@ -4,6 +4,10 @@ class Rotate private constructor(params: Map<String, Param>) :
     ParamsAction<Rotate>(params) {
     override fun create(params: Map<String, Param>) = Rotate(params)
 
+    companion object {
+        fun angle(degrees: Int) = Builder().angle(degrees).build()
+    }
+
     enum class Mode(private val value: String) {
         AUTO_RIGHT("auto_right"),
         AUTO_LEFT("auto_left"),

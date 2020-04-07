@@ -9,13 +9,6 @@ class ResizeTest {
 
     @Test
     fun testScale() {
-
-        val resize: Resize = Resize.scale {
-            width(100)
-            dpr(2.5f)
-        }
-
-        Transformation().resize(resize)
         cldAssert("c_scale,test_param,w_100", Resize.scale { width(100) }.add(testParam))
         cldAssert("c_scale,w_100", Resize.scale { width(100) })
         cldAssert("c_scale,w_1.0", Resize.scale { width(1f) })
@@ -44,16 +37,16 @@ class ResizeTest {
     }
 
     @Test
-    fun testLimitFit() {
-        cldAssert("c_limit,w_100", Resize.limitFit { width(100) })
-        cldAssert("c_limit,w_1.0", Resize.limitFit { width(1f) })
-        cldAssert("c_limit,h_100,w_100", Resize.limitFit { width(100).height(100) })
-        cldAssert("c_limit,h_100,w_100", Resize.limitFit { width(100).height(100) })
-        cldAssert("c_limit,h_1.1,w_0.5", Resize.limitFit { width(0.5f).height(1.1f) })
-        cldAssert("ar_1.5,c_limit,w_100", Resize.limitFit { width(100).aspectRatio(1.5f) })
+    fun testLimit() {
+        cldAssert("c_limit,w_100", Resize.limit { width(100) })
+        cldAssert("c_limit,w_1.0", Resize.limit { width(1f) })
+        cldAssert("c_limit,h_100,w_100", Resize.limit { width(100).height(100) })
+        cldAssert("c_limit,h_100,w_100", Resize.limit { width(100).height(100) })
+        cldAssert("c_limit,h_1.1,w_0.5", Resize.limit { width(0.5f).height(1.1f) })
+        cldAssert("ar_1.5,c_limit,w_100", Resize.limit { width(100).aspectRatio(1.5f) })
         cldAssert(
             "ar_1.5,c_limit,dpr_2.0,h_100",
-            Resize.limitFit { height(100).aspectRatio(1.5f).dpr(2f) }
+            Resize.limit { height(100).aspectRatio(1.5f).dpr(2f) }
         )
     }
 

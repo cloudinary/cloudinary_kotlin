@@ -1,9 +1,11 @@
 package com.cloudinary.transformation.adjust
 
+import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.transformation.cldToActionMap
 import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.resize.Resize
 
 open class Adjust private constructor(params: Map<String, Param>) : ParamsAction<Adjust>(params) {
     constructor(params: Collection<Param>) : this(params.cldToActionMap())
@@ -49,18 +51,18 @@ open class Adjust private constructor(params: Map<String, Param>) : ParamsAction
             return builder.build()
         }
 
+        fun brightness(level: Int? = null, brightness: (Brightness.Builder.() -> Unit)? = null): Brightness {
+            val builder = Brightness.Builder()
+            level?.let { builder.level(it) }
+            brightness?.let { builder.it() }
+            return builder.build()
+        }
+
         fun autoBrightness(level: Int? = null, autoBrightness: (AutoBrightness.Builder.() -> Unit)? = null):
                 AutoBrightness {
             val builder = AutoBrightness.Builder()
             level?.let { builder.level(it) }
             autoBrightness?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun brightness(level: Int? = null, brightness: (Brightness.Builder.() -> Unit)? = null): Brightness {
-            val builder = Brightness.Builder()
-            level?.let { builder.level(it) }
-            brightness?.let { builder.it() }
             return builder.build()
         }
 
@@ -80,8 +82,7 @@ open class Adjust private constructor(params: Map<String, Param>) : ParamsAction
             return builder.build()
         }
 
-        fun viesusCorrect(): ViesusCorrect =
-            ViesusCorrect()
+        fun viesusCorrect(): ViesusCorrect = ViesusCorrect()
 
         fun brightnessHSB(level: Int? = null, brightnessHSB: (BrightnessHSB.Builder.() -> Unit)? = null):
                 BrightnessHSB {

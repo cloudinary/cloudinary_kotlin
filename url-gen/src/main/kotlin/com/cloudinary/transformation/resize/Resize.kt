@@ -29,95 +29,136 @@ open class Resize protected constructor(params: Map<String, Param>) : ParamsActi
         Resize(params)
 
     companion object {
-        fun fillPad(fillPad: (FillPad.Builder.() -> Unit)? = null): FillPad {
+        fun fillPad(width: Any? = null, height: Any? = null, fillPad: (FillPad.Builder.() -> Unit)? = null): FillPad {
             val builder = FillPad.Builder()
             fillPad?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun limitFill(limitFill: (LimitFill.Builder.() -> Unit)? = null): LimitFill {
+        fun limitFill(
+            width: Any? = null,
+            height: Any? = null,
+            limitFill: (LimitFill.Builder.() -> Unit)? = null
+        ): LimitFill {
             val builder = LimitFill.Builder()
             limitFill?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun fill(fill: (Fill.Builder.() -> Unit)? = null): Fill {
+        fun fill(width: Any? = null, height: Any? = null, fill: (Fill.Builder.() -> Unit)? = null): Fill {
             val builder = Fill.Builder()
             fill?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun minimumPad(minimumPad: (MinimumPad.Builder.() -> Unit)? = null): MinimumPad {
+        fun minimumPad(
+            width: Any? = null,
+            height: Any? = null,
+            minimumPad: (MinimumPad.Builder.() -> Unit)? = null
+        ): MinimumPad {
             val builder = MinimumPad.Builder()
             minimumPad?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun limitPad(limitPad: (LimitPad.Builder.() -> Unit)? = null): LimitPad {
+        fun limitPad(
+            width: Any? = null,
+            height: Any? = null,
+            limitPad: (LimitPad.Builder.() -> Unit)? = null
+        ): LimitPad {
             val builder = LimitPad.Builder()
             limitPad?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun minimumFit(minimumFit: (MinimumFit.Builder.() -> Unit)? = null): MinimumFit {
+        fun minimumFit(
+            width: Any? = null,
+            height: Any? = null,
+            minimumFit: (MinimumFit.Builder.() -> Unit)? = null
+        ): MinimumFit {
             val builder = MinimumFit.Builder()
             minimumFit?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun imaggaCrop(imaggaCrop: (ImaggaCrop.Builder.() -> Unit)? = null): ImaggaCrop {
+        fun imaggaCrop(
+            width: Any? = null,
+            height: Any? = null,
+            imaggaCrop: (ImaggaCrop.Builder.() -> Unit)? = null
+        ): ImaggaCrop {
             val builder = ImaggaCrop.Builder()
             imaggaCrop?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun limitFit(limitFit: (LimitFit.Builder.() -> Unit)? = null): LimitFit {
-            val builder = LimitFit.Builder()
-            limitFit?.let { builder.it() }
+        fun limit(width: Any? = null, height: Any? = null, limit: (Limit.Builder.() -> Unit)? = null): Limit {
+            val builder = Limit.Builder()
+            limit?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun fit(fit: (Fit.Builder.() -> Unit)? = null): Fit {
+        fun fit(width: Any? = null, height: Any? = null, fit: (Fit.Builder.() -> Unit)? = null): Fit {
             val builder = Fit.Builder()
             fit?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun crop(crop: (Crop.Builder.() -> Unit)? = null): Crop {
+        fun crop(width: Any? = null, height: Any? = null, crop: (Crop.Builder.() -> Unit)? = null): Crop {
             val builder = Crop.Builder()
             crop?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun thumb(thumb: (Thumb.Builder.() -> Unit)? = null): Thumb {
+        fun thumb(width: Any? = null, height: Any? = null, thumb: (Thumb.Builder.() -> Unit)? = null): Thumb {
             val builder = Thumb.Builder()
             thumb?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun pad(width: Int, pad: (Pad.Builder.() -> Unit)? = null): Pad {
-            val builder = Pad.Builder()
-            builder.width(width)
-            pad?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun pad(pad: (Pad.Builder.() -> Unit)? = null): Pad {
+        fun pad(width: Any? = null, height: Any? = null, pad: (Pad.Builder.() -> Unit)? = null): Pad {
             val builder = Pad.Builder()
             pad?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun imaggaScale(imaggaScale: (ImaggaScale.Builder.() -> Unit)? = null):
+        fun imaggaScale(width: Any? = null, height: Any? = null, imaggaScale: (ImaggaScale.Builder.() -> Unit)? = null):
                 ImaggaScale {
             val builder = ImaggaScale.Builder()
             imaggaScale?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
 
-        fun scale(scale: (Scale.Builder.() -> Unit)? = null): Scale {
+        fun scale(width: Any? = null, height: Any? = null, scale: (Scale.Builder.() -> Unit)? = null): Scale {
             val builder = Scale.Builder()
             scale?.let { builder.it() }
+            width?.let { builder.width(width) }
+            height?.let { builder.height(height) }
             return builder.build()
         }
     }
