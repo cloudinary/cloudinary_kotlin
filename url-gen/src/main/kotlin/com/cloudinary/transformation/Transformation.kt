@@ -4,7 +4,7 @@ import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
-import com.cloudinary.transformation.layer.LayerSource
+import com.cloudinary.transformation.layer.LayerContainer
 import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.video.Video
 import com.cloudinary.transformation.warp.Warp
@@ -12,6 +12,9 @@ import com.cloudinary.transformation.warp.Warp
 @TransformationDsl
 open class Transformation(private val actions: List<Action> = emptyList()) {
     constructor(action: Action) : this(listOf(action))
+
+    // TODO REMOVE THIS!!!
+    fun aspectRatio(aspectRatio: Any) = add(GenericAction(aspectRatio.cldAsAspectRatio()))
 
     override fun toString() = actions.joinToString("/")
 
@@ -54,14 +57,14 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
      * @param cutter The cutter action to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun cutter(source: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
+    fun cutter(source: Layer, cutter: (Cutter.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutter.Builder(source), cutter)
 
     // TODO doc
     fun cutout(cutout: Cutout) = add(cutout)
 
     // TODO doc
-    fun cutout(source: LayerSource, cutout: (Cutout.Builder.() -> Unit)? = null) =
+    fun cutout(source: Layer, cutout: (Cutout.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutout.Builder(source), cutout)
 
     /**
@@ -82,7 +85,7 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
      * @param antiRemoval The anti-removal action to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun antiRemoval(source: LayerSource, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
+    fun antiRemoval(source: Layer, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
         addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
 
 
@@ -130,11 +133,8 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
     fun outline(outline: Outline) = add(outline)
     fun outline(outline: (Outline.Builder.() -> Unit)? = null) = addWithBuilder(Outline.Builder(), outline)
 
-    fun shadow(shadow: Shadow) = add(shadow)
-    fun shadow(shadow: (Shadow.Builder.() -> Unit)? = null) = addWithBuilder(Shadow.Builder(), shadow)
-
-    fun cornersRadius(radius: CornerRadius) = add(radius)
-    fun cornersRadius(radius: CornerRadius.Builder.() -> Unit) = addWithBuilder(CornerRadius.Builder(), radius)
+    fun roundCorners(radius: Int) = add(RoundCorners.radius(radius))
+    fun roundCorners(radius: RoundCorners) = add(radius)
 
     fun gradientFade(gradientFade: GradientFade) = add(gradientFade)
     fun gradientFade(gradientFade: (GradientFade.Builder.() -> Unit)? = null) =
@@ -144,12 +144,12 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
     fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
     fun displace(displace: Displace) = add(displace)
-    fun displace(source: LayerSource, displace: (Displace.Builder.() -> Unit)? = null) =
+    fun displace(source: Layer, displace: (Displace.Builder.() -> Unit)? = null) =
         addWithBuilder(Displace.Builder(source), displace)
 
 
     fun styleTransfer(styleTransfer: StyleTransfer) = add(styleTransfer)
-    fun styleTransfer(source: LayerSource, styleTransfer: (StyleTransfer.Builder.() -> Unit)? = null) =
+    fun styleTransfer(source: Layer, styleTransfer: (StyleTransfer.Builder.() -> Unit)? = null) =
         addWithBuilder(StyleTransfer.Builder(source), styleTransfer)
 
 
@@ -172,12 +172,16 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
     fun warp(warp: Warp) = add(warp)
 
     // layer
-    fun layer(layer: Layer) = add(layer)
+    fun overlay(layer: Layer) = add(LayerContainer.Builder(layer).param("overlay", "l").build())
 
-    fun named(name: String) = add(GenericAction(NamedTransformationParam(name)))
+    fun underlay(layer: Layer) = add(LayerContainer.Builder(layer).param("underlay", "u").build())
+
+    fun namedTransformation(name: String) = add(GenericAction(NamedTransformationParam(name)))
 
     // variables
     fun variable(name: String, value: Expression) = add(GenericAction(Param(name, name, value)))
+
+    fun variable(name: String, value: Any) = add(GenericAction(Param(name, name, value)))
 
     // conditions
     fun ifCondition(expression: Expression) = add(GenericAction(Param("if", "if", expression)))
@@ -185,6 +189,16 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
     fun ifElse() = add(GenericAction(Param("if", "if", ParamValue("else"))))
 
     fun endIfCondition() = add(GenericAction(Param("if", "if", ParamValue("end"))))
+
+    fun format(format: Format) = add(format)
+
+    fun quality(quality: Quality) = add(quality)
+
+    fun quality(level: Int) = add(Quality.fixed(level))
+
+    fun dpr(dpr: Dpr) = add(dpr)
+
+    fun dpr(dpr: Number) = add(Dpr.fixed(dpr))
 
     private fun <T : TransformationComponentBuilder> addWithBuilder(
         builder: T,
@@ -200,12 +214,12 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
         fun merge(transformation: Transformation) = apply { components.addAll(transformation.actions) }
 
         fun cutter(cutter: Cutter) = add(cutter)
-        fun cutter(layerSource: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
-            addWithBuilder(Cutter.Builder(layerSource), cutter)
+        fun cutter(layer: Layer, cutter: (Cutter.Builder.() -> Unit)? = null) =
+            addWithBuilder(Cutter.Builder(layer), cutter)
 
         fun cutout(cutout: Cutout) = add(cutout)
-        fun cutout(layerSource: LayerSource, cutout: (Cutout.Builder.() -> Unit)? = null) =
-            addWithBuilder(Cutout.Builder(layerSource), cutout)
+        fun cutout(layer: Layer, cutout: (Cutout.Builder.() -> Unit)? = null) =
+            addWithBuilder(Cutout.Builder(layer), cutout)
 
         fun clip(path: ClippingPath? = null) = add(path ?: clippingPath())
         fun clip(clip: (ClippingPath.Builder.() -> Unit)) = addWithBuilder(ClippingPath.Builder(), clip)
@@ -224,26 +238,22 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
         fun outline(outline: Outline) = add(outline)
         fun outline(outline: (Outline.Builder.() -> Unit)? = null) = addWithBuilder(Outline.Builder(), outline)
 
-        fun shadow(shadow: Shadow) = add(shadow)
-        fun shadow(shadow: (Shadow.Builder.() -> Unit)? = null) = addWithBuilder(Shadow.Builder(), shadow)
-
-        fun cornersRadius(radius: CornerRadius) = add(radius)
-        fun cornersRadius(radius: CornerRadius.Builder.() -> Unit) = addWithBuilder(CornerRadius.Builder(), radius)
+        fun roundCorners(radius: Int) = add(RoundCorners.radius(radius))
+        fun roundCorners(radius: RoundCorners) = add(radius)
 
         fun gradientFade(gradientFade: GradientFade) = add(gradientFade)
         fun gradientFade(gradientFade: (GradientFade.Builder.() -> Unit)? = null) =
             addWithBuilder(GradientFade.Builder(), gradientFade)
 
         fun border(border: Border) = add(border)
-        fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
         fun displace(displace: Displace) = add(displace)
-        fun displace(source: LayerSource, displace: (Displace.Builder.() -> Unit)? = null) =
+        fun displace(source: Layer, displace: (Displace.Builder.() -> Unit)? = null) =
             addWithBuilder(Displace.Builder(source), displace)
 
 
         fun styleTransfer(styleTransfer: StyleTransfer) = add(styleTransfer)
-        fun styleTransfer(source: LayerSource, styleTransfer: (StyleTransfer.Builder.() -> Unit)? = null) =
+        fun styleTransfer(source: Layer, styleTransfer: (StyleTransfer.Builder.() -> Unit)? = null) =
             addWithBuilder(StyleTransfer.Builder(source), styleTransfer)
 
         fun effect(effect: Effect) = add(effect)
@@ -258,17 +268,29 @@ open class Transformation(private val actions: List<Action> = emptyList()) {
 
         fun warp(warp: Warp) = add(warp)
 
-        fun layer(layer: Layer) = add(layer)
+        fun overlay(layer: Layer) = add(LayerContainer.Builder(layer).param("overlay", "l").build())
 
-        fun named(name: String) = add(GenericAction(NamedTransformationParam(name)))
+        fun underlay(layer: Layer) = add(LayerContainer.Builder(layer).param("underlay", "u").build())
+
+        fun namedTransformation(name: String) = add(GenericAction(NamedTransformationParam(name)))
 
         fun variable(name: String, value: Expression) = add(GenericAction(Param(name, name, value)))
+
+        fun variable(name: String, value: String) = add(GenericAction(Param(name, name, value)))
 
         fun ifCondition(expression: Expression) = add(GenericAction(Param("if", "if", expression)))
 
         fun ifElse() = add(GenericAction(Param("if", "if", ParamValue("else"))))
 
         fun endIfCondition() = add(GenericAction(Param("if", "if", ParamValue("end"))))
+
+        fun format(format: Format) = add(format)
+
+        fun quality(quality: Quality) = add(quality)
+
+        fun dpr(dpr: Dpr) = add(dpr)
+
+        fun dpr(dpr: Number) = add(GenericAction(dpr.cldAsDpr()))
 
         private fun <T : TransformationComponentBuilder> addWithBuilder(
             builder: T,

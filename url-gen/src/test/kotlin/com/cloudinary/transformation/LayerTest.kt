@@ -4,15 +4,15 @@ import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Direction.NORTH
 import com.cloudinary.transformation.Gravity.Companion.direction
 import com.cloudinary.transformation.layer.*
-import com.cloudinary.transformation.layer.Layer.Companion.overlay
-import com.cloudinary.transformation.layer.Layer.Companion.underlay
-import com.cloudinary.transformation.layer.LayerSource.Companion.subtitles
+import com.cloudinary.transformation.layer.Layer.Companion.subtitles
+import com.cloudinary.transformation.layer.LayerContainer.Companion.overlay
+import com.cloudinary.transformation.layer.LayerContainer.Companion.underlay
 import com.cloudinary.transformation.layer.Stroke.STROKE
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class LayerTest {
-    private val layer = MediaLayerSource("sample")
+    private val layer = MediaLayer("sample")
     private val t = Transformation().resize(Resize.scale { width(100) })
     private val pos = Position.Builder().gravity(direction(NORTH)).x(25).build()
     private val blendMode = BlendMode.MULTIPLY
@@ -110,7 +110,8 @@ class LayerTest {
         cldAssert(
             "b_red,co_blue,l_subtitles:arial_17_antialias_best:sample_sub_en.srt/fl_layer_apply",
             overlay(subtitles("sample_sub_en.srt") {
-                font("arial", 17)
+                fontFamily("arial")
+                fontSize(17)
                 background { named("red") }
                 textColor { named("blue") }
                 style {
@@ -122,19 +123,29 @@ class LayerTest {
 
     @Test
     fun testTextLayer() {
-        cldAssert("l_text:arial_20:test/fl_layer_apply", overlay(LayerSource.text("test", "arial", 20)))
-        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", overlay(LayerSource.text("t est", "arial", 20)))
+        cldAssert("l_text:arial_20:test/fl_layer_apply", overlay(Layer.text("test") {
+            fontFamily("arial")
+            fontSize(20)
+        }))
+        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", overlay(Layer.text("t est") {
+            fontFamily("arial")
+            fontSize(20)
+        }))
         cldAssert(
             "l_text:arial_20:test\$(var)/fl_layer_apply",
-            overlay(LayerSource.text("test\$(var)", "arial", 20))
+            overlay(Layer.text("test\$(var)") {
+                fontFamily("arial")
+                fontSize(20)
+            })
         )
+
         cldAssert(
             "l_text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12.0_line_spacing_2.0:test/fl_layer_apply",
-            overlay(LayerSource.text(
-                "test",
-                "arial",
-                20
+            overlay(Layer.text(
+                "test"
             ) {
+                fontFamily("arial")
+                fontSize(20)
                 style {
                     fontWeight(FontWeight.BOLD)
                     fontStyle(FontStyle.ITALIC)
@@ -150,20 +161,34 @@ class LayerTest {
             ))
 
 
-        cldAssert("l_text:arial_20:test/fl_layer_apply", overlay(LayerSource.text("test", "arial", 20)))
-        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", overlay(LayerSource.text("t est", "arial", 20)))
+        cldAssert("l_text:arial_20:test/fl_layer_apply", overlay(Layer.text("test") {
+            fontFamily("arial")
+            fontSize(20)
+        }))
+
+        cldAssert("l_text:arial_20:t%20est/fl_layer_apply", overlay(Layer.text("t est") {
+            fontFamily("arial")
+            fontSize(20)
+        }))
+
         cldAssert(
             "l_text:arial_20:test\$(var)/fl_layer_apply",
-            overlay(LayerSource.text("test\$(var)", "arial", 20))
+            overlay(Layer.text("test\$(var)") {
+                fontFamily("arial")
+                fontSize(20)
+            })
         )
+
         cldAssert(
             "l_text:arial_20_bold_italic_antialias_best_hinting_full_underline_left_stroke_letter_spacing_12_line_spacing_2:test/fl_layer_apply",
             overlay(
-                LayerSource.text(
-                    "test",
-                    "arial",
-                    20
+                Layer.text(
+                    "test"
                 ) {
+
+                    fontFamily("arial")
+                    fontSize(20)
+
                     style {
                         fontWeight(FontWeight.BOLD)
                         fontStyle(FontStyle.ITALIC)
@@ -184,42 +209,40 @@ class LayerTest {
     fun testFetchLayer() {
         cldAssert(
             "l_fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png/fl_layer_apply",
-            Transformation().layer(
-                overlay(
-                    LayerSource.fetch("https://res.cloudinary.com/demo/image/upload/sample") { format("png") })
-            )
+            Transformation().overlay(
+                Layer.fetch("https://res.cloudinary.com/demo/image/upload/sample") { format("png") })
         )
+
         cldAssert(
             "l_video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n/fl_layer_apply",
-            Transformation().layer(overlay(LayerSource.fetch("https://res.cloudinary.com/demo/video/upload/dog") {
+            Transformation().overlay(Layer.fetch("https://res.cloudinary.com/demo/video/upload/dog") {
                 resourceType(
                     "video"
                 )
-            }))
+            })
         )
+
 
         cldAssert(
             "l_fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby9pbWFnZS91cGxvYWQvc2FtcGxl.png/fl_layer_apply",
-            Transformation().layer(
-                overlay(
-                    FetchLayerSource(
-                        "https://res.cloudinary.com/demo/image/upload/sample",
-                        format = "png"
-                    )
+            Transformation().overlay(
+                FetchLayer(
+                    "https://res.cloudinary.com/demo/image/upload/sample",
+                    format = "png"
                 )
             )
         )
 
+
         cldAssert(
             "l_video:fetch:aHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZGVtby92aWRlby91cGxvYWQvZG9n/fl_layer_apply",
-            Transformation().layer(
-                overlay(
-                    FetchLayerSource(
+            Transformation()
+                .overlay(
+                    FetchLayer(
                         "https://res.cloudinary.com/demo/video/upload/dog",
                         "video"
                     )
                 )
-            )
         )
     }
 
@@ -227,21 +250,27 @@ class LayerTest {
     fun testMediaLayer() {
         cldAssert(
             "l_video:dog.mp4/fl_layer_apply",
-            Transformation().layer(overlay((LayerSource.media("dog") {
+            Transformation().overlay((Layer.image("dog") {
                 format("mp4").resourceType("video").type("upload")
-            })))
+            }))
         )
 
-        cldAssert("l_sample/fl_layer_apply", overlay(LayerSource.media("sample")))
+        cldAssert("l_sample/fl_layer_apply", overlay(Layer.image("sample")))
         cldAssert(
             "l_sample.png/fl_layer_apply",
-            overlay(LayerSource.media("sample") {
+            overlay(Layer.image("sample") {
                 format("png").resourceType("image").type("upload")
             })
         )
 
-        cldAssert("l_video:dog.mp4/fl_layer_apply", overlay(MediaLayerSource("dog", "video", "upload", "mp4")))
-        cldAssert("l_sample/fl_layer_apply", overlay(MediaLayerSource("sample")))
-        cldAssert("l_sample.png/fl_layer_apply", overlay(MediaLayerSource("sample", "image", "upload", "png")))
+        cldAssert(
+            "l_video:dog.mp4/fl_layer_apply",
+            overlay(MediaLayer("dog", "video", "upload", "mp4"))
+        )
+        cldAssert("l_sample/fl_layer_apply", overlay(MediaLayer("sample")))
+        cldAssert(
+            "l_sample.png/fl_layer_apply",
+            overlay(MediaLayer("sample", "image", "upload", "png"))
+        )
     }
 }

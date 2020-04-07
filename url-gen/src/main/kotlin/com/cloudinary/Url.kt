@@ -2,8 +2,8 @@ package com.cloudinary
 
 
 import com.cloudinary.config.Configuration
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
-import com.cloudinary.transformation.delivery.Delivery.Companion.format
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.URL
@@ -16,8 +16,6 @@ private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
 private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_RESOURCE_TYPE = "image"
-private const val DEFAULT_TYPE = "upload"
-
 
 data class Url(
     private val config: Configuration,
@@ -25,7 +23,7 @@ data class Url(
     private val publicId: String? = null,
     val type: String? = null,
     val resourceType: String = DEFAULT_RESOURCE_TYPE,
-    private val format: String? = null,
+    private val format: Format? = null,
     val version: String? = null,
     val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
@@ -53,8 +51,8 @@ data class Url(
             return mutableSource
         }
 
-        if (type == "fetch" && !mutableFormat.isNullOrBlank()) {
-            mutableTransformation = mutableTransformation.delivery(format(mutableFormat))
+        if (type == "fetch" && mutableFormat != null) {
+            mutableTransformation = mutableTransformation.format(mutableFormat)
             mutableFormat = null
         }
 
@@ -122,7 +120,7 @@ data class Url(
 
 private fun finalizeSource(
     source: String,
-    format: String?,
+    format: Format?,
     urlSuffix: String?
 ): FinalizedSource {
     var mutableSource = source.cldMergeSlashedInUrl()
@@ -141,7 +139,7 @@ private fun finalizeSource(
             require(!(urlSuffix.contains(".") || urlSuffix.contains("/"))) { "url_suffix should not include . or /" }
             mutableSource = "$mutableSource/$urlSuffix"
         }
-        if (!format.isNullOrBlank()) {
+        if (format != null) {
             mutableSource = "$mutableSource.$format"
             sourceToSign = "$sourceToSign.$format"
         }

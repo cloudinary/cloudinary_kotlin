@@ -1,13 +1,13 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.layer.MediaLayerSource
+import com.cloudinary.transformation.layer.MediaLayer
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class AntiRemovalTest {
-    private val layer = MediaLayerSource("sample")
+    private val layer = MediaLayer("sample")
     private val t = Transformation().resize(Resize.scale { width(100) })
     private val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(25).build()
 

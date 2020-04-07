@@ -1,12 +1,18 @@
 package com.cloudinary.transformation
 
-class CornerRadius private constructor(params: Map<String, Param>) :
-    ParamsAction<CornerRadius>(params) {
+class RoundCorners private constructor(params: Map<String, Param>) :
+    ParamsAction<RoundCorners>(params) {
 
     constructor(values: List<Any>) : this(Param("radius", "r", ParamValue(values)).let { mapOf(Pair(it.key, it)) })
 
-    override fun create(params: Map<String, Param>) = CornerRadius(params)
+    override fun create(params: Map<String, Param>) = RoundCorners(params)
 
+    companion object {
+        fun radius(pixels: Int) = RoundCorners(listOf(pixels))
+        fun max() = RoundCorners(listOf("max"))
+    }
+
+    // TODO - is this even really needed now?
     class Builder : TransformationComponentBuilder {
         private var corners = mutableListOf<Any>()
 
@@ -23,7 +29,7 @@ class CornerRadius private constructor(params: Map<String, Param>) :
         }
 
 
-        override fun build() = CornerRadius(corners)
+        override fun build() = RoundCorners(corners)
     }
 }
 

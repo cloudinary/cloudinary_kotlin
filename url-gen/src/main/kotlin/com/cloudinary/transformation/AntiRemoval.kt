@@ -5,9 +5,9 @@ import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 import com.cloudinary.util.cldRanged
 
-class AntiRemoval private constructor(components: LayerComponents) : Layer(components) {
+class AntiRemoval private constructor(components: LayerComponents) : LayerContainer(components) {
 
-    class Builder(private var source: LayerSource) : TransformationComponentBuilder {
+    class Builder(private var source: Layer) : TransformationComponentBuilder {
         private var level: Any? = null
         private var transformation: Transformation? = null
         private var position: Position? = null

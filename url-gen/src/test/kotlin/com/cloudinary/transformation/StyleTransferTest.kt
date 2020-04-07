@@ -2,14 +2,14 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.effect.Sepia
-import com.cloudinary.transformation.layer.LayerSource
+import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.resize.Scale
 import org.junit.Test
 
 class StyleTransferTest {
     @Test
     fun testStyleTransfer() {
-        val lighthouse = LayerSource.media("lighthouse")
+        val lighthouse = Layer.image("lighthouse")
         cldAssert(
             "l_lighthouse/e_style_transfer,fl_layer_apply",
             Transformation().styleTransfer(lighthouse)

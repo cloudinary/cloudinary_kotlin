@@ -1,7 +1,9 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.*
-import com.cloudinary.util.cldRanged
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.cldAsParamValueContent
 import com.cloudinary.util.cldRealPositive
 
 
@@ -84,69 +86,6 @@ class AudioFrequency private constructor(frequency: AudioFrequencyType) :
     ) {
     class Builder(private val frequency: AudioFrequencyType) : TransformationComponentBuilder {
         override fun build() = AudioFrequency(frequency)
-    }
-}
-
-class Format private constructor(format: String) :
-    Delivery(
-        Param(
-            "fetch_format",
-            "f",
-            ParamValue(format)
-        )
-    ) {
-
-    class Builder(private val format: String) : TransformationComponentBuilder {
-        override fun build() = Format(format)
-    }
-}
-
-class Quality private constructor(value: ParamValue, flag: FlagKey? = null) :
-    Delivery(
-        listOfNotNull(
-            Param("quality", "q", value),
-            flag?.asParam()
-        ).cldToActionMap()
-    ) {
-
-    class Builder internal constructor(private val level: Any? = null, private val type: QualityType? = null) :
-        TransformationComponentBuilder {
-        constructor(level: Int) : this(level, null)
-        constructor(type: QualityType) : this(null, type)
-
-        private var maxQuantization: Any? = null // Int
-        private var chromaSubSampling: ChromaSubSampling? = null
-        private var preset: AutoQuality? = null
-        private var anyFormat: Boolean? = null
-
-//        fun level(level: Int) = apply { this.level = level.cldRanged(1, 100) }
-//        fun setLevel(level: Any) = apply { this.level = level.cldRanged(1, 100) }
-
-        fun maxQuantization(maxQuantization: Any) =
-            apply { this.maxQuantization = maxQuantization.cldRanged(1, 100) }
-
-        fun maxQuantization(maxQuantization: Int) =
-            apply { this.maxQuantization = maxQuantization.cldRanged(1, 100) }
-
-
-        fun chromaSubSampling(chromaSubSampling: ChromaSubSampling) =
-            apply { this.chromaSubSampling = chromaSubSampling }
-
-        fun preset(preset: AutoQuality) = apply { this.preset = preset }
-
-        fun anyFormat(anyFormat: Boolean) = apply { this.anyFormat = anyFormat }
-
-        override fun build() = Quality(
-            ParamValue(
-                listOfNotNull(
-                    type,
-                    level,
-                    maxQuantization?.let { NamedValue("qmax", maxQuantization!!, "_") },
-                    chromaSubSampling,
-                    preset
-                )
-            ), if (anyFormat == true) FlagKey.AnyFormat() else null
-        )
     }
 }
 

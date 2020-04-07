@@ -47,61 +47,57 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
     override fun create(params: Map<String, Param>) = Position(params)
 }
 
-abstract class LayerSource internal constructor(val values: List<Any>, val params: List<Param> = emptyList()) {
+abstract class Layer internal constructor(val values: List<Any>, val params: List<Param> = emptyList()) {
     companion object {
-        fun fetch(remoteUrl: String, fetch: (FetchLayerSource.Builder.() -> Unit)? = null): FetchLayerSource {
-            val builder = FetchLayerSource.Builder(remoteUrl)
+        fun fetch(remoteUrl: String, fetch: (FetchLayer.Builder.() -> Unit)? = null): FetchLayer {
+            val builder = FetchLayer.Builder(remoteUrl)
             fetch?.let { builder.fetch() }
             return builder.build()
         }
 
-        fun media(publicId: String, media: (MediaLayerSource.Builder.() -> Unit)? = null): MediaLayerSource {
-            val builder = MediaLayerSource.Builder(publicId)
+        fun image(publicId: String, media: (MediaLayer.Builder.() -> Unit)? = null): MediaLayer {
+            val builder = MediaLayer.Builder(publicId)
             media?.let { builder.media() }
             return builder.build()
         }
 
-        fun text(
-            text: String,
-            fontFamily: String,
-            fontSize: Int,
-            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
-        ) =
-            text(text, fontFamily, fontSize as Any, textLayer)
+        fun video(publicId: String, media: (MediaLayer.Builder.() -> Unit)? = null): MediaLayer {
+            val builder = MediaLayer.Builder(publicId)
+            media?.let { builder.media() }
+            return builder.resourceType("video").build()
+        }
 
         fun text(
             text: String,
-            fontFamily: String,
-            fontSize: Any,
-            textLayer: (TextLayerSource.Builder.() -> Unit)? = null
-        ): BaseTextLayerSource {
-            val builder = TextLayerSource.Builder(text, fontFamily, fontSize)
+            textLayer: (TextLayer.Builder.() -> Unit)? = null
+        ): BaseTextLayer {
+            val builder = TextLayer.Builder(text)
             textLayer?.let { builder.it() }
             return builder.build()
         }
 
         fun subtitles(
             publicId: String,
-            subtitles: (SubtitlesLayerSource.Builder.() -> Unit)? = null
-        ): BaseTextLayerSource {
-            val builder = SubtitlesLayerSource.Builder(publicId)
+            subtitles: (SubtitlesLayer.Builder.() -> Unit)? = null
+        ): BaseTextLayer {
+            val builder = SubtitlesLayer.Builder(publicId)
             subtitles?.let { builder.it() }
             return builder.build()
         }
     }
 }
 
-open class Layer internal constructor(private val components: LayerComponents) :
+open class LayerContainer internal constructor(private val components: LayerComponents) :
     Action {
 
     companion object {
-        fun overlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
+        fun overlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerContainer {
             val builder = Builder(source).param("overlay", "l")
             options?.let { builder.options() }
             return builder.build()
         }
 
-        fun underlay(source: LayerSource, options: (Builder.() -> Unit)? = null): Layer {
+        fun underlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerContainer {
             val builder = Builder(source).param("underlay", "u")
             options?.let { builder.options() }
             return builder.build()
@@ -114,7 +110,7 @@ open class Layer internal constructor(private val components: LayerComponents) :
         components.position
     ).joinToString("/")
 
-    class Builder(private val source: LayerSource) : TransformationComponentBuilder {
+    class Builder(private val source: Layer) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
         private var position: Position? = null
         private var blendMode: BlendMode? = null
@@ -150,7 +146,7 @@ open class Layer internal constructor(private val components: LayerComponents) :
         internal fun flagKey(flag: FlagKey) = apply { this.flag = flag }
 
         override fun build() =
-            Layer(
+            LayerContainer(
                 buildLayerComponent(
                     source,
                     transformation,
@@ -165,7 +161,7 @@ open class Layer internal constructor(private val components: LayerComponents) :
 }
 
 internal fun buildLayerComponent(
-    source: LayerSource,
+    source: Layer,
     transformation: Transformation? = null,
     position: Position? = null,
     blendMode: BlendMode? = null,

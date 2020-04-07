@@ -37,49 +37,12 @@ open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params)
 
         fun audioFrequency(frequency: AudioFrequencyType) = AudioFrequency.Builder(frequency).build()
 
-        fun format(format: String) = Format.Builder(format).build()
-
-        fun quality(type: QualityType, quality: (Quality.Builder.() -> Unit)? = null): Quality {
-            val builder = Quality.Builder(type)
-            quality?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun quality(level: Int, quality: (Quality.Builder.() -> Unit)? = null): Quality {
-            val builder = Quality.Builder(level)
-            quality?.let { builder.it() }
-            return builder.build()
-        }
-
         fun defaultImage(publicId: String) = DefaultImage.Builder(publicId).build()
 
         fun colorSpace(colorSpace: ColorSpaceType) = ColorSpace.Builder(colorSpace).build()
 
         fun keyframeInterval(seconds: Float) = KeyframeInterval.Builder(seconds).build()
     }
-}
-
-enum class QualityType(private val value: String) {
-    AUTO("auto"),
-    JPEG_MINI("jpegmini");
-
-    override fun toString() = value
-}
-
-enum class ChromaSubSampling(private val value: String) {
-    C_444("444"),
-    C_420("420");
-
-    override fun toString() = value
-}
-
-enum class AutoQuality(private val value: String) {
-    BEST("best"),
-    GOOD("good"),
-    ECO("eco"),
-    LOW("low");
-
-    override fun toString() = value
 }
 
 enum class VideoCodecType(private val value: String) {

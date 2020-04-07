@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.layer.LayerSource
+import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.Position
 import com.cloudinary.transformation.layer.TileMode
 import com.cloudinary.transformation.resize.Resize
@@ -13,7 +13,7 @@ class CutterTest {
     fun testCutter() {
         var expected = "l_hexagon_sample/c_scale,fl_relative,h_1.0,w_1.0/fl_cutter.layer_apply"
 
-        val layer = LayerSource.media("hexagon_sample")
+        val layer = Layer.image("hexagon_sample")
         val scale = Resize.scale { width(1f).height(1f).mode(ResizeMode.RELATIVE) }
         var actualFromBuilder = Cutter.Builder(layer)
             .transformation(

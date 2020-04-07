@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
+
 import com.cloudinary.util.cldToString
 
 open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
@@ -32,6 +33,14 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
             return builder.build()
         }
 
+        fun shadow(strength: Int? = null, shadow: (Shadow.Builder.() -> Unit)? = null): Shadow {
+            val builder = Shadow.Builder()
+            shadow?.let { builder.shadow() }
+            strength?.let { builder.strength(strength) }
+            return builder.build()
+        }
+
+
         fun orderedDither(orderedDither: (OrderedDither.Builder.() -> Unit)? = null):
                 OrderedDither {
             val builder = OrderedDither.Builder()
@@ -55,7 +64,7 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
 
         fun blur(strength: Int? = null, blur: (Blur.Builder.() -> Unit)? = null): Blur {
             val builder = Blur.Builder()
-            strength?.let { builder.strength(it) }
+            strength?.let { builder.level(it) }
             blur?.let { builder.it() }
             return builder.build()
         }
@@ -94,7 +103,7 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
             return builder.build()
         }
 
-        fun redEye(): RedEye = RedEye()
+        fun redeye(): Redeye = Redeye()
 
         fun pixelateRegion(pixelateRegion: (PixelateRegion.Builder.() -> Unit)? = null):
                 PixelateRegion {
@@ -103,12 +112,12 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
             return builder.build()
         }
 
-        fun assistColorBlind(
-            assistColorBlind: (AssistColorBlind.Builder.() -> Unit)? =
+        fun assistColorblind(
+            assistColorblind: (AssistColorblind.Builder.() -> Unit)? =
                 null
-        ): AssistColorBlind {
-            val builder = AssistColorBlind.Builder()
-            assistColorBlind?.let { builder.it() }
+        ): AssistColorblind {
+            val builder = AssistColorblind.Builder()
+            assistColorblind?.let { builder.it() }
             return builder.build()
         }
 
@@ -119,7 +128,7 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
             return builder.build()
         }
 
-        fun grayScale(): GrayScale = GrayScale()
+        fun grayscale(): Grayscale = Grayscale()
 
         fun oilPaint(level: Int? = null, oilPaint: (OilPaint.Builder.() -> Unit)? = null): OilPaint {
             val builder = OilPaint.Builder()
@@ -128,7 +137,7 @@ open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
             return builder.build()
         }
 
-        fun advRedEye(): AdvRedEye = AdvRedEye()
+        fun advRedeye(): AdvRedeye = AdvRedeye()
 
         fun pixelate(squareSize: Int? = null, pixelate: (Pixelate.Builder.() -> Unit)? = null): Pixelate {
             val builder = Pixelate.Builder()

@@ -4,9 +4,9 @@ import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 
-class Cutout private constructor(components: LayerComponents) : Layer(components) {
+class Cutout private constructor(components: LayerComponents) : LayerContainer(components) {
 
-    class Builder(private val source: LayerSource) : TransformationComponentBuilder {
+    class Builder(private val source: Layer) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
         private var position: Position? = null
 

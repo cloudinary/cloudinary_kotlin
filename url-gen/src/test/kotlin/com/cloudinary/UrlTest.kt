@@ -1,6 +1,7 @@
 package com.cloudinary
 
 import com.cloudinary.config.Configuration
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.*
@@ -110,7 +111,7 @@ class UrlTest {
 
     @Test
     fun testFormat() { // should use format from options
-        val result = cloudinary.url(format = "jpg").generate("test")
+        val result = cloudinary.url(format = Format.jpg()).generate("test")
         assertEquals(DEFAULT_UPLOAD_PATH + "test.jpg", result)
     }
 
@@ -181,20 +182,21 @@ class UrlTest {
 
     @Test
     fun testPutFormatAfterUrlSuffix() {
-        val actual = cloudinary.url(urlSuffix = "hello", privateCdn = true, format = "jpg").generate("test")
+        val actual = cloudinary.url(urlSuffix = "hello", privateCdn = true, format = Format.jpg()).generate("test")
         assertEquals("http://test123-res.cloudinary.com/images/test/hello.jpg", actual)
     }
 
     @Test
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
-        var url = cloudinary.url(format = "jpg", signUrl = true).generate("test")!!
+        var url = cloudinary.url(format = Format.jpg(), signUrl = true).generate("test")!!
         var matcher = pattern.matcher(url)
         matcher.find()
         var expectedSignature = url.substring(matcher.start(), matcher.end())
 
         var actual =
-            cloudinary.url(format = "jpg", privateCdn = true, signUrl = true, urlSuffix = "hello").generate("test")
+            cloudinary.url(format = Format.jpg(), privateCdn = true, signUrl = true, urlSuffix = "hello")
+                .generate("test")
 
         assertEquals(
             "http://test123-res.cloudinary.com/images/$expectedSignature/test/hello.jpg",
@@ -202,13 +204,13 @@ class UrlTest {
         )
 
         url = cloudinary.url(
-            format = "jpg",
+            format = Format.jpg(),
             signUrl = true,
             transformation = Transformation().rotate { angle(0) }).generate("test")!!
         matcher = pattern.matcher(url)
         matcher.find()
         expectedSignature = url.substring(matcher.start(), matcher.end())
-        actual = cloudinary.url(format = "jpg", privateCdn = true, signUrl = true, urlSuffix = "hello",
+        actual = cloudinary.url(format = Format.jpg(), privateCdn = true, signUrl = true, urlSuffix = "hello",
             transformation = Transformation().rotate { angle(0) }).generate("test")
         assertEquals(
             "http://test123-res.cloudinary.com/images/$expectedSignature/a_0/test/hello.jpg",
@@ -285,7 +287,7 @@ class UrlTest {
     @Test
     fun testFetchFormat() { // should support format for fetch urls
         val result =
-            cloudinary.url(format = "jpg", type = "fetch").generate("http://cloudinary.com/images/old_logo.png")
+            cloudinary.url(format = Format.jpg(), type = "fetch").generate("http://cloudinary.com/images/old_logo.png")
         assertEquals(
             "http://res.cloudinary.com/test123/image/fetch/f_jpg/http://cloudinary.com/images/old_logo.png",
             result

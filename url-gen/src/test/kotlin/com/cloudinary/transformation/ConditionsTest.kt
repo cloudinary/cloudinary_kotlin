@@ -24,13 +24,13 @@ class ConditionsTest {
         cldAssert(
             allOperators,
             Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
-                .effect(Effect.grayScale())
+                .effect(Effect.grayscale())
         )
 
         cldAssert(
             allOperators,
             Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
-                .effect(Effect.grayScale())
+                .effect(Effect.grayscale())
         )
 
         cldAssert(
@@ -43,7 +43,7 @@ class ConditionsTest {
                     .and(faceCount().lte(0))
                     .and(width().gte(0))
             )
-                .effect(Effect.grayScale())
+                .effect(Effect.grayscale())
                 .ifElse()
                 .effect(Effect.sepia { level(30) })
         )

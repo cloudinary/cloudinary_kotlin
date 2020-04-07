@@ -1,6 +1,7 @@
 package com.cloudinary
 
 import com.cloudinary.config.Configuration
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
@@ -19,7 +20,7 @@ class Cloudinary(val config: Configuration) {
         publicId: String? = null,
         type: String? = null,
         resourceType: String = DEFAULT_RESOURCE_TYPE,
-        format: String? = null,
+        format: Format? = null,
         version: String? = null,
         transformation: Transformation? = null,
         signUrl: Boolean = false,

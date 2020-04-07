@@ -1,8 +1,7 @@
 package com.cloudinary.transformation.effect
 
-import com.cloudinary.transformation.ColorValue
-import com.cloudinary.transformation.NamedValue
-import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.*
+import com.cloudinary.transformation.cldAsX
 import com.cloudinary.util.cldRanged
 
 
@@ -19,7 +18,7 @@ class Sepia private constructor(level: Any? = null) :
 class Negate : Effect("negate")
 
 
-class GrayScale : Effect("grayscale")
+class Grayscale : Effect("grayscale")
 
 
 class BlackWhite : Effect("blackwhite")
@@ -46,7 +45,7 @@ class Colorize private constructor(
 }
 
 
-class AssistColorBlind private constructor(
+class AssistColorblind private constructor(
     strength: Any? = null, type: Any? = null
 ) :
     Effect("assist_colorblind", type ?: strength?.run {
@@ -60,8 +59,8 @@ class AssistColorBlind private constructor(
 
         private var type: Any? = null
 
-        override fun build(): AssistColorBlind =
-            AssistColorBlind(strength = strength, type = type)
+        override fun build(): AssistColorblind =
+            AssistColorblind(strength = strength, type = type)
 
         fun strength(strength: Int) = apply { this.strength = strength }
 
@@ -267,9 +266,9 @@ class OilPaint private constructor(level: Any? = null) :
     }
 }
 
-class RedEye : Effect("redeye")
+class Redeye : Effect("redeye")
 
-class AdvRedEye : Effect("adv_redeye")
+class AdvRedeye : Effect("adv_redeye")
 
 class Vignette private constructor(level: Any? = null) :
     Effect("vignette", level) {
@@ -341,14 +340,14 @@ class PixelateFaces private constructor(squareSize: Any? = null) :
 class Blur private constructor(strength: Any? = null) :
     Effect("blur", strength?.cldRanged(1, 2000)) {
     class Builder : TransformationComponentBuilder {
-        private var strength: Any? = null
+        private var level: Any? = null
 
         override fun build(): Blur =
-            Blur(strength = strength)
+            Blur(strength = level)
 
-        fun strength(strength: Any) = apply { this.strength = strength }
+        fun level(level: Any) = apply { this.level = level }
 
-        fun strength(strength: Int) = apply { this.strength = strength }
+        fun level(level: Int) = apply { this.level = level }
     }
 }
 
@@ -374,6 +373,36 @@ class BlurRegion private constructor(
     }
 }
 
+class Shadow private constructor(
+    strength: Any? = null,
+    color: ColorValue? = null,
+    x: Any? = null,
+    y: Any? = null
+) : Effect(
+    "shadow",
+    listOfNotNull(strength?.cldRanged(0, 100)),
+    listOfNotNull(color?.asParam(), x?.cldAsX(), y?.cldAsY())
+) {
+    override fun create(params: Map<String, Param>) = Shadow(params)
+
+    class Builder : TransformationComponentBuilder {
+        private var strength: Any? = null
+        private var color: ColorValue? = null
+        private var x: Any? = null
+        private var y: Any? = null
+
+        fun strength(strength: Any) = apply { this.strength = strength }
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun color(color: ColorValue?) = apply { this.color = color }
+        fun x(x: Any) = apply { this.x = x }
+        fun y(y: Any) = apply { this.y = y }
+        fun x(x: Int) = apply { this.x = x }
+        fun y(y: Int) = apply { this.y = y }
+
+        override fun build() = Shadow(strength, color, x, y)
+    }
+}
+
 class BlurFaces private constructor(strength: Any? = null) : Effect("blur_faces", strength) {
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
@@ -385,7 +414,6 @@ class BlurFaces private constructor(strength: Any? = null) : Effect("blur_faces"
 
         fun strength(strength: Int) = apply { this.strength = strength }
     }
-
 }
 
 class OrderedDither private constructor(filter: Any? = null) : Effect("ordered_dither", filter) {
@@ -399,3 +427,5 @@ class OrderedDither private constructor(filter: Any? = null) : Effect("ordered_d
         fun filter(filter: Any) = apply { this.filter = filter }
     }
 }
+
+

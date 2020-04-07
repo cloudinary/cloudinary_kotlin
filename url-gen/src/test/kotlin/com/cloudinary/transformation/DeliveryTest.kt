@@ -2,16 +2,12 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.testParam
+import com.cloudinary.transformation.AutoQuality.LOW
 import com.cloudinary.transformation.delivery.AudioCodecType.AAC
 import com.cloudinary.transformation.delivery.AudioFrequencyType.HZ_8000
-import com.cloudinary.transformation.delivery.AutoQuality.LOW
-import com.cloudinary.transformation.delivery.ChromaSubSampling.C_420
 import com.cloudinary.transformation.delivery.ColorSpaceType
 import com.cloudinary.transformation.delivery.Delivery
-import com.cloudinary.transformation.delivery.Delivery.Companion.quality
 import com.cloudinary.transformation.delivery.Delivery.Companion.videoCodec
-import com.cloudinary.transformation.delivery.QualityType
-import com.cloudinary.transformation.delivery.QualityType.JPEG_MINI
 import com.cloudinary.transformation.delivery.VideoCodecProfile.VCP_BASELINE
 import com.cloudinary.transformation.delivery.VideoCodecProfile.VCP_HIGH
 import com.cloudinary.transformation.delivery.VideoCodecType.H264
@@ -74,26 +70,6 @@ class DeliveryTest {
         cldAssert("fps_5.2-10", Delivery.fps(5.2, 10))
     }
 
-    @Test
-    fun testQuality() {
-
-        cldAssert("q_100", quality(100))
-        cldAssert("q_100:420", quality(100) {
-            chromaSubSampling(C_420)
-        })
-
-        cldAssert("q_auto", quality(QualityType.AUTO))
-        cldAssert(
-            "q_auto:low", quality(QualityType.AUTO) {
-                preset(LOW)
-            })
-
-        cldAssert("q_70:qmax_80", quality(70) {
-            maxQuantization(80)
-        })
-
-        cldAssert("q_jpegmini", quality(JPEG_MINI))
-    }
 
     @Test
     fun testKeyframeInterval() {
@@ -106,11 +82,32 @@ class DeliveryTest {
     }
 
     @Test
+    fun testQuality() {
+
+        cldAssert("q_100", Quality.fixed(100))
+        cldAssert("q_100:420", Quality.fixed(100) {
+            chromaSubSampling(ChromaSubSampling.C_420)
+        })
+
+        cldAssert("q_auto", Quality.auto())
+        cldAssert(
+            "q_auto:low", Quality.auto {
+                preset(LOW)
+            })
+
+        cldAssert("q_70:qmax_80", Quality.fixed(70) {
+            maxQuantization(80)
+        })
+
+        cldAssert("q_jpegmini", Quality.jpegmini())
+    }
+
+    @Test
     fun testAnyFormat() {
-        cldAssert("fl_any_format,q_auto", quality(QualityType.AUTO) {
+        cldAssert("fl_any_format,q_auto", Quality.auto {
             anyFormat(true)
         })
-        cldAssert("q_auto", quality(QualityType.AUTO) {
+        cldAssert("q_auto", Quality.auto {
             anyFormat(false)
         })
     }

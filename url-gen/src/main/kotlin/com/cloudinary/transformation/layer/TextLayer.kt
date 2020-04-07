@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.layer.BaseTextLayerSource.Builder
+import com.cloudinary.transformation.layer.BaseTextLayer.Builder
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
@@ -9,18 +9,19 @@ internal interface ITextLayerBuilder {
     var style: TextStyle?
     var background: ColorValue?
     var textColor: ColorValue?
-    fun font(fontFamily: String, size: Int): Builder
-    fun font(fontFamily: String, size: Any): Builder
+    fun fontFamily(fontFamily: String): Builder
+    fun fontSize(size: Int): Builder
+    fun fontSize(size: Any): Builder
     fun style(style: TextStyle): Builder
     fun style(style: TextStyle.Builder.() -> Unit): Builder
     fun background(background: ColorValue): Builder
     fun textColor(textColor: ColorValue): Builder
     fun background(color: ColorValue.Builder.() -> Unit): Builder
     fun textColor(color: ColorValue.Builder.() -> Unit): Builder
-    fun build(): BaseTextLayerSource
+    fun build(): BaseTextLayer
 }
 
-open class BaseTextLayerSource internal constructor(
+open class BaseTextLayer internal constructor(
     type: String,
     value: String,
     fontFamily: String? = null,
@@ -29,7 +30,7 @@ open class BaseTextLayerSource internal constructor(
     background: ColorValue? = null,
     textColor: ColorValue? = null
 ) :
-    LayerSource(
+    Layer(
         listOfNotNull(
             type,
             ParamValue(
@@ -58,11 +59,18 @@ open class BaseTextLayerSource internal constructor(
         override var background: ColorValue? = null
         override var textColor: ColorValue? = null
 
-        override fun font(fontFamily: String, size: Int) = font(fontFamily, size as Any)
-        override fun font(fontFamily: String, size: Any) = apply {
+        override fun fontFamily(fontFamily: String) = apply {
             this.fontFamily = fontFamily
+        }
+
+        override fun fontSize(size: Int) = apply {
             this.fontSize = size
         }
+
+        override fun fontSize(size: Any) = apply {
+            this.fontSize = size
+        }
+
 
         override fun style(style: TextStyle) = apply { this.style = style }
         override fun style(style: TextStyle.Builder.() -> Unit) = apply {
@@ -86,42 +94,35 @@ open class BaseTextLayerSource internal constructor(
             return textColor(builder.build())
         }
 
-        override fun build() = BaseTextLayerSource(type, value, fontFamily, fontSize, style, background, textColor)
+        override fun build() = BaseTextLayer(type, value, fontFamily, fontSize, style, background, textColor)
     }
 }
 
-class TextLayerSource(
+class TextLayer(
     text: String,
-    fontFamily: String,
-    fontSize: Any,
+    fontFamily: String? = null,
+    fontSize: Any? = null,
     style: TextStyle? = null,
     background: ColorValue? = null,
     textColor: ColorValue? = null
-) : BaseTextLayerSource("text", encode(text), fontFamily, fontSize, style, background, textColor) {
+) : BaseTextLayer("text", encode(text), fontFamily, fontSize, style, background, textColor) {
     class Builder internal constructor(
         text: String,
-        fontFamily: String,
-        fontSize: Any,
-        b: BaseTextLayerSource.Builder = Builder("text", encode(text))
-    ) : ITextLayerBuilder by b {
-        init {
-            b.font(fontFamily, fontSize)
-        }
-    }
+        b: BaseTextLayer.Builder = Builder("text", encode(text))
+    ) : ITextLayerBuilder by b
 }
 
-class SubtitlesLayerSource(
+class SubtitlesLayer(
     publicId: String,
     style: TextStyle? = null,
     background: ColorValue? = null,
     textColor: ColorValue? = null
-) : BaseTextLayerSource("subtitles", publicId, null, null, style, background, textColor) {
+) : BaseTextLayer("subtitles", publicId, null, null, style, background, textColor) {
     class Builder internal constructor(
         private val publicId: String,
-        b: BaseTextLayerSource.Builder = Builder("subtitles", publicId)
+        b: BaseTextLayer.Builder = Builder("subtitles", publicId)
     ) : ITextLayerBuilder by b
 }
-
 
 class TextStyle(
     fontWeight: FontWeight? = null,

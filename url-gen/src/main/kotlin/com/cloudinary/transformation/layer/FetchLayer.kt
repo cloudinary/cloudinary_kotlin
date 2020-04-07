@@ -3,8 +3,8 @@ package com.cloudinary.transformation.layer
 import com.cloudinary.util.cldJoin
 import com.cloudinary.util.cldToBase64
 
-class FetchLayerSource(remoteUrl: String, resourceType: String? = null, format: String? = null) :
-    LayerSource(
+class FetchLayer(remoteUrl: String, resourceType: String? = null, format: String? = null) :
+    Layer(
         listOfNotNull(
             if (resourceType != "image") resourceType else null,
             "fetch",
@@ -18,7 +18,7 @@ class FetchLayerSource(remoteUrl: String, resourceType: String? = null, format: 
         fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
         fun format(format: String) = apply { this.format = format }
 
-        fun build() = FetchLayerSource(remoteUrl, resourceType, format)
+        fun build() = FetchLayer(remoteUrl, resourceType, format)
     }
 }
 
