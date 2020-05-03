@@ -13,7 +13,6 @@ import org.junit.Test
 
 class LayerTest {
     private val layer = MediaLayer("sample")
-    private val t = Transformation().resize(Resize.scale { width(100) })
     private val pos = Position.Builder().gravity(direction(NORTH)).x(25).build()
     private val blendMode = BlendMode.MULTIPLY
 
@@ -50,28 +49,47 @@ class LayerTest {
         cldAssert("l_sample/fl_layer_apply", overlay(layer))
         cldAssert(
             "l_sample/e_multiply,fl_layer_apply",
-            overlay(layer) { blendMode(blendMode) }
+            overlay(layer) {
+                blendMode(blendMode)
+            }
         )
         cldAssert(
             "l_sample/c_scale,w_100/fl_layer_apply",
-            overlay(layer) { transformation(t) }
+            overlay(layer) {
+                resize(Resize.scale { width(100) })
+            }
         )
-        cldAssert("l_sample/fl_layer_apply,g_north,x_25", overlay(layer) { position(pos) })
+        cldAssert("l_sample/fl_layer_apply,g_north,x_25", overlay(layer) {
+            position(pos)
+        })
         cldAssert(
             "l_sample/c_scale,w_100/fl_layer_apply,g_north,x_25",
-            overlay(layer) { transformation(t).position(pos) }
+            overlay(layer) {
+                resize(Resize.scale { width(100) })
+                position(pos)
+            }
         )
         cldAssert(
             "l_sample/c_scale,w_100/e_multiply,fl_layer_apply",
-            overlay(layer) { transformation(t).blendMode(blendMode) }
+            overlay(layer) {
+                resize(Resize.scale { width(100) })
+                blendMode(blendMode)
+            }
         )
         cldAssert(
             "l_sample/e_multiply,fl_layer_apply,g_north,x_25",
-            overlay(layer) { position(pos).blendMode(blendMode) }
+            overlay(layer) {
+                position(pos)
+                blendMode(blendMode)
+            }
         )
         cldAssert(
             "l_sample/c_scale,w_100/e_multiply,fl_layer_apply,g_north,x_25",
-            overlay(layer) { transformation(t).position(pos).blendMode(blendMode) }
+            overlay(layer) {
+                resize(Resize.scale { width(100) })
+                position(pos)
+                blendMode(blendMode)
+            }
         )
     }
 
@@ -84,16 +102,16 @@ class LayerTest {
         )
         cldAssert(
             "u_sample/c_scale,w_100/fl_layer_apply",
-            underlay(layer) { transformation(t) }
+            underlay(layer) { resize(Resize.scale { width(100) }) }
         )
         cldAssert("u_sample/fl_layer_apply,g_north,x_25", underlay(layer) { position(pos) })
         cldAssert(
             "u_sample/c_scale,w_100/fl_layer_apply,g_north,x_25",
-            underlay(layer) { transformation(t).position(pos) }
+            underlay(layer) { resize(Resize.scale { width(100) }).position(pos) }
         )
         cldAssert(
             "u_sample/c_scale,w_100/e_multiply,fl_layer_apply",
-            underlay(layer) { transformation(t).blendMode(blendMode) }
+            underlay(layer) { resize(Resize.scale { width(100) }).blendMode(blendMode) }
         )
         cldAssert(
             "u_sample/e_multiply,fl_layer_apply,g_north,x_25",
@@ -101,7 +119,7 @@ class LayerTest {
         )
         cldAssert(
             "u_sample/c_scale,w_100/e_multiply,fl_layer_apply,g_north,x_25",
-            underlay(layer) { transformation(t).position(pos).blendMode(blendMode) }
+            underlay(layer) { resize(Resize.scale { width(100) }).position(pos).blendMode(blendMode) }
         )
     }
 

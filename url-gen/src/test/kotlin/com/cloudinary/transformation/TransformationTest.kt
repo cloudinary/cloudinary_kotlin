@@ -15,7 +15,6 @@ import com.cloudinary.transformation.layer.FontHinting
 import com.cloudinary.transformation.layer.FontWeight
 import com.cloudinary.transformation.layer.Layer.Companion.image
 import com.cloudinary.transformation.layer.Layer.Companion.text
-import com.cloudinary.transformation.layer.LayerContainer.Companion.overlay
 import com.cloudinary.transformation.layer.Stroke
 import com.cloudinary.transformation.resize.Resize.Companion.scale
 import com.cloudinary.transformation.video.Video
@@ -193,11 +192,9 @@ class TransformationTest {
                         allowOverflow(false)
                     }
                     blendMode(SCREEN)
-                    transformation {
-                        resize(scale {
-                            width(100)
-                        })
-                    }
+                    resize(scale {
+                        width(100)
+                    })
                 }
                 overlay(
                     text("hello world") {

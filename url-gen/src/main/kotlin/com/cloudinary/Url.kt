@@ -2,8 +2,7 @@ package com.cloudinary
 
 
 import com.cloudinary.config.Configuration
-import com.cloudinary.transformation.Format
-import com.cloudinary.transformation.Transformation
+import com.cloudinary.transformation.*
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.URL
@@ -17,6 +16,7 @@ private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
 private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_RESOURCE_TYPE = "image"
 
+@TransformationDsl
 data class Url(
     private val config: Configuration,
     val cloudName: String = config.cloudName,
@@ -37,7 +37,9 @@ data class Url(
     val shorten: Boolean = config.shorten,
     val secure: Boolean = config.secure,
     val cname: String? = config.cname
-) {
+) : ITransformable<Url> {
+
+    override fun add(action: Action) = copy(transformation = (transformation ?: Transformation()).add(action))
 
     fun generate(source: String? = null): String? {
         require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
