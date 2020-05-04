@@ -95,7 +95,7 @@ internal class Range(private val from: Int? = null, private val to: Int? = null)
 
 class EagerTransformation(val transformation: Transformation, val format: String? = null)
 
-class Format(private val value: String) : GenericAction(Param("fetch_format", "f", value)) {
+class Format(private val value: String) {
     companion object {
         fun auto() = Format("auto")
         fun jpg() = Format("jpg")
@@ -105,6 +105,7 @@ class Format(private val value: String) : GenericAction(Param("fetch_format", "f
     }
 
     override fun toString() = value
+    fun asAction() = GenericAction(Param("fetch_format", "f", value))
 }
 
 enum class QualityType(private val value: String) {

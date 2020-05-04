@@ -110,7 +110,7 @@ open class LayerContainer internal constructor(private val components: LayerComp
         components.position
     ).joinToString("/")
 
-    class Builder(private val source: Layer) : TransformationComponentBuilder {
+    class Builder(private val source: Layer) : TransformationComponentBuilder, ITransformable<Builder> {
         private var transformation: Transformation? = null
         private var position: Position? = null
         private var blendMode: BlendMode? = null
@@ -118,6 +118,8 @@ open class LayerContainer internal constructor(private val components: LayerComp
         private var paramKey: String = "l"
         private var extraParams: Collection<Param> = emptyList()
         private var flag: FlagKey? = null
+
+        override fun add(action: Action) = apply { transformation = (transformation ?: Transformation()).add(action) }
 
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
