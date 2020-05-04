@@ -1,7 +1,6 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.cldAsX
 import com.cloudinary.util.cldRanged
 
 
@@ -25,22 +24,21 @@ class BlackWhite : Effect("blackwhite")
 
 
 class Colorize private constructor(
-    level: Any? = null, color: ColorValue? = null
+    level: Any? = null, color: Color? = null
 ) :
     Effect("colorize", listOfNotNull(level?.cldRanged(0, 100)), listOfNotNull(color?.asParam())) {
     class Builder : TransformationComponentBuilder {
         private var level: Any? = null
 
-        private var color: ColorValue? = null
+        private var color: Color? = null
 
         override fun build(): Colorize =
             Colorize(level = level, color = color)
 
         fun level(level: Any) = apply { this.level = level }
-
         fun level(level: Int) = apply { this.level = level }
-
-        fun color(color: ColorValue) = apply { this.color = color }
+        fun color(color: Color) = apply { this.color = color }
+        fun color(color: String) = apply { this.color = Color.parseString(color) }
     }
 }
 
@@ -244,7 +242,7 @@ class Trim private constructor(
                 colorSimilarity
         }
 
-        fun colorOverride(colorOverride: ColorValue) = apply {
+        fun colorOverride(colorOverride: Color) = apply {
             this.colorOverride =
                 colorOverride
         }
@@ -375,7 +373,7 @@ class BlurRegion private constructor(
 
 class Shadow private constructor(
     strength: Any? = null,
-    color: ColorValue? = null,
+    color: Color? = null,
     x: Any? = null,
     y: Any? = null
 ) : Effect(
@@ -387,13 +385,13 @@ class Shadow private constructor(
 
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
-        private var color: ColorValue? = null
+        private var color: Color? = null
         private var x: Any? = null
         private var y: Any? = null
 
         fun strength(strength: Any) = apply { this.strength = strength }
         fun strength(strength: Int) = apply { this.strength = strength }
-        fun color(color: ColorValue?) = apply { this.color = color }
+        fun color(color: Color?) = apply { this.color = color }
         fun x(x: Any) = apply { this.x = x }
         fun y(y: Any) = apply { this.y = y }
         fun x(x: Int) = apply { this.x = x }

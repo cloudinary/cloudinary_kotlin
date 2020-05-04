@@ -1,10 +1,9 @@
 package com.cloudinary.transformation.adjust
 
-import com.cloudinary.transformation.ColorValue
+import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.effect.ImproveMode
 import com.cloudinary.util.cldRanged
 
@@ -131,19 +130,19 @@ class Gamma private constructor(level: Any? = null) : Adjust("gamma", level) {
     }
 }
 
-class ReplaceColor private constructor(to: ColorValue?, from: ColorValue? = null, tolerance: Int? = null) :
+class ReplaceColor private constructor(to: Color?, from: Color? = null, tolerance: Int? = null) :
     Adjust(
         "replace_color",
 
         listOfNotNull(to?.withoutRgbPrefix(), tolerance?.cldRanged(0, 100), from?.withoutRgbPrefix())
     ) {
     class Builder : TransformationComponentBuilder {
-        private var to: ColorValue? = null
-        private var from: ColorValue? = null
+        private var to: Color? = null
+        private var from: Color? = null
         private var tolerance: Int? = null
 
-        fun to(to: ColorValue) = apply { this.to = to }
-        fun from(from: ColorValue) = apply { this.from = from }
+        fun to(to: Color) = apply { this.to = to }
+        fun from(from: Color) = apply { this.from = from }
         fun tolerance(tolerance: Int) = apply { this.tolerance = tolerance }
 
         override fun build() = ReplaceColor(to, from, tolerance)

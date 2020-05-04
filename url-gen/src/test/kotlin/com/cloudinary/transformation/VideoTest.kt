@@ -80,7 +80,7 @@ class VideoTest {
 
     @Test
     fun testMakeTransparent() {
-        val color = color { named("white") }
+        val color = Color.WHITE
         cldAssert("co_white,e_make_transparent", Video.makeTransparent(color))
         cldAssert("co_white,e_make_transparent:10", Video.makeTransparent(color) { level(10) })
     }

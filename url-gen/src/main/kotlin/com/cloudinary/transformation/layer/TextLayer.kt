@@ -7,17 +7,15 @@ import java.util.regex.Pattern
 
 internal interface ITextLayerBuilder {
     var style: TextStyle?
-    var background: ColorValue?
-    var textColor: ColorValue?
+    var background: Color?
+    var textColor: Color?
     fun fontFamily(fontFamily: String): Builder
     fun fontSize(size: Int): Builder
     fun fontSize(size: Any): Builder
     fun style(style: TextStyle): Builder
     fun style(style: TextStyle.Builder.() -> Unit): Builder
-    fun background(background: ColorValue): Builder
-    fun textColor(textColor: ColorValue): Builder
-    fun background(color: ColorValue.Builder.() -> Unit): Builder
-    fun textColor(color: ColorValue.Builder.() -> Unit): Builder
+    fun background(background: Color): Builder
+    fun textColor(textColor: Color): Builder
     fun build(): BaseTextLayer
 }
 
@@ -27,8 +25,8 @@ open class BaseTextLayer internal constructor(
     fontFamily: String? = null,
     fontSize: Any? = null,
     style: TextStyle? = null,
-    background: ColorValue? = null,
-    textColor: ColorValue? = null
+    background: Color? = null,
+    textColor: Color? = null
 ) :
     Layer(
         listOfNotNull(
@@ -56,8 +54,8 @@ open class BaseTextLayer internal constructor(
         var fontFamily: String? = null
         var fontSize: Any? = null
         override var style: TextStyle? = null
-        override var background: ColorValue? = null
-        override var textColor: ColorValue? = null
+        override var background: Color? = null
+        override var textColor: Color? = null
 
         override fun fontFamily(fontFamily: String) = apply {
             this.fontFamily = fontFamily
@@ -79,20 +77,8 @@ open class BaseTextLayer internal constructor(
             style(builder.build())
         }
 
-        override fun background(background: ColorValue) = apply { this.background = background }
-        override fun textColor(textColor: ColorValue) = apply { this.textColor = textColor }
-
-        override fun background(color: ColorValue.Builder.() -> Unit): Builder {
-            val builder = ColorValue.Builder()
-            builder.color()
-            return background(builder.build())
-        }
-
-        override fun textColor(color: ColorValue.Builder.() -> Unit): Builder {
-            val builder = ColorValue.Builder()
-            builder.color()
-            return textColor(builder.build())
-        }
+        override fun background(background: Color) = apply { this.background = background }
+        override fun textColor(textColor: Color) = apply { this.textColor = textColor }
 
         override fun build() = BaseTextLayer(type, value, fontFamily, fontSize, style, background, textColor)
     }
@@ -103,8 +89,8 @@ class TextLayer(
     fontFamily: String? = null,
     fontSize: Any? = null,
     style: TextStyle? = null,
-    background: ColorValue? = null,
-    textColor: ColorValue? = null
+    background: Color? = null,
+    textColor: Color? = null
 ) : BaseTextLayer("text", encode(text), fontFamily, fontSize, style, background, textColor) {
     class Builder internal constructor(
         text: String,
@@ -115,8 +101,8 @@ class TextLayer(
 class SubtitlesLayer(
     publicId: String,
     style: TextStyle? = null,
-    background: ColorValue? = null,
-    textColor: ColorValue? = null
+    background: Color? = null,
+    textColor: Color? = null
 ) : BaseTextLayer("subtitles", publicId, null, null, style, background, textColor) {
     class Builder internal constructor(
         private val publicId: String,

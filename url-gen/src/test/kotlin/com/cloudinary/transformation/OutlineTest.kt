@@ -18,9 +18,7 @@ class OutlineTest {
             Transformation().outline {
                 mode(OutlineMode.INNER_FILL)
                 width(5)
-                color {
-                    named("red")
-                }
+                color(Color.RED)
             })
 
         cldAssert(
@@ -29,7 +27,7 @@ class OutlineTest {
                 mode(OutlineMode.INNER_FILL)
                 blur(200)
                 width(5)
-                color { named("red") }
+                color(Color.RED)
             })
 
         cldAssert(

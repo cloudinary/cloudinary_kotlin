@@ -14,21 +14,13 @@ class Border private constructor(params: Map<String, Param>) :
 
     class Builder : TransformationComponentBuilder {
         private var width: Any? = null
-        private var color: ColorValue? = null
+        private var color: Color? = null
         private var type = "solid"
 
         fun width(width: Int) = apply { this.width = width }
         fun width(width: Any) = apply { this.width = width }
-        fun color(color: String) = color {
-            named(color)
-        }
-
-        fun color(color: ColorValue) = apply { this.color = color }
-        fun color(color: ColorValue.Builder.() -> Unit) = apply {
-            val builder = ColorValue.Builder()
-            builder.color()
-            color(builder.build())
-        }
+        fun color(color: String) = apply { this.color = Color.parseString(color) }
+        fun color(color: Color) = apply { this.color = color }
 
         override fun build() = Border(
             Param(

@@ -7,13 +7,13 @@ class Shadow private constructor(params: Map<String, Param>) : ParamsAction<Shad
 
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
-        private var color: ColorValue? = null
+        private var color: Color? = null
         private var x: Any? = null
         private var y: Any? = null
 
         fun strength(strength: Any) = apply { this.strength = strength }
         fun strength(strength: Int) = apply { this.strength = strength }
-        fun color(color: ColorValue?) = apply { this.color = color }
+        fun color(color: Color?) = apply { this.color = color }
         fun x(x: Any) = apply { this.x = x }
         fun y(y: Any) = apply { this.y = y }
         fun x(x: Int) = apply { this.x = x }

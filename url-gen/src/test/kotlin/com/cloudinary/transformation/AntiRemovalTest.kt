@@ -9,7 +9,7 @@ import org.junit.Test
 class AntiRemovalTest {
     private val layer = MediaLayer("sample")
     private val t = Transformation().resize(Resize.scale { width(100) })
-    private val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(25).build()
+    private val pos = Position.Builder().gravity(Gravity.north()).x(25).build()
 
     @Test
     fun testAntiRemoval() {

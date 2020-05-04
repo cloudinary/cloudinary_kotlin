@@ -7,6 +7,7 @@ open class FlagsParam(flag: FlagKey) : Param("flags", "fl", ParamValue(flag)) {
     override val hashKey = _hashKey
 }
 
+// Make these objects instead of classes
 sealed class FlagKey(vararg items: Any?) : ParamValue(items.toList().filterNotNull()) {
     class AnyFormat : FlagKey("any_format")
     class Attachment : FlagKey("attachment")

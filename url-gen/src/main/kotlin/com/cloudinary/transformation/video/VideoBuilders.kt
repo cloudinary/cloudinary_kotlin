@@ -184,13 +184,13 @@ class Noise private constructor(level: Int? = null) :
     }
 }
 
-class MakeTransparent private constructor(color: ColorValue, level: Int? = null) :
+class MakeTransparent private constructor(color: Color, level: Int? = null) :
     Effect(
         "make_transparent",
         listOfNotNull(level),
         listOf(ColorParam(color))
     ) {
-    class Builder(private val color: ColorValue) : TransformationComponentBuilder {
+    class Builder(private val color: Color) : TransformationComponentBuilder {
         private var level: Int? = null
         fun level(level: Int) = apply { this.level = level }
         override fun build() = MakeTransparent(color, level)

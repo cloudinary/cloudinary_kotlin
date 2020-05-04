@@ -78,7 +78,7 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_fill,dpr_2.0,g_north,h_100",
             Resize.fill {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
     }
@@ -98,7 +98,7 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_lfill,dpr_2.0,g_north,h_100",
             Resize.limitFill {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
     }
@@ -116,7 +116,7 @@ class ResizeTest {
             Resize.pad { height(100).aspectRatio(1.5f).dpr(2f) })
         cldAssert(
             "ar_1.5,c_pad,dpr_2.0,g_north,h_100",
-            Resize.pad { height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH)) }
+            Resize.pad { height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north()) }
         )
     }
 
@@ -135,7 +135,7 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_lpad,dpr_2.0,g_north,h_100",
             Resize.limitPad {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
     }
@@ -155,7 +155,7 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_mpad,dpr_2.0,g_north,h_100",
             Resize.minimumPad {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
     }
@@ -203,13 +203,13 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_crop,dpr_2.0,g_north,h_100",
             Resize.crop {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
         cldAssert(
             "ar_1.5,c_crop,dpr_2.0,g_north,h_100,z_1.5",
             Resize.crop {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
                     .zoom(1.5f)
             }
         )
@@ -230,13 +230,13 @@ class ResizeTest {
         cldAssert(
             "ar_1.5,c_thumb,dpr_2.0,g_north,h_100",
             Resize.thumb {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
             }
         )
         cldAssert(
             "ar_1.5,c_thumb,dpr_2.0,g_north,h_100,z_1.5",
             Resize.thumb {
-                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.direction(Direction.NORTH))
+                height(100).aspectRatio(1.5f).dpr(2f).gravity(Gravity.north())
                     .zoom(1.5f)
             }
         )

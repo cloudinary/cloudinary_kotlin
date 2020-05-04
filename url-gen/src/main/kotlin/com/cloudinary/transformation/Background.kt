@@ -5,15 +5,11 @@ class Background private constructor(params: Map<String, Param>) :
     override fun create(params: Map<String, Param>) = Background(params)
 
     companion object {
-        fun color(color: ColorValue) = Builder(color).build()
-        fun color(color: ColorValue.Builder.() -> Unit): Background {
-            val builder = ColorValue.Builder()
-            builder.color()
-            return Builder(builder.build()).build()
-        }
+        fun color(color: Color) = Builder(color).build()
+        fun color(color: String) = Builder(Color.parseString(color)).build()
     }
 
-    class Builder(private val color: ColorValue) : TransformationComponentBuilder {
+    class Builder(private val color: Color) : TransformationComponentBuilder {
         override fun build() = buildParameters(color)
         private fun buildParameters(value: ParamValue) =
             Background(

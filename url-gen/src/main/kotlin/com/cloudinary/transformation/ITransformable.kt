@@ -184,16 +184,19 @@ interface ITransformable<T> {
     // variables
     fun variable(name: String, value: Expression) = add(GenericAction(Param(name, name, value)))
 
-    fun variable(name: String, value: Any) = add(GenericAction(Param(name, name, value)))
+    fun variable(name: String, value: Any) =
+        add(GenericAction(Param(name.asVariableName(), name.asVariableName(), value.asVariableValue())))
 
     // conditions
     fun ifCondition(expression: Expression) = add(GenericAction(Param("if", "if", expression)))
+
+    fun ifCondition(expression: String) = add(GenericAction(Param("if", "if", expression)))
 
     fun ifElse() = add(GenericAction(Param("if", "if", ParamValue("else"))))
 
     fun endIfCondition() = add(GenericAction(Param("if", "if", ParamValue("end"))))
 
-    fun format(format: Format) = add(format.asAction())
+    fun fetchFormat(format: Format) = add(format.asAction())
 
     fun quality(quality: Quality) = add(quality)
 

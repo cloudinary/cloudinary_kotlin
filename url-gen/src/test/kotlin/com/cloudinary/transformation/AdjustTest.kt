@@ -102,16 +102,16 @@ class AdjustTest {
     fun replaceColor() {
         cldAssert(
             "e_replace_color:saddlebrown",
-            Adjust.replaceColor { to(color { named("saddlebrown") }) }
+            Adjust.replaceColor { to(Color.SADDLEBROWN) }
         )
         cldAssert(
             "e_replace_color:2F4F4F:20",
-            Adjust.replaceColor { to(color { fromRGB("2F4F4F") }).tolerance(20) }
+            Adjust.replaceColor { to(Color.RGB("2F4F4F")).tolerance(20) }
         )
         cldAssert(
             "e_replace_color:silver:50:89b8ed",
             Adjust.replaceColor {
-                to(color { named("silver") }).tolerance(50).from(color { fromRGB("#89b8ed") })
+                to(Color.SILVER).tolerance(50).from(Color.RGB("#89b8ed"))
             }
         )
     }

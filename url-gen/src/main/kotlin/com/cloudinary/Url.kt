@@ -17,29 +17,49 @@ private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_RESOURCE_TYPE = "image"
 
 @TransformationDsl
-data class Url(
+class Url private constructor(
     private val config: Configuration,
-    val cloudName: String = config.cloudName,
+    private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
-    val type: String? = null,
-    val resourceType: String = DEFAULT_RESOURCE_TYPE,
+    private val type: String? = null,
+    private val resourceType: String = DEFAULT_RESOURCE_TYPE,
     private val format: Format? = null,
-    val version: String? = null,
-    val transformation: Transformation? = null,
+    private val version: String? = null,
+    private val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
-    val authToken: AuthToken? = config.authToken,
+    private val authToken: AuthToken? = config.authToken,
     private val source: String? = null,
     private val urlSuffix: String? = null,
-    val useRootPath: Boolean = config.useRootPath,
-    val forceVersion: Boolean = true,
+    private val useRootPath: Boolean = config.useRootPath,
+    private val forceVersion: Boolean = true,
     private val secureDistribution: String? = config.secureDistribution,
-    val privateCdn: Boolean = config.privateCdn,
-    val shorten: Boolean = config.shorten,
-    val secure: Boolean = config.secure,
-    val cname: String? = config.cname
+    private val privateCdn: Boolean = config.privateCdn,
+    private val shorten: Boolean = config.shorten,
+    private val secure: Boolean = config.secure,
+    private val cname: String? = config.cname
 ) : ITransformable<Url> {
 
-    override fun add(action: Action) = copy(transformation = (transformation ?: Transformation()).add(action))
+    override fun add(action: Action) = Url(
+        config,
+        cloudName,
+        publicId,
+        type,
+        resourceType,
+        format,
+        version,
+        (transformation ?: Transformation()).add(action),
+        signUrl,
+        authToken,
+        source,
+        urlSuffix,
+        useRootPath,
+        forceVersion,
+        secureDistribution,
+        privateCdn,
+        shorten,
+        secure,
+        cname
+    )
 
     fun generate(source: String? = null): String? {
         require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -54,7 +74,7 @@ data class Url(
         }
 
         if (type == "fetch" && mutableFormat != null) {
-            mutableTransformation = mutableTransformation.format(mutableFormat)
+            mutableTransformation = mutableTransformation.fetchFormat(mutableFormat)
             mutableFormat = null
         }
 
@@ -117,6 +137,74 @@ data class Url(
         } else {
             url
         }
+    }
+
+    @TransformationDsl
+    class Builder(private val config: Configuration) : ITransformable<Builder> {
+        private var cloudName: String = config.cloudName
+        private var publicId: String? = null
+        private var type: String? = null
+        private var resourceType: String = DEFAULT_RESOURCE_TYPE
+        private var format: Format? = null
+        private var version: String? = null
+        private var transformation: Transformation? = null
+        private var signUrl: Boolean = false
+        private var authToken: AuthToken? = config.authToken
+        private var source: String? = null
+        private var urlSuffix: String? = null
+        private var useRootPath: Boolean = config.useRootPath
+        private var forceVersion: Boolean = true
+        private var secureDistribution: String? = config.secureDistribution
+        private var privateCdn: Boolean = config.privateCdn
+        private var shorten: Boolean = config.shorten
+        private var secure: Boolean = config.secure
+        private var cname: String? = config.cname
+
+        fun cloudName(cloudName: String) = apply { this.cloudName = cloudName }
+        fun publicId(publicId: String) = apply { this.publicId = publicId }
+        fun type(type: String?) = apply { this.type = type }
+        fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
+        fun format(format: Format?) = apply { this.format = format }
+        fun version(version: String?) = apply { this.version = version }
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun signUrl(signUrl: Boolean) = apply { this.signUrl = signUrl }
+        fun authToken(authToken: AuthToken) = apply { this.authToken = authToken }
+        fun source(source: String?) = apply { this.source = source }
+        fun urlSuffix(urlSuffix: String) = apply { this.urlSuffix = urlSuffix }
+        fun useRootPath(useRootPath: Boolean) = apply { this.useRootPath = useRootPath }
+        fun forceVersion(forceVersion: Boolean) = apply { this.forceVersion = forceVersion }
+        fun secureDistribution(secureDistribution: String?) = apply { this.secureDistribution = secureDistribution }
+        fun privateCdn(privateCdn: Boolean) = apply { this.privateCdn = privateCdn }
+        fun shorten(shorten: Boolean) = apply { this.shorten = shorten }
+        fun secure(secure: Boolean) = apply { this.secure = secure }
+        fun cname(cname: String?) = apply { this.cname = cname }
+
+        override fun add(action: Action) =
+            apply { this.transformation = (this.transformation ?: Transformation()).add(action) }
+
+        fun build() = Url(
+            config,
+            cloudName,
+            publicId,
+            type,
+            resourceType,
+            format,
+            version,
+            transformation,
+            signUrl,
+            authToken,
+            source,
+            urlSuffix,
+            useRootPath,
+            forceVersion,
+            secureDistribution,
+            privateCdn,
+            shorten,
+            secure,
+            cname
+        )
+
+
     }
 }
 

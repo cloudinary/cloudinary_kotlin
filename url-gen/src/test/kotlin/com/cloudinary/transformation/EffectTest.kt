@@ -1,9 +1,9 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.testParam
 import com.cloudinary.transformation.effect.*
 import org.junit.Test
-import com.cloudinary.testParam
 
 class EffectTest {
     @Test
@@ -35,7 +35,7 @@ class EffectTest {
         cldAssert("e_colorize:80", Effect.colorize { level(80) })
         cldAssert(
             "co_blue,e_colorize:80",
-            Effect.colorize { level(80).color(color { named("blue") }) })
+            Effect.colorize { level(80).color(Color.BLUE) })
     }
 
     @Test
@@ -97,10 +97,10 @@ class EffectTest {
     fun testTrim() {
         cldAssert("e_trim", Effect.trim())
         cldAssert("e_trim:30", Effect.trim { colorSimilarity(30) })
-        cldAssert("e_trim:white", Effect.trim { colorOverride(color { named("white") }) })
+        cldAssert("e_trim:white", Effect.trim { colorOverride(Color.WHITE) })
         cldAssert(
             "e_trim:30:white",
-            Effect.trim { colorSimilarity(30).colorOverride(color { named("white") }) })
+            Effect.trim { colorSimilarity(30).colorOverride(Color.WHITE) })
     }
 
     @Test
@@ -174,15 +174,15 @@ class EffectTest {
 
     @Test
     fun testShadow() {
-        cldAssert("e_shadow,test_param",Shadow.Builder().build().add(testParam))
+        cldAssert("e_shadow,test_param", Shadow.Builder().build().add(testParam))
         cldAssert("e_shadow", Effect.shadow())
         cldAssert("e_shadow:50", Effect.shadow { strength(50) })
         cldAssert(
             "co_green,e_shadow:50",
-            Effect.shadow { strength(50).color(color { named("green") }) })
+            Effect.shadow { strength(50).color(Color.GREEN) })
         cldAssert(
             "co_green,e_shadow:50,x_20,y_-20",
-            Effect.shadow { strength(50).color(color { named("green") }).x(20).y(-20) }
+            Effect.shadow { strength(50).color(Color.GREEN).x(20).y(-20) }
         )
     }
 }

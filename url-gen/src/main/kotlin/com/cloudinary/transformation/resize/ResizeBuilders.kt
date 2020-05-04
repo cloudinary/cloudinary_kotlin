@@ -156,6 +156,7 @@ class Pad internal constructor(params: Map<String, Param>) : Resize(params) {
         fun y(y: Int) = apply { this.y = y }
         fun y(y: Any) = apply { this.y = y }
         fun y(y: Float) = apply { this.y = y }
+        fun background(color: Color) = apply { this.background = color }
 
         override fun build() = Pad(buildParameters("pad"))
     }
@@ -180,6 +181,7 @@ class LimitPad internal constructor(params: Map<String, Param>) : Resize(params)
         fun y(y: Int) = apply { this.y = y }
         fun y(y: Any) = apply { this.y = y }
         fun y(y: Float) = apply { this.y = y }
+        fun background(color: Color) = apply { this.background = color }
 
         override fun build() = LimitPad(buildParameters("lpad"))
     }
@@ -204,6 +206,7 @@ class MinimumPad internal constructor(params: Map<String, Param>) : Resize(param
         fun y(y: Int) = apply { this.y = y }
         fun y(y: Any) = apply { this.y = y }
         fun y(y: Float) = apply { this.y = y }
+        fun background(color: Color) = apply { this.background = color }
 
         override fun build() = MinimumPad(buildParameters("mpad"))
     }
@@ -228,6 +231,7 @@ class FillPad internal constructor(params: Map<String, Param>) : Resize(params) 
         fun y(y: Int) = apply { this.y = y }
         fun y(y: Any) = apply { this.y = y }
         fun y(y: Float) = apply { this.y = y }
+        fun background(color: Color) = apply { this.background = color }
 
         override fun build() = FillPad(buildParameters("fill_pad"))
     }
@@ -305,6 +309,7 @@ abstract class BaseBuilder<T> {
     protected var zoom: Any? = null
     protected var x: Any? = null
     protected var y: Any? = null
+    protected var background: Color? = null
 
     abstract fun build(): T
 
@@ -319,7 +324,8 @@ abstract class BaseBuilder<T> {
             x?.cldAsX(),
             y?.cldAsY(),
             zoom?.cldAsZoom(),
-            mode?.asFlag()
+            mode?.asFlag(),
+            background?.asParam()
         ).cldToActionMap()
 }
 

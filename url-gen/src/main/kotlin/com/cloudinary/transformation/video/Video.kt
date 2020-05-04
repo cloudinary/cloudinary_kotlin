@@ -1,6 +1,6 @@
 package com.cloudinary.transformation.video
 
-import com.cloudinary.transformation.ColorValue
+import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamValue
 import com.cloudinary.transformation.ParamsAction
@@ -59,7 +59,7 @@ open class Video constructor(params: Map<String, Param>) : ParamsAction<Video>(p
         }
 
         fun makeTransparent(
-            color: ColorValue,
+            color: Color,
             makeTransparent: (MakeTransparent.Builder.() -> Unit)? = null
         ): MakeTransparent {
             val newBuilder = MakeTransparent.Builder(color)

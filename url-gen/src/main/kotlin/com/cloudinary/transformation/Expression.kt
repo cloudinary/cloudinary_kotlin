@@ -195,3 +195,14 @@ private fun getPattern(): Pattern {
     pattern = sb.toString()
     return Pattern.compile(pattern)
 }
+
+internal fun String.asVariableName() = if (startsWith("\$")) this else "\$${this}"
+internal fun Any.asVariableValue(): Any {
+    if (this !is String) return this
+
+    var normalized = this
+    if (!this.startsWith("!")) normalized = "!${normalized}"
+    if (!this.endsWith("!")) normalized = "${normalized}!"
+
+    return normalized
+}

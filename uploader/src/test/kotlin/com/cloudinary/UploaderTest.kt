@@ -747,11 +747,11 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val explicitData = response.data!!
 
-        val url = cloudinary.url(
-            transformation = transformation,
-            format = Format.png(),
-            version = explicitData.version!!.toString()
-        ).generate(publicId)!!
+        val url = cloudinary.url {
+            transformation(transformation)
+            format(Format.png())
+            version(explicitData.version!!.toString())
+        }.generate(publicId)!!
 
         val eagerUrl = explicitData.eager!!.first().secureUrl!!
         val cloudName = cloudinary.config.cloudName
@@ -859,13 +859,19 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         uploader.removeTag(tag2, listOf(publicId2))
 
-        var url = URL(cloudinary.url(publicId = "$tag1.json", type = "list").generate())
+        var url = URL(cloudinary.url {
+            publicId("$tag1.json")
+            type("list")
+        }.generate())
         var jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
         assertTrue(jsonUrl.contains(publicId1))
         assertTrue(jsonUrl.contains(publicId2))
 
-        url = URL(cloudinary.url(publicId = "$tag2.json", type = "list").generate())
+        url = URL(cloudinary.url {
+            publicId("$tag2.json")
+            type("list")
+        }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 
@@ -874,7 +880,10 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         uploader.removeAllTags(listOf(publicId2))
 
-        url = URL(cloudinary.url(publicId = "$tag3.json", type = "list").generate())
+        url = URL(cloudinary.url {
+            publicId("$tag3.json")
+            type("list")
+        }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 
@@ -882,7 +891,10 @@ class UploaderTest(networkLayer: NetworkLayer) {
         assertFalse(jsonUrl.contains(publicId2))
 
         uploader.replaceTag(tag4, listOf(publicId1))
-        url = URL(cloudinary.url(publicId = "$tag4.json", type = "list").generate())
+        url = URL(cloudinary.url {
+            publicId("$tag4.json")
+            type("list")
+        }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
 

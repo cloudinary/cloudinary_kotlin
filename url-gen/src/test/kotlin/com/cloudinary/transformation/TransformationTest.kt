@@ -2,8 +2,6 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.CustomFunction.Companion.wasm
-import com.cloudinary.transformation.Direction.EAST
-import com.cloudinary.transformation.Direction.WEST
 import com.cloudinary.transformation.Extract.Companion.pages
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
@@ -83,8 +81,8 @@ class TransformationTest {
 
     @Test
     fun testBackground() {
-        cldAssert("b_white", Transformation().background(Background.color { named("white") }))
-        cldAssert("b_white", Transformation().background(color { named("white") }))
+        cldAssert("b_white", Transformation().background(Background.color(Color.WHITE)))
+        cldAssert("b_white", Transformation().background(Color.WHITE))
     }
 
     @Test
@@ -111,9 +109,7 @@ class TransformationTest {
             "bo_4px_solid_black",
             Transformation().border {
                 width(4)
-                color {
-                    named("black")
-                }
+                color(Color.BLACK)
             })
     }
 
@@ -182,13 +178,11 @@ class TransformationTest {
                 adjust(opacity(80))
                 border(Border.solid {
                     width(4)
-                    color {
-                        named("red")
-                    }
+                    color(Color.RED)
                 })
                 overlay(image("sample")) {
                     position {
-                        gravity(Gravity.direction(EAST))
+                        gravity(Gravity.east())
                         allowOverflow(false)
                     }
                     blendMode(SCREEN)
@@ -206,16 +200,16 @@ class TransformationTest {
                             stroke(Stroke.STROKE)
                             letterSpacing(12f)
                         }
-                        background { named("red") }
-                        textColor { named("blue") }
+                        background(Color.RED)
+                        textColor(Color.BLUE)
                     }
                 ) {
                     position {
-                        gravity(Gravity.direction(WEST))
+                        gravity(Gravity.west())
                     }
                 }
                 rotate { angle(25) }
-                format(Format.png())
+                fetchFormat(Format.png())
             }
 
         cldAssert(
