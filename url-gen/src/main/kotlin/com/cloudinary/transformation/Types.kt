@@ -1,7 +1,6 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.util.cldRanged
-import com.cloudinary.util.cldRemovePound
 import com.cloudinary.util.cldToString
 
 internal fun widthParam(w: Any) = Param("width", "w", ParamValue(w))
@@ -25,60 +24,10 @@ internal fun Any.cldAsPageParam() = pageParam(this)
 
 internal fun pageParam(page: Any) = Param("page", "pg", ParamValue(page))
 
-class ColorValue private constructor(values: List<Any?>) : ParamValue(values.filterNotNull()) {
-
-    internal fun asParam() = ColorParam(this)
-    internal fun withoutRgbPrefix(): ColorValue {
-        val valueContent = values.first()
-        return if (valueContent is NamedValue && valueContent.name == "rgb") ColorValue(
-            listOf(SimpleValue(valueContent.value)) + values.subList(
-                1,
-                values.size
-            )
-        ) else this
-    }
-
-    companion object {
-        fun parseString(color: String) = when {
-            color.startsWith("#") -> {
-                val builder = Builder()
-                builder.fromRGB(color)
-                builder.build()
-            }
-            color.startsWith("rgb:") -> ColorValue(color.split(":"))
-            else -> {
-                val builder = Builder()
-                builder.named(color)
-                builder.build()
-            }
-        }
-    }
-
-    class Builder {
-        private var values = mutableListOf<Any>()
-
-        fun fromRGB(hex: String) = apply { values = mutableListOf(NamedValue("rgb", hex.cldRemovePound())) }
-        fun named(name: String) = apply { values = mutableListOf(name) }
-
-        fun build() = ColorValue(values)
-    }
-}
-
-fun color(color: ColorValue.Builder.() -> Unit): ColorValue {
-    val builder = ColorValue.Builder()
-    builder.color()
-    return builder.build()
-}
 
 internal fun backgroundParam(value: ParamValue) = Param("background", "b", value)
 
-internal fun backgroundParam(color: ColorValue.Builder.() -> Unit): Param {
-    val builder = ColorValue.Builder()
-    builder.color()
-    return backgroundParam(builder.build())
-}
-
-class ColorParam(color: ColorValue) : Param("color", "co", color)
+class ColorParam(color: Color) : Param("color", "co", color)
 
 internal class Range(private val from: Int? = null, private val to: Int? = null) {
     override fun toString() =

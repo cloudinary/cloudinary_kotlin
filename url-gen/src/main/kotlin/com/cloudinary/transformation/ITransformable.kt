@@ -129,7 +129,7 @@ interface ITransformable<T> {
     fun extract(extract: Extract) = add(extract)
 
     fun background(background: Background) = add(background)
-    fun background(color: ColorValue, background: (Background.Builder.() -> Unit)? = null) =
+    fun background(color: Color, background: (Background.Builder.() -> Unit)? = null) =
         addWithBuilder(Background.Builder(color), background)
 
     fun outline(outline: Outline) = add(outline)
