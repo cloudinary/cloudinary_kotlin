@@ -15,6 +15,22 @@ class LayerTest {
     private val blendMode = BlendMode.MULTIPLY
 
     @Test
+    fun testNewSyntax() {
+//        transformation {
+//            overlay(Layer.image("young_couple") {
+//                roundCorners(RoundCorners.max())
+//                border(Border.solid {
+//                    width(3)
+//                    color(Color.BLACK)
+//                })
+//                resize(Resize.thumbnail(150, 150) {
+//                    gravity(Gravity.faces())
+//                })
+//            }, Position.northEast())
+//        }
+    }
+
+    @Test
     fun testLayerPosition() {
 
         val noOverflow =

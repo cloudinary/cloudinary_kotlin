@@ -169,7 +169,6 @@ class TransformationTest {
         cldAssert("l_sample/fl_layer_apply", Transformation().overlay(layer))
     }
 
-
     @Test
     fun textComplexTransformation() {
         val transformation =
@@ -205,6 +204,7 @@ class TransformationTest {
                     }
                 ) {
                     position {
+                        x(20)
                         gravity(Gravity.west())
                     }
                 }
@@ -216,7 +216,7 @@ class TransformationTest {
             "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                     "e_screen,fl_layer_apply.no_overflow,g_east/" +
                     "b_red,co_blue,l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +
-                    "fl_layer_apply,g_west/a_25/f_png",
+                    "fl_layer_apply,g_west,x_20/a_25/f_png",
             transformation
         )
     }

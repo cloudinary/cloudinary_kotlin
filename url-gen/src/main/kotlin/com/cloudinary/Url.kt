@@ -17,7 +17,7 @@ private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_RESOURCE_TYPE = "image"
 
 @TransformationDsl
-class Url private constructor(
+data class Url private constructor(
     private val config: Configuration,
     private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
@@ -37,29 +37,7 @@ class Url private constructor(
     private val shorten: Boolean = config.shorten,
     private val secure: Boolean = config.secure,
     private val cname: String? = config.cname
-) : ITransformable<Url> {
-
-    override fun add(action: Action) = Url(
-        config,
-        cloudName,
-        publicId,
-        type,
-        resourceType,
-        format,
-        version,
-        (transformation ?: Transformation()).add(action),
-        signUrl,
-        authToken,
-        source,
-        urlSuffix,
-        useRootPath,
-        forceVersion,
-        secureDistribution,
-        privateCdn,
-        shorten,
-        secure,
-        cname
-    )
+) {
 
     fun generate(source: String? = null): String? {
         require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -81,7 +59,8 @@ class Url private constructor(
         val transformationStr = mutableTransformation.toString()
         var signature = ""
 
-        val finalizedSource = finalizeSource(mutableSource, mutableFormat, urlSuffix)
+        val finalizedSource =
+            finalizeSource(mutableSource, mutableFormat, urlSuffix)
         mutableSource = finalizedSource.source
         val sourceToSign = finalizedSource.sourceToSign
 
@@ -111,7 +90,13 @@ class Url private constructor(
             signature = "s--" + signature.substring(0, 8) + "--"
         }
 
-        val finalizedResourceType = finalizeResourceType(resourceType, type, urlSuffix, useRootPath, shorten)
+        val finalizedResourceType = finalizeResourceType(
+            resourceType,
+            type,
+            urlSuffix,
+            useRootPath,
+            shorten
+        )
 
         val prefix = unsignedDownloadUrlPrefix2(
             cloudName,
@@ -179,8 +164,7 @@ class Url private constructor(
         fun secure(secure: Boolean) = apply { this.secure = secure }
         fun cname(cname: String?) = apply { this.cname = cname }
 
-        override fun add(action: Action) =
-            apply { this.transformation = (this.transformation ?: Transformation()).add(action) }
+        override fun add(action: Action) = apply { transformation = (transformation ?: Transformation()).add(action) }
 
         fun build() = Url(
             config,
@@ -203,8 +187,6 @@ class Url private constructor(
             secure,
             cname
         )
-
-
     }
 }
 
