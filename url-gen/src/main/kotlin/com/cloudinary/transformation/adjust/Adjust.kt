@@ -1,11 +1,9 @@
 package com.cloudinary.transformation.adjust
 
-import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.transformation.cldToActionMap
 import com.cloudinary.transformation.effect.Effect
-import com.cloudinary.transformation.resize.Resize
 
 open class Adjust private constructor(params: Map<String, Param>) : ParamsAction<Adjust>(params) {
     constructor(params: Collection<Param>) : this(params.cldToActionMap())

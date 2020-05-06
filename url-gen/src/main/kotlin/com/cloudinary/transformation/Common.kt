@@ -5,6 +5,8 @@ import com.cloudinary.util.cldToString
 interface ParamValueContent
 
 internal const val DEFAULT_VALUES_SEPARATOR = ":"
+private const val PARAM_SEPARATOR = ","
+private const val PARAM_VALUE_JOINER = "."
 
 open class ParamValue(
     internal val values: List<ParamValueContent>,
@@ -51,6 +53,7 @@ interface Action
 annotation class TransformationDsl
 
 abstract class ParamsAction<T>(internal val params: Map<String, Param>) : Action {
+
     abstract fun create(params: Map<String, Param>): T
 
     fun add(param: Param) = create(params + Pair(param.hashKey, param))
@@ -65,22 +68,15 @@ abstract class ParamsAction<T>(internal val params: Map<String, Param>) : Action
         return buildString {
             params.values.sortedWith(compareBy({ it.key }, { it.value.cldToString() })).forEach { param ->
                 if (param.key == lastKey) {
-                    append(".${param.value}")
+                    append("$PARAM_VALUE_JOINER${param.value}")
                 } else {
-                    if (!first) append(",")
+                    if (!first) append(PARAM_SEPARATOR)
                     append(param)
                 }
 
                 lastKey = param.key
                 first = false
             }
-
-
-//        // An alternative elegant solution - but probably extremely inefficient. Pending benchmarks
-//        return params.values.groupBy { it.key }
-//            .map { p -> p.key + "_" + p.value.map { p2 -> p2.value.cldToString() }.sorted().joinToString(".") }
-//            .sorted()
-//            .joinToString { "," }
         }
     }
 }

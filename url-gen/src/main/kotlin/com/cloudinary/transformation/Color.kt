@@ -7,8 +7,8 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
 
     companion object {
         fun parseString(color: String) = when {
-            color.startsWith("#") || color.startsWith("rgb:") -> RGB(color)
-            else -> NAMED(color)
+            color.startsWith("#") || color.startsWith("rgb:") -> Rgb(color)
+            else -> Named(color)
         }
     }
 
@@ -26,8 +26,8 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
     }
 
     private class FromValues(values: List<Any>) : Color(values)
-    class RGB(hex: String) : Color(listOf(NamedValue("rgb", hex.cldRemovePound())))
-    class NAMED(name: String) : Color(name)
+    class Rgb(hex: String) : Color(listOf(NamedValue("rgb", hex.cldRemovePound())))
+    class Named(name: String) : Color(name)
     object SNOW : Color("snow")
     object SNOW1 : Color("snow1")
     object SNOW2 : Color("snow2")

@@ -9,6 +9,6 @@ class BackgroundTest {
     fun testBackground() {
         cldAssert("b_blue,test_param", Background.color(Color.BLUE).add(testParam))
         cldAssert("b_blue", Background.color(Color.BLUE))
-        cldAssert("b_rgb:9090ff", Background.color(Color.RGB("9090ff")))
+        cldAssert("b_rgb:9090ff", Background.color(Color.Rgb("9090ff")))
     }
 }

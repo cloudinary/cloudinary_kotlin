@@ -106,12 +106,12 @@ class AdjustTest {
         )
         cldAssert(
             "e_replace_color:2F4F4F:20",
-            Adjust.replaceColor { to(Color.RGB("2F4F4F")).tolerance(20) }
+            Adjust.replaceColor { to(Color.Rgb("2F4F4F")).tolerance(20) }
         )
         cldAssert(
             "e_replace_color:silver:50:89b8ed",
             Adjust.replaceColor {
-                to(Color.SILVER).tolerance(50).from(Color.RGB("#89b8ed"))
+                to(Color.SILVER).tolerance(50).from(Color.Rgb("#89b8ed"))
             }
         )
     }

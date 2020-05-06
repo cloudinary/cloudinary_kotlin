@@ -21,10 +21,10 @@ class BorderTest {
 
         cldAssert(
             "bo_3px_solid_rgb:00390b",
-            Transformation().border { color(Color.RGB("00390b")).width(3) })
+            Transformation().border { color(Color.Rgb("00390b")).width(3) })
 
         cldAssert(
             "bo_6px_solid_rgb:00390b60",
-            Transformation().border { color(Color.RGB("00390b60")).width(6) })
+            Transformation().border { color(Color.Rgb("00390b60")).width(6) })
     }
 }
