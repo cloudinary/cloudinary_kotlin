@@ -4,10 +4,10 @@ import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
-import com.cloudinary.transformation.layer.LayerContainer
+import com.cloudinary.transformation.layer.LayerAction
+import com.cloudinary.transformation.reshape.Reshape
 import com.cloudinary.transformation.resize.Resize
-import com.cloudinary.transformation.video.Video
-import com.cloudinary.transformation.warp.Warp
+import com.cloudinary.transformation.videoedit.VideoEdit
 
 @TransformationDsl
 interface ITransformable<T> {
@@ -166,18 +166,18 @@ interface ITransformable<T> {
     fun delivery(delivery: Delivery) = add(delivery)
 
     // video
-    fun video(video: Video) = add(video)
+    fun video(videoEdit: VideoEdit) = add(videoEdit)
 
-    // warp
-    fun warp(warp: Warp) = add(warp)
-
-    // layer
-    fun overlay(layer: Layer, layerBuilder: (LayerContainer.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerContainer.Builder(layer).param("overlay", "l"), layerBuilder)
+    // reshape
+    fun reshape(reshape: Reshape) = add(reshape)
 
     // layer
-    fun underlay(layer: Layer, layerBuilder: (LayerContainer.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerContainer.Builder(layer).param("underlay", "u"), layerBuilder)
+    fun overlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(layer).param("overlay", "l"), layerBuilder)
+
+    // layer
+    fun underlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(layer).param("underlay", "u"), layerBuilder)
 
     fun namedTransformation(name: String) = add(GenericAction(NamedTransformationParam(name)))
 
@@ -205,4 +205,6 @@ interface ITransformable<T> {
     fun dpr(dpr: Dpr) = add(dpr)
 
     fun dpr(dpr: Number) = add(Dpr.fixed(dpr))
+
+    fun delay(milliseconds: Long) = add(CParamsAction(Param("delay", "dl", milliseconds)))
 }

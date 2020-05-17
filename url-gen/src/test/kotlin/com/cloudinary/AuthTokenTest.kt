@@ -59,7 +59,7 @@ class AuthTokenTest {
             cloudinary.url {
                 signUrl(true)
                 resourceType("image")
-                type("authenticated")
+                deliveryType("authenticated")
                 version("1486020273")
             }.generate("sample.jpg")
         assertEquals(
@@ -71,7 +71,7 @@ class AuthTokenTest {
         url = cloudinary.url {
             signUrl(true)
             resourceType("image")
-            type("public")
+            deliveryType("public")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(
@@ -83,7 +83,7 @@ class AuthTokenTest {
         url =
             cloudinary.url {
                 resourceType("image")
-                type("authenticated")
+                deliveryType("authenticated")
                 version("1486020273")
             }
                 .generate("sample.jpg")
@@ -98,7 +98,7 @@ class AuthTokenTest {
             authToken(NULL_AUTH_TOKEN)
             signUrl(true)
             resourceType("image")
-            type("authenticated")
+            deliveryType("authenticated")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(
@@ -111,7 +111,7 @@ class AuthTokenTest {
             signUrl(true)
             authToken(AuthToken(key = ALT_KEY, startTime = 222222222, duration = 100))
             resourceType("image")
-            type("authenticated")
+            deliveryType("authenticated")
             resize(Resize.scale {
                 width(300)
             })
@@ -125,7 +125,7 @@ class AuthTokenTest {
         url = cloudinary.url {
             signUrl(true)
             authToken(AuthToken(key = KEY, startTime = 11111111, duration = 300))
-            type("authenticated")
+            deliveryType("authenticated")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(

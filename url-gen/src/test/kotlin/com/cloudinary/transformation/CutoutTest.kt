@@ -11,7 +11,8 @@ class CutoutTest {
     fun testCutout() {
         val pos = Position.Builder().gravity(Gravity.north()).x(100).build()
         val tr = Transformation().resize(Resize.scale {
-            width(200).height(200)
+            width(200)
+            height(200)
         }).roundCorners(RoundCorners.max())
 
         cldAssert(

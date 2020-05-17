@@ -136,7 +136,7 @@ class UrlTest {
     @Test
     fun testType() { // should use type from options
         val result = cloudinary.url {
-            type("facebook")
+            deliveryType("facebook")
         }.generate("test")
         assertEquals("http://res.cloudinary.com/test123/image/facebook/test", result)
     }
@@ -154,11 +154,11 @@ class UrlTest {
         var result = cloudinary.url().generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.url {
-            type("asset")
+            deliveryType("asset")
         }.generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.url {
-            type("fetch")
+            deliveryType("fetch")
         }.generate("http://test")
         assertEquals("http://res.cloudinary.com/test123/image/fetch/http://test", result)
     }
@@ -166,7 +166,7 @@ class UrlTest {
     @Test
     fun testFetch() { // should escape fetch urls
         val result = cloudinary.url {
-            type("fetch")
+            deliveryType("fetch")
         }.generate("http://blah.com/hello?a=b")
         assertEquals(
             "http://res.cloudinary.com/test123/image/fetch/http://blah.com/hello%3Fa%3Db",
@@ -187,7 +187,7 @@ class UrlTest {
         cloudinary.url {
             urlSuffix("hello")
             privateCdn(true)
-            type("facebook")
+            deliveryType("facebook")
         }.generate("test")
     }
 
@@ -311,7 +311,7 @@ class UrlTest {
                 urlSuffix("hello")
                 privateCdn(true)
                 resourceType("image")
-                type("authenticated")
+                deliveryType("authenticated")
             }
                 .generate("test")
         assertEquals("http://test123-res.cloudinary.com/authenticated_images/test/hello", actual)
@@ -324,7 +324,7 @@ class UrlTest {
                 urlSuffix("hello")
                 privateCdn(true)
                 resourceType("image")
-                type("private")
+                deliveryType("private")
             }
                 .generate("test")
         assertEquals("http://test123-res.cloudinary.com/private_images/test/hello", actual)
@@ -361,7 +361,7 @@ class UrlTest {
         cloudinary.url {
             useRootPath(true)
             privateCdn(true)
-            type("facebook")
+            deliveryType("facebook")
         }.generate("test")
     }
 
@@ -378,7 +378,7 @@ class UrlTest {
     fun testHttpEscape() { // should escape http urls
         val result =
             cloudinary.url {
-                type("youtube")
+                deliveryType("youtube")
             }.generate("http://www.youtube.com/watch?v=d9NF2edxy-M")
         assertEquals(
             "http://res.cloudinary.com/test123/image/youtube/http://www.youtube.com/watch%3Fv%3Dd9NF2edxy-M",
@@ -391,7 +391,7 @@ class UrlTest {
         val result =
             cloudinary.url {
                 format(Format.jpg())
-                type("fetch")
+                deliveryType("fetch")
             }.generate("http://cloudinary.com/images/old_logo.png")
         assertEquals(
             "http://res.cloudinary.com/test123/image/fetch/f_jpg/http://cloudinary.com/images/old_logo.png",

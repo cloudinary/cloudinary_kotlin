@@ -3,8 +3,8 @@ package com.cloudinary.transformation
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.layer.*
 import com.cloudinary.transformation.layer.Layer.Companion.subtitles
-import com.cloudinary.transformation.layer.LayerContainer.Companion.overlay
-import com.cloudinary.transformation.layer.LayerContainer.Companion.underlay
+import com.cloudinary.transformation.layer.LayerAction.Companion.overlay
+import com.cloudinary.transformation.layer.LayerAction.Companion.underlay
 import com.cloudinary.transformation.layer.Stroke.STROKE
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
@@ -13,22 +13,6 @@ class LayerTest {
     private val layer = MediaLayer("sample")
     private val pos = Position.Builder().gravity(Gravity.north()).x(25).build()
     private val blendMode = BlendMode.MULTIPLY
-
-    @Test
-    fun testNewSyntax() {
-//        transformation {
-//            overlay(Layer.image("young_couple") {
-//                roundCorners(RoundCorners.max())
-//                border(Border.solid {
-//                    width(3)
-//                    color(Color.BLACK)
-//                })
-//                resize(Resize.thumbnail(150, 150) {
-//                    gravity(Gravity.faces())
-//                })
-//            }, Position.northEast())
-//        }
-    }
 
     @Test
     fun testLayerPosition() {
@@ -183,7 +167,7 @@ class LayerTest {
                     fontStyle(FontStyle.ITALIC)
                     fontAntialias(FontAntialias.BEST)
                     fontHinting(FontHinting.FULL)
-                    textDecoration(FontDecoration.UNDERLINE)
+                    textDecoration(TextDecoration.UNDERLINE)
                     textAlign(TextAlign.LEFT)
                     stroke(STROKE)
                     letterSpacing(12f)
@@ -226,7 +210,7 @@ class LayerTest {
                         fontStyle(FontStyle.ITALIC)
                         fontAntialias(FontAntialias.BEST)
                         fontHinting(FontHinting.FULL)
-                        textDecoration(FontDecoration.UNDERLINE)
+                        textDecoration(TextDecoration.UNDERLINE)
                         textAlign(TextAlign.LEFT)
                         stroke(STROKE)
                         letterSpacing(12)

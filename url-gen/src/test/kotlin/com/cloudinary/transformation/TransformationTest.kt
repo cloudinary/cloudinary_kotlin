@@ -5,7 +5,7 @@ import com.cloudinary.transformation.CustomFunction.Companion.wasm
 import com.cloudinary.transformation.Extract.Companion.pages
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
-import com.cloudinary.transformation.delivery.AudioCodecType
+import com.cloudinary.transformation.delivery.AudioCodec
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.BlendMode.SCREEN
@@ -14,9 +14,8 @@ import com.cloudinary.transformation.layer.FontWeight
 import com.cloudinary.transformation.layer.Layer.Companion.image
 import com.cloudinary.transformation.layer.Layer.Companion.text
 import com.cloudinary.transformation.layer.Stroke
+import com.cloudinary.transformation.reshape.Reshape.Companion.distortArc
 import com.cloudinary.transformation.resize.Resize.Companion.scale
-import com.cloudinary.transformation.video.Video
-import com.cloudinary.transformation.warp.Warp.Companion.distort
 import org.junit.Test
 
 class TransformationTest {
@@ -41,7 +40,6 @@ class TransformationTest {
             Transformation().antiRemoval(layer) {
                 transformation(sepiaTransformation)
             })
-
     }
 
     @Test
@@ -146,28 +144,34 @@ class TransformationTest {
 
     @Test
     fun testAdjust() {
-        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma { level(50) }))
+        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma(50)))
     }
 
     @Test
     fun testDelivery() {
-        cldAssert("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodecType.MP3)))
+        cldAssert("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodec.MP3)))
     }
 
     @Test
     fun testVideo() {
-        cldAssert("e_boomerang", Transformation().video(Video.boomerang()))
+        // TODO
     }
 
     @Test
-    fun testWarp() {
-        cldAssert("e_distort:arc:10", Transformation().warp(distort(10)))
+    fun testReshape() {
+        cldAssert("e_distort:arc:10", Transformation().reshape(distortArc(10)))
     }
 
     @Test
     fun testLayer() {
         cldAssert("l_sample/fl_layer_apply", Transformation().overlay(layer))
     }
+
+    @Test
+    fun testDelay() {
+        cldAssert("dl_20", Transformation().delay(20))
+    }
+
 
     @Test
     fun textComplexTransformation() {

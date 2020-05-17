@@ -12,9 +12,6 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
         }
     }
 
-
-    internal fun asParam() = ColorParam(this)
-
     internal fun withoutRgbPrefix(): Color {
         val valueContent = values.first()
         return if (valueContent is NamedValue && valueContent.name == "rgb") FromValues(

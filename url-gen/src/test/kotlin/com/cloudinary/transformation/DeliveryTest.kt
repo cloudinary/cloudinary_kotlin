@@ -1,23 +1,21 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import com.cloudinary.transformation.AutoQuality.LOW
-import com.cloudinary.transformation.delivery.AudioCodecType.AAC
-import com.cloudinary.transformation.delivery.AudioFrequencyType.HZ_8000
-import com.cloudinary.transformation.delivery.ColorSpaceType
+import com.cloudinary.transformation.delivery.AudioCodec.AAC
+import com.cloudinary.transformation.delivery.AudioFrequency.HZ_8000
+import com.cloudinary.transformation.delivery.ColorSpace
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.delivery.Delivery.Companion.videoCodec
+import com.cloudinary.transformation.delivery.VideoCodec.H264
+import com.cloudinary.transformation.delivery.VideoCodec.VP8
 import com.cloudinary.transformation.delivery.VideoCodecProfile.VCP_BASELINE
 import com.cloudinary.transformation.delivery.VideoCodecProfile.VCP_HIGH
-import com.cloudinary.transformation.delivery.VideoCodecType.H264
-import com.cloudinary.transformation.delivery.VideoCodecType.VP8
 import org.junit.Test
 
 class DeliveryTest {
     @Test
     fun testAudioCodec() {
-        cldAssert("ac_aac,test_param", Delivery.audioCodec(AAC).add(testParam))
         cldAssert("ac_aac", Delivery.audioCodec(AAC))
     }
 
@@ -28,11 +26,11 @@ class DeliveryTest {
 
     @Test
     fun testColorSpace() {
-        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceType.CMYK))
+        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpace.CMYK))
 
         cldAssert(
             "cs_icc:file.extension",
-            Delivery.colorSpace(ColorSpaceType.CsIcc("file.extension"))
+            Delivery.colorSpace(ColorSpace.CsIcc("file.extension"))
         )
     }
 
@@ -62,12 +60,9 @@ class DeliveryTest {
 
     @Test
     fun testFps() {
-        cldAssert("fps_5", Delivery.fps(5))
-        cldAssert("fps_5-", Delivery.fps(5, null))
-        cldAssert("fps_5-10", Delivery.fps(5, 10))
-
-        cldAssert("fps_5.2-", Delivery.fps(5.2, max = null))
-        cldAssert("fps_5.2-10", Delivery.fps(5.2, 10))
+//        cldAssert("fps_5", Delivery.fps(5))
+        cldAssert("fps_5.2-", Delivery.fps { min(5.2) })
+//        cldAssert("fps_5-10", Delivery.fps { min(5).max(10) })
     }
 
 

@@ -1,5 +1,9 @@
 package com.cloudinary.transformation.layer
 
+import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.ITransformable
+import com.cloudinary.transformation.Transformation
+import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldJoin
 
@@ -11,16 +15,22 @@ class MediaLayer(publicId: String, resourceType: String? = null, type: String? =
             publicId.cldEncodePublicId().cldJoin(".", format)
         )
     ) {
-    class Builder(private val publicId: String) {
+    @TransformationDsl
+    class Builder(private val publicId: String) : ITransformable<Builder> {
         private var resourceType: String? = null
         private var type: String? = null
         private var format: String? = null
+        private var transformation: Transformation? = null
 
         fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
         fun type(type: String) = apply { this.type = type }
         fun format(format: String) = apply { this.format = format }
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
 
         fun build() = MediaLayer(publicId, resourceType, type, format)
+        override fun add(action: Action): Builder {
+            TODO("Not yet implemented")
+        }
     }
 }
 

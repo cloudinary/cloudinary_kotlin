@@ -41,11 +41,12 @@ open class BaseTextLayer internal constructor(
             value
         ),
         listOfNotNull(
-            background?.let { backgroundParam(it) },
+            background?.cldAsBackground(),
             textColor?.let { ColorParam(it) }
         )
     ) {
 
+    @TransformationDsl
     class Builder(
         private val type: String,
         private val value: String
@@ -115,7 +116,7 @@ class TextStyle(
     fontStyle: FontStyle? = null,
     fontAntialias: FontAntialias? = null,
     fontHinting: FontHinting? = null,
-    textDecoration: FontDecoration? = null,
+    textDecoration: TextDecoration? = null,
     textAlign: TextAlign? = null,
     stroke: Stroke? = null,
     letterSpacing: Any? = null,
@@ -139,7 +140,7 @@ class TextStyle(
         private var fontStyle: FontStyle? = null
         private var fontAntialias: FontAntialias? = null
         private var fontHinting: FontHinting? = null
-        private var textDecoration: FontDecoration? = null
+        private var textDecoration: TextDecoration? = null
         private var textAlign: TextAlign? = null
         private var stroke: Stroke? = null
         private var letterSpacing: Any? = null
@@ -149,7 +150,7 @@ class TextStyle(
         fun fontStyle(fontStyle: FontStyle) = apply { this.fontStyle = fontStyle }
         fun fontAntialias(fontAntialias: FontAntialias) = apply { this.fontAntialias = fontAntialias }
         fun fontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
-        fun textDecoration(textDecoration: FontDecoration) = apply { this.textDecoration = textDecoration }
+        fun textDecoration(textDecoration: TextDecoration) = apply { this.textDecoration = textDecoration }
         fun textAlign(textAlign: TextAlign) = apply { this.textAlign = textAlign }
         fun stroke(stroke: Stroke) = apply { this.stroke = stroke }
         fun letterSpacing(letterSpacing: Any) = apply { this.letterSpacing = letterSpacing }
@@ -189,7 +190,7 @@ enum class FontStyle(private val value: String) {
     }
 }
 
-enum class FontDecoration(private val value: String) {
+enum class TextDecoration(private val value: String) {
     NORMAL("normal"),
     UNDERLINE("underline"),
     STRIKETHROUGH("strikethrough");

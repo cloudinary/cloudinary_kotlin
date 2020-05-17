@@ -21,7 +21,7 @@ class Shadow private constructor(params: Map<String, Param>) : ParamsAction<Shad
 
         override fun build(): Shadow {
             val values = listOfNotNull(strength?.cldRanged(0, 100))
-            val params = listOfNotNull(color?.asParam(), x?.cldAsX(), y?.cldAsY())
+            val params = listOfNotNull(color?.cldAsColor(), x?.cldAsX(), y?.cldAsY())
             return Shadow(
                 (params + Param(
                     "effect",

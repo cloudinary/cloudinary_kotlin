@@ -861,7 +861,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         var url = URL(cloudinary.url {
             publicId("$tag1.json")
-            type("list")
+            deliveryType("list")
         }.generate())
         var jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
@@ -870,7 +870,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         url = URL(cloudinary.url {
             publicId("$tag2.json")
-            type("list")
+            deliveryType("list")
         }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
@@ -882,7 +882,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         url = URL(cloudinary.url {
             publicId("$tag3.json")
-            type("list")
+            deliveryType("list")
         }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
@@ -893,7 +893,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         uploader.replaceTag(tag4, listOf(publicId1))
         url = URL(cloudinary.url {
             publicId("$tag4.json")
-            type("list")
+            deliveryType("list")
         }.generate())
         jsonUrl =
             HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!

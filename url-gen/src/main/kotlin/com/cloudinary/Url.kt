@@ -21,7 +21,7 @@ data class Url private constructor(
     private val config: Configuration,
     private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
-    private val type: String? = null,
+    private val deliveryType: String? = null,
     private val resourceType: String = DEFAULT_RESOURCE_TYPE,
     private val format: Format? = null,
     private val version: String? = null,
@@ -47,11 +47,11 @@ data class Url private constructor(
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
-        if (httpSource && (type.isNullOrBlank() || type == "asset")) {
+        if (httpSource && (deliveryType.isNullOrBlank() || deliveryType == "asset")) {
             return mutableSource
         }
 
-        if (type == "fetch" && mutableFormat != null) {
+        if (deliveryType == "fetch" && mutableFormat != null) {
             mutableTransformation = mutableTransformation.fetchFormat(mutableFormat)
             mutableFormat = null
         }
@@ -92,7 +92,7 @@ data class Url private constructor(
 
         val finalizedResourceType = finalizeResourceType(
             resourceType,
-            type,
+            deliveryType,
             urlSuffix,
             useRootPath,
             shorten
@@ -128,7 +128,7 @@ data class Url private constructor(
     class Builder(private val config: Configuration) : ITransformable<Builder> {
         private var cloudName: String = config.cloudName
         private var publicId: String? = null
-        private var type: String? = null
+        private var deliveryType: String? = null
         private var resourceType: String = DEFAULT_RESOURCE_TYPE
         private var format: Format? = null
         private var version: String? = null
@@ -147,7 +147,7 @@ data class Url private constructor(
 
         fun cloudName(cloudName: String) = apply { this.cloudName = cloudName }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
-        fun type(type: String?) = apply { this.type = type }
+        fun deliveryType(type: String?) = apply { this.deliveryType = type }
         fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
         fun format(format: Format?) = apply { this.format = format }
         fun version(version: String?) = apply { this.version = version }
@@ -170,7 +170,7 @@ data class Url private constructor(
             config,
             cloudName,
             publicId,
-            type,
+            deliveryType,
             resourceType,
             format,
             version,

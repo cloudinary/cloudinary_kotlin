@@ -23,7 +23,7 @@ class Outline private constructor(params: Map<String, Param>) :
         fun blur(blur: Int) = apply { this.blur = blur }
         override fun build(): Outline {
             val values = listOfNotNull(mode, width?.cldRanged(1, 100), blur?.cldRanged(0, 200))
-            val params = listOfNotNull(color?.asParam())
+            val params = listOfNotNull(color?.cldAsColor())
             return Outline(
                 (params + Param(
                     "effect",
