@@ -68,7 +68,7 @@ class Effect(private val action: Action) : Action by action {
 
         fun blur(strength: Int? = null) = effect("blur", strength?.cldRanged(1, 2000))
 
-        fun vignette(level: Int? = null) = effect("vignette", level) // TODO range?
+        fun vignette(level: Int? = null) = effect("vignette", level) // TODO range
 
         fun trim(options: (TrimBuilder.() -> Unit)? = null): Effect {
             val builder = TrimBuilder()

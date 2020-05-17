@@ -43,7 +43,7 @@ class Adjust(private val action: Action) : Action by action {
 
         fun hue(level: Int? = null) = adjustEffect("hue", level?.cldRanged(-100, 100))
 
-        fun gamma(level: Int? = null) = adjustEffect("gamma", level) // TODO range?
+        fun gamma(level: Int? = null) = adjustEffect("gamma", level) // TODO range
 
         fun contrast(level: Int? = null) = adjustEffect("contrast", level?.cldRanged(-100, 100))
 

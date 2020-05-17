@@ -9,7 +9,6 @@ class PreviewBuilder : TransformationComponentBuilder {
     private var maximumSegments: Any? = null
     private var minimumSegmentDuration: Any? = null
 
-    // TODO more types?
     fun duration(duration: Int) = apply { this.duration = duration }
     fun maximumSegments(maximumSegments: Int) = apply { this.maximumSegments = maximumSegments }
     fun minimumSegmentDuration(minimumSegmentDuration: Int) =
@@ -156,7 +155,7 @@ class BlurRegionBuilder : BaseRegionEffectBuilder("blur_region") {
 
     override fun build() = effect(
         name,
-        strength, // TODO range?
+        strength, // TODO range
         x?.cldAsX(),
         y?.cldAsY(),
         width?.cldAsWidth(),
@@ -172,7 +171,7 @@ class PixelateRegionBuilder : BaseRegionEffectBuilder("pixelate_region") {
 
     override fun build() = effect(
         name,
-        squareSize, // TODO range?
+        squareSize, // TODO range
         x?.cldAsX(),
         y?.cldAsY(),
         width?.cldAsWidth(),

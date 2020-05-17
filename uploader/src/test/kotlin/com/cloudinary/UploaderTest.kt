@@ -287,19 +287,6 @@ class UploaderTest(networkLayer: NetworkLayer) {
     }
 
     @Test
-    fun testHeaders() {
-        // TODO remove? this test is not relevant anymore
-        uploader.upload(srcTestImage) {
-            params {
-                tags = defaultTags
-            }
-            options {
-                headers = mapOf("Link" to "1")
-            }
-        }
-    }
-
-    @Test
     fun testAllowedFormats() {
         //should allow whitelisted formats if allowed_formats
         val formats = listOf("png")
