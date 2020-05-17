@@ -1,6 +1,7 @@
 package com.cloudinary.upload.request
 
 import com.cloudinary.config.Configuration
+import com.cloudinary.http.Payload
 import com.cloudinary.http.ProgressCallback
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.response.UploaderResponse

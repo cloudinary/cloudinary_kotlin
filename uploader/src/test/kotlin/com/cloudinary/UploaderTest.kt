@@ -59,6 +59,8 @@ enum class NetworkLayer {
 class UploaderTest(networkLayer: NetworkLayer) {
     private val cloudinary = Cloudinary()
 
+    private val uploader2 = cloudinary.uploader()
+
     private val uploader = when (networkLayer) {
         NetworkLayer.OkHttp -> Uploader(
             cloudinary,
@@ -81,8 +83,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
         @Parameterized.Parameters
         fun data(): Collection<Any> {
             return listOf(
-                NetworkLayer.UrlConnection,
-                NetworkLayer.OkHttp,
+//                NetworkLayer.UrlConnection,
+//                NetworkLayer.OkHttp,
                 NetworkLayer.ApacheHttpClient
             )
         }
@@ -156,7 +158,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        assertEquals(response.data?.publicId, "Plattenkreiss_ñg-é")
+        assertEquals(response.resultOrThrow().publicId, "Plattenkreiss_ñg-é")
     }
 
     @Test
@@ -207,8 +209,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        assertEquals(result.width, SRC_TEST_IMAGE_W)
+        assertEquals(response.resultOrThrow().width, SRC_TEST_IMAGE_W)
     }
 
     @Test
@@ -238,8 +239,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        var result = response.resultOrThrow()
-        assertTrue(result.publicId!!.matches("old_logo_[a-z0-9]{6}".toRegex()))
+        assertTrue(response.resultOrThrow().publicId!!.matches("old_logo_[a-z0-9]{6}".toRegex()))
 
         response = uploader.upload(srcTestImage) {
             params {
@@ -249,8 +249,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        result = response.resultOrThrow()
-        assertEquals(result.publicId, "old_logo")
+        assertEquals(response.resultOrThrow().publicId, "old_logo")
     }
 
     @Test
@@ -263,8 +262,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        val eager = result.eager?.first()
+        val eager = response.resultOrThrow().eager?.first()
         assertNotNull(eager)
         assertEquals("png", eager.format)
         assertEquals("c_scale,w_2.0/png", eager.transformation)
@@ -281,9 +279,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
                 tags = defaultTags
             }
         }
-        val result = response.resultOrThrow()
 
-        assertEquals(result.status, "pending")
+        assertEquals(response.resultOrThrow().status, "pending")
     }
 
     @Test
@@ -297,8 +294,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        assertEquals(result.format, "png")
+        assertEquals(response.resultOrThrow().format, "png")
     }
 
     @Test
@@ -330,8 +326,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        assertEquals("jpg", result.format)
+        assertEquals("jpg", response.resultOrThrow().format)
     }
 
     @Test
@@ -366,10 +361,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
         assertEquals(
             Coordinates(Rectangle(121, 31, SRC_TEST_IMAGE_W, SRC_TEST_IMAGE_H)),
-            result.coordinates?.values?.first()
+            response.resultOrThrow().coordinates?.values?.first()
         )
     }
 
@@ -518,9 +512,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
                 unsigned = true
             }
         }
-        val result = response.resultOrThrow()
 
-        assertTrue(result.publicId?.matches("^upload_folder/[a-z0-9]+$".toRegex()) ?: false)
+        assertTrue(response.resultOrThrow().publicId?.matches("^upload_folder/[a-z0-9]+$".toRegex()) ?: false)
     }
 
     @Test
@@ -534,8 +527,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        assertEquals("emanelif", result.originalFilename)
+        assertEquals("emanelif", response.resultOrThrow().originalFilename)
     }
 
     @Test
@@ -557,8 +549,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        val breakpointsResponse = result.responsiveBreakpoints!!
+        val breakpointsResponse = response.resultOrThrow().responsiveBreakpoints!!
         val br = breakpointsResponse.first()
 
         assertTrue(br.breakpoints.first().url.endsWith("gif"))
@@ -603,8 +594,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
                 }
             }
 
-        assertEquals(1, response.resultOrThrow().fileCount)
-        assertEquals(1, response.resultOrThrow().fileCount)
+        val result = response.resultOrThrow()
+        assertEquals(1, result.fileCount)
+        assertEquals(1, result.fileCount)
     }
 
     @Test
@@ -621,9 +613,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-
-        val accessControlResponse = result.accessControl!!
+        val accessControlResponse = response.resultOrThrow().accessControl!!
 
         assertEquals(2, accessControlResponse.size)
         var acr = accessControlResponse[0]
@@ -645,8 +635,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        Assert.assertNotNull(result.qualityAnalysis)
+        Assert.assertNotNull(response.resultOrThrow().qualityAnalysis)
     }
 
     @Test
@@ -658,8 +647,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.resultOrThrow()
-        Assert.assertNotNull(result.cinemagraphAnalysis)
+        Assert.assertNotNull(response.resultOrThrow().cinemagraphAnalysis)
     }
 
     @Test
@@ -673,7 +661,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val publicId = uploadResponse.resultOrThrow().publicId!!
 
         val response = uploader.destroy(publicId)
-        assertEquals("ok", response.data?.result)
+        assertEquals("ok", response.resultOrThrow().result)
     }
 
     @Test
@@ -708,7 +696,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
 
         }
-        assertEquals("ok", response.data?.result)
+        assertEquals("ok", response.resultOrThrow().result)
     }
 
     @Test
@@ -719,7 +707,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val publicId = uploadResponse.data!!.publicId!!
+        val publicId = uploadResponse.resultOrThrow().publicId!!
 
         val transformation = Transformation().resize(scale {
             width(2.0)
@@ -732,7 +720,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val explicitData = response.data!!
+        val explicitData = response.resultOrThrow()
 
         val url = cloudinary.url {
             transformation(transformation)
@@ -766,8 +754,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }
 
         var response = uploader.generateSprite(spriteTestTag)
-        var result = response.data!!
-        assertEquals(2, result.imageInfos.size)
+        assertEquals(2, response.resultOrThrow().imageInfos.size)
 
         response = uploader.generateSprite(spriteTestTag) {
             transformation {
@@ -777,8 +764,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        result = response.data!!
-        assertTrue(result.cssUrl!!.contains("c_scale,w_100"))
+        assertTrue(response.resultOrThrow().cssUrl!!.contains("c_scale,w_100"))
 
 
         response = uploader.generateSprite(spriteTestTag) {
@@ -789,9 +775,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
             format = Format.jpg()
         }
-        result = response.data!!
 
-        assertTrue(result.cssUrl!!.contains("c_scale,w_100/f_jpg"))
+        assertTrue(response.resultOrThrow().cssUrl!!.contains("c_scale,w_100/f_jpg"))
     }
 
     @Test
@@ -810,14 +795,14 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val result = response.data!!
+        val result = response.resultOrThrow()
 
         val pdfResponse = uploader.multi(multiTestTag) {
             transformation = Transformation().resize(scale { width(111) })
             format = "pdf"
         }
 
-        val pdfResult = pdfResponse.data!!
+        val pdfResult = pdfResponse.resultOrThrow()
 
         assertEquals(true, result.url?.endsWith(".gif"))
         assertEquals(true, result.url?.contains("w_0.5"))
@@ -851,7 +836,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             deliveryType("list")
         }.generate())
         var jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
+                .get(url)?.content!!
         assertTrue(jsonUrl.contains(publicId1))
         assertTrue(jsonUrl.contains(publicId2))
 
@@ -860,7 +846,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             deliveryType("list")
         }.generate())
         jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
+                .get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
         assertFalse(jsonUrl.contains(publicId2))
@@ -872,7 +859,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             deliveryType("list")
         }.generate())
         jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
+                .get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
         assertFalse(jsonUrl.contains(publicId2))
@@ -883,7 +871,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             deliveryType("list")
         }.generate())
         jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient().get(url)?.content!!
+            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
+                .get(url)?.content!!
 
         assertTrue(jsonUrl.contains(publicId1))
     }
@@ -909,7 +898,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        assertMapsHaveSameEntries(differentContext, response.data!!.context?.custom)
+        assertMapsHaveSameEntries(differentContext, response.resultOrThrow().context?.custom)
     }
 
     @Test
@@ -921,11 +910,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
             context("caption" to "new caption")
         }
 
-        val result = response.data!!
-
         Assert.assertTrue(
             "addContext should return a list of modified public IDs",
-            result.publicIds.contains(publicId)
+            response.resultOrThrow().publicIds.contains(publicId)
         )
     }
 
@@ -934,9 +921,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val publicId = "remove_context_id$suffix"
         uploadResource(publicId)
         val response = uploader.removeAllContext(listOf(publicId, "no-such-id"))
-        val result = response.data!!
 
-        assertTrue(result.publicIds.contains(publicId))
+        assertTrue(response.resultOrThrow().publicIds.contains(publicId))
     }
 
     @Test
@@ -966,7 +952,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
                 context = contextForTest
                 transformation = Transformation().resize(scale { width(10) })
             }
-        }.data!!
+        }.resultOrThrow()
     }
 
     private fun validateSignature(result: UploadResult) {

@@ -1,23 +1,18 @@
 package com.cloudinary.upload.request
 
+import com.cloudinary.http.Payload
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 
-internal abstract class Payload<T>(internal val value: T) {
-    abstract fun asInputStream(): InputStream
-    abstract val length: Long
-    abstract val name: String
-}
-
-internal class FilePayload(file: File) : Payload<File>(file) {
+internal class FilePayload(override val value: File) : Payload<File> {
     override fun asInputStream() = value.inputStream()
 
     override val length = value.length()
     override val name: String = value.name
 }
 
-internal class UrlPayload(remoteUrl: String) : Payload<String>(remoteUrl) {
+internal class UrlPayload(override val value: String) : Payload<String> {
 
     override val name: String = "file"
     override val length: Long = -1
@@ -27,16 +22,16 @@ internal class UrlPayload(remoteUrl: String) : Payload<String>(remoteUrl) {
     }
 }
 
-internal class StreamPayload(stream: InputStream) : Payload<InputStream>(stream) {
+internal class StreamPayload(override val value: InputStream) : Payload<InputStream> {
     override val name: String = "file"
     override val length: Long = -1
     override fun asInputStream() = value
 }
 
 internal class BytesPayload(
-    bytes: ByteArray,
-    override val name: String = "file",
-    override val length: Long = bytes.size.toLong()
-) : Payload<ByteArray>(bytes) {
+    override val value: ByteArray,
+    override val name: String = "file"
+) : Payload<ByteArray> {
+    override val length: Long = value.size.toLong()
     override fun asInputStream() = ByteArrayInputStream(value)
 }
