@@ -59,8 +59,6 @@ enum class NetworkLayer {
 class UploaderTest(networkLayer: NetworkLayer) {
     private val cloudinary = Cloudinary()
 
-    private val uploader2 = cloudinary.uploader()
-
     private val uploader = when (networkLayer) {
         NetworkLayer.OkHttp -> Uploader(
             cloudinary,
