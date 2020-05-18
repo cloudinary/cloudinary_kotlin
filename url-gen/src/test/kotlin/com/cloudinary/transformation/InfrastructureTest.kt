@@ -37,10 +37,11 @@ class InfrastructureTest {
         val param3 = FlagsParam(Flag.NoOverflow())
         val param4 = Param("b", "b", paramValue3)
 
-        val baseAction = GenericAction(param)
-        val withAdd = baseAction.add(param2).add(param3).add(param4).add(param).flag(Flag.Cutter())
-        val withAddReversed = baseAction.add(param4).add(param3).flag(Flag.Cutter()).add(param).add(param2)
-        val withAddedCollection = baseAction.add(listOf(param2, param4, param, param3)).flag(Flag.Cutter())
+        val baseAction = ParamsAction(param)
+        val withAdd = baseAction.addParam(param2).addParam(param3).addParam(param4).addParam(param).flag(Flag.Cutter())
+        val withAddReversed =
+            baseAction.addParam(param4).addParam(param3).flag(Flag.Cutter()).addParam(param).addParam(param2)
+        val withAddedCollection = baseAction.addParams(listOf(param2, param4, param, param3)).flag(Flag.Cutter())
 
         val correctString = "a_val1:val2,b_val3:val4,fl_cutter.no_overflow.tiled"
         cldAssert(correctString, withAdd)

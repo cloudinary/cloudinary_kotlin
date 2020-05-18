@@ -1,16 +1,16 @@
 package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
-import com.cloudinary.transformation.CParamsAction
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.ParamsAction
 import com.cloudinary.transformation.effect.innerEffectAction
 import com.cloudinary.util.cldRanged
 
 class Adjust(private val action: Action) : Action by action {
 
     companion object {
-        fun opacity(level: Int) = Adjust(CParamsAction(Param("opacity", "o", level)))
+        fun opacity(level: Int) = Adjust(ParamsAction(Param("opacity", "o", level)))
 
         fun improve(blend: Int? = null, options: (ImproveBuilder.() -> Unit)? = null): Adjust {
             val builder = ImproveBuilder()

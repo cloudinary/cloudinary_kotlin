@@ -1,8 +1,7 @@
 package com.cloudinary.transformation
 
-class Extract private constructor(params: Map<String, Param>) :
-    ParamsAction<Extract>(params) {
-    override fun create(params: Map<String, Param>) = Extract(params)
+// TODO simplify
+class Extract(private val action: Action) : Action by action {
 
     companion object {
         fun pages(pages: PageNumbersBuilder.() -> Unit): Extract {
@@ -21,15 +20,15 @@ class Extract private constructor(params: Map<String, Param>) :
 
         fun smartObject(vararg names: String) = EmbeddedBuilder(names).build()
 
-        private fun buildParameters(value: ParamValue) =
-            Extract(Param("page", "pg", value).let { mapOf(Pair(it.key, it)) })
+        private fun buildAction(value: ParamValue) =
+            Extract(ParamsAction(Param("page", "pg", value)))
     }
 
 
     class LayerNamesBuilder(private val names: Array<out String>) : TransformationComponentBuilder {
         override fun build(): Action {
             val value = ParamValue(listOf(buildValueOfNames(names.asList())))
-            return buildParameters(value)
+            return buildAction(value)
         }
 
     }
@@ -44,7 +43,7 @@ class Extract private constructor(params: Map<String, Param>) :
             else
                 SimpleValue(items.first()) // TODO only one page is possible using embedded?
 
-            return buildParameters(ParamValue(listOfNotNull("embedded", value)))
+            return buildAction(ParamValue(listOfNotNull("embedded", value)))
 
         }
     }
@@ -55,7 +54,7 @@ class Extract private constructor(params: Map<String, Param>) :
         fun page(page: Int) = apply { items.add(page) }
         fun page(from: Int?, to: Int?) = apply { items.add(Range(from, to)) }
 
-        override fun build() = buildParameters(ParamValue(items.cldAsParamValueContent(), ";"))
+        override fun build() = buildAction(ParamValue(items.cldAsParamValueContent(), ";"))
     }
 }
 

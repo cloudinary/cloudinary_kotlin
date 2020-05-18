@@ -60,8 +60,8 @@ internal fun Any.asNamedValue(
 ) =
     NamedValue(name, this, separator)
 
-internal fun Param.asAction() = CParamsAction(this)
-internal fun List<Param>.asAction() = CParamsAction(this)
+internal fun Param.asAction() = ParamsAction(this)
+internal fun List<Param>.asAction() = ParamsAction(this)
 internal fun pageParam(page: Any) = Param("page", "pg", ParamValue(page))
 
 
@@ -92,7 +92,7 @@ class Format(private val value: String) {
     }
 
     override fun toString() = value
-    fun asAction() = GenericAction(Param("fetch_format", "f", value))
+    fun asAction() = ParamsAction(Param("fetch_format", "f", value))
 }
 
 enum class QualityType(private val value: String) {
@@ -118,24 +118,16 @@ enum class AutoQuality(private val value: String) {
     override fun toString() = value
 }
 
-class Dpr private constructor(value: ParamValue) :
-    GenericAction(Param("dpr", "dpr", value)) {
+// TODO this is not consistent with anything.
+// TODO simplify
+class Quality(private val action: Action) : Action by action {
 
-    companion object {
-        fun fixed(dpr: Number) = Dpr(ParamValue(dpr))
-        fun auto() = Dpr(ParamValue("auto"))
-    }
-}
-
-class Quality private constructor(value: ParamValue, flag: Flag? = null) :
-    GenericAction(
-        listOfNotNull(
-            Param("quality", "q", value),
-            flag?.cldAsFlag()
-        ).cldToActionMap()
-    ) {
-
-    constructor(level: Int) : this(ParamValue(level))
+//    ParamsAction(
+//        listOfNotNull(
+//            Param("quality", "q", value),
+//            flag?.cldAsFlag()
+//        ).cldToActionMap()
+//    ) {
 
     companion object {
         fun auto(quality: (Builder.() -> Unit)? = null): Quality {
@@ -185,15 +177,20 @@ class Quality private constructor(value: ParamValue, flag: Flag? = null) :
         fun anyFormat(anyFormat: Boolean) = apply { this.anyFormat = anyFormat }
 
         override fun build() = Quality(
-            ParamValue(
-                listOfNotNull(
-                    type,
-                    level,
-                    maxQuantization?.let { NamedValue("qmax", maxQuantization!!, "_") },
-                    chromaSubSampling,
-                    preset
-                )
-            ), if (anyFormat == true) Flag.AnyFormat() else null
+            ParamsAction(
+                Param(
+                    "quality", "q",
+                    ParamValue(
+                        listOfNotNull(
+                            type,
+                            level,
+                            maxQuantization?.let { NamedValue("qmax", maxQuantization!!, "_") },
+                            chromaSubSampling,
+                            preset
+                        )
+                    )
+                ), if (anyFormat == true) Flag.AnyFormat().cldAsFlag() else null
+            )
         )
     }
 }

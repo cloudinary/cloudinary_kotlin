@@ -1,11 +1,7 @@
 package com.cloudinary.transformation
 
 
-class ClippingPath private constructor(params: Map<String, Param>) :
-    ParamsAction<ClippingPath>(params) {
-    private constructor(page: Param? = null, evenOdd: Boolean = false) : this(buildParams(page, evenOdd))
-
-    override fun create(params: Map<String, Param>) = ClippingPath(params)
+class ClippingPath(private val action: Action) : Action by action {
 
     class Builder : TransformationComponentBuilder {
         private var index: Int? = null
@@ -16,7 +12,7 @@ class ClippingPath private constructor(params: Map<String, Param>) :
         fun path(path: String) = apply { this.path = path }
         fun evenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
 
-        override fun build() = ClippingPath(buildParams(index ?: path, evenOdd))
+        override fun build() = ClippingPath(buildAction(index ?: path, evenOdd))
     }
 }
 
@@ -26,14 +22,11 @@ fun clippingPath(clippingPath: (ClippingPath.Builder.() -> Unit)? = null): Clipp
     return newBuilder.build()
 }
 
-private fun buildParams(pageParamValue: Any?, evenOdd: Boolean): Map<String, Param> {
+// TODO simplify
+private fun buildAction(pageParamValue: Any?, evenOdd: Boolean): ParamsAction {
     val page = pageParamValue?.cldAsPage()
     val clip = FlagsParam(if (evenOdd) Flag.ClipEvenOdd() else Flag.Clip())
     val clipPair = Pair(clip.key, clip)
 
-    return if (page != null) {
-        mapOf(clipPair, Pair(page.key, page))
-    } else {
-        mapOf(clipPair)
-    }
+    return ParamsAction(page, clip)
 }

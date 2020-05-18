@@ -1,11 +1,10 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.effect.innerEffectAction
 import com.cloudinary.util.cldRanged
 
-class Outline private constructor(params: Map<String, Param>) :
-    ParamsAction<Outline>(params) {
-
-    override fun create(params: Map<String, Param>) = Outline(params)
+// TODO simplify
+class Outline(private val action: Action) : Action by action {
 
     class Builder private constructor(
         private var mode: OutlineMode? = null,
@@ -24,13 +23,8 @@ class Outline private constructor(params: Map<String, Param>) :
         override fun build(): Outline {
             val values = listOfNotNull(mode, width?.cldRanged(1, 100), blur?.cldRanged(0, 200))
             val params = listOfNotNull(color?.cldAsColor())
-            return Outline(
-                (params + Param(
-                    "effect",
-                    "e",
-                    ParamValue(listOf("outline") + values)
-                )).cldToActionMap()
-            )
+
+            return Outline(innerEffectAction("outline", *((values + params).toTypedArray())))
         }
     }
 }

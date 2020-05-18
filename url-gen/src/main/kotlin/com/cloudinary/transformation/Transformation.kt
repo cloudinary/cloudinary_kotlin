@@ -9,7 +9,7 @@ class Transformation(private val actions: List<Action> = emptyList()) : ITransfo
 
     override fun add(action: Action) = Transformation(actions + action)
 
-    fun addFlag(flag: Flag) = Transformation(actions + CParamsAction(flag.cldAsFlag()))
+    fun addFlag(flag: Flag) = Transformation(actions + ParamsAction(flag.cldAsFlag()))
 
     class Builder(private val components: MutableList<Action> = mutableListOf()) : ITransformable<Builder> {
         override fun add(action: Action) = apply { components.add(action) }

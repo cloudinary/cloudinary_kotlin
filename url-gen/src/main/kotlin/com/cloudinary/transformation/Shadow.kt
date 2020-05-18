@@ -1,9 +1,9 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.effect.innerEffectAction
 import com.cloudinary.util.cldRanged
 
-class Shadow private constructor(params: Map<String, Param>) : ParamsAction<Shadow>(params) {
-    override fun create(params: Map<String, Param>) = Shadow(params)
+class Shadow(private val action: Action) : Action by action {
 
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
@@ -22,13 +22,8 @@ class Shadow private constructor(params: Map<String, Param>) : ParamsAction<Shad
         override fun build(): Shadow {
             val values = listOfNotNull(strength?.cldRanged(0, 100))
             val params = listOfNotNull(color?.cldAsColor(), x?.cldAsX(), y?.cldAsY())
-            return Shadow(
-                (params + Param(
-                    "effect",
-                    "e",
-                    ParamValue(listOf("shadow") + values)
-                )).cldToActionMap()
-            )
+
+            return Shadow(innerEffectAction("shadow", *((values + params).toTypedArray())))
         }
     }
 }

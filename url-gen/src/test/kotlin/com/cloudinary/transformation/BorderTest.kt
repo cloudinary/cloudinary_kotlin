@@ -1,17 +1,11 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import org.junit.Test
 
 class BorderTest {
     @Test
     fun testBorder() {
-        cldAssert(
-            "bo_4px_solid_black,test_param",
-            Border.Builder().color(Color.BLACK).width(4).build().add(testParam)
-        )
-
         cldAssert(
             "bo_4px_solid_black",
             Transformation().border {

@@ -1,34 +1,30 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.transformation.CustomFunction.Type.*
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldToUrlSafeBase64
 
-class CustomFunction private constructor(params: Map<String, Param>) :
-    ParamsAction<CustomFunction>(params) {
-    override fun create(params: Map<String, Param>) = CustomFunction(params)
+// TODO simplify
+class CustomFunction(private val action: Action) : Action by action {
 
     companion object {
-        fun wasm(publicId: String) = Builder(publicId).type(WASM).build()
-        fun remote(url: String) = Builder(url).type(REMOTE).build()
-        fun preProcess(url: String) = Builder(url).type(PRE_PROCESS).build()
+        fun wasm(publicId: String) = Builder(publicId).type(Type.WASM).build()
+        fun remote(url: String) = Builder(url).type(Type.REMOTE).build()
+        fun preProcess(url: String) = Builder(url).type(Type.PRE_PROCESS).build()
     }
 
     private class Builder(private val source: String) : TransformationComponentBuilder {
-        private var type: Type = WASM
+        private var type: Type = Type.WASM
 
         fun type(type: Type) = apply { this.type = type }
 
         override fun build() = when (type) {
-            PRE_PROCESS -> buildParameters(listOf("pre", "remote", source.cldToUrlSafeBase64()))
-            REMOTE -> buildParameters(listOf("remote", source.cldToUrlSafeBase64()))
-            WASM -> buildParameters(listOf("wasm", source.cldEncodePublicId()))
+            Type.PRE_PROCESS -> buildAction(listOf("pre", "remote", source.cldToUrlSafeBase64()))
+            Type.REMOTE -> buildAction(listOf("remote", source.cldToUrlSafeBase64()))
+            Type.WASM -> buildAction(listOf("wasm", source.cldEncodePublicId()))
         }
 
-        private fun buildParameters(values: List<Any>) =
-            CustomFunction(
-                Param("custom_function", "fn", ParamValue(values)).let { mapOf(Pair(it.key, it)) }
-            )
+        private fun buildAction(values: List<Any>) =
+            CustomFunction(ParamsAction(Param("custom_function", "fn", ParamValue(values))))
     }
 
     enum class Type {

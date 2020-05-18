@@ -1,7 +1,6 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import com.cloudinary.transformation.effect.*
 import org.junit.Test
 
@@ -249,7 +248,6 @@ class EffectTest {
 
     @Test
     fun testShadow() {
-        cldAssert("e_shadow,test_param", Shadow.Builder().build().add(testParam))
         cldAssert("e_shadow", Effect.shadow())
         cldAssert("e_shadow:50", Effect.shadow { strength(50) })
         cldAssert("e_shadow:50", Effect.shadow(50))

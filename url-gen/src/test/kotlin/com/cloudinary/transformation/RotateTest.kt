@@ -1,15 +1,14 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import org.junit.Test
 
 class RotateTest {
     @Test
     fun testRotate() {
         cldAssert(
-            "a_50,test_param",
-            Transformation().rotate(Rotate.Builder().angle(50).build().add(testParam))
+            "a_50",
+            Transformation().rotate(Rotate.Builder().angle(50).build())
         )
         cldAssert("a_50", Transformation().rotate { angle(50) })
         cldAssert(

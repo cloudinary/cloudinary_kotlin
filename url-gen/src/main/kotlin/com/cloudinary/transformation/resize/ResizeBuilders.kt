@@ -31,7 +31,7 @@ open class BaseBuilder(private val cropMode: String) {
     var background: Color? = null
 
     fun build() = Resize(
-        CParamsAction(
+        ParamsAction(
             listOfNotNull(
                 cropMode.cldAsCrop(),
                 width?.cldAsWidth(),

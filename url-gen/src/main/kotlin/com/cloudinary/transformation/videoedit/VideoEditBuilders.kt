@@ -17,7 +17,7 @@ class TrimBuilder : TransformationComponentBuilder {
 
     // TODO validations? at least one is necessary but three is too much
     override fun build() = VideoEdit(
-        CParamsAction(
+        ParamsAction(
             startOffset?.cldAsStartOffset(),
             endOffset?.cldAsEndOffset(),
             duration?.cldAsDuration()

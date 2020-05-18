@@ -129,8 +129,7 @@ interface ITransformable<T> {
     fun extract(extract: Extract) = add(extract)
 
     fun background(background: Background) = add(background)
-    fun background(color: Color, background: (Background.Builder.() -> Unit)? = null) =
-        addWithBuilder(Background.Builder(color), background)
+    fun background(color: Color) = add(ParamsAction(color.cldAsBackground()))
 
     fun outline(outline: Outline) = add(outline)
     fun outline(outline: (Outline.Builder.() -> Unit)? = null) = addWithBuilder(Outline.Builder(), outline)
@@ -179,22 +178,22 @@ interface ITransformable<T> {
     fun underlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
         addWithBuilder(LayerAction.Builder(layer).param("underlay", "u"), layerBuilder)
 
-    fun namedTransformation(name: String) = add(GenericAction(NamedTransformationParam(name)))
+    fun namedTransformation(name: String) = add(ParamsAction(NamedTransformationParam(name)))
 
     // variables
-    fun variable(name: String, value: Expression) = add(GenericAction(Param(name, name, value)))
+    fun variable(name: String, value: Expression) = add(ParamsAction(Param(name, name, value)))
 
     fun variable(name: String, value: Any) =
-        add(GenericAction(Param(name.asVariableName(), name.asVariableName(), value.asVariableValue())))
+        add(ParamsAction(Param(name.asVariableName(), name.asVariableName(), value.asVariableValue())))
 
     // conditions
-    fun ifCondition(expression: Expression) = add(GenericAction(Param("if", "if", expression)))
+    fun ifCondition(expression: Expression) = add(ParamsAction(Param("if", "if", expression)))
 
-    fun ifCondition(expression: String) = add(GenericAction(Param("if", "if", expression)))
+    fun ifCondition(expression: String) = add(ParamsAction(Param("if", "if", expression)))
 
-    fun ifElse() = add(GenericAction(Param("if", "if", ParamValue("else"))))
+    fun ifElse() = add(ParamsAction(Param("if", "if", ParamValue("else"))))
 
-    fun endIfCondition() = add(GenericAction(Param("if", "if", ParamValue("end"))))
+    fun endIfCondition() = add(ParamsAction(Param("if", "if", ParamValue("end"))))
 
     fun fetchFormat(format: Format) = add(format.asAction())
 
@@ -202,9 +201,5 @@ interface ITransformable<T> {
 
     fun quality(level: Int) = add(Quality.fixed(level))
 
-    fun dpr(dpr: Dpr) = add(dpr)
-
-    fun dpr(dpr: Number) = add(Dpr.fixed(dpr))
-
-    fun delay(milliseconds: Long) = add(CParamsAction(Param("delay", "dl", milliseconds)))
+    fun delay(milliseconds: Long) = add(ParamsAction(Param("delay", "dl", milliseconds)))
 }

@@ -3,7 +3,9 @@ package com.cloudinary.transformation.layer
 import com.cloudinary.transformation.*
 import com.cloudinary.transformation.Transformation.Builder
 
-class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
+// TODO simplify
+class Position(internal val action: ParamsAction) : Action by action {
+
     class Builder : TransformationComponentBuilder {
         private var gravity: Gravity? = null
 
@@ -16,13 +18,15 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
         private var allowOverflow: Boolean = true
 
         override fun build() = Position(
-            listOfNotNull(
-                gravity,
-                x?.cldAsX(),
-                y?.cldAsY(),
-                tileMode?.asFlag(),
-                if (!allowOverflow) FlagsParam(Flag.NoOverflow()) else null
-            ).cldToActionMap()
+            ParamsAction(
+                listOfNotNull(
+                    gravity,
+                    x?.cldAsX(),
+                    y?.cldAsY(),
+                    tileMode?.asFlag(),
+                    if (!allowOverflow) FlagsParam(Flag.NoOverflow()) else null
+                )
+            )
         )
 
         fun gravity(gravity: Gravity) = apply {
@@ -43,8 +47,6 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
             this.allowOverflow = allowOverflow
         }
     }
-
-    override fun create(params: Map<String, Param>) = Position(params)
 }
 
 abstract class Layer internal constructor(val values: List<Any>, val params: List<Param> = emptyList()) {
@@ -175,7 +177,7 @@ internal fun buildLayerComponent(
 ): LayerComponents {
     // start with the layer param itself
     val firstComponentParams =
-        GenericAction((source.params + Param(paramName, paramKey, ParamValue(source.values))).cldToActionMap())
+        ParamsAction((source.params + Param(paramName, paramKey, ParamValue(source.values))).cldToActionMap())
 
     // layer apply flag + optional flags
     val allParams = mutableListOf<Param>(FlagsParam(Flag.LayerApply()))
@@ -186,7 +188,7 @@ internal fun buildLayerComponent(
     blendMode?.let { allParams.add(Param("effect", "e", ParamValue(it))) }
 
     // construct the position component (this needs to include the extra parameters and some of flags):
-    val positionAction: ParamsAction<*> = (position?.add(allParams) ?: GenericAction(allParams.cldToActionMap()))
+    val positionAction = (position?.action?.addParams(allParams) ?: ParamsAction(allParams.cldToActionMap()))
 
     return LayerComponents(firstComponentParams, transformation, positionAction)
 }

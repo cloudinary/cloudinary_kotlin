@@ -1,8 +1,7 @@
 package com.cloudinary.transformation
 
-class Rotate private constructor(params: Map<String, Param>) :
-    ParamsAction<Rotate>(params) {
-    override fun create(params: Map<String, Param>) = Rotate(params)
+// TODO simplify
+class Rotate(private val action: Action) : Action by action {
 
     companion object {
         fun angle(degrees: Int) = Builder().angle(degrees).build()
@@ -30,13 +29,13 @@ class Rotate private constructor(params: Map<String, Param>) :
 
         private fun buildParameters(values: List<Any>) =
             Rotate(
-                Param("angle", "a", ParamValue(values.cldAsParamValueContent(), ".")).let { mapOf(Pair(it.key, it)) }
+                ParamsAction(
+                    Param(
+                        "angle",
+                        "a",
+                        ParamValue(values.cldAsParamValueContent(), ".")
+                    )
+                )
             )
     }
 }
-
-//fun rotate(angle: (Rotate.Builder.() -> Unit)? = null): Rotate {
-//    val newBuilder = Rotate.Builder()
-//    if (angle != null) newBuilder.angle()
-//    return newBuilder.build()
-//}
