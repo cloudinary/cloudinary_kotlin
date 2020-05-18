@@ -78,7 +78,7 @@ private fun instantiateClientFactory(
     apiConfig: ApiConfig
 ) = run {
     when {
-        exists("org.apache.http.client.HttpClient") -> ApacheHttpClient45Factory(
+        exists("org.apache.http.impl.client.HttpClientBuilder") -> ApacheHttpClient45Factory(
             userAgent,
             apiConfig
         )

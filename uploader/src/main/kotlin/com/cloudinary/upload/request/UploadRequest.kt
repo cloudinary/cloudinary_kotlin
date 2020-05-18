@@ -24,9 +24,8 @@ class UploadRequest internal constructor(
     override fun buildParams() = params.toMap()
     override fun execute() = uploader.doUpload(this)
 
-    class Builder private constructor(
-        private val payload: Payload<*>,
-        uploader: Uploader
+    class Builder(
+        private val payload: Payload<*>, uploader: Uploader
     ) :
         UploaderRequestsBuilder<UploadRequest>(uploader) {
         constructor(file: File, uploader: Uploader) : this(
