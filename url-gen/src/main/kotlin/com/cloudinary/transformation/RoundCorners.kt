@@ -1,15 +1,11 @@
 package com.cloudinary.transformation
 
-class RoundCorners private constructor(params: Map<String, Param>) :
-    ParamsAction<RoundCorners>(params) {
-
-    constructor(values: List<Any>) : this(Param("radius", "r", ParamValue(values)).let { mapOf(Pair(it.key, it)) })
-
-    override fun create(params: Map<String, Param>) = RoundCorners(params)
+// TODO sipmlify
+class RoundCorners(private val action: Action) : Action by action {
 
     companion object {
-        fun radius(pixels: Int) = RoundCorners(listOf(pixels))
-        fun max() = RoundCorners(listOf("max"))
+        fun radius(pixels: Int) = roundCorners(listOf(pixels))
+        fun max() = roundCorners(listOf("max"))
     }
 
     // TODO - is this even really needed now?
@@ -28,7 +24,12 @@ class RoundCorners private constructor(params: Map<String, Param>) :
             corners.add("max")
         }
 
-        override fun build() = RoundCorners(corners)
+        override fun build() = roundCorners(corners)
     }
+
+}
+
+fun roundCorners(values: List<Any>): RoundCorners {
+    return RoundCorners(ParamsAction(Param("radius", "r", ParamValue(values))))
 }
 

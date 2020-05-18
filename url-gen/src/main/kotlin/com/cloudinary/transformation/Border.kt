@@ -1,8 +1,6 @@
 package com.cloudinary.transformation
 
-class Border private constructor(params: Map<String, Param>) :
-    ParamsAction<Border>(params) {
-    override fun create(params: Map<String, Param>) = Border(params)
+class Border(private val action: Action) : Action by action {
 
     companion object {
         fun solid(border: (Builder.() -> Unit)? = null): Border {
@@ -22,13 +20,16 @@ class Border private constructor(params: Map<String, Param>) :
         fun color(color: String) = apply { this.color = Color.parseString(color) }
         fun color(color: Color) = apply { this.color = color }
 
+        // TODO simplify
         override fun build() = Border(
-            Param(
-                "border",
-                "bo",
-                ParamValue(listOf("${width}px", type, color).cldAsParamValueContent(), "_")
-            ).let { mapOf(Pair(it.key, it)) })
-
+            ParamsAction(
+                Param(
+                    "border",
+                    "bo",
+                    ParamValue(listOf("${width}px", type, color).cldAsParamValueContent(), "_")
+                )
+            )
+        )
     }
 }
 

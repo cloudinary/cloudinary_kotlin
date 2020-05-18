@@ -1,7 +1,6 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import org.junit.Test
 
 class OutlineTest {
@@ -9,8 +8,8 @@ class OutlineTest {
     fun testOutline() {
         cldAssert("e_outline", Transformation().outline())
         cldAssert(
-            "e_outline,test_param",
-            Transformation().outline(Outline.Builder().build().add(testParam))
+            "e_outline",
+            Transformation().outline(Outline.Builder().build())
         )
         cldAssert("e_outline:inner_fill", Transformation().outline { mode(OutlineMode.INNER_FILL) })
         cldAssert(

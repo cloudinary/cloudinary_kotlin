@@ -105,4 +105,4 @@ sealed class ColorSpace(value: Any) : ParamValue(value) {
     )
 }
 
-internal fun delivery(vararg params: Param) = Delivery(CParamsAction(params.toList()))
+internal fun delivery(vararg params: Param) = Delivery(ParamsAction(params.toList()))

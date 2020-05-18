@@ -1,15 +1,14 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.testParam
 import org.junit.Test
 
 class GradientFadeTest {
     @Test
     fun testGradientFade() {
         cldAssert(
-            "e_gradient_fade:40,test_param,y_0.8",
-            Transformation().gradientFade(GradientFade.Builder().strength(40).y(0.8).build().add(testParam))
+            "e_gradient_fade:40,y_0.8",
+            Transformation().gradientFade(GradientFade.Builder().strength(40).y(0.8).build())
         )
         cldAssert(
             "e_gradient_fade:40,y_0.8",

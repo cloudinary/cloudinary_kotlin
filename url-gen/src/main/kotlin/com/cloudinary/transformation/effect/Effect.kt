@@ -220,11 +220,11 @@ internal fun effect(name: String, vararg values: Any?) = Effect(innerEffectActio
 internal fun innerEffectAction(
     name: String,
     vararg values: Any?
-): CParamsAction {
+): ParamsAction {
     val (params, paramValues) = values.filterNotNull().partition { i -> i is Param }
 
     // This list was generated using partition by type, however the compiler does not detect it. 100% safe cast.
     @Suppress("UNCHECKED_CAST") val list = listOf((listOf(name) + paramValues).cldAsEffect()) + (params as List<Param>)
-    val action = CParamsAction(list)
+    val action = ParamsAction(list)
     return action
 }
