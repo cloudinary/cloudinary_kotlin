@@ -1,174 +1,118 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
-
+import com.cloudinary.util.cldPositiveNumber
+import com.cloudinary.util.cldRanged
 import com.cloudinary.util.cldToString
 
-open class Effect(params: Map<String, Param>) : ParamsAction<Effect>(params) {
-    constructor(params: Collection<Param>) : this(params.cldToActionMap())
-    constructor (
-        name: String,
-        values: List<Any> = emptyList(),
-        params: Collection<Param> = emptyList()
-    ) : this(listOf(effectParam(name, values)) + params)
-
-    constructor (name: String, value: Any?) : this(name, listOfNotNull(value))
-
-    override fun create(params: Map<String, Param>) =
-        Effect(params)
+class Effect(private val action: Action) : Action by action {
 
     companion object {
-        fun simulateColorblind(
-            simulateColorblind: (SimulateColorblind.Builder.() -> Unit)?
-            = null
-        ): SimulateColorblind {
-            val builder = SimulateColorblind.Builder()
-            simulateColorblind?.let { builder.it() }
+
+        fun makeTransparent(options: (MakeTransparentBuilder.() -> Unit)? = null): Effect {
+            val builder = MakeTransparentBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun cartoonify(cartoonify: (Cartoonify.Builder.() -> Unit)? = null): Cartoonify {
-            val builder = Cartoonify.Builder()
-            cartoonify?.let { builder.it() }
+        fun waveform() = Effect(Flag.Waveform().cldAsFlag().asAction())
+        fun accelerate(percent: Int? = null) = effect("accelerate", percent?.cldRanged(-50, 100))
+        fun deshake(factor: DeShakeFactor? = null) = effect("deshake", factor)
+        fun noise(level: Int? = null) = effect("noise", level?.cldRanged(0, 100))
+        fun boomerang() = effect("boomerang")
+        fun reverse() = effect("reverse")
+        fun preview(options: (PreviewBuilder.() -> Unit)? = null): Effect {
+            val builder = PreviewBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun shadow(strength: Int? = null, shadow: (Shadow.Builder.() -> Unit)? = null): Shadow {
-            val builder = Shadow.Builder()
-            shadow?.let { builder.shadow() }
-            strength?.let { builder.strength(strength) }
+        fun fadeIn(milliseconds: Long? = null) = fade(milliseconds?.cldPositiveNumber())
+        fun fadeOut(milliseconds: Long) = fade(-milliseconds.cldPositiveNumber())
+        private fun fade(milliseconds: Long? = null) = effect("fade", milliseconds)
+
+        fun loop(loops: Int? = null) = effect("loop", loops)
+
+        fun sepia(level: Int? = null) = effect("sepia", level?.cldRanged(1, 100))
+
+        fun simulateColorblind(condition: ColorBlindCondition? = null) = effect("simulate_colorblind", condition)
+
+        fun cartoonify(options: (CartoonifyBuilder.() -> Unit)? = null): Effect {
+            val builder = CartoonifyBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-
-        fun orderedDither(orderedDither: (OrderedDither.Builder.() -> Unit)? = null):
-                OrderedDither {
-            val builder = OrderedDither.Builder()
-            orderedDither?.let { builder.it() }
+        fun shadow(strength: Int? = null, options: (ShadowBuilder.() -> Unit)? = null): Effect {
+            val builder = ShadowBuilder()
+            strength?.let { builder.strength(it) }
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun blurRegion(blurRegion: (BlurRegion.Builder.() -> Unit)? = null): BlurRegion {
-            val builder = BlurRegion.Builder()
-            blurRegion?.let { builder.it() }
+        fun orderedDither(filter: DitherFilter? = null) = effect("ordered_dither", filter)
+
+        fun blurRegion(options: (BlurRegionBuilder.() -> Unit)? = null): Effect {
+            val builder = BlurRegionBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun vectorize(vectorize: (Vectorize.Builder.() -> Unit)? = null): Vectorize {
-            val builder = Vectorize.Builder()
-            vectorize?.let { builder.it() }
+        fun vectorize(options: (VectorizeBuilder.() -> Unit)? = null): Effect {
+            val builder = VectorizeBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun blackWhite(): BlackWhite = BlackWhite()
+        fun blackWhite() = effect("blackwhite")
 
-        fun blur(strength: Int? = null, blur: (Blur.Builder.() -> Unit)? = null): Blur {
-            val builder = Blur.Builder()
-            strength?.let { builder.level(it) }
-            blur?.let { builder.it() }
+        fun blur(strength: Int? = null) = effect("blur", strength?.cldRanged(1, 2000))
+
+        fun vignette(level: Int? = null) = effect("vignette", level) // TODO range
+
+        fun trim(options: (TrimBuilder.() -> Unit)? = null): Effect {
+            val builder = TrimBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun sepia(level: Int? = null, sepia: (Sepia.Builder.() -> Unit)? = null): Sepia {
-            val builder = Sepia.Builder()
-            level?.let { builder.level(it) }
-            sepia?.let { builder.it() }
+        fun artistic(filter: ArtisticFilter) = effect("art", filter)
+
+        fun negate() = effect("negate")
+
+        fun colorize(options: (ColorizeBuilder.() -> Unit)? = null): Effect {
+            val builder = ColorizeBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun vignette(level: Int? = null, vignette: (Vignette.Builder.() -> Unit)? = null): Vignette {
-            val builder = Vignette.Builder()
-            level?.let { builder.level(it) }
-            vignette?.let { builder.it() }
+        fun redeye() = effect("redeye")
+
+        fun pixelateRegion(options: (PixelateRegionBuilder.() -> Unit)? = null): Effect {
+            val builder = PixelateRegionBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun trim(trim: (Trim.Builder.() -> Unit)? = null): Trim {
-            val builder = Trim.Builder()
-            trim?.let { builder.it() }
+        fun assistColorblind(options: (AssistColorblindBuilder.() -> Unit)? = null): Effect {
+            val builder = AssistColorblindBuilder()
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun artistic(artistic: (Artistic.Builder.() -> Unit)? = null): Artistic {
-            val builder = Artistic.Builder()
-            artistic?.let { builder.it() }
-            return builder.build()
-        }
+        fun pixelateFaces(squareSize: Int? = null) = effect("pixelate_faces", squareSize?.cldRanged(1, 200))
 
-        fun negate(): Negate = Negate()
+        fun grayscale() = effect("grayscale")
 
-        fun colorize(colorize: (Colorize.Builder.() -> Unit)? = null): Colorize {
-            val builder = Colorize.Builder()
-            colorize?.let { builder.it() }
-            return builder.build()
-        }
+        fun oilPaint(level: Int? = null) = effect("oil_paint", level) // TODO range
 
-        fun redeye(): Redeye = Redeye()
+        fun advRedeye() = effect("adv_redeye")
 
-        fun pixelateRegion(pixelateRegion: (PixelateRegion.Builder.() -> Unit)? = null):
-                PixelateRegion {
-            val builder = PixelateRegion.Builder()
-            pixelateRegion?.let { builder.it() }
-            return builder.build()
-        }
+        fun pixelate(squareSize: Int? = null) = effect("pixelate", squareSize?.cldRanged(1, 200))
 
-        fun assistColorblind(
-            assistColorblind: (AssistColorblind.Builder.() -> Unit)? =
-                null
-        ): AssistColorblind {
-            val builder = AssistColorblind.Builder()
-            assistColorblind?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun pixelateFaces(pixelateFaces: (PixelateFaces.Builder.() -> Unit)? = null):
-                PixelateFaces {
-            val builder = PixelateFaces.Builder()
-            pixelateFaces?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun grayscale(): Grayscale = Grayscale()
-
-        fun oilPaint(level: Int? = null, oilPaint: (OilPaint.Builder.() -> Unit)? = null): OilPaint {
-            val builder = OilPaint.Builder()
-            level?.let { builder.level(it) }
-            oilPaint?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun advRedeye(): AdvRedeye = AdvRedeye()
-
-        fun pixelate(squareSize: Int? = null, pixelate: (Pixelate.Builder.() -> Unit)? = null): Pixelate {
-            val builder = Pixelate.Builder()
-            squareSize?.let { builder.squareSize(it) }
-            pixelate?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun blurFaces(blurFaces: (BlurFaces.Builder.() -> Unit)? = null): BlurFaces {
-            val builder = BlurFaces.Builder()
-            blurFaces?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun makeTransparent(makeTransparent: (MakeTransparent.Builder.() -> Unit)? = null):
-                MakeTransparent {
-            val builder = MakeTransparent.Builder()
-            makeTransparent?.let { builder.it() }
-            return builder.build()
-        }
+        fun blurFaces(strength: Any? = null) = effect("blur_faces", strength)
     }
 }
-
-internal fun effectParam(
-    name: String,
-    values: List<Any>
-) = Param(
-    "effect",
-    "e",
-    ParamValue(listOf(name) + values)
-)
 
 class Region(x: Int? = null, y: Int? = null, width: Int? = null, height: Int? = null) {
     internal val list = listOfNotNull(x?.cldAsX(), y?.cldAsY(), width?.cldAsWidth(), height?.cldAsHeight())
@@ -258,4 +202,29 @@ enum class ArtisticFilter(private val value: String) {
     override fun toString(): String {
         return value
     }
+}
+
+enum class DeShakeFactor(private val factor: Int) {
+    FACTOR16(16),
+    FACTOR32(32),
+    FACTOR48(48),
+    FACTOR64(64);
+
+    override fun toString(): String {
+        return factor.cldToString()
+    }
+}
+
+internal fun effect(name: String, vararg values: Any?) = Effect(innerEffectAction(name, *values))
+
+internal fun innerEffectAction(
+    name: String,
+    vararg values: Any?
+): CParamsAction {
+    val (params, paramValues) = values.filterNotNull().partition { i -> i is Param }
+
+    // This list was generated using partition by type, however the compiler does not detect it. 100% safe cast.
+    @Suppress("UNCHECKED_CAST") val list = listOf((listOf(name) + paramValues).cldAsEffect()) + (params as List<Param>)
+    val action = CParamsAction(list)
+    return action
 }

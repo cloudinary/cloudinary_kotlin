@@ -27,8 +27,8 @@ fun clippingPath(clippingPath: (ClippingPath.Builder.() -> Unit)? = null): Clipp
 }
 
 private fun buildParams(pageParamValue: Any?, evenOdd: Boolean): Map<String, Param> {
-    val page = pageParamValue?.cldAsPageParam()
-    val clip = FlagsParam(if (evenOdd) FlagKey.ClipEvenOdd() else FlagKey.Clip())
+    val page = pageParamValue?.cldAsPage()
+    val clip = FlagsParam(if (evenOdd) Flag.ClipEvenOdd() else Flag.Clip())
     val clipPair = Pair(clip.key, clip)
 
     return if (page != null) {

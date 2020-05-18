@@ -2,12 +2,10 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.CustomFunction.Companion.wasm
-import com.cloudinary.transformation.Direction.EAST
-import com.cloudinary.transformation.Direction.WEST
 import com.cloudinary.transformation.Extract.Companion.pages
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
-import com.cloudinary.transformation.delivery.AudioCodecType
+import com.cloudinary.transformation.delivery.AudioCodec
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.BlendMode.SCREEN
@@ -16,9 +14,8 @@ import com.cloudinary.transformation.layer.FontWeight
 import com.cloudinary.transformation.layer.Layer.Companion.image
 import com.cloudinary.transformation.layer.Layer.Companion.text
 import com.cloudinary.transformation.layer.Stroke
+import com.cloudinary.transformation.reshape.Reshape.Companion.distortArc
 import com.cloudinary.transformation.resize.Resize.Companion.scale
-import com.cloudinary.transformation.video.Video
-import com.cloudinary.transformation.warp.Warp.Companion.distort
 import org.junit.Test
 
 class TransformationTest {
@@ -43,7 +40,6 @@ class TransformationTest {
             Transformation().antiRemoval(layer) {
                 transformation(sepiaTransformation)
             })
-
     }
 
     @Test
@@ -83,8 +79,8 @@ class TransformationTest {
 
     @Test
     fun testBackground() {
-        cldAssert("b_white", Transformation().background(Background.color { named("white") }))
-        cldAssert("b_white", Transformation().background(color { named("white") }))
+        cldAssert("b_white", Transformation().background(Background.color(Color.WHITE)))
+        cldAssert("b_white", Transformation().background(Color.WHITE))
     }
 
     @Test
@@ -111,9 +107,7 @@ class TransformationTest {
             "bo_4px_solid_black",
             Transformation().border {
                 width(4)
-                color {
-                    named("black")
-                }
+                color(Color.BLACK)
             })
     }
 
@@ -150,27 +144,32 @@ class TransformationTest {
 
     @Test
     fun testAdjust() {
-        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma { level(50) }))
+        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma(50)))
     }
 
     @Test
     fun testDelivery() {
-        cldAssert("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodecType.MP3)))
+        cldAssert("ac_mp3", Transformation().delivery(Delivery.audioCodec(AudioCodec.MP3)))
     }
 
     @Test
     fun testVideo() {
-        cldAssert("e_boomerang", Transformation().video(Video.boomerang()))
+        // TODO
     }
 
     @Test
-    fun testWarp() {
-        cldAssert("e_distort:arc:10", Transformation().warp(distort(10)))
+    fun testReshape() {
+        cldAssert("e_distort:arc:10", Transformation().reshape(distortArc(10)))
     }
 
     @Test
     fun testLayer() {
         cldAssert("l_sample/fl_layer_apply", Transformation().overlay(layer))
+    }
+
+    @Test
+    fun testDelay() {
+        cldAssert("dl_20", Transformation().delay(20))
     }
 
 
@@ -182,13 +181,11 @@ class TransformationTest {
                 adjust(opacity(80))
                 border(Border.solid {
                     width(4)
-                    color {
-                        named("red")
-                    }
+                    color(Color.RED)
                 })
                 overlay(image("sample")) {
                     position {
-                        gravity(Gravity.direction(EAST))
+                        gravity(Gravity.east())
                         allowOverflow(false)
                     }
                     blendMode(SCREEN)
@@ -206,23 +203,24 @@ class TransformationTest {
                             stroke(Stroke.STROKE)
                             letterSpacing(12f)
                         }
-                        background { named("red") }
-                        textColor { named("blue") }
+                        background(Color.RED)
+                        textColor(Color.BLUE)
                     }
                 ) {
                     position {
-                        gravity(Gravity.direction(WEST))
+                        x(20)
+                        gravity(Gravity.west())
                     }
                 }
                 rotate { angle(25) }
-                format(Format.png())
+                fetchFormat(Format.png())
             }
 
         cldAssert(
             "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                     "e_screen,fl_layer_apply.no_overflow,g_east/" +
                     "b_red,co_blue,l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello%20world/" +
-                    "fl_layer_apply,g_west/a_25/f_png",
+                    "fl_layer_apply,g_west,x_20/a_25/f_png",
             transformation
         )
     }

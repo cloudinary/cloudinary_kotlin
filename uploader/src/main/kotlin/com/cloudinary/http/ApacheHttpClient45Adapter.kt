@@ -9,7 +9,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder
 import java.io.File
 import java.net.URL
 
-class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpClient) : HttpClient {
+class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpClient) :
+    HttpClient {
     private val textFieldContentType: ContentType =
         ContentType.MULTIPART_FORM_DATA.withCharset(
             MIME.UTF8_CHARSET
@@ -32,7 +33,7 @@ class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpC
     ): HttpResponse? {
         val httpPost = HttpPost(url.toExternalForm())
         val builder = MultipartEntityBuilder.create()
-        entity.parts.forEach { addPart(builder, it) }
+        entity.parts.forEach { (k, v) -> addPart(builder, k, v) }
         headers.keys.forEach { httpPost.addHeader(it, headers[it]) }
         httpPost.entity = builder.build()
         return execute(httpPost)
@@ -42,17 +43,21 @@ class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpC
         val response = client.execute(httpRequest)
         val responseHeaders = response.allHeaders.associateBy({ it.name }, { it.value })
         val stringResponse = response.entity.content.bufferedReader().use { it.readText() }
-        return HttpResponse(response.statusLine.statusCode, stringResponse, responseHeaders)
+        return HttpResponse(
+            response.statusLine.statusCode,
+            stringResponse,
+            responseHeaders
+        )
     }
 
-    private fun addPart(builder: MultipartEntityBuilder, part: MultipartEntity.Part) {
-        when (part.value) {
-            is String -> builder.addTextBody(part.name, part.value, textFieldContentType)
-            is URL -> builder.addTextBody(part.name, part.value.toString(), textFieldContentType)
-            is File -> builder.addBinaryBody("file", part.value, ContentType.APPLICATION_OCTET_STREAM, part.name)
+    private fun addPart(builder: MultipartEntityBuilder, name: String, value: Any) {
+        when (value) {
+            is String -> builder.addTextBody(name, value, textFieldContentType)
+            is URL -> builder.addTextBody(name, value.toString(), textFieldContentType)
+            is File -> builder.addBinaryBody("file", value, ContentType.APPLICATION_OCTET_STREAM, name)
             is ByteArray -> builder.addBinaryBody(
-                "file", part.value,
-                ContentType.APPLICATION_OCTET_STREAM, part.name
+                "file", value,
+                ContentType.APPLICATION_OCTET_STREAM, name
             )
         }
     }

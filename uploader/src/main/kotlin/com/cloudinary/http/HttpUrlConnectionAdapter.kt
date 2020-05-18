@@ -11,7 +11,8 @@ import java.net.URL
 
 private const val bufferSize = 4096
 
-class HttpUrlConnectionAdapter(private val userAgent: String, private val config: ApiConfig) : HttpClient {
+class HttpUrlConnectionAdapter(private val userAgent: String, private val config: ApiConfig) :
+    HttpClient {
     private val lineFeed = "\r\n"
     private val boundary: String = randomPublicId()
 
@@ -55,7 +56,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
 
         httpConn.outputStream.use { outputStream ->
             PrintWriter(OutputStreamWriter(outputStream, charset), true).use { writer ->
-                entity.parts.forEach { addPart(writer, outputStream, it, charset.name()) }
+                entity.parts.forEach { (k, v) -> addPart(writer, outputStream, k, v, charset.name()) }
                 writer.append("--$boundary--").append(lineFeed)
             }
         }
@@ -73,11 +74,11 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
         }
     }
 
-    private fun addPart(writer: PrintWriter, outputStream: OutputStream, part: MultipartEntity.Part, charset: String) {
-        when (part.value) {
-            is String -> addFormField(writer, part.name, part.value, charset)
-            is File -> FileInputStream(part.value).use { addFilePart(writer, outputStream, "file", it, part.name) }
-            is ByteArray -> part.value.inputStream().use { addFilePart(writer, outputStream, "file", it, part.name) }
+    private fun addPart(writer: PrintWriter, outputStream: OutputStream, name: String, value: Any, charset: String) {
+        when (value) {
+            is String -> addFormField(writer, name, value, charset)
+            is File -> FileInputStream(value).use { addFilePart(writer, outputStream, "file", it, name) }
+            is ByteArray -> value.inputStream().use { addFilePart(writer, outputStream, "file", it, name) }
         }
     }
 

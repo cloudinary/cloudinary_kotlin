@@ -6,7 +6,7 @@ internal const val DEFAULT_PRIVATE_CDN = false
 internal const val DEFAULT_CDN_SUBDOMAIN = false
 internal const val DEFAULT_SHORTEN = false
 internal const val DEFAULT_USE_ROOT_PATH = false
-internal const val DEFAULT_SECURE = false // TODO this should probably be false
+internal const val DEFAULT_SECURE = false
 internal const val DEFAULT_SECURE_CDN_SUBDOMAIN = false
 
 interface IUrlConfig {

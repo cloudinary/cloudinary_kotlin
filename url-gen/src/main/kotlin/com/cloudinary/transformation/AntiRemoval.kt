@@ -1,11 +1,10 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.transformation.Transformation.Builder
-import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 import com.cloudinary.util.cldRanged
 
-class AntiRemoval private constructor(components: LayerComponents) : LayerContainer(components) {
+class AntiRemoval private constructor(components: LayerComponents) : LayerAction(components) {
 
     class Builder(private var source: Layer) : TransformationComponentBuilder {
         private var level: Any? = null
@@ -39,10 +38,7 @@ class AntiRemoval private constructor(components: LayerComponents) : LayerContai
                     null,
                     "overlay",
                     "l",
-                    extraParams = Effect(
-                        "anti_removal",
-                        level?.cldRanged(1, 100)
-                    ).params.values
+                    extraParams = listOf(listOfNotNull("anti_removal", level?.cldRanged(1, 100)).cldAsEffect())
                 )
             )
     }

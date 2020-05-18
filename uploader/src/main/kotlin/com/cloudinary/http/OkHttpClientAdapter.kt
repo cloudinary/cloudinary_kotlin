@@ -20,7 +20,7 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
         val bodyBuilder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
 
-        entity.parts.forEach { addPart(bodyBuilder, it) }
+        entity.parts.forEach { (k, v) -> addPart(bodyBuilder, k, v) }
 
         val requestBuilder = Request.Builder()
             .url(url.toExternalForm())
@@ -45,21 +45,25 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
 
         this.client.newCall(requestBuilder.build()).execute().use { response ->
             val responseHeaders = response.headers().names().associateBy({ it!! }, { response.headers().get(it)!! })
-            return HttpResponse(response.code(), response.body()?.string(), responseHeaders)
+            return HttpResponse(
+                response.code(),
+                response.body()?.string(),
+                responseHeaders
+            )
         }
     }
 
-    private fun addPart(builder: MultipartBody.Builder, part: MultipartEntity.Part) {
-        when (part.value) {
-            is String -> builder.addFormDataPart(part.name, part.value)
-            is URL -> builder.addFormDataPart(part.name, part.value.toString())
+    private fun addPart(builder: MultipartBody.Builder, name: String, value: Any) {
+        when (value) {
+            is String -> builder.addFormDataPart(name, value)
+            is URL -> builder.addFormDataPart(name, value.toString())
             is File -> builder.addFormDataPart(
                 "file",
-                part.name,
-                RequestBody.create(APPLICATION_OCTET_STREAM, part.value)
+                name,
+                RequestBody.create(APPLICATION_OCTET_STREAM, value)
             )
             is ByteArray -> builder.addFormDataPart(
-                "file", part.name, RequestBody.create(APPLICATION_OCTET_STREAM, part.value)
+                "file", name, RequestBody.create(APPLICATION_OCTET_STREAM, value)
             )
         }
     }

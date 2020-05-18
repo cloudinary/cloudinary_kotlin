@@ -4,10 +4,10 @@ import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.Layer
-import com.cloudinary.transformation.layer.LayerContainer
+import com.cloudinary.transformation.layer.LayerAction
+import com.cloudinary.transformation.reshape.Reshape
 import com.cloudinary.transformation.resize.Resize
-import com.cloudinary.transformation.video.Video
-import com.cloudinary.transformation.warp.Warp
+import com.cloudinary.transformation.videoedit.VideoEdit
 
 @TransformationDsl
 interface ITransformable<T> {
@@ -129,7 +129,7 @@ interface ITransformable<T> {
     fun extract(extract: Extract) = add(extract)
 
     fun background(background: Background) = add(background)
-    fun background(color: ColorValue, background: (Background.Builder.() -> Unit)? = null) =
+    fun background(color: Color, background: (Background.Builder.() -> Unit)? = null) =
         addWithBuilder(Background.Builder(color), background)
 
     fun outline(outline: Outline) = add(outline)
@@ -166,34 +166,37 @@ interface ITransformable<T> {
     fun delivery(delivery: Delivery) = add(delivery)
 
     // video
-    fun video(video: Video) = add(video)
+    fun video(videoEdit: VideoEdit) = add(videoEdit)
 
-    // warp
-    fun warp(warp: Warp) = add(warp)
-
-    // layer
-    fun overlay(layer: Layer, layerBuilder: (LayerContainer.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerContainer.Builder(layer).param("overlay", "l"), layerBuilder)
+    // reshape
+    fun reshape(reshape: Reshape) = add(reshape)
 
     // layer
-    fun underlay(layer: Layer, layerBuilder: (LayerContainer.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerContainer.Builder(layer).param("underlay", "u"), layerBuilder)
+    fun overlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(layer).param("overlay", "l"), layerBuilder)
+
+    // layer
+    fun underlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(layer).param("underlay", "u"), layerBuilder)
 
     fun namedTransformation(name: String) = add(GenericAction(NamedTransformationParam(name)))
 
     // variables
     fun variable(name: String, value: Expression) = add(GenericAction(Param(name, name, value)))
 
-    fun variable(name: String, value: Any) = add(GenericAction(Param(name, name, value)))
+    fun variable(name: String, value: Any) =
+        add(GenericAction(Param(name.asVariableName(), name.asVariableName(), value.asVariableValue())))
 
     // conditions
     fun ifCondition(expression: Expression) = add(GenericAction(Param("if", "if", expression)))
+
+    fun ifCondition(expression: String) = add(GenericAction(Param("if", "if", expression)))
 
     fun ifElse() = add(GenericAction(Param("if", "if", ParamValue("else"))))
 
     fun endIfCondition() = add(GenericAction(Param("if", "if", ParamValue("end"))))
 
-    fun format(format: Format) = add(format.asAction())
+    fun fetchFormat(format: Format) = add(format.asAction())
 
     fun quality(quality: Quality) = add(quality)
 
@@ -202,4 +205,6 @@ interface ITransformable<T> {
     fun dpr(dpr: Dpr) = add(dpr)
 
     fun dpr(dpr: Number) = add(Dpr.fixed(dpr))
+
+    fun delay(milliseconds: Long) = add(CParamsAction(Param("delay", "dl", milliseconds)))
 }

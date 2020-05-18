@@ -3,7 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.transformation.Transformation.Builder
 import com.cloudinary.transformation.layer.*
 
-class Cutter private constructor(components: LayerComponents) : LayerContainer(components) {
+class Cutter private constructor(components: LayerComponents) : LayerAction(components) {
 
     class Builder(private val source: Layer) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
@@ -33,7 +33,7 @@ class Cutter private constructor(components: LayerComponents) : LayerContainer(c
                     position,
                     paramName = "layer",
                     paramKey = "l",
-                    flag = FlagKey.Cutter()
+                    flag = Flag.Cutter()
                 )
             )
     }

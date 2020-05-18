@@ -28,7 +28,6 @@ class RoundCorners private constructor(params: Map<String, Param>) :
             corners.add("max")
         }
 
-
         override fun build() = RoundCorners(corners)
     }
 }

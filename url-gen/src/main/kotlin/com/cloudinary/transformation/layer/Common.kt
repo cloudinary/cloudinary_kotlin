@@ -21,7 +21,7 @@ class Position(params: Map<String, Param>) : ParamsAction<Position>(params) {
                 x?.cldAsX(),
                 y?.cldAsY(),
                 tileMode?.asFlag(),
-                if (!allowOverflow) FlagsParam(FlagKey.NoOverflow()) else null
+                if (!allowOverflow) FlagsParam(Flag.NoOverflow()) else null
             ).cldToActionMap()
         )
 
@@ -87,17 +87,17 @@ abstract class Layer internal constructor(val values: List<Any>, val params: Lis
     }
 }
 
-open class LayerContainer internal constructor(private val components: LayerComponents) :
+open class LayerAction internal constructor(private val components: LayerComponents) :
     Action {
 
     companion object {
-        fun overlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerContainer {
+        internal fun overlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerAction {
             val builder = Builder(source).param("overlay", "l")
             options?.let { builder.options() }
             return builder.build()
         }
 
-        fun underlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerContainer {
+        fun underlay(source: Layer, options: (Builder.() -> Unit)? = null): LayerAction {
             val builder = Builder(source).param("underlay", "u")
             options?.let { builder.options() }
             return builder.build()
@@ -110,6 +110,7 @@ open class LayerContainer internal constructor(private val components: LayerComp
         components.position
     ).joinToString("/")
 
+    @TransformationDsl
     class Builder(private val source: Layer) : TransformationComponentBuilder, ITransformable<Builder> {
         private var transformation: Transformation? = null
         private var position: Position? = null
@@ -117,7 +118,7 @@ open class LayerContainer internal constructor(private val components: LayerComp
         private var paramName: String = "layer"
         private var paramKey: String = "l"
         private var extraParams: Collection<Param> = emptyList()
-        private var flag: FlagKey? = null
+        private var flag: Flag? = null
 
         override fun add(action: Action) = apply { transformation = (transformation ?: Transformation()).add(action) }
 
@@ -145,10 +146,10 @@ open class LayerContainer internal constructor(private val components: LayerComp
         }
 
         internal fun extraParams(params: Collection<Param>) = apply { this.extraParams = params }
-        internal fun flagKey(flag: FlagKey) = apply { this.flag = flag }
+        internal fun flagKey(flag: Flag) = apply { this.flag = flag }
 
         override fun build() =
-            LayerContainer(
+            LayerAction(
                 buildLayerComponent(
                     source,
                     transformation,
@@ -170,14 +171,14 @@ internal fun buildLayerComponent(
     paramName: String,
     paramKey: String,
     extraParams: Collection<Param> = emptyList(),
-    flag: FlagKey? = null
+    flag: Flag? = null
 ): LayerComponents {
     // start with the layer param itself
     val firstComponentParams =
         GenericAction((source.params + Param(paramName, paramKey, ParamValue(source.values))).cldToActionMap())
 
     // layer apply flag + optional flags
-    val allParams = mutableListOf<Param>(FlagsParam(FlagKey.LayerApply()))
+    val allParams = mutableListOf<Param>(FlagsParam(Flag.LayerApply()))
     flag?.let { allParams.add(FlagsParam(it)) }
     allParams.addAll(extraParams)
 
@@ -210,5 +211,5 @@ enum class TileMode {
     NONE,
     TILED;
 
-    fun asFlag() = if (this == TILED) FlagsParam(FlagKey.Tiled()) else null
+    fun asFlag() = if (this == TILED) FlagsParam(Flag.Tiled()) else null
 }

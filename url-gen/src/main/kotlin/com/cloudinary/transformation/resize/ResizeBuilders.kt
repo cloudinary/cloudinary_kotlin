@@ -2,324 +2,127 @@ package com.cloudinary.transformation.resize
 
 import com.cloudinary.transformation.*
 
-class Scale internal constructor(params: Map<String, Param>) : Resize(params) {
+class ScaleBuilder : BaseBuilder("scale"), ResizeCommon
+class CropBuilder : BaseBuilder("crop"), ResizeCommon, HasGravity, HasZoom, HasXY
+class FitBuilder : BaseBuilder("fit"), ResizeCommon
+class LimitBuilder : BaseBuilder("limit"), ResizeCommon
+class MinimumFitBuilder : BaseBuilder("mfit"), ResizeCommon
+class FillBuilder : BaseBuilder("fill"), ResizeCommon, HasGravity
+class LimitFillBuilder : BaseBuilder("lfill"), ResizeCommon, HasGravity
+class PadBuilder : BaseBuilder("pad"), ResizeCommon, HasGravity, HasXY, HasBackground
+class LimitPadBuilder : BaseBuilder("lpad"), ResizeCommon, HasGravity, HasXY, HasBackground
+class MinimumPadBuilder : BaseBuilder("mpad"), ResizeCommon, HasGravity, HasXY, HasBackground
+class FillPadBuilder : BaseBuilder("fill_pad"), ResizeCommon, HasGravity, HasXY, HasBackground
+class ThumbBuilder : BaseBuilder("thumb"), ResizeCommon, HasGravity, HasXY, HasZoom
+class ImaggaCropBuilder : BaseBuilder("imagga_crop"), ResizeCommon
+class ImaggaScaleBuilder : BaseBuilder("imagga_scale"), ResizeCommon
 
-    class Builder : BaseBuilder<Scale>() {
+open class BaseBuilder(private val cropMode: String) {
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
+    var width: Any? = null
+    var height: Any? = null
+    var aspectRatio: Any? = null
+    var dpr: Any? = null
+    var mode: ResizeMode? = null
+    var gravity: Gravity? = null
+    var zoom: Any? = null
+    var x: Any? = null
+    var y: Any? = null
+    var background: Color? = null
 
-        override fun build() = Scale(
-            buildParameters(
-                cropMode = "scale"
+    fun build() = Resize(
+        CParamsAction(
+            listOfNotNull(
+                cropMode.cldAsCrop(),
+                width?.cldAsWidth(),
+                height?.cldAsHeight(),
+                aspectRatio?.cldAsAspectRatio(),
+                dpr?.cldAsDpr(),
+                gravity,
+                x?.cldAsX(),
+                y?.cldAsY(),
+                zoom?.cldAsZoom(),
+                mode?.asFlag(),
+                background?.cldAsColor()
             )
         )
-    }
+    )
 }
 
-class Crop internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Crop>() {
-
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun zoom(zoom: Float) = apply { this.zoom = zoom }
-        fun zoom(zoom: Any) = apply { this.zoom = zoom }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-
-        override fun build() = Crop(buildParameters("crop"))
-    }
+interface HasWidth {
+    var width: Any?
+    fun width(width: Any) = apply { this.width = width }
+    fun width(width: Int) = width(width as Any)
+    fun width(width: Float) = width(width as Any)
 }
 
-class Fit internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Fit>() {
-
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-
-        override fun build() = Fit(buildParameters("fit"))
-    }
+interface HasHeight {
+    var height: Any?
+    fun height(height: Any) = apply { this.height = height }
+    fun height(height: Int) = height(height as Any)
+    fun height(height: Float) = height(height as Any)
 }
 
-class Limit internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Limit>() {
+interface HasAspectRatio {
+    var aspectRatio: Any?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-
-        override fun build() = Limit(buildParameters("limit"))
-    }
+    fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
+    fun aspectRatio(aspectRatio: Int) = aspectRatio(aspectRatio as Any)
+    fun aspectRatio(aspectRatio: Float) = aspectRatio(aspectRatio as Any)
 }
 
-class MinimumFit internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<MinimumFit>() {
+interface HasDpr {
+    var dpr: Any?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-
-        override fun build() = MinimumFit(buildParameters("mfit"))
-    }
+    fun dpr(dpr: Any) = apply { this.dpr = dpr }
+    fun dpr(dpr: Float) = dpr(dpr as Any)
 }
 
-class Fill internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Fill>() {
+interface HasGravity {
+    var gravity: Gravity?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-
-        override fun build() = Fill(buildParameters("fill"))
-    }
+    fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
 }
 
-class LimitFill internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<LimitFill>() {
+interface HasXY {
+    var x: Any?
+    var y: Any?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
+    fun x(x: Any) = apply { this.x = x }
+    fun x(x: Int) = x(x as Any)
+    fun x(x: Float) = x(x as Any)
 
-        override fun build() = LimitFill(buildParameters("lfill"))
-    }
+    fun y(y: Any) = apply { this.y = y }
+    fun y(y: Int) = y(y as Any)
+    fun y(y: Float) = y(y as Any)
 }
 
-class Pad internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Pad>() {
+interface HasY {
+    var y: Any?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-
-        override fun build() = Pad(buildParameters("pad"))
-    }
+    fun y(y: Any) = apply { this.y = y }
+    fun y(y: Int) = y(y as Any)
+    fun y(y: Float) = y(y as Any)
 }
 
-class LimitPad internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<LimitPad>() {
+interface HasZoom {
+    var zoom: Any?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-
-        override fun build() = LimitPad(buildParameters("lpad"))
-    }
+    fun zoom(zoom: Any) = apply { this.zoom = zoom }
+    fun zoom(zoom: Int) = zoom(zoom as Any)
+    fun zoom(zoom: Float) = zoom(zoom as Any)
 }
 
-class MinimumPad internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<MinimumPad>() {
+interface HasMode {
+    var mode: ResizeMode?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-
-        override fun build() = MinimumPad(buildParameters("mpad"))
-    }
+    fun mode(mode: ResizeMode) = apply { this.mode = mode }
 }
 
-class FillPad internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<FillPad>() {
+interface HasBackground {
+    var background: Color?
 
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-
-        override fun build() = FillPad(buildParameters("fill_pad"))
-    }
+    fun background(color: Color) = apply { this.background = color }
 }
 
-class Thumb internal constructor(params: Map<String, Param>) : Resize(params) {
-    class Builder : BaseBuilder<Thumb>() {
-
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-        fun gravity(gravity: Gravity) = apply { this.gravity = gravity }
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
-        fun y(y: Float) = apply { this.y = y }
-        fun zoom(zoom: Float) = apply { this.zoom = zoom }
-        fun zoom(zoom: Any) = apply { this.zoom = zoom }
-
-        override fun build() = Thumb(buildParameters("thumb"))
-    }
-}
-
-class ImaggaCrop internal constructor(params: Map<String, Param>) : Resize(params) {
-
-    class Builder : BaseBuilder<ImaggaCrop>() {
-
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-
-        override fun build() = ImaggaCrop(buildParameters("imagga_crop"))
-    }
-}
-
-class ImaggaScale internal constructor(params: Map<String, Param>) : Resize(params) {
-
-    class Builder : BaseBuilder<ImaggaScale>() {
-
-        fun width(width: Int) = apply { this.width = width }
-        fun height(height: Int) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Float) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Float) = apply { this.dpr = dpr }
-        fun width(width: Any) = apply { this.width = width }
-        fun height(height: Any) = apply { this.height = height }
-        fun aspectRatio(aspectRatio: Any) = apply { this.aspectRatio = aspectRatio }
-        fun dpr(dpr: Any) = apply { this.dpr = dpr }
-        fun mode(mode: ResizeMode) = apply { this.mode = mode }
-
-        override fun build() = ImaggaScale(buildParameters("imagga_scale"))
-    }
-}
-
-abstract class BaseBuilder<T> {
-    protected var width: Any? = null
-    protected var height: Any? = null
-    internal var aspectRatio: Any? = null
-    protected var dpr: Any? = null
-    protected var mode: ResizeMode? = null
-    protected var gravity: Gravity? = null
-    protected var zoom: Any? = null
-    protected var x: Any? = null
-    protected var y: Any? = null
-
-    abstract fun build(): T
-
-    protected fun buildParameters(cropMode: String) =
-        listOfNotNull(
-            cropMode.cldAsCrop(),
-            width?.cldAsWidth(),
-            height?.cldAsHeight(),
-            aspectRatio?.cldAsAspectRatio(),
-            dpr?.cldAsDpr(),
-            gravity,
-            x?.cldAsX(),
-            y?.cldAsY(),
-            zoom?.cldAsZoom(),
-            mode?.asFlag()
-        ).cldToActionMap()
-}
-
+interface ResizeCommon : HasWidth, HasHeight, HasAspectRatio, HasDpr, HasMode

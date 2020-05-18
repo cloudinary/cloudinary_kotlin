@@ -11,7 +11,7 @@ class DisplaceTest {
     fun testDisplace() {
         val source = Layer.image("radialize")
         val t = Transformation().resize(Resize.scale { width(200) })
-        val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(25).build()
+        val pos = Position.Builder().gravity(Gravity.north()).x(25).build()
         cldAssert("l_radialize/e_displace,fl_layer_apply", Displace.displace(source))
         cldAssert("l_radialize/c_scale,w_200/e_displace,fl_layer_apply", Displace.displace(source, t))
         cldAssert(

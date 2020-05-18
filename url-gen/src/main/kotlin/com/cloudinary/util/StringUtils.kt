@@ -121,7 +121,6 @@ internal fun String.cldRemovePound() = replaceFirst("#", "")
 internal fun URI.cldQueryAsMap() =
     query?.split("&")?.associate { it.split("=").run { Pair(this[0], this[1]) } } ?: emptyMap()
 
-// TODO - this implementation is java 8 only??
 /**
  * Returns the base64 representation of this string
  */

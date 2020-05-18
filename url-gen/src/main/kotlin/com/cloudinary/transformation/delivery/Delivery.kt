@@ -1,51 +1,42 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.ParamValue
-import com.cloudinary.transformation.ParamsAction
+import com.cloudinary.transformation.*
+import com.cloudinary.util.cldRealPositive
 import com.cloudinary.util.cldToString
 
-open class Delivery(params: Map<String, Param>) : ParamsAction<Delivery>(params) {
-    constructor(param: Param) : this(mapOf(Pair(param.key, param)))
+class Delivery(private val action: Action) : Action by action {
 
-    override fun create(params: Map<String, Param>) =
-        Delivery(params)
 
     companion object {
-        fun streamingProfile(profile: String) = StreamingProfile.Builder(profile).build()
+        fun streamingProfile(profile: String) = delivery(profile.cldAsStreamingProfile())
 
-        fun videoCodec(
-            codec: VideoCodecType, videoCodec: (VideoCodec.Builder.() -> Unit)? = null
-        ): VideoCodec {
-            val builder = VideoCodec.Builder(codec)
-            videoCodec?.let { builder.it() }
+        fun videoCodec(codec: VideoCodec, options: (VideoCodecBuilder.() -> Unit)? = null): Delivery {
+            val builder = VideoCodecBuilder(codec)
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun fps(fps: Int) = Fps.Builder().fixed(fps).build()
-
-        fun fps(min: Any, max: Any?): Fps {
-            val builder = Fps.Builder().min(min)
-            max?.let { builder.max(max) }
+        fun fps(fps: Float) = FpsBuilder().fixed(fps).build()
+        fun fps(fps: Int) = FpsBuilder().fixed(fps).build()
+        fun fps(options: (FpsBuilder.() -> Unit)? = null): Delivery {
+            val builder = FpsBuilder()
+            options?.let { builder.options() }
             return builder.build()
         }
 
-        fun fps(min: Int, max: Int?) = fps(min as Any, max)
-        fun fps(min: Float, max: Float?) = fps(min as Any, max)
+        fun audioCodec(codec: AudioCodec) = delivery(codec.cldAsAudioCodec())
 
-        fun audioCodec(codec: AudioCodecType) = AudioCodec.Builder(codec).build()
+        fun audioFrequency(frequency: AudioFrequency) = delivery(frequency.cldAsAudioFrequency())
 
-        fun audioFrequency(frequency: AudioFrequencyType) = AudioFrequency.Builder(frequency).build()
+        fun defaultImage(publicId: String) = delivery(publicId.cldAsDefaultImage())
 
-        fun defaultImage(publicId: String) = DefaultImage.Builder(publicId).build()
+        fun colorSpace(colorSpace: ColorSpace) = delivery(colorSpace.cldAsColorSpace())
 
-        fun colorSpace(colorSpace: ColorSpaceType) = ColorSpace.Builder(colorSpace).build()
-
-        fun keyframeInterval(seconds: Float) = KeyframeInterval.Builder(seconds).build()
+        fun keyframeInterval(seconds: Float) = delivery((seconds.cldRealPositive().cldAsKeyframeInterval()))
     }
 }
 
-enum class VideoCodecType(private val value: String) {
+enum class VideoCodec(private val value: String) {
     VP8("vp8"),
     VP9("vp9"),
     PRORES("prores"),
@@ -69,7 +60,7 @@ enum class VideoCodecProfile(private val value: String) {
     }
 }
 
-enum class AudioCodecType(private val value: String) {
+enum class AudioCodec(private val value: String) {
     NONE("none"),
     AAC("aac"),
     VORBIS("vorbis"),
@@ -80,7 +71,7 @@ enum class AudioCodecType(private val value: String) {
     }
 }
 
-enum class AudioFrequencyType(private val frequency: Int) {
+enum class AudioFrequency(private val frequency: Int) {
     HZ_8000(8000),
     HZ_11025(11025),
     HZ_16000(16000),
@@ -101,15 +92,17 @@ enum class AudioFrequencyType(private val frequency: Int) {
     }
 }
 
-sealed class ColorSpaceType(value: Any) : ParamValue(value) {
+sealed class ColorSpace(value: Any) : ParamValue(value) {
     constructor(value: String) : this(ParamValue(value))
 
-    object Srgb : ColorSpaceType("srgb")
-    object TinySrgb : ColorSpaceType("tinysrgb")
-    object CMYK : ColorSpaceType("cmyk")
-    object NoCmyk : ColorSpaceType("no_cmyk")
-    object KeepCmyk : ColorSpaceType("keep_cmyk")
-    class CsIcc(publicId: String) : ColorSpaceType(
+    object SRGB : ColorSpace("srgb")
+    object TINYSRGB : ColorSpace("tinysrgb")
+    object CMYK : ColorSpace("cmyk")
+    object NO_CMYK : ColorSpace("no_cmyk")
+    object KEEP_CMYK : ColorSpace("keep_cmyk")
+    class CsIcc(publicId: String) : ColorSpace(
         ParamValue(listOfNotNull("icc", publicId))
     )
 }
+
+internal fun delivery(vararg params: Param) = Delivery(CParamsAction(params.toList()))

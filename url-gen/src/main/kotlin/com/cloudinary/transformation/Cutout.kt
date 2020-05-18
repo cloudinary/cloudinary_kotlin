@@ -1,10 +1,9 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.transformation.Transformation.Builder
-import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 
-class Cutout private constructor(components: LayerComponents) : LayerContainer(components) {
+class Cutout private constructor(components: LayerComponents) : LayerAction(components) {
 
     class Builder(private val source: Layer) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
@@ -29,9 +28,12 @@ class Cutout private constructor(components: LayerComponents) : LayerContainer(c
         override fun build() =
             Cutout(
                 buildLayerComponent(
-                    source, transformation, position, paramName = "layer", paramKey = "l", extraParams = Effect(
-                        "cut_out"
-                    ).params.values
+                    source,
+                    transformation,
+                    position,
+                    paramName = "layer",
+                    paramKey = "l",
+                    extraParams = listOf(listOfNotNull("cut_out").cldAsEffect())
                 )
             )
     }

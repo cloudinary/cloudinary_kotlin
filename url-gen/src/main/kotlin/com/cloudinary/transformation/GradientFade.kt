@@ -24,7 +24,7 @@ class GradientFade private constructor(params: Map<String, Param>) :
 
         override fun build(): GradientFade {
             val values = listOfNotNull(if (symmetric) "symmetric" else null, strength?.cldRanged(0, 100))
-            val params = listOfNotNull(xParam(x), yParam(y))
+            val params = listOfNotNull(x?.cldAsX(), y?.cldAsY())
 
             return GradientFade(
                 (params + Param(

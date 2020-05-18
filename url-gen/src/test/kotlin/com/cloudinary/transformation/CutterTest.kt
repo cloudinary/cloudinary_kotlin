@@ -14,7 +14,11 @@ class CutterTest {
         var expected = "l_hexagon_sample/c_scale,fl_relative,h_1.0,w_1.0/fl_cutter.layer_apply"
 
         val layer = Layer.image("hexagon_sample")
-        val scale = Resize.scale { width(1f).height(1f).mode(ResizeMode.RELATIVE) }
+        val scale = Resize.scale {
+            width(1f)
+            height(1f)
+            mode(ResizeMode.RELATIVE)
+        }
         var actualFromBuilder = Cutter.Builder(layer)
             .transformation(
                 Transformation().resize(scale)
@@ -29,7 +33,10 @@ class CutterTest {
         cldAssert(expected, actualFromDsl)
 
         val position = Position.Builder().x(50).tileMode(TileMode.TILED).build()
-        val crop = Resize.crop { width(100).height(50) }
+        val crop = Resize.crop {
+            width(100)
+            height(50)
+        }
         actualFromBuilder = Cutter.Builder(layer)
             .transformation(Transformation().resize(crop))
             .position(position)

@@ -1,17 +1,19 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.*
 
-class Displace private constructor(components: LayerComponents) : LayerContainer(components) {
+class Displace private constructor(components: LayerComponents) : LayerAction(components) {
 
     companion object {
         fun displace(source: Layer, transformation: Transformation? = null, position: Position? = null) =
             Displace(
                 buildLayerComponent(
-                    source, transformation, position, paramName = "layer", paramKey = "l", extraParams = Effect(
-                        "displace"
-                    ).params.values
+                    source,
+                    transformation,
+                    position,
+                    paramName = "layer",
+                    paramKey = "l",
+                    extraParams = listOf(listOfNotNull("displace").cldAsEffect())
                 )
             )
     }

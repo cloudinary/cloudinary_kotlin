@@ -9,9 +9,10 @@ import org.junit.Test
 class CutoutTest {
     @Test
     fun testCutout() {
-        val pos = Position.Builder().gravity(Gravity.direction(Direction.NORTH)).x(100).build()
+        val pos = Position.Builder().gravity(Gravity.north()).x(100).build()
         val tr = Transformation().resize(Resize.scale {
-            width(200).height(200)
+            width(200)
+            height(200)
         }).roundCorners(RoundCorners.max())
 
         cldAssert(

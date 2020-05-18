@@ -1,7 +1,6 @@
 package com.cloudinary
 
 import com.cloudinary.config.Configuration
-import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -57,16 +56,24 @@ class AuthTokenTest {
             Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(privateCdn = true)))
         var message = "should add token if authToken is globally set and signed = true"
         var url =
-            cloudinary.url(signUrl = true, resourceType = "image", type = "authenticated", version = "1486020273")
-                .generate("sample.jpg")
+            cloudinary.url {
+                signUrl(true)
+                resourceType("image")
+                deliveryType("authenticated")
+                version("1486020273")
+            }.generate("sample.jpg")
         assertEquals(
             message,
             "http://test123-res.cloudinary.com/image/authenticated/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=8db0d753ee7bbb9e2eaf8698ca3797436ba4c20e31f44527e43b6a6e995cfdb3",
             url
         )
         message = "should add token for 'public' resource"
-        url = cloudinary.url(signUrl = true, resourceType = "image", type = "public", version = "1486020273")
-            .generate("sample.jpg")
+        url = cloudinary.url {
+            signUrl(true)
+            resourceType("image")
+            deliveryType("public")
+            version("1486020273")
+        }.generate("sample.jpg")
         assertEquals(
             message,
             "http://test123-res.cloudinary.com/image/public/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=c2b77d9f81be6d89b5d0ebc67b671557e88a40bcf03dd4a6997ff4b994ceb80e",
@@ -74,7 +81,11 @@ class AuthTokenTest {
         )
         message = "should not add token if signed is false"
         url =
-            cloudinary.url(resourceType = "image", type = "authenticated", version = "1486020273")
+            cloudinary.url {
+                resourceType("image")
+                deliveryType("authenticated")
+                version("1486020273")
+            }
                 .generate("sample.jpg")
         assertEquals(
             message,
@@ -83,36 +94,40 @@ class AuthTokenTest {
         )
         message =
             "should not add token if authToken is globally set but null auth token is explicitly set and signed = true"
-        url = cloudinary.url(
-            authToken = NULL_AUTH_TOKEN, signUrl = true, resourceType = "image",
-            type = "authenticated", version = "1486020273"
-        ).generate("sample.jpg")
+        url = cloudinary.url {
+            authToken(NULL_AUTH_TOKEN)
+            signUrl(true)
+            resourceType("image")
+            deliveryType("authenticated")
+            version("1486020273")
+        }.generate("sample.jpg")
         assertEquals(
             message,
             "http://test123-res.cloudinary.com/image/authenticated/s--v2fTPYTu--/v1486020273/sample.jpg",
             url
         )
         message = "explicit authToken should override global setting"
-        url = cloudinary.url(
-            signUrl = true,
-            authToken =
-            AuthToken(key = ALT_KEY, startTime = 222222222, duration = 100),
-            resourceType = "image",
-            type = "authenticated",
-            transformation = Transformation().resize(Resize.scale { width(300) })
-        ).generate("sample.jpg")
+        url = cloudinary.url {
+            signUrl(true)
+            authToken(AuthToken(key = ALT_KEY, startTime = 222222222, duration = 100))
+            resourceType("image")
+            deliveryType("authenticated")
+            resize(Resize.scale {
+                width(300)
+            })
+        }.generate("sample.jpg")
         assertEquals(
             message,
             "http://test123-res.cloudinary.com/image/authenticated/c_scale,w_300/sample.jpg?__cld_token__=st=222222222~exp=222222322~hmac=55cfe516530461213fe3b3606014533b1eca8ff60aeab79d1bb84c9322eebc1f",
             url
         )
         message = "should compute expiration as start time + duration"
-        url = cloudinary.url(
-            signUrl = true,
-            authToken = AuthToken(key = KEY, startTime = 11111111, duration = 300),
-            type = "authenticated",
-            version = "1486020273"
-        ).generate("sample.jpg")
+        url = cloudinary.url {
+            signUrl(true)
+            authToken(AuthToken(key = KEY, startTime = 11111111, duration = 300))
+            deliveryType("authenticated")
+            version("1486020273")
+        }.generate("sample.jpg")
         assertEquals(
             message,
             "http://test123-res.cloudinary.com/image/authenticated/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=8db0d753ee7bbb9e2eaf8698ca3797436ba4c20e31f44527e43b6a6e995cfdb3",

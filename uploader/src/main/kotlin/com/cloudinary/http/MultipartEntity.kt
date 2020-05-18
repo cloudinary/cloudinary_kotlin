@@ -1,20 +1,18 @@
 package com.cloudinary.http
 
-import com.cloudinary.upload.request.Payload
+class MultipartEntityImpl : MultipartEntity {
+    override val parts = sortedMapOf<String, Any>()
 
-class MultipartEntity {
-    internal val parts = ArrayList<Part>()
-
-    internal fun addTextPart(name: String, value: String): MultipartEntity {
-        parts.add(Part(name, value))
+    override fun addTextPart(name: String, value: String): MultipartEntity {
+        parts[name] = value
         return this
     }
 
-    internal fun addPayloadPart(payload: Payload<*>, forcedName: String? = null) = apply {
+    override fun addPayloadPart(payload: Payload<*>, forcedName: String?) = apply {
         payload.value?.let { value ->
-            parts.add(Part(forcedName ?: payload.name, value))
+            parts[forcedName ?: payload.name] = value
         }
     }
 
-    internal data class Part(val name: String, val value: Any)
+    data class Part(val name: String, val value: Any)
 }

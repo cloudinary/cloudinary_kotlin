@@ -1,38 +1,36 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.Direction.NORTH
-import com.cloudinary.transformation.Gravity.Companion.direction
 import com.cloudinary.transformation.layer.*
 import com.cloudinary.transformation.layer.Layer.Companion.subtitles
-import com.cloudinary.transformation.layer.LayerContainer.Companion.overlay
-import com.cloudinary.transformation.layer.LayerContainer.Companion.underlay
+import com.cloudinary.transformation.layer.LayerAction.Companion.overlay
+import com.cloudinary.transformation.layer.LayerAction.Companion.underlay
 import com.cloudinary.transformation.layer.Stroke.STROKE
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class LayerTest {
     private val layer = MediaLayer("sample")
-    private val pos = Position.Builder().gravity(direction(NORTH)).x(25).build()
+    private val pos = Position.Builder().gravity(Gravity.north()).x(25).build()
     private val blendMode = BlendMode.MULTIPLY
 
     @Test
     fun testLayerPosition() {
 
         val noOverflow =
-            Position.Builder().gravity(direction(NORTH)).x(10).y(20).allowOverflow(false).build()
+            Position.Builder().gravity(Gravity.north()).x(10).y(20).allowOverflow(false).build()
         cldAssert("fl_no_overflow,g_north,x_10,y_20", noOverflow)
         cldAssert(
             "g_north,x_10,y_20",
-            Position.Builder().gravity(direction(NORTH)).x(10).y(20).allowOverflow(true).build()
+            Position.Builder().gravity(Gravity.north()).x(10).y(20).allowOverflow(true).build()
         )
         val tiled =
-            Position.Builder().gravity(direction(NORTH)).x(10).y(20).tileMode(TileMode.TILED).build()
+            Position.Builder().gravity(Gravity.north()).x(10).y(20).tileMode(TileMode.TILED).build()
         cldAssert("fl_tiled,g_north,x_10,y_20", tiled)
 
         cldAssert(
             "g_north,x_10,y_20",
-            Position.Builder().gravity(direction(NORTH)).x(10).y(20).tileMode(TileMode.NONE).build()
+            Position.Builder().gravity(Gravity.north()).x(10).y(20).tileMode(TileMode.NONE).build()
         )
 
         cldAssert(
@@ -130,8 +128,8 @@ class LayerTest {
             overlay(subtitles("sample_sub_en.srt") {
                 fontFamily("arial")
                 fontSize(17)
-                background { named("red") }
-                textColor { named("blue") }
+                background(Color.RED)
+                textColor(Color.BLUE)
                 style {
                     fontAntialias(FontAntialias.BEST)
                 }
@@ -169,7 +167,7 @@ class LayerTest {
                     fontStyle(FontStyle.ITALIC)
                     fontAntialias(FontAntialias.BEST)
                     fontHinting(FontHinting.FULL)
-                    textDecoration(FontDecoration.UNDERLINE)
+                    textDecoration(TextDecoration.UNDERLINE)
                     textAlign(TextAlign.LEFT)
                     stroke(STROKE)
                     letterSpacing(12f)
@@ -212,7 +210,7 @@ class LayerTest {
                         fontStyle(FontStyle.ITALIC)
                         fontAntialias(FontAntialias.BEST)
                         fontHinting(FontHinting.FULL)
-                        textDecoration(FontDecoration.UNDERLINE)
+                        textDecoration(TextDecoration.UNDERLINE)
                         textAlign(TextAlign.LEFT)
                         stroke(STROKE)
                         letterSpacing(12)
