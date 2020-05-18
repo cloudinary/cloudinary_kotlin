@@ -9,7 +9,7 @@ import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.resize.Resize.Companion.scale
-import com.cloudinary.upload.Uploader
+import com.cloudinary.upload.*
 import com.cloudinary.upload.request.params.AccessControlRule
 import com.cloudinary.upload.request.params.Coordinates
 import com.cloudinary.upload.request.params.Rectangle

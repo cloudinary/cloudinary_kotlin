@@ -6,13 +6,8 @@ import com.cloudinary.upload.request.AbstractUploaderRequest
 import com.cloudinary.upload.response.Error
 import com.cloudinary.upload.response.UploadError
 import com.cloudinary.upload.response.UploaderResponse
-import com.cloudinary.util.apiSignRequest
-import com.cloudinary.util.asCloudinaryTimestamp
 import com.cloudinary.util.uploadError
 import java.net.URL
-
-private const val DEFAULT_PREFIX = "https://api.cloudinary.com"
-private const val API_VERSION = "v1_1"
 
 internal typealias StringToResult<T> = (String) -> T?
 
@@ -25,10 +20,10 @@ internal class NetworkDelegate(
 
     internal fun <T> callApi(
         request: AbstractUploaderRequest<*>,
-        action: String,
+        url: String,
+        params: MutableMap<String, Any>,
         adapter: StringToResult<T>
     ): UploaderResponse<T> {
-        val (url, params) = prepare(action, request)
 
         // TODO error handling
         val post = clientFactory.getClient().post(
@@ -51,32 +46,6 @@ internal class NetworkDelegate(
 
         // TODO error handling
         return processResponse(post, adapter)
-    }
-
-    private fun prepare(action: String, request: AbstractUploaderRequest<*>): PreparedRequest {
-        val paramsMap = request.buildParams()
-
-        val config = request.configuration
-        val prefix = config.uploadPrefix ?: DEFAULT_PREFIX
-        val cloudName = config.cloudName
-        val resourceType = if (action != "delete_by_token") (request.options.resourceType ?: "image") else null
-
-        if (requiresSigning(action, paramsMap, request)) {
-            config.apiKey?.let {
-                // no signature - we need to sign using api secret if present:
-                val apiSecret = request.configuration.apiSecret
-                    ?: throw IllegalArgumentException("Must supply api_secret")
-
-                paramsMap["timestamp"] = (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()
-                paramsMap["signature"] = apiSignRequest(paramsMap, apiSecret)
-
-                paramsMap["api_key"] = it
-            }
-        }
-
-        val url = listOfNotNull(prefix, API_VERSION, cloudName, resourceType, action).joinToString("/")
-
-        return PreparedRequest(url, paramsMap)
     }
 
     private fun <T> processResponse(httpResponse: HttpResponse, adapter: StringToResult<T>): UploaderResponse<T> {
@@ -102,19 +71,6 @@ internal class NetworkDelegate(
 
         return result
     }
-
-    private fun requiresSigning(
-        action: String,
-        params: Map<String, Any>,
-        request: AbstractUploaderRequest<*>
-    ): Boolean {
-        val missingSignature = params["signature"]?.toString().isNullOrBlank()
-        val signedRequest = !request.options.unsigned
-        val actionRequiresSigning = action != "delete_by_token"
-        return missingSignature && signedRequest && actionRequiresSigning
-    }
-
-    internal data class PreparedRequest(val url: String, val params: MutableMap<String, Any>)
 }
 
 private fun instantiateClientFactory(
