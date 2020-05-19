@@ -12,7 +12,6 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:3.11.0")
 
     implementation(kotlin("stdlib-jdk7"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
 
     testImplementation("org.apache.httpcomponents:httpclient:4.5.6")
