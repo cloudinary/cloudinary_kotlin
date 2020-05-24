@@ -30,13 +30,16 @@ fun getCloudinaryUrl() = findProperty("cloudinaryUrl") ?: System.getenv("CLOUDIN
 
 dependencies {
     api(project(":url-gen"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72")
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.core:core-ktx:1.2.0")
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.2.0")
-    androidTestImplementation("androidx.test:rules:1.2.0")
+    implementation(kotlin("stdlib"))
 
+    compileOnly("com.squareup.picasso:picasso:2.71828")
+    compileOnly("com.facebook.fresco:fresco:2.2.0")
+    compileOnly("com.github.bumptech.glide:glide:4.11.0")
+
+    testImplementation("junit:junit:4.13")
+    androidTestImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    androidTestImplementation("org.mockito:mockito-android:2.24.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+
 }

@@ -8,7 +8,7 @@
 
     <instrumentation
             android:name="androidx.test.runner.AndroidJUnitRunner"
-            android:targetPackage="com.cloudinary.android.uploader"/>
+            android:targetPackage="com.cloudinary.android.downloader"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
