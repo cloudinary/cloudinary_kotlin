@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 
-internal class FilePayload(override val value: File) : Payload<File> {
+class FilePayload(override val value: File) : Payload<File> {
     override fun asInputStream() = value.inputStream()
 
     override val length = value.length()

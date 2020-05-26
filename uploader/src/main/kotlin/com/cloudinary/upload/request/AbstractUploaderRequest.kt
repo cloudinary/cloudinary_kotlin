@@ -10,7 +10,7 @@ abstract class AbstractUploaderRequest<T> internal constructor(
     internal val uploader: Uploader,
     internal val options: UploaderOptions,
     internal val configuration: Configuration,
-    internal val payload: Payload<*>? = null,
+    val payload: Payload<*>? = null,
     internal val progressCallback: ProgressCallback? = null
 ) {
     abstract fun buildParams(): MutableMap<String, Any>
