@@ -24,13 +24,21 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    packagingOptions {
+        exclude("META-INF/proguard/coroutines.pro")
+    }
 }
 
 fun getCloudinaryUrl() = findProperty("cloudinaryUrl") ?: System.getenv("CLOUDINARY_URL")
 
 dependencies {
-    api(project(":uploader"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72")
+
+api(project(":uploader"))
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.core:core-ktx:1.2.0")
     testImplementation("junit:junit:4.12")

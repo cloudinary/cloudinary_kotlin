@@ -14,13 +14,7 @@ buildscript {
     }
 }
 
-
 allprojects {
-
-    group = "com.cloudinary.android"
-
-    version = "1.0"
-
     repositories {
         google()
         jcenter()
