@@ -6,7 +6,7 @@ import android.provider.OpenableColumns.SIZE
 import com.cloudinary.http.Payload
 import java.io.InputStream
 
-internal class LocalUriPayload(private val context: Context, override val value: Uri) : Payload<Uri> {
+class LocalUriPayload(private val context: Context, override val value: Uri) : Payload<Uri> {
     override fun asInputStream(): InputStream = context.contentResolver.openInputStream(value)
         ?: throw IllegalArgumentException("Provided Uri cannot be read: $value")
 
