@@ -43,8 +43,8 @@ data class UploadParams( //45
     @Json(name = "transformation") internal val transformation: Transformation? = null,
     @Json(name = "eager") internal val eager: List<EagerTransformation>? = null,
 
-    internal val signature: String? = null,
-    internal val timestamp: Long? = null,
+    @Json(name = "signature") internal val signature: String? = null,
+    @Json(name = "timestamp") internal val timestamp: Long? = null,
 
     // process write params:
     @Json(name = "headers") internal val headers: String? = null,

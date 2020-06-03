@@ -1,97 +1,97 @@
 package com.cloudinary.upload
 
-import com.cloudinary.config.ApiConfig
-import com.cloudinary.http.*
-import com.cloudinary.upload.request.AbstractUploaderRequest
+import com.cloudinary.http.HttpClientFactory
+import com.cloudinary.http.HttpResponse
+import com.cloudinary.http.MultipartEntityImpl
+import com.cloudinary.http.ProgressCallback
+import com.cloudinary.upload.request.Payload
 import com.cloudinary.upload.response.Error
 import com.cloudinary.upload.response.UploadError
 import com.cloudinary.upload.response.UploaderResponse
-import com.cloudinary.util.uploadError
+import com.cloudinary.util.extractUploadError
 import java.net.URL
 
 internal typealias StringToResult<T> = (String) -> T?
 
-internal class NetworkDelegate(
-    userAgent: String,
-    apiConfig: ApiConfig,
-    private val clientFactory: HttpClientFactory = instantiateClientFactory(userAgent, apiConfig)
-) {
-    private val parsableStatusCodes = intArrayOf(200, 400, 401, 403, 404, 420, 500)
+private val parsableStatusCodes = intArrayOf(200, 400, 401, 403, 404, 420, 500)
+private val unknownErrorResponse = UploadError(Error("Unknown error"))
 
-    internal fun <T> callApi(
-        request: AbstractUploaderRequest<*>,
-        url: String,
-        params: MutableMap<String, Any>,
-        adapter: StringToResult<T>
-    ): UploaderResponse<T> {
+class NetworkDelegate(private val clientFactory: HttpClientFactory) {
 
-        // TODO error handling
-        val post = clientFactory.getClient().post(
-            URL(url), request.options.headers,
-            MultipartEntityImpl().also { entity ->
-                request.payload?.let { entity.addPayloadPart(it, request.options.filename) }
-                params.forEach { param ->
-                    if (param.value is Collection<*>) {
-                        (param.value as Collection<*>).forEach {
-                            entity.addTextPart("${param.key}[]", it.toString())
+    fun <T> callApi(request: NetworkRequest<T>): UploaderResponse<T> {
+
+        with(request) {
+            val post = clientFactory.getClient().post(
+                URL(url), headers,
+                MultipartEntityImpl().also { entity ->
+                    payload?.let { entity.addPayloadPart(it, filename) }
+                    params.forEach { param ->
+                        if (param.value is Collection<*>) {
+                            (param.value as Collection<*>).forEach {
+                                entity.addTextPart("${param.key}[]", it.toString())
+                            }
+                        } else {
+                            entity.addTextPart(param.key, param.value.toString())
                         }
-                    } else {
-                        entity.addTextPart(param.key, param.value.toString())
                     }
-                }
-            },
-            request.progressCallback
-        )
-            ?: throw Exception()
+                },
+                progressCallback
+            )
 
-        // TODO error handling
-        return processResponse(post, adapter)
+            return processResponse(post, adapter)
+        }
     }
 
-    private fun <T> processResponse(httpResponse: HttpResponse, adapter: StringToResult<T>): UploaderResponse<T> {
-        val result: UploaderResponse<T>
-        if (parsableStatusCodes.contains(httpResponse.httpStatusCode)) {
-            result = if (httpResponse.httpStatusCode == 200) {
-                // parse result body
-                // TODO error handling
-                httpResponse.content?.let { UploaderResponse(adapter(it), null) } ?: throw Exception()
-            } else {
-                // parse error body
-                // TODO error handling
-                val error: UploadError = httpResponse.uploadError()
-                    ?: httpResponse.headers["X-Cld-Error"]?.let { UploadError(Error(it)) }
-                    ?: throw Exception("Unknown error")
+    companion object {
+        fun <T> processResponse(
+            statusCode: Int,
+            content: String?,
+            error: String?,
+            adapter: StringToResult<T>
+        ): UploaderResponse<T> {
+            return if (parsableStatusCodes.contains(statusCode)) {
+                if (statusCode == 200) {
+                    content?.let { UploaderResponse<T>(statusCode, adapter(it), null, it) } ?: UploaderResponse<T>(
+                        statusCode,
+                        null,
+                        unknownErrorResponse,
+                        content
+                    )
 
-                UploaderResponse(null, error)
+                } else {
+                    val uploaderError: UploadError = content?.let { extractUploadError(it) }
+                        ?: error?.let { UploadError(Error(it)) }
+                        ?: unknownErrorResponse
+
+                    UploaderResponse<T>(statusCode, null, uploaderError, content)
+                }
+            } else {
+                UploaderResponse<T>(
+                    statusCode,
+                    null,
+                    unknownErrorResponse,
+                    content
+                )
             }
-        } else {
-            // TODO error handling
-            throw Exception("Unknown error")
         }
 
-        return result
+        fun <T> processResponse(httpResponse: HttpResponse, adapter: StringToResult<T>) =
+            processResponse(
+                httpResponse.httpStatusCode,
+                httpResponse.content,
+                httpResponse.headers["X-Cld-Error"],
+                adapter
+            )
+
     }
 }
 
-private fun instantiateClientFactory(
-    userAgent: String,
-    apiConfig: ApiConfig
-) = run {
-    when {
-        exists("org.apache.http.impl.client.HttpClientBuilder") -> ApacheHttpClient45Factory(
-            userAgent,
-            apiConfig
-        )
-        exists("okhttp3.OkHttpClient") -> OkHttpClientFactory(userAgent, apiConfig)
-        else -> HttpUrlConnectionFactory(userAgent, apiConfig)
-    }
-}
-
-private fun exists(factoryCanonicalName: String): Boolean {
-    return try {
-        Class.forName(factoryCanonicalName)
-        true
-    } catch (ignored: Exception) {
-        false
-    }
-}
+class NetworkRequest<T>(
+    val url: String,
+    val filename: String?,
+    val headers: Map<String, String>,
+    val params: MutableMap<String, Any>,
+    val adapter: StringToResult<T>,
+    val payload: Payload<*>?,
+    val progressCallback: ProgressCallback?
+)

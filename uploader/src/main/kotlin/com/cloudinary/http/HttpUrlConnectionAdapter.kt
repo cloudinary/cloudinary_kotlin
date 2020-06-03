@@ -38,7 +38,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
         headers: Map<String, String>,
         entity: MultipartEntity,
         progressCallback: ProgressCallback?
-    ): HttpResponse? {
+    ): HttpResponse {
         val charset = Charsets.UTF_8
         val httpConn = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = HttpPost.METHOD_NAME
@@ -56,7 +56,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
 
         httpConn.outputStream.use { outputStream ->
             PrintWriter(OutputStreamWriter(outputStream, charset), true).use { writer ->
-                entity.parts.forEach { (k, v) -> addPart(writer, outputStream, k, v, charset.name()) }
+                entity.parts.forEach { (name, value) -> addPart(writer, outputStream, name, value, charset.name()) }
                 writer.append("--$boundary--").append(lineFeed)
             }
         }
@@ -64,7 +64,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
         return constructResponse(httpConn)
     }
 
-    private fun constructResponse(httpConn: HttpURLConnection): HttpResponse? {
+    private fun constructResponse(httpConn: HttpURLConnection): HttpResponse {
         return with(httpConn) {
             val responseCode = responseCode
             val responseStream: InputStream? = if (responseCode >= 400) errorStream else inputStream
@@ -77,8 +77,9 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
     private fun addPart(writer: PrintWriter, outputStream: OutputStream, name: String, value: Any, charset: String) {
         when (value) {
             is String -> addFormField(writer, name, value, charset)
-            is File -> FileInputStream(value).use { addFilePart(writer, outputStream, "file", it, name) }
-            is ByteArray -> value.inputStream().use { addFilePart(writer, outputStream, "file", it, name) }
+            is File -> FileInputStream(value).use { addFilePart(writer, outputStream, it, name) }
+            is ByteArray -> value.inputStream().use { addFilePart(writer, outputStream, it, name) }
+            is InputStream -> value.use { addFilePart(writer, outputStream, it, name) }
         }
     }
 
@@ -103,13 +104,12 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
     private fun addFilePart(
         writer: PrintWriter,
         outputStream: OutputStream,
-        fieldName: String,
         inputStream: InputStream,
         fileName: String
     ) {
         writer.apply {
             append("--$boundary").append(lineFeed)
-            append("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"$fileName\"").append(lineFeed)
+            append("Content-Disposition: form-data; name=\"file\"; filename=\"$fileName\"").append(lineFeed)
             append("Content-Type: ").append("application/octet-stream").append(lineFeed)
             append("Content-Transfer-Encoding: binary").append(lineFeed)
             append(lineFeed)

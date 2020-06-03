@@ -7,6 +7,7 @@ import org.apache.http.entity.ContentType
 import org.apache.http.entity.mime.MIME
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import java.io.File
+import java.io.InputStream
 import java.net.URL
 
 class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpClient) :
@@ -30,10 +31,10 @@ class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpC
         headers: Map<String, String>,
         entity: MultipartEntity,
         progressCallback: ProgressCallback?
-    ): HttpResponse? {
+    ): HttpResponse {
         val httpPost = HttpPost(url.toExternalForm())
         val builder = MultipartEntityBuilder.create()
-        entity.parts.forEach { (k, v) -> addPart(builder, k, v) }
+        entity.parts.forEach { (name, value) -> addPart(builder, name, value) }
         headers.keys.forEach { httpPost.addHeader(it, headers[it]) }
         httpPost.entity = builder.build()
         return execute(httpPost)
@@ -53,9 +54,12 @@ class ApacheHttpClient45Adapter(private val client: org.apache.http.client.HttpC
     private fun addPart(builder: MultipartEntityBuilder, name: String, value: Any) {
         when (value) {
             is String -> builder.addTextBody(name, value, textFieldContentType)
-            is URL -> builder.addTextBody(name, value.toString(), textFieldContentType)
             is File -> builder.addBinaryBody("file", value, ContentType.APPLICATION_OCTET_STREAM, name)
             is ByteArray -> builder.addBinaryBody(
+                "file", value,
+                ContentType.APPLICATION_OCTET_STREAM, name
+            )
+            is InputStream -> builder.addBinaryBody(
                 "file", value,
                 ContentType.APPLICATION_OCTET_STREAM, name
             )

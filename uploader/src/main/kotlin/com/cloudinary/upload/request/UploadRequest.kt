@@ -1,7 +1,6 @@
 package com.cloudinary.upload.request
 
 import com.cloudinary.config.Configuration
-import com.cloudinary.http.Payload
 import com.cloudinary.http.ProgressCallback
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.request.params.UploadParams
@@ -13,8 +12,8 @@ import java.io.InputStream
 import java.net.URL
 
 
-class UploadRequest internal constructor(
-    internal val params: UploadParams,
+open class UploadRequest(
+    val params: UploadParams,
     uploader: Uploader,
     options: UploaderOptions,
     configuration: Configuration,
@@ -24,10 +23,8 @@ class UploadRequest internal constructor(
     override fun buildParams() = params.toMap()
     override fun execute() = uploader.doUpload(this)
 
-    class Builder(
-        private val payload: Payload<*>, uploader: Uploader
-    ) :
-        UploaderRequestsBuilder<UploadRequest>(uploader) {
+    class Builder(payload: Payload<*>, uploader: Uploader) :
+        BaseUploadRequestBuilder<UploadRequest>(payload, uploader) {
         constructor(file: File, uploader: Uploader) : this(
             FilePayload(file),
             uploader
@@ -54,15 +51,6 @@ class UploadRequest internal constructor(
             ), uploader
         )
 
-        var params = UploadParams()
-        var progressCallback: ProgressCallback? = null
-
-        fun params(params: UploadParams.Builder.() -> Unit) {
-            val builder = UploadParams.Builder()
-            builder.params()
-            this.params = builder.build()
-        }
-
         override fun build() = UploadRequest(
             params,
             uploader,
@@ -72,5 +60,21 @@ class UploadRequest internal constructor(
             progressCallback
         )
     }
+}
+
+abstract class BaseUploadRequestBuilder<T>(
+    protected val payload: Payload<*>, uploader: Uploader
+) :
+    UploaderRequestsBuilder<T>(uploader) {
+
+    var params = UploadParams()
+    var progressCallback: ProgressCallback? = null
+
+    fun params(params: UploadParams.Builder.() -> Unit) {
+        val builder = UploadParams.Builder()
+        builder.params()
+        this.params = builder.build()
+    }
+
 }
 

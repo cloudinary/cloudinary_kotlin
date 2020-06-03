@@ -971,13 +971,13 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     private fun verifyError(uploader: Uploader, cld: Cloudinary) {
         val res = uploader.upload(srcTestImage) {
-            configuration(
+            configuration =
                 cld.config.copy(
                     accountConfig = cld.config.accountConfig.copy(
                         apiKey = "bad_secret"
                     )
                 )
-            )
+
         }
 
         assertNull(res.data)

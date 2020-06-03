@@ -1,6 +1,5 @@
 package com.cloudinary.util
 
-import com.cloudinary.http.HttpResponse
 import com.cloudinary.transformation.EagerTransformation
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.upload.request.ContextCommand
@@ -265,13 +264,11 @@ fun toUploadResult(httpContent: String): UploadResult? {
     return jsonAdapter.fromJson(httpContent)
 }
 
-fun HttpResponse.uploadError(): UploadError? {
-    return this.content?.let {
-        val jsonAdapter = moshi.adapter<UploadError>(
-            UploadError::class.java
-        )
-        jsonAdapter.fromJson(it)
-    }
+fun extractUploadError(content: String): UploadError? {
+    val jsonAdapter = moshi.adapter(
+        UploadError::class.java
+    )
+    return jsonAdapter.fromJson(content)
 }
 
 fun List<AccessControlRule>.toAccessControlJson(): String {

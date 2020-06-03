@@ -63,7 +63,8 @@ data class UploadResult(
     var cinemagraphAnalysis: ResultCinemagraphAnalysis? = null,
     @Json(name = "delete_token")
     var deleteToken: String? = null,
-    var context: ResultContext? = null
+    var context: ResultContext? = null,
+    var done: Boolean? = null
 )
 
 class ResultColor(val color: String, val percent: Float)
