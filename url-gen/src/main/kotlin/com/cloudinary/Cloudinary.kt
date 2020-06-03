@@ -5,8 +5,6 @@ import com.cloudinary.util.cloudinaryUrlFromEnv
 
 var instance: Cloudinary? = null
 
-private val initLockObject = Any()
-
 class Cloudinary(val config: Configuration) {
     private val extensionsLock = Any()
     private val extensions = mutableMapOf<String, Any>()
@@ -51,11 +49,10 @@ class Cloudinary(val config: Configuration) {
         /**
          * Init the singleton instance.
          */
+        @Synchronized
         fun init(newInstance: Cloudinary = Cloudinary()) {
-            synchronized(initLockObject) {
-                if (instance == null) throw Error(IllegalStateException("Cloudinary init() must be called only once"))
-                instance = newInstance
-            }
+            check(instance == null) { "Cloudinary init() must be called only once" }
+            instance = newInstance
         }
 
         /**
