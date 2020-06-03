@@ -25,7 +25,7 @@ data class Url private constructor(
     private val resourceType: String = DEFAULT_RESOURCE_TYPE,
     private val format: Format? = null,
     private val version: String? = null,
-    private val transformation: Transformation? = null,
+    val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
     private val authToken: AuthToken? = config.authToken,
     private val source: String? = null,

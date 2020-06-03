@@ -17,6 +17,7 @@ android {
         // files - to make sure the credentials are not checked into source control.
         // The url is taken from a property or environment variable:
         manifestPlaceholders = mapOf("cloudinaryUrl" to (getCloudinaryUrl() ?: ""))
+        multiDexEnabled = true
     }
     buildTypes {
         getByName("release") {
@@ -30,13 +31,15 @@ fun getCloudinaryUrl() = findProperty("cloudinaryUrl") ?: System.getenv("CLOUDIN
 
 dependencies {
     api(project(":uploader"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72")
+    implementation(kotlin("stdlib"))
     implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.core:core-ktx:1.2.0")
-    testImplementation("junit:junit:4.12")
+    implementation("androidx.core:core-ktx:1.3.0")
+    implementation("com.android.support:multidex:1.0.3")
+
+    testImplementation("junit:junit:4.13")
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")
-
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    androidTestImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    androidTestImplementation("org.mockito:mockito-android:2.24.0")
 }
