@@ -2,6 +2,7 @@ package com.cloudinary.http
 
 import okhttp3.*
 import java.io.File
+import java.io.InputStream
 import java.net.URL
 
 val APPLICATION_OCTET_STREAM = MediaType.parse("application/octet-stream")
@@ -16,11 +17,11 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
         headers: Map<String, String>,
         entity: MultipartEntity,
         progressCallback: ProgressCallback?
-    ): HttpResponse? {
+    ): HttpResponse {
         val bodyBuilder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
 
-        entity.parts.forEach { (k, v) -> addPart(bodyBuilder, k, v) }
+        entity.parts.forEach { (name, value) -> addPart(bodyBuilder, name, value) }
 
         val requestBuilder = Request.Builder()
             .url(url.toExternalForm())
@@ -56,7 +57,6 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
     private fun addPart(builder: MultipartBody.Builder, name: String, value: Any) {
         when (value) {
             is String -> builder.addFormDataPart(name, value)
-            is URL -> builder.addFormDataPart(name, value.toString())
             is File -> builder.addFormDataPart(
                 "file",
                 name,
@@ -65,6 +65,7 @@ class OkHttpClientAdapter(private var client: OkHttpClient) : HttpClient {
             is ByteArray -> builder.addFormDataPart(
                 "file", name, RequestBody.create(APPLICATION_OCTET_STREAM, value)
             )
+            is InputStream -> throw Error(IllegalArgumentException("OkHttp does not support uploading streams"))
         }
     }
 }

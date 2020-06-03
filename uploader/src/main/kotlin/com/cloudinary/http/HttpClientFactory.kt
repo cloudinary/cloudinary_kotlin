@@ -5,6 +5,13 @@ import okhttp3.OkHttpClient
 import org.apache.http.impl.client.HttpClientBuilder
 import java.util.concurrent.TimeUnit
 
+interface HttpClientFactory {
+    val userAgent: String
+    val config: ApiConfig
+
+    fun getClient(): HttpClient
+}
+
 class ApacheHttpClient45Factory(
     override val userAgent: String,
     override val config: ApiConfig
