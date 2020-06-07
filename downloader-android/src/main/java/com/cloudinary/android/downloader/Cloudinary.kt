@@ -1,30 +1,39 @@
 package com.cloudinary.android.downloader
 
 import android.content.Context
-import android.content.pm.PackageManager
 import com.cloudinary.Cloudinary
+import com.cloudinary.android.downloader.downloaders.fresco.FrescoDownloadRequestBuilderFactory
+import com.cloudinary.android.downloader.downloaders.glide.GlideDownloadRequestBuilderFactory
+import com.cloudinary.android.downloader.downloaders.picasso.PicassoDownloadRequestBuilderFactory
 
-private var downloadRequestBuilderFactory: DownloadRequestBuilderFactory? = null
+private const val DOWNLOAD_REQUEST_BUILDER_FACTORY_EXTENSION_NAME =
+    "cld.downloader.DownloadRequestBuilderFactory"
 
-fun Cloudinary.setDownloadRequestBuilderFactory(factory: DownloadRequestBuilderFactory) {
-    downloadRequestBuilderFactory = factory
-}
+var Cloudinary.downloadRequestBuilderFactory: DownloadRequestBuilderFactory
+    get() = getExtension(
+        DOWNLOAD_REQUEST_BUILDER_FACTORY_EXTENSION_NAME,
+        instantiateDownloadRequestBuilderFactory()
+    ) as DownloadRequestBuilderFactory
+    set(value) = setExtension(DOWNLOAD_REQUEST_BUILDER_FACTORY_EXTENSION_NAME, value)
 
 fun Cloudinary.download(context: Context): DownloadRequestBuilder {
-    return downloadRequestBuilderFactory?.createDownloadRequestBuilder(context, this) ?:
-            throw IllegalStateException("Must set a factory before downloading.")
+    return downloadRequestBuilderFactory.createDownloadRequestBuilder(context, this)
 }
 
-fun cloudinaryUrlFromContext(context: Context): String {
-    var url = ""
-    try {
-        val packageManager = context.packageManager
-        val info = packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        if (info.metaData != null) {
-            url = info.metaData["CLOUDINARY_URL"] as String
-        }
-    } catch (e: PackageManager.NameNotFoundException) {
-        // No metadata found
+private fun instantiateDownloadRequestBuilderFactory() = run {
+    when {
+        exists("com.facebook.drawee.backends.pipeline.Fresco") -> FrescoDownloadRequestBuilderFactory()
+        exists("com.bumptech.glide.Glide") -> GlideDownloadRequestBuilderFactory()
+        exists("com.squareup.picasso.Picasso") -> PicassoDownloadRequestBuilderFactory()
+        else -> throw IllegalStateException("Must set a factory before downloading.")
     }
-    return url
+}
+
+private fun exists(factoryCanonicalName: String): Boolean {
+    return try {
+        Class.forName(factoryCanonicalName)
+        true
+    } catch (ignored: Exception) {
+        false
+    }
 }

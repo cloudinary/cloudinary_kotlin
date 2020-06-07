@@ -15,24 +15,20 @@ internal class PicassoDownloadRequestBuilderStrategy internal constructor(contex
     private var requestCreator: RequestCreator? = null
     private var callback: DownloadRequestCallback? = null
 
-    override fun load(url: String): DownloadRequestBuilderStrategy {
+    override fun load(url: String): DownloadRequestBuilderStrategy = apply {
         requestCreator = picasso.load(url)
-        return this
     }
 
-    override fun load(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun load(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         requestCreator = picasso.load(resourceId)
-        return this
     }
 
-    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         requestCreator?.placeholder(resourceId) ?: throw IllegalStateException("Must call load before.")
-        return this
     }
 
-    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy {
+    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy = apply {
         this.callback = callback
-        return this
     }
 
     override fun into(imageView: ImageView): DownloadRequestStrategy {

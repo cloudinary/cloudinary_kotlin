@@ -20,23 +20,20 @@ internal class FrescoDownloadRequestBuilderStrategy(context: Context)
         GenericDraweeHierarchyBuilder.newInstance(context.resources)
     private var imageRequestBuilder: ImageRequestBuilder? = null
 
-    override fun load(url: String): DownloadRequestBuilderStrategy {
+    override fun load(url: String): DownloadRequestBuilderStrategy = apply {
         imageRequestBuilder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
-        return this
     }
 
-    override fun load(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun load(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         imageRequestBuilder = ImageRequestBuilder.newBuilderWithResourceId(resourceId)
-        return this
     }
 
-    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         checkNotNull(imageRequestBuilder) { "Must call load before." }
         genericDraweeHierarchyBuilder.setPlaceholderImage(resourceId)
-        return this
     }
 
-    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy {
+    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy = apply {
         checkNotNull(imageRequestBuilder) { "Must call load before." }
         imageRequestBuilder?.requestListener = object : BaseRequestListener() {
 
@@ -50,8 +47,6 @@ internal class FrescoDownloadRequestBuilderStrategy(context: Context)
                 super.onRequestFailure(request, requestId, throwable, isPrefetch)
             }
         }
-
-        return this
     }
 
     override fun into(imageView: ImageView): DownloadRequestStrategy {

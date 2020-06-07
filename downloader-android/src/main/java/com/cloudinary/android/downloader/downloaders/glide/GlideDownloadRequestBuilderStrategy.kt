@@ -18,22 +18,19 @@ internal class GlideDownloadRequestBuilderStrategy(context: Context)
     : DownloadRequestBuilderStrategy {
     private val requestBuilder = Glide.with(context).asDrawable()
 
-    override fun load(url: String): DownloadRequestBuilderStrategy {
+    override fun load(url: String): DownloadRequestBuilderStrategy = apply {
         requestBuilder.load(url)
-        return this
     }
 
-    override fun load(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun load(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         requestBuilder.load(resourceId)
-        return this
     }
 
-    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy {
+    override fun placeholder(resourceId: Int): DownloadRequestBuilderStrategy = apply {
         requestBuilder.placeholder(resourceId)
-        return this
     }
 
-    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy {
+    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilderStrategy = apply {
         requestBuilder.listener(object : RequestListener<Drawable?> {
 
             override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable?>,
@@ -48,12 +45,9 @@ internal class GlideDownloadRequestBuilderStrategy(context: Context)
                 return false
             }
         })
-        return this
     }
 
     override fun into(imageView: ImageView): DownloadRequestStrategy {
-        val target = requestBuilder.into(imageView)
-
-        return GlideDownloadRequestStrategy(target)
+        return GlideDownloadRequestStrategy(requestBuilder.into(imageView))
     }
 }

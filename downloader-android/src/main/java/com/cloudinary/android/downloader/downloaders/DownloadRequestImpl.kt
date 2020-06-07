@@ -38,12 +38,11 @@ internal class DownloadRequestImpl internal constructor(
     }
 
     @Synchronized
-    fun start(): DownloadRequestImpl {
+    fun start(): DownloadRequestImpl = apply {
         if (!isCancelled && downloadRequestStrategy == null) {
             shouldStart = true
             source?.let { doStart() }
         }
-        return this
     }
 
     private fun doStart() {

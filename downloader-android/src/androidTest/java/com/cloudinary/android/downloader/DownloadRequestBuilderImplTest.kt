@@ -34,11 +34,7 @@ class DownloadRequestBuilderImplTest {
         @BeforeClass @JvmStatic
         fun setup() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            val uri = Uri.parse(
-                cloudinaryUrlFromContext(
-                    context
-                )
-            )
+            val uri = Uri.parse(Cloudinary.cloudinaryUrlFromContext(context))
             cloudName = uri.host
             val configuration = Configuration(AccountConfig(cloudName = cloudName!!), UrlConfig(secure = true), ApiConfig())
             cloudinary =

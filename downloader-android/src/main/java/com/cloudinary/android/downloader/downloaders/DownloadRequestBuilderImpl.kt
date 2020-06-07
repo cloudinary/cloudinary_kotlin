@@ -5,7 +5,6 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import com.cloudinary.Cloudinary
-import com.cloudinary.Url
 import com.cloudinary.android.downloader.DownloadRequest
 import com.cloudinary.android.downloader.DownloadRequestBuilder
 import com.cloudinary.android.downloader.DownloadRequestCallback
@@ -27,55 +26,46 @@ class DownloadRequestBuilderImpl(
     private var isCloudinaryPublicIdSource = false
     private var callback: DownloadRequestCallback? = null
 
-    override fun load(source: String): DownloadRequestBuilder {
+    override fun load(source: String): DownloadRequestBuilder = apply {
         isCloudinaryPublicIdSource = !source.isRemoteUrl()
         this.source = source
-        return this
     }
 
-    override fun load(@IdRes resource: Int): DownloadRequestBuilder {
+    override fun load(@IdRes resource: Int): DownloadRequestBuilder = apply {
         source = resource
-        return this
     }
 
-    override fun transformation(transformation: Transformation): DownloadRequestBuilder {
+    override fun transformation(transformation: Transformation): DownloadRequestBuilder = apply {
         this.transformation = transformation
-        return this
     }
 
-    override fun placeholder(@DrawableRes resourceId: Int): DownloadRequestBuilder {
+    override fun placeholder(@DrawableRes resourceId: Int): DownloadRequestBuilder = apply {
         placeholder = resourceId
-        return this
     }
 
-    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilder {
+    override fun callback(callback: DownloadRequestCallback): DownloadRequestBuilder = apply {
         this.callback = callback
-        return this
     }
 
     override fun into(imageView: ImageView): DownloadRequest {
         checkNotNull(source) { "Source is null." }
-        val downloadRequestImpl = DownloadRequestImpl(
-            downloadRequestBuilderStrategy,
-            imageView
-        )
+        val downloadRequestImpl = DownloadRequestImpl(downloadRequestBuilderStrategy, imageView)
 
-        when (source) {
+        source = when (source) {
             is String -> {
                 if (isCloudinaryPublicIdSource) {
-                    val url: Url = cloudinary.url {
+                    cloudinary.url {
                         publicId(source as String)
                         transformation?.let { transformation(it) }
-                    }
-
-                    downloadRequestImpl.setSource(url.generate())
+                    }.generate()
                 } else {
-                    downloadRequestImpl.setSource(source)
+                    source
                 }
             }
-            is Int -> downloadRequestImpl.setSource(source)
+            is Int -> source
             else -> throw IllegalArgumentException("Load source is not an instance of a correct type.")
         }
+        downloadRequestImpl.setSource(source)
 
         if (placeholder != 0) {
             downloadRequestBuilderStrategy.placeholder(placeholder)

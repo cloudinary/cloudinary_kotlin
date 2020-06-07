@@ -9,7 +9,5 @@ internal class PicassoDownloadRequestStrategy(
     private val imageView: ImageView
 ) : DownloadRequestStrategy {
 
-    override fun cancel() {
-        picasso.cancelRequest(imageView)
-    }
+    override fun cancel() = picasso.cancelRequest(imageView)
 }
