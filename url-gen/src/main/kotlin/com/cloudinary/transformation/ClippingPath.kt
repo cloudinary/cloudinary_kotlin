@@ -2,31 +2,47 @@ package com.cloudinary.transformation
 
 
 class ClippingPath(private val action: Action) : Action by action {
+    companion object {
+        fun number(number: Int, options: (Builder.() -> Unit)? = null): ClippingPath {
+            val builder = Builder().number(number)
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun name(name: String, options: (Builder.() -> Unit)? = null): ClippingPath {
+            val builder = Builder().name(name)
+            options?.let { builder.it() }
+            return builder.build()
+        }
+    }
 
     class Builder : TransformationComponentBuilder {
-        private var index: Int? = null
-        private var path: String? = null
+        private var number: Int? = null
+        private var name: String? = null
         private var evenOdd: Boolean = false
 
-        fun index(index: Int) = apply { this.index = index }
-        fun path(path: String) = apply { this.path = path }
+        fun number(number: Int) = apply { this.number = number }
+        fun name(name: String) = apply { this.name = name }
         fun evenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
 
-        override fun build() = ClippingPath(buildAction(index ?: path, evenOdd))
+        override fun build(): ClippingPath {
+            val finalName = name
+            val value = number ?: if (finalName != null) NamedValue("name", finalName) else null
+            return ClippingPath(buildAction(value, evenOdd))
+        }
     }
 }
 
-fun clippingPath(clippingPath: (ClippingPath.Builder.() -> Unit)? = null): ClippingPath {
+
+internal fun clippingPath(clippingPath: (ClippingPath.Builder.() -> Unit)? = null): ClippingPath {
     val newBuilder = ClippingPath.Builder()
     if (clippingPath != null) newBuilder.clippingPath()
     return newBuilder.build()
 }
 
-// TODO simplify
 private fun buildAction(pageParamValue: Any?, evenOdd: Boolean): ParamsAction {
     val page = pageParamValue?.cldAsPage()
-    val clip = FlagsParam(if (evenOdd) Flag.ClipEvenOdd() else Flag.Clip())
-    val clipPair = Pair(clip.key, clip)
+    val clip = FlagsParam(if (evenOdd) Flag.clipEvenOdd() else Flag.clip())
 
     return ParamsAction(page, clip)
 }

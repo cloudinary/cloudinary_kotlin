@@ -4,47 +4,62 @@ import com.cloudinary.AuthToken
 import java.net.URI
 
 data class Configuration(
-    val accountConfig: AccountConfig,
+    val accountConfig: CloudConfig,
     val urlConfig: UrlConfig,
     val apiConfig: ApiConfig
-) : IUrlConfig by urlConfig, IAccountConfig by accountConfig, IApiConfig by apiConfig {
+) : IUrlConfig by urlConfig, ICloudConfig by accountConfig, IApiConfig by apiConfig {
 
     companion object {
         fun fromUri(uri: String): Configuration {
 
             val params = parseConfigUrl(uri)
 
-            val accountConfig = AccountConfig(
+            val accountConfig = CloudConfig(
                 cloudName = params["cloud_name"] as String,
-                apiKey = params["api_key"] as? String,
-                apiSecret = params["api_secret"] as? String
+                apiKey = params["api_key"]?.toString(),
+                apiSecret = params["api_secret"]?.toString()
             )
+
             val urlConfig = UrlConfig(
-                secureDistribution = params["secure_distribution"] as? String,
-                privateCdn = params["private_cdn"] as? Boolean ?: DEFAULT_PRIVATE_CDN,
-                cdnSubdomain = params["cdn_subdomain"] as? Boolean ?: DEFAULT_CDN_SUBDOMAIN,
-                shorten = params["shorten"] as? Boolean ?: DEFAULT_SHORTEN,
-                secureCdnSubdomain = params["secure_cdn_subdomain"] as? Boolean ?: DEFAULT_SECURE_CDN_SUBDOMAIN,
-                useRootPath = params["use_root_path"] as? Boolean ?: DEFAULT_USE_ROOT_PATH,
-                cname = params["cname"] as? String,
-                secure = params["secure"] as? Boolean ?: DEFAULT_SECURE,
+                secureDistribution = params["secure_distribution"]?.toString(),
+                privateCdn = params.getBoolean("private_cdn") ?: DEFAULT_PRIVATE_CDN,
+                cdnSubdomain = params.getBoolean("cdn_subdomain") ?: DEFAULT_CDN_SUBDOMAIN,
+                shorten = params.getBoolean("shorten") ?: DEFAULT_SHORTEN,
+                secureCdnSubdomain = params.getBoolean("secure_cdn_subdomain") ?: DEFAULT_SECURE_CDN_SUBDOMAIN,
+                useRootPath = params.getBoolean("use_root_path") ?: DEFAULT_USE_ROOT_PATH,
+                cname = params["cname"]?.toString(),
+                secure = params.getBoolean("secure") ?: DEFAULT_SECURE,
                 authToken = params["auth_token"]?.let { if (it is Map<*, *>) AuthToken.fromParams(it) else null }
             )
-            val uploadConfig = ApiConfig(
-                uploadPrefix = params["upload_prefix"] as? String,
-                chunkSize = params["chunk_size"] as? Int ?: DEFAULT_CHUNK_SIZE,
-                readTimeout = params["read_timeout"] as? Int ?: DEFAULT_READ_TIMEOUT,
-                connectTimeout = params["connect_timeout"] as? Int ?: DEFAULT_CONNECT_TIMEOUT
+            val apiConfig = ApiConfig(
+                uploadPrefix = params["upload_prefix"]?.toString(),
+                chunkSize = params.getInt("chunk_size") ?: DEFAULT_CHUNK_SIZE,
+                readTimeout = params.getInt("read_timeout") ?: DEFAULT_READ_TIMEOUT,
+                connectTimeout = params.getInt("connect_timeout") ?: DEFAULT_CONNECT_TIMEOUT
             )
 
             return Configuration(
                 accountConfig,
                 urlConfig,
-                uploadConfig
+                apiConfig
             )
         }
     }
 }
+
+private fun Map<String, Any>.getBoolean(key: String) =
+    when (val obj = this[key]) {
+        is Boolean -> obj
+        is String -> obj.toBoolean()
+        else -> null
+    }
+
+private fun Map<String, Any>.getInt(key: String) =
+    when (val obj = this[key]) {
+        is Int -> obj
+        is String -> obj.toInt()
+        else -> null
+    }
 
 private fun parseConfigUrl(cloudinaryUrl: String): Map<String, Any> {
     require(cloudinaryUrl.isNotBlank()) { "Cloudinary url must not be blank" }

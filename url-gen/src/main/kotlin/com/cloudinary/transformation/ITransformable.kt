@@ -1,13 +1,16 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.transformation.adjust.Adjust
+import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
-import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.LayerAction
+import com.cloudinary.transformation.layer.Source
 import com.cloudinary.transformation.reshape.Reshape
 import com.cloudinary.transformation.resize.Resize
+import com.cloudinary.transformation.transcode.Transcode
 import com.cloudinary.transformation.videoedit.VideoEdit
+
 
 @TransformationDsl
 interface ITransformable<T> {
@@ -59,14 +62,12 @@ interface ITransformable<T> {
      * @param cutter The cutter action to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun cutter(source: Layer, cutter: (Cutter.Builder.() -> Unit)? = null) =
+    fun cutter(source: Source, cutter: (Cutter.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutter.Builder(source), cutter)
 
-    // TODO doc
     fun cutout(cutout: Cutout) = add(cutout)
 
-    // TODO doc
-    fun cutout(source: Layer, cutout: (Cutout.Builder.() -> Unit)? = null) =
+    fun cutout(source: Source, cutout: (Cutout.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutout.Builder(source), cutout)
 
     /**
@@ -87,9 +88,8 @@ interface ITransformable<T> {
      * @param antiRemoval The anti-removal action to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun antiRemoval(source: Layer, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
+    fun antiRemoval(source: Source, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
         addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
-
 
     /**
      * Trims the pixels of a PSD image according to a Photoshop clipping path that is stored in the image's metadata.
@@ -102,10 +102,15 @@ interface ITransformable<T> {
     /**
      * Trims the pixels of a PSD image according to a Photoshop clipping path that is stored in the image's metadata.
      *
-     * @param clip The clip action to add TODO DOC builder receiver param
+     * @param options The clip options to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun clip(clip: (ClippingPath.Builder.() -> Unit)) = addWithBuilder(ClippingPath.Builder(), clip)
+    fun clip(options: (ClippingPath.Builder.() -> Unit)) = addWithBuilder(ClippingPath.Builder(), options)
+    fun clip(number: Int, options: (ClippingPath.Builder.() -> Unit)? = null) =
+        addWithBuilder(ClippingPath.Builder().number(number), options)
+
+    fun clip(name: String, options: (ClippingPath.Builder.() -> Unit)? = null) =
+        addWithBuilder(ClippingPath.Builder().name(name), options)
 
     /**
      * Inject a custom function into the image transformation pipeline.
@@ -124,33 +129,23 @@ interface ITransformable<T> {
      */
     fun rotate(rotate: Rotate) = add(rotate)
 
-    fun rotate(rotate: (Rotate.Builder.() -> Unit)? = null) = addWithBuilder(Rotate.Builder(), rotate)
-
-    fun extract(extract: Extract) = add(extract)
+    fun getPage(pagesDescriptor: String) = add(pagesDescriptor.cldAsPage().asAction())
+    fun getPage(page: Int) = add(page.cldAsPage().asAction())
+    fun getSmartObject(smartObject: SmartObject) = add(smartObject.cldAsPage().asAction())
+    fun getLayer(layer: PsdLayer) = add(layer.cldAsPage().asAction())
 
     fun background(background: Background) = add(background)
     fun background(color: Color) = add(ParamsAction(color.cldAsBackground()))
 
-    fun outline(outline: Outline) = add(outline)
-    fun outline(outline: (Outline.Builder.() -> Unit)? = null) = addWithBuilder(Outline.Builder(), outline)
-
-    fun roundCorners(radius: Int) = add(RoundCorners.radius(radius))
+    fun roundCorners(vararg radius: Int) = add(RoundCorners.radius(*radius))
     fun roundCorners(radius: RoundCorners) = add(radius)
-
-    fun gradientFade(gradientFade: GradientFade) = add(gradientFade)
-    fun gradientFade(gradientFade: (GradientFade.Builder.() -> Unit)? = null) =
-        addWithBuilder(GradientFade.Builder(), gradientFade)
 
     fun border(border: Border) = add(border)
     fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
     fun displace(displace: Displace) = add(displace)
-    fun displace(source: Layer, displace: (Displace.Builder.() -> Unit)? = null) =
+    fun displace(source: Source, displace: (Displace.Builder.() -> Unit)? = null) =
         addWithBuilder(Displace.Builder(source), displace)
-
-    fun styleTransfer(styleTransfer: StyleTransfer) = add(styleTransfer)
-    fun styleTransfer(source: Layer, styleTransfer: (StyleTransfer.Builder.() -> Unit)? = null) =
-        addWithBuilder(StyleTransfer.Builder(source), styleTransfer)
 
     // effects
     fun effect(effect: Effect) = add(effect)
@@ -165,26 +160,31 @@ interface ITransformable<T> {
     fun delivery(delivery: Delivery) = add(delivery)
 
     // video
-    fun video(videoEdit: VideoEdit) = add(videoEdit)
+    fun videoEdit(videoEdit: VideoEdit) = add(videoEdit)
 
     // reshape
     fun reshape(reshape: Reshape) = add(reshape)
 
-    // layer
-    fun overlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerAction.Builder(layer).param("overlay", "l"), layerBuilder)
+    // transcode
+    fun transcode(transcode: Transcode) = add(transcode)
 
     // layer
-    fun underlay(layer: Layer, layerBuilder: (LayerAction.Builder.() -> Unit)? = null) =
-        addWithBuilder(LayerAction.Builder(layer).param("underlay", "u"), layerBuilder)
+    fun overlay(source: Source, options: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(source).param("overlay", "l"), options)
 
-    fun namedTransformation(name: String) = add(ParamsAction(NamedTransformationParam(name)))
+    // layer
+    fun underlay(source: Source, options: (LayerAction.Builder.() -> Unit)? = null) =
+        addWithBuilder(LayerAction.Builder(source).param("underlay", "u"), options)
+
+    fun add3dLut(publicId: String) = add(LayerAction.Builder(Source.lut(publicId)).build())
+
+    fun namedTransformation(name: String) = add(name.cldAsNamedTransformation().asAction())
 
     // variables
-    fun variable(name: String, value: Expression) = add(ParamsAction(Param(name, name, value)))
+    fun variable(name: String, value: Expression) = variable(name, value as Any)
 
     fun variable(name: String, value: Any) =
-        add(ParamsAction(Param(name.asVariableName(), name.asVariableName(), value.asVariableValue())))
+        add(ParamsAction(Param(name.asVariableName(), name.asVariableName(), ParamValue(value, normalize = true))))
 
     // conditions
     fun ifCondition(expression: Expression) = add(ParamsAction(Param("if", "if", expression)))
@@ -195,11 +195,13 @@ interface ITransformable<T> {
 
     fun endIfCondition() = add(ParamsAction(Param("if", "if", ParamValue("end"))))
 
-    fun fetchFormat(format: Format) = add(format.asAction())
+    fun format(format: Format) = add(format)
 
     fun quality(quality: Quality) = add(quality)
 
-    fun quality(level: Int) = add(Quality.fixed(level))
+    fun prefix(prefix: String) = add(prefix.cldAsPrefix().asAction())
 
-    fun delay(milliseconds: Long) = add(ParamsAction(Param("delay", "dl", milliseconds)))
+    fun quality(level: Int) = add(Quality.level(level))
+
+    fun addFlag(flag: Flag) = add(flag.cldAsFlag().asAction())
 }

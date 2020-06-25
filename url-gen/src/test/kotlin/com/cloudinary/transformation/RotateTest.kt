@@ -8,14 +8,23 @@ class RotateTest {
     fun testRotate() {
         cldAssert(
             "a_50",
-            Transformation().rotate(Rotate.Builder().angle(50).build())
+            Transformation().rotate(Rotate.angle(50))
         )
-        cldAssert("a_50", Transformation().rotate { angle(50) })
+
         cldAssert(
-            "a_50.30.vflip",
-            Transformation().rotate { angle(50).angle(30).mode(Rotate.Mode.VFLIP) })
-        cldAssert("a_-50", Transformation().rotate { angle(-50) })
-        cldAssert("a_auto_left", Transformation().rotate { mode(Rotate.Mode.AUTO_LEFT) })
+            "a_50.hflip",
+            Transformation().rotate(Rotate.angle(50) {
+                horizontalFlip()
+            })
+        )
+
+        cldAssert("a_-50", Transformation().rotate(Rotate.angle(-50)))
+        cldAssert("a_auto_left", Transformation().rotate(Rotate.autoLeft()))
+
+        cldAssert("a_180.hflip.vflip.45", Transformation().rotate(Rotate.angle(180) {
+            horizontalFlip()
+            verticalFlip()
+            angle(45)
+        }))
     }
 }
-

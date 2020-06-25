@@ -6,7 +6,7 @@ import com.cloudinary.util.cldRanged
 
 class AntiRemoval private constructor(components: LayerComponents) : LayerAction(components) {
 
-    class Builder(private var source: Layer) : TransformationComponentBuilder {
+    class Builder(private var source: Source) : TransformationComponentBuilder {
         private var level: Any? = null
         private var transformation: Transformation? = null
         private var position: Position? = null

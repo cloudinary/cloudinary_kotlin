@@ -3,13 +3,12 @@ package com.cloudinary.transformation
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldToUrlSafeBase64
 
-// TODO simplify
 class CustomFunction(private val action: Action) : Action by action {
 
     companion object {
         fun wasm(publicId: String) = Builder(publicId).type(Type.WASM).build()
         fun remote(url: String) = Builder(url).type(Type.REMOTE).build()
-        fun preProcess(url: String) = Builder(url).type(Type.PRE_PROCESS).build()
+        fun preprocessRemote(url: String) = Builder(url).type(Type.PRE_PROCESS).build()
     }
 
     private class Builder(private val source: String) : TransformationComponentBuilder {

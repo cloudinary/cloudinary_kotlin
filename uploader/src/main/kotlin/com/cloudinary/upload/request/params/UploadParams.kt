@@ -1,7 +1,7 @@
 package com.cloudinary.upload.request.params
 
-import com.cloudinary.transformation.EagerTransformation
 import com.cloudinary.transformation.Transformation
+import com.cloudinary.upload.EagerTransformation
 import com.cloudinary.upload.request.UploaderDsl
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

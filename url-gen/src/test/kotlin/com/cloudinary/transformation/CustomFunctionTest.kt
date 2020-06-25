@@ -1,7 +1,7 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.CustomFunction.Companion.preProcess
+import com.cloudinary.transformation.CustomFunction.Companion.preprocessRemote
 import com.cloudinary.transformation.CustomFunction.Companion.remote
 import com.cloudinary.transformation.CustomFunction.Companion.wasm
 import org.junit.Test
@@ -24,7 +24,7 @@ class CustomFunctionTest {
     fun testPreProcessRemoteFunction() {
         cldAssert(
             "fn_pre:remote:aHR0cHM6Ly9teS5leGFtcGxlLmN1c3RvbS9mdW5jdGlvbg==",
-            preProcess("https://my.example.custom/function")
+            preprocessRemote("https://my.example.custom/function")
         )
     }
 }

@@ -15,15 +15,16 @@ private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
 private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_RESOURCE_TYPE = "image"
+internal const val DEFAULT_DELIVERY_TYPE = "upload"
 
 @TransformationDsl
-data class Url private constructor(
+data class Url constructor(
     private val config: Configuration,
     private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
     private val deliveryType: String? = null,
     private val resourceType: String = DEFAULT_RESOURCE_TYPE,
-    private val format: Format? = null,
+    private val extension: Extension? = null,
     private val version: String? = null,
     private val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
@@ -43,7 +44,7 @@ data class Url private constructor(
         require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
         var mutableSource = source ?: publicId ?: this.source ?: return null
         var mutableTransformation = transformation ?: Transformation()
-        var mutableFormat = format
+        var mutableExtension = extension
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
@@ -51,16 +52,16 @@ data class Url private constructor(
             return mutableSource
         }
 
-        if (deliveryType == "fetch" && mutableFormat != null) {
-            mutableTransformation = mutableTransformation.fetchFormat(mutableFormat)
-            mutableFormat = null
+        if (deliveryType == "fetch" && mutableExtension != null) {
+            mutableTransformation = mutableTransformation.format(mutableExtension.toFormat())
+            mutableExtension = null
         }
 
         val transformationStr = mutableTransformation.toString()
         var signature = ""
 
         val finalizedSource =
-            finalizeSource(mutableSource, mutableFormat, urlSuffix)
+            finalizeSource(mutableSource, mutableExtension, urlSuffix)
         mutableSource = finalizedSource.source
         val sourceToSign = finalizedSource.sourceToSign
 
@@ -98,7 +99,7 @@ data class Url private constructor(
             shorten
         )
 
-        val prefix = unsignedDownloadUrlPrefix2(
+        val prefix = unsignedDownloadUrlPrefix(
             cloudName,
             privateCdn,
             cname,
@@ -130,7 +131,7 @@ data class Url private constructor(
         private var publicId: String? = null
         private var deliveryType: String? = null
         private var resourceType: String = DEFAULT_RESOURCE_TYPE
-        private var format: Format? = null
+        private var extension: Extension? = null
         private var version: String? = null
         private var transformation: Transformation? = null
         private var signUrl: Boolean = false
@@ -149,7 +150,7 @@ data class Url private constructor(
         fun publicId(publicId: String) = apply { this.publicId = publicId }
         fun deliveryType(type: String?) = apply { this.deliveryType = type }
         fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
-        fun format(format: Format?) = apply { this.format = format }
+        fun extension(extension: Extension) = apply { this.extension = extension }
         fun version(version: String?) = apply { this.version = version }
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun signUrl(signUrl: Boolean) = apply { this.signUrl = signUrl }
@@ -172,7 +173,7 @@ data class Url private constructor(
             publicId,
             deliveryType,
             resourceType,
-            format,
+            extension,
             version,
             transformation,
             signUrl,
@@ -192,7 +193,7 @@ data class Url private constructor(
 
 private fun finalizeSource(
     source: String,
-    format: Format?,
+    extension: Extension?,
     urlSuffix: String?
 ): FinalizedSource {
     var mutableSource = source.cldMergeSlashedInUrl()
@@ -211,9 +212,9 @@ private fun finalizeSource(
             require(!(urlSuffix.contains(".") || urlSuffix.contains("/"))) { "url_suffix should not include . or /" }
             mutableSource = "$mutableSource/$urlSuffix"
         }
-        if (format != null) {
-            mutableSource = "$mutableSource.$format"
-            sourceToSign = "$sourceToSign.$format"
+        if (extension != null) {
+            mutableSource = "$mutableSource.$extension"
+            sourceToSign = "$sourceToSign.$extension"
         }
     }
 
@@ -227,8 +228,8 @@ fun finalizeResourceType(
     useRootPath: Boolean,
     shorten: Boolean
 ): String? {
-    var mutableResourceType: String? = resourceType ?: "image"
-    var mutableType: String? = type ?: "upload"
+    var mutableResourceType: String? = resourceType ?: DEFAULT_RESOURCE_TYPE
+    var mutableType: String? = type ?: DEFAULT_DELIVERY_TYPE
 
     if (!urlSuffix.isNullOrBlank()) {
         if (mutableResourceType == "image" && mutableType == "upload") {
@@ -270,7 +271,7 @@ fun finalizeResourceType(
     return result
 }
 
-fun unsignedDownloadUrlPrefix2(
+fun unsignedDownloadUrlPrefix(
     cloudName: String?,
     privateCdn: Boolean,
     cname: String?,
@@ -313,3 +314,17 @@ fun unsignedDownloadUrlPrefix2(
 }
 
 private class FinalizedSource(val source: String, val sourceToSign: String)
+
+enum class Extension(private val value: String) {
+    JPG("jpg"),
+    WEBP("webp"),
+    JP2("jp2"),
+    PNG("png"),
+    WEBM("webm"),
+    MP4("mp4"),
+    GIF("gif");
+
+    override fun toString() = value
+
+    internal fun toFormat() = buildFormat(null, value)
+}

@@ -4,21 +4,6 @@ import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Flag
 import com.cloudinary.transformation.FlagsParam
 
-private const val SCALE = "scale"
-private const val CROP = "crop"
-private const val FIT = "fit"
-private const val LIMIT_FIT = "limit"
-private const val MINIMUM_FIT = "mfit"
-private const val FILL = "fill"
-private const val LIMIT_FILL = "lfill"
-private const val IMAGGA_CROP = "imagga_crop"
-private const val IMAGGA_SCALE = "imagga_scale"
-private const val PAD = "pad"
-private const val LIMIT_PAD = "lpad"
-private const val MINIMUM_PAD = "mpad"
-private const val FILL_PAD = "fill_pad"
-private const val THUMB = "thumb"
-
 class Resize(private val action: Action) : Action by action {
 
     companion object {
@@ -46,8 +31,8 @@ class Resize(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun limit(width: Int? = null, height: Int? = null, options: (LimitBuilder.() -> Unit)? = null): Resize {
-            val builder = LimitBuilder()
+        fun limitFit(width: Int? = null, height: Int? = null, options: (LimitFitBuilder.() -> Unit)? = null): Resize {
+            val builder = LimitFitBuilder()
             width?.let { builder.width(width) }
             height?.let { builder.height(height) }
             options?.let { builder.it() }
@@ -130,8 +115,8 @@ class Resize(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun thumb(width: Int? = null, height: Int? = null, options: (ThumbBuilder.() -> Unit)? = null): Resize {
-            val builder = ThumbBuilder()
+        fun thumbnail(width: Int? = null, height: Int? = null, options: (ThumbnailBuilder.() -> Unit)? = null): Resize {
+            val builder = ThumbnailBuilder()
             width?.let { builder.width(width) }
             height?.let { builder.height(height) }
             options?.let { builder.it() }
@@ -161,12 +146,20 @@ class Resize(private val action: Action) : Action by action {
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun generic(cropMode: String, options: (GenericResizeBuilder.() -> Unit)? = null): Resize {
+            val builder = GenericResizeBuilder(cropMode)
+            options?.let { builder.it() }
+            return builder.build()
+        }
     }
 }
 
-enum class ResizeMode(private val flag: Flag) {
-    RELATIVE(Flag.Relative()),
-    REGION_RELATIVE(Flag.RegionRelative());
+class ResizeMode(private val flag: Flag) {
+    companion object {
+        fun relative() = ResizeMode(Flag.relative())
+        fun regionRelative() = ResizeMode(Flag.regionRelative())
+    }
 
     internal fun asFlag() = FlagsParam(this.flag)
 }

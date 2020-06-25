@@ -8,9 +8,9 @@ import androidx.work.WorkManager
 import com.cloudinary.Cloudinary
 import com.cloudinary.android.uploader.*
 import com.cloudinary.android.uploader.request.*
-import com.cloudinary.transformation.EagerTransformation
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.upload.EagerTransformation
 import com.cloudinary.upload.request.params.UploadParams
 import com.cloudinary.upload.response.UploadResult
 import com.cloudinary.uploader

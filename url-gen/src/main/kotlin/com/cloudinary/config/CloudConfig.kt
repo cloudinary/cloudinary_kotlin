@@ -1,13 +1,13 @@
 package com.cloudinary.config
 
-interface IAccountConfig {
+interface ICloudConfig {
     val cloudName: String
     val apiKey: String?
     val apiSecret: String?
 }
 
-data class AccountConfig(
+data class CloudConfig(
     override val cloudName: String,
     override val apiKey: String? = null,
     override val apiSecret: String? = null
-) : IAccountConfig
+) : ICloudConfig

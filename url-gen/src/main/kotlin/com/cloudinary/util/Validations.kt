@@ -1,5 +1,7 @@
 package com.cloudinary.util
 
+import com.cloudinary.Cloudinary
+
 
 /**
  * This is used for input validations. Depending on the throw flag, this can either throw an exception or just silently
@@ -7,11 +9,9 @@ package com.cloudinary.util
  */
 // TODO should behave according to config once the config spec is complete
 internal fun <T> illegalArgument(value: T, reason: String? = null): T {
-    val configThrow = true
-
     val message = "Illegal value: $value." + (reason?.let { " reason: $reason" } ?: "")
 
-    if (configThrow) {
+    if (Cloudinary.throwOnInvalidTransformations) {
         throw IllegalArgumentException(message)
     } else {
         print(message)

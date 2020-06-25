@@ -1,7 +1,7 @@
 package com.cloudinary.util
 
-import com.cloudinary.transformation.EagerTransformation
 import com.cloudinary.transformation.Transformation
+import com.cloudinary.upload.EagerTransformation
 import com.cloudinary.upload.request.ContextCommand
 import com.cloudinary.upload.request.TagsCommand
 import com.cloudinary.upload.request.params.*
@@ -202,7 +202,7 @@ private fun List<ResponsiveBreakpoint>.asResponsiveBreakpointParam() = toRespons
 
 private fun List<EagerTransformation>.asEagerParam() = joinToString("|", transform = { it.asEagerParam() })
 
-private fun EagerTransformation.asEagerParam() = listOfNotNull(transformation.toString(), format).joinToString("/")
+private fun EagerTransformation.asEagerParam() = listOfNotNull(transformation.toString(), extension).joinToString("/")
 
 internal fun Map<String, Any?>.asContextParam(): String {
     return this.entries.joinToString("|") {

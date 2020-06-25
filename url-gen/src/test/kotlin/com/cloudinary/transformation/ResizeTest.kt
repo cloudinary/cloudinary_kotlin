@@ -1,6 +1,7 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
@@ -11,11 +12,12 @@ class ResizeTest {
         cldAssert("c_scale,w_100", Resize.scale {
             width(100)
         })
-        cldAssert("c_scale,w_100", Resize.scale {
-            width(100)
-        })
+        cldAssert("c_scale,w_100", Resize.scale(100))
+
         cldAssert("c_scale,w_1.0", Resize.scale
-        { width(1f) })
+        {
+            width(1f)
+        })
         cldAssert("c_scale,h_100,w_100", Resize.scale {
             width(100)
             height(100)
@@ -73,28 +75,28 @@ class ResizeTest {
     }
 
     @Test
-    fun testLimit() {
-        cldAssert("c_limit,w_100", Resize.limit { width(100) })
-        cldAssert("c_limit,w_1.0", Resize.limit { width(1f) })
-        cldAssert("c_limit,h_100,w_100", Resize.limit {
+    fun testLimitFit() {
+        cldAssert("c_limit,w_100", Resize.limitFit { width(100) })
+        cldAssert("c_limit,w_1.0", Resize.limitFit { width(1f) })
+        cldAssert("c_limit,h_100,w_100", Resize.limitFit {
             width(100)
             height(100)
         })
-        cldAssert("c_limit,h_100,w_100", Resize.limit {
+        cldAssert("c_limit,h_100,w_100", Resize.limitFit {
             width(100)
             height(100)
         })
-        cldAssert("c_limit,h_1.1,w_0.5", Resize.limit {
+        cldAssert("c_limit,h_1.1,w_0.5", Resize.limitFit {
             width(0.5f)
             height(1.1f)
         })
-        cldAssert("ar_1.5,c_limit,w_100", Resize.limit {
+        cldAssert("ar_1.5,c_limit,w_100", Resize.limitFit {
             width(100)
             aspectRatio(1.5f)
         })
         cldAssert(
             "ar_1.5,c_limit,dpr_2.0,h_100",
-            Resize.limit {
+            Resize.limitFit {
                 height(100)
                 aspectRatio(1.5f)
                 dpr(2f)
@@ -436,27 +438,27 @@ class ResizeTest {
 
     @Test
     fun testThumb() {
-        cldAssert("c_thumb,w_100", Resize.thumb { width(100) })
-        cldAssert("c_thumb,w_1.0", Resize.thumb { width(1f) })
-        cldAssert("c_thumb,h_100,w_100", Resize.thumb {
+        cldAssert("c_thumb,w_100", Resize.thumbnail { width(100) })
+        cldAssert("c_thumb,w_1.0", Resize.thumbnail { width(1f) })
+        cldAssert("c_thumb,h_100,w_100", Resize.thumbnail {
             width(100)
             height(100)
         })
-        cldAssert("c_thumb,h_100,w_100", Resize.thumb {
+        cldAssert("c_thumb,h_100,w_100", Resize.thumbnail {
             width(100)
             height(100)
         })
-        cldAssert("c_thumb,h_1.1,w_0.5", Resize.thumb {
+        cldAssert("c_thumb,h_1.1,w_0.5", Resize.thumbnail {
             width(0.5f)
             height(1.1f)
         })
-        cldAssert("ar_1.5,c_thumb,w_100", Resize.thumb {
+        cldAssert("ar_1.5,c_thumb,w_100", Resize.thumbnail {
             width(100)
             aspectRatio(1.5f)
         })
         cldAssert(
             "ar_1.5,c_thumb,dpr_2.0,h_100",
-            Resize.thumb {
+            Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
                 dpr(2f)
@@ -464,7 +466,7 @@ class ResizeTest {
         )
         cldAssert(
             "ar_1.5,c_thumb,dpr_2.0,g_north,h_100",
-            Resize.thumb {
+            Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
                 dpr(2f)
@@ -473,7 +475,7 @@ class ResizeTest {
         )
         cldAssert(
             "ar_1.5,c_thumb,dpr_2.0,g_north,h_100,z_1.5",
-            Resize.thumb {
+            Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
                 dpr(2f)
@@ -541,6 +543,23 @@ class ResizeTest {
                 height(100)
                 aspectRatio(1.5f)
                 dpr(2f)
+            }
+        )
+    }
+
+    @Test
+    fun testGenericResize() {
+
+        cldAssert(
+            "c_mycrop,fl_ignore_aspect_ratio,g_west,h_2.5,w_1.5,x_4.5,y_5.5,z_3.5",
+            Resize.generic("mycrop") {
+                width(1.5f)
+                height(2.5f)
+                zoom(3.5f)
+                gravity(Gravity.west())
+                ignoreAspectRatio()
+                x(4.5f)
+                y(5.5f)
             }
         )
     }

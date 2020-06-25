@@ -93,7 +93,7 @@ data class AuthToken(
             val secret = SecretKeySpec(binKey, "HmacSHA256")
             hmac.init(secret)
             val bytes = message.toByteArray()
-            hmac.doFinal(bytes).toHex().toLowerCase()
+            hmac.doFinal(bytes).toHex().toLowerCase(Locale.US)
         } catch (e: NoSuchAlgorithmException) {
             throw RuntimeException("Cannot create authorization token.", e)
         } catch (e: InvalidKeyException) {

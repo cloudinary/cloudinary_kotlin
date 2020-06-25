@@ -23,7 +23,7 @@ class GenerateSpriteRequest(
             if (format == null)
                 transformation
             else
-                (transformation ?: Transformation()).fetchFormat(format)
+                (transformation ?: Transformation()).format(format)
 
         return buildGenerateSpriteParams(
             tag,

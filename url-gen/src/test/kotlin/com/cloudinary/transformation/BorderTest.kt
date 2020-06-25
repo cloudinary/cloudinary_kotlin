@@ -15,6 +15,14 @@ class BorderTest {
 
         cldAssert(
             "bo_3px_solid_rgb:00390b",
+            Transformation().border(Border.solid {
+                color(Color.Rgb("00390b"))
+                width(3)
+            })
+        )
+
+        cldAssert(
+            "bo_3px_solid_rgb:00390b",
             Transformation().border { color(Color.Rgb("00390b")).width(3) })
 
         cldAssert(

@@ -1,8 +1,8 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.layer.Layer
 import com.cloudinary.transformation.layer.Position
+import com.cloudinary.transformation.layer.Source
 import com.cloudinary.transformation.layer.TileMode
 import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.resize.ResizeMode
@@ -13,19 +13,20 @@ class CutterTest {
     fun testCutter() {
         var expected = "l_hexagon_sample/c_scale,fl_relative,h_1.0,w_1.0/fl_cutter.layer_apply"
 
-        val layer = Layer.image("hexagon_sample")
+        val source = Source.image("hexagon_sample")
         val scale = Resize.scale {
             width(1f)
             height(1f)
-            mode(ResizeMode.RELATIVE)
+            resizeMode(ResizeMode.relative())
         }
-        var actualFromBuilder = Cutter.Builder(layer)
+
+        var actualFromBuilder = Cutter.Builder(source)
             .transformation(
                 Transformation().resize(scale)
 
             ).build()
 
-        var actualFromDsl = Transformation().cutter(layer) {
+        var actualFromDsl = Transformation().cutter(source) {
             transformation(Transformation().resize(scale))
         }
 
@@ -37,12 +38,12 @@ class CutterTest {
             width(100)
             height(50)
         }
-        actualFromBuilder = Cutter.Builder(layer)
+        actualFromBuilder = Cutter.Builder(source)
             .transformation(Transformation().resize(crop))
             .position(position)
             .build()
 
-        actualFromDsl = Transformation().cutter(layer) {
+        actualFromDsl = Transformation().cutter(source) {
             transformation(Transformation().resize(crop))
             position(position)
         }

@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.reshape
 
 import com.cloudinary.transformation.Action
-import com.cloudinary.transformation.effect.innerEffectAction
+import com.cloudinary.transformation.effect.effectAction
 import com.cloudinary.util.cldRanged
 
 class Reshape(private val action: Action) : Action by action {
@@ -25,5 +25,5 @@ class Reshape(private val action: Action) : Action by action {
 
 }
 
-internal fun reshape(name: String, vararg values: Any?) = Reshape(innerEffectAction(name, *values))
+internal fun reshape(name: String, vararg values: Any?) = Reshape(effectAction(name, *values))
 
