@@ -9,15 +9,13 @@ open class Gravity internal constructor(value: ParamValue) : Param("gravity", "g
         ParamValue(direction)
     )
 
-    constructor(focus: FocalPoint) : this(
+    internal constructor(focus: FocalPoint) : this(
         ParamValue(
             focus
         )
     )
 
     companion object {
-        fun gravityObject(vararg objects: IObjectGravity) = Gravity(ParamValue(objects))
-
         fun south() =
             Gravity(Direction.SOUTH)
 
@@ -71,37 +69,18 @@ open class Gravity internal constructor(value: ParamValue) : Param("gravity", "g
         fun customNoOverride() =
             Gravity(FocalPoint.CUSTOM_NO_OVERRIDE)
 
+        fun objects(objectGravity: IObjectGravity, vararg objects: IObjectGravity) =
+            Gravity(ParamValue(listOf(objectGravity) + objects))
+
         fun auto(focalPoint: FocalPoint? = null) =
             Gravity(ParamValue(listOfNotNull("auto", focalPoint)))
 
-        fun auto(gravity: AutoGravity, options: (AutoGravityBuilder.() -> Unit)? = null): Gravity {
-            val builder = AutoGravityBuilder(gravity)
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun autoClassic() = Gravity(ParamValue(listOf("auto", "classic")))
 
-        fun auto(gravityObject: ObjectGravity, vararg objects: ObjectGravity) =
-            Gravity(ParamValue(listOf("auto", gravityObject) + objects.asList()))
+        fun auto(vararg objects: IAutoObjectGravity) =
+            Gravity(ParamValue(listOf("auto") + objects))
     }
 }
-
-class AutoGravity internal constructor(objects: Any?) : Gravity(ParamValue(listOfNotNull("auto", objects))) {
-    companion object {
-        fun classic() = AutoGravity("classic")
-        fun gravityObject(gravityObject: IObjectGravity): IObjectGravity = AutoGravityObject(gravityObject)
-    }
-}
-
-class AutoGravityBuilder(private val gravity: AutoGravity) {
-    private var avoid: Boolean = false
-
-    fun avoid() = apply { this.avoid = true }
-
-    fun build() = if (avoid) AutoGravity(ParamValue(listOf(gravity, "avoid"), "_")) else gravity
-}
-
-private class AutoGravityObject(gravityObject: IObjectGravity) : ParamValue(listOf("auto", gravityObject)),
-    IObjectGravity
 
 internal enum class Direction(private val value: String) {
     NORTH("north"),
