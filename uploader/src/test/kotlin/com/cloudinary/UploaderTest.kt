@@ -47,6 +47,7 @@ const val remoteTestImageUrlString = "http://cloudinary.com/images/old_logo.png"
 private val srcTestImage = UploaderTest::class.java.getResource("/old_logo.png").file
 const val SRC_TEST_IMAGE_W = 241
 const val SRC_TEST_IMAGE_H = 51
+const val UPLOAD_PRESET = "sdk-test-upload-preset"
 
 enum class NetworkLayer {
     OkHttp,
@@ -94,6 +95,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             if (cloudinary.config.apiSecret == null) {
                 System.err.println("Please setup environment for Upload test to run")
             }
+
+            createUploadPreset(cloudinary, UPLOAD_PRESET)
 
             val setupTags = listOf(sdkTestTag, uploaderTag, archiveTag)
 
@@ -502,7 +505,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         // should support unsigned uploading using presets
         val response = uploader.upload(srcTestImage) {
             params {
-                uploadPreset = "sdk-test-upload-preset"
+                uploadPreset = UPLOAD_PRESET
                 tags = defaultTags
             }
             options {
@@ -510,7 +513,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        assertTrue(response.resultOrThrow().publicId?.matches("^upload_folder/[a-z0-9]+$".toRegex()) ?: false)
+        val result = response.resultOrThrow()
+        assertEquals(result.width, SRC_TEST_IMAGE_W)
+        assertEquals(result.height, SRC_TEST_IMAGE_H)
     }
 
     @Test
@@ -810,7 +815,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
     @Test
     fun testTags() {
         var uploaderResponse = uploader.upload(srcTestImage)
-        var uploadResult = uploaderResponse.data!!
+        var uploadResult = uploaderResponse.resultOrThrow()
         val publicId1 = uploadResult.publicId!!
 
         uploaderResponse = uploader.upload(srcTestImage)
@@ -828,50 +833,19 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         uploader.removeTag(tag2, listOf(publicId2))
 
-        var url = URL(cloudinary.url {
-            publicId("$tag1.json")
-            deliveryType("list")
-        }.generate())
-        var jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-        assertTrue(jsonUrl.contains(publicId1))
-        assertTrue(jsonUrl.contains(publicId2))
 
-        url = URL(cloudinary.url {
-            publicId("$tag2.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-
-        assertTrue(jsonUrl.contains(publicId1))
-        assertFalse(jsonUrl.contains(publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag1, publicId1, publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag2, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag2, publicId2))
 
         uploader.removeAllTags(listOf(publicId2))
 
-        url = URL(cloudinary.url {
-            publicId("$tag3.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-
-        assertTrue(jsonUrl.contains(publicId1))
-        assertFalse(jsonUrl.contains(publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag3, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag3, publicId2))
 
         uploader.replaceTag(tag4, listOf(publicId1))
-        url = URL(cloudinary.url {
-            publicId("$tag4.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
 
-        assertTrue(jsonUrl.contains(publicId1))
+        assertTrue(doResourcesHaveTag(cloudinary, tag4, publicId1))
     }
 
     @Test

@@ -1,7 +1,11 @@
 package com.cloudinary
 
+import com.cloudinary.http.HttpResponse
+import com.cloudinary.http.MultipartEntityImpl
+import com.cloudinary.util.Base64Coder
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URL
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -166,4 +170,35 @@ fun generateFile(): File {
     }
     out.close()
     return temp
+}
+
+fun createUploadPreset(cloudinary: Cloudinary, preset: String): HttpResponse? {
+    val apiUrl =
+        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/upload_presets?unsigned=true&name=$preset"
+
+    return cloudinary.httpClientFactory.getClient().post(
+        URL(apiUrl),
+        mapOf("Authorization" to "Basic " + Base64Coder.encodeString(cloudinary.config.apiKey + ":" + cloudinary.config.apiSecret)),
+        MultipartEntityImpl()
+    )
+}
+
+fun doResourcesHaveTag(cloudinary: Cloudinary, tag: String, vararg publicIds: String): Boolean {
+    val apiUrl =
+        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/resources/image/tags/$tag"
+    val res = cloudinary.httpClientFactory.getClient().get(
+        URL(apiUrl),
+        mapOf("Authorization" to "Basic " + Base64Coder.encodeString(cloudinary.config.apiKey + ":" + cloudinary.config.apiSecret))
+    )
+
+    if (res?.content == null) {
+        throw Error("Could not verify tags: " + res?.httpStatusCode)
+    } else {
+        val resultBody = res.content!!
+        for (id: String in publicIds) {
+            if (!resultBody.contains("\"public_id\":\"$id\"")) return false
+        }
+    }
+
+    return true
 }

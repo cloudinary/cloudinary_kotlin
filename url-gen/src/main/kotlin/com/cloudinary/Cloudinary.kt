@@ -4,6 +4,7 @@ import com.cloudinary.config.Configuration
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
 var instance: Cloudinary? = null
+const val SDK_VERSION = "0.0.1-alpha.0"
 
 class Cloudinary(val config: Configuration) {
     private val extensionsLock = Any()
@@ -15,8 +16,7 @@ class Cloudinary(val config: Configuration) {
         IllegalArgumentException("A cloudinary url must be provided")
     )
 
-    private val sdkVersion = "1.0.0"
-    val userAgent = "CloudinaryKotlin/$sdkVersion"
+    val userAgent = "CloudinaryKotlin/$SDK_VERSION"
 
     fun url(url: (Url.Builder.() -> Unit)? = null): Url {
         val builder = Url.Builder(config)
