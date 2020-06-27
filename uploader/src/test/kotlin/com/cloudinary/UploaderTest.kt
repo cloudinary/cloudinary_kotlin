@@ -500,10 +500,12 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testUnsignedUpload() {
+        val uploadPresetName = "sdk-test-upload-preset"
+        createUploadPreset(cloudinary, uploadPresetName)
         // should support unsigned uploading using presets
         val response = uploader.upload(srcTestImage) {
             params {
-                uploadPreset = "sdk-test-upload-preset"
+                uploadPreset = uploadPresetName
                 tags = defaultTags
             }
             options {
@@ -811,7 +813,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
     @Test
     fun testTags() {
         var uploaderResponse = uploader.upload(srcTestImage)
-        var uploadResult = uploaderResponse.data!!
+        var uploadResult = uploaderResponse.resultOrThrow()
         val publicId1 = uploadResult.publicId!!
 
         uploaderResponse = uploader.upload(srcTestImage)
@@ -829,50 +831,19 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         uploader.removeTag(tag2, listOf(publicId2))
 
-        var url = URL(cloudinary.url {
-            publicId("$tag1.json")
-            deliveryType("list")
-        }.generate())
-        var jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-        assertTrue(jsonUrl.contains(publicId1))
-        assertTrue(jsonUrl.contains(publicId2))
 
-        url = URL(cloudinary.url {
-            publicId("$tag2.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-
-        assertTrue(jsonUrl.contains(publicId1))
-        assertFalse(jsonUrl.contains(publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag1, publicId1, publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag2, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag2, publicId2))
 
         uploader.removeAllTags(listOf(publicId2))
 
-        url = URL(cloudinary.url {
-            publicId("$tag3.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
-
-        assertTrue(jsonUrl.contains(publicId1))
-        assertFalse(jsonUrl.contains(publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag3, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag3, publicId2))
 
         uploader.replaceTag(tag4, listOf(publicId1))
-        url = URL(cloudinary.url {
-            publicId("$tag4.json")
-            deliveryType("list")
-        }.generate())
-        jsonUrl =
-            HttpUrlConnectionFactory(cloudinary.userAgent, cloudinary.config.apiConfig).getClient()
-                .get(url)?.content!!
 
-        assertTrue(jsonUrl.contains(publicId1))
+        assertTrue(doResourcesHaveTag(cloudinary, tag4, publicId1))
     }
 
     @Test
