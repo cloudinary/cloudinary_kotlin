@@ -1,7 +1,8 @@
 package com.cloudinary
 
 import com.cloudinary.config.Configuration
-import com.cloudinary.transformation.Format
+import com.cloudinary.config.UrlConfig
+import com.cloudinary.transformation.Rotate
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.*
 import org.junit.Test
@@ -13,6 +14,27 @@ private const val DEFAULT_UPLOAD_PATH = DEFAULT_ROOT_PATH + "image/upload/"
 class UrlTest {
     private val cloudinary = Cloudinary("cloudinary://a:b@test123")
 
+    @Test
+    fun testConfigValues() {
+
+        val urlConfig = UrlConfig(
+            secureDistribution = "secure.api.com",
+            privateCdn = true,
+            cdnSubdomain = true,
+            shorten = true,
+            secureCdnSubdomain = true,
+            useRootPath = true,
+            cname = "my.domain.org",
+            secure = true
+        )
+
+        val config = cloudinary.config.copy(
+            urlConfig = urlConfig
+        )
+
+        assertEquals("https://secure.api.com/sample", Url(config).generate("sample"))
+        assertEquals("http://my.domain.org/sample", Url(config, secure = false).generate("sample"))
+    }
 
     @Test
     fun testUrlSuffixWithDotOrSlash() {
@@ -128,7 +150,7 @@ class UrlTest {
     @Test
     fun testFormat() { // should use format from options
         val result = cloudinary.url {
-            format(Format.jpg())
+            extension(Extension.JPG)
         }.generate("test")
         assertEquals(DEFAULT_UPLOAD_PATH + "test.jpg", result)
     }
@@ -218,7 +240,7 @@ class UrlTest {
             cloudinary.url {
                 urlSuffix("hello")
                 privateCdn(true)
-                rotate { angle(0) }
+                rotate(Rotate.angle(0))
             }
                 .generate("test")
         assertEquals("http://test123-res.cloudinary.com/images/a_0/test/hello", actual)
@@ -230,7 +252,7 @@ class UrlTest {
             cloudinary.url {
                 urlSuffix("hello")
                 privateCdn(true)
-                format(Format.jpg())
+                extension(Extension.JPG)
             }.generate("test")
         assertEquals("http://test123-res.cloudinary.com/images/test/hello.jpg", actual)
     }
@@ -239,7 +261,7 @@ class UrlTest {
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
         var url = cloudinary.url {
-            format(Format.jpg())
+            extension(Extension.JPG)
             signUrl(true)
         }.generate("test")!!
         var matcher = pattern.matcher(url)
@@ -248,7 +270,7 @@ class UrlTest {
 
         var actual =
             cloudinary.url {
-                format(Format.jpg())
+                extension(Extension.JPG)
                 privateCdn(true)
                 signUrl(true)
                 urlSuffix("hello")
@@ -260,21 +282,19 @@ class UrlTest {
         )
 
         url = cloudinary.url {
-            format(Format.jpg())
+            extension(Extension.JPG)
             signUrl(true)
-            rotate {
-                angle(0)
-            }
+            rotate(Rotate.angle(0))
         }.generate("test")!!
         matcher = pattern.matcher(url)
         matcher.find()
         expectedSignature = url.substring(matcher.start(), matcher.end())
         actual = cloudinary.url {
-            format(Format.jpg())
+            extension(Extension.JPG)
             privateCdn(true)
             signUrl(true)
             urlSuffix("hello")
-            rotate { angle(0) }
+            rotate(Rotate.angle(0))
         }.generate("test")
         assertEquals(
             "http://test123-res.cloudinary.com/images/$expectedSignature/a_0/test/hello.jpg",
@@ -340,7 +360,7 @@ class UrlTest {
         actual =
             cloudinary.url {
                 privateCdn(true)
-                rotate { angle(0) }
+                rotate(Rotate.angle(0))
                 useRootPath(true)
             }.generate("test")
         assertEquals("http://test123-res.cloudinary.com/a_0/test", actual)
@@ -390,7 +410,7 @@ class UrlTest {
     fun testFetchFormat() { // should support format for fetch urls
         val result =
             cloudinary.url {
-                format(Format.jpg())
+                extension(Extension.JPG)
                 deliveryType("fetch")
             }.generate("http://cloudinary.com/images/old_logo.png")
         assertEquals(

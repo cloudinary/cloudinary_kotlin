@@ -5,22 +5,15 @@ import com.cloudinary.util.Base64Coder.encodeURLSafeString
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
-internal fun Any.cldToString(): String {
-    return when (this) {
-        is Int -> toString()
-        is Float -> toString()
-        else -> toString()
-    }
-}
 
 /**
  * If the param is null the original string is returned unchanged.
  */
-internal fun String.cldJoin(separator: String, toJoin: Any?): String? {
-    return if (toJoin != null) this + separator + toJoin.cldToString() else this
+internal fun String.cldJoinWithOrReturnOriginal(separator: String, toJoin: Any?): String? {
+    return if (toJoin != null) this + separator + toJoin.toString() else this
 }
 
 /**
@@ -157,7 +150,7 @@ internal fun String.cldUrlEncode(unsafe: Pattern, charset: Charset?): String {
             ch = Character.forDigit((aByte.toInt() and 0xF), 16)
             escaped.append(ch)
         }
-        matcher.appendReplacement(sb, Matcher.quoteReplacement(escaped.toString().toLowerCase()))
+        matcher.appendReplacement(sb, Matcher.quoteReplacement(escaped.toString().toLowerCase(Locale.US)))
     }
     matcher.appendTail(sb)
     return sb.toString()

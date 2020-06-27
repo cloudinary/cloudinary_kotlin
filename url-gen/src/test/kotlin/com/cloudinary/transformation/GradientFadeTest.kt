@@ -1,6 +1,8 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.effect.GradientFade
 import org.junit.Test
 
 class GradientFadeTest {
@@ -8,32 +10,47 @@ class GradientFadeTest {
     fun testGradientFade() {
         cldAssert(
             "e_gradient_fade:40,y_0.8",
-            Transformation().gradientFade(GradientFade.Builder().strength(40).y(0.8).build())
+            Effect.gradientFade {
+                strength(40)
+                y(0.8)
+            }
         )
         cldAssert(
-            "e_gradient_fade:40,y_0.8",
-            Transformation().gradientFade { strength(40).y(0.8f) })
-        cldAssert("e_gradient_fade:50,x_25", Transformation().gradientFade { strength(50).x(25) })
-        cldAssert("e_gradient_fade:10", Transformation().gradientFade { strength(10) })
-        cldAssert("e_gradient_fade,x_0.3", Transformation().gradientFade { x(0.3f) })
-        cldAssert("e_gradient_fade,y_30", Transformation().gradientFade { y(30) })
+            "e_gradient_fade:50,x_0.4",
+            Effect.gradientFade {
+                strength(50)
+                x(0.4)
+            }
+        )
+        cldAssert(
+            "e_gradient_fade:30",
+            Effect.gradientFade {
+                strength(30)
+            }
+        )
+
+        cldAssert(
+            "e_gradient_fade:symmetric,y_0.8",
+            Effect.gradientFade {
+                type(GradientFade.SYMMETRIC)
+                y(0.8)
+
+            }
+        )
 
         cldAssert(
             "e_gradient_fade:symmetric:40,y_0.8",
-            Transformation().gradientFade { symmetric(true).strength(40).y(0.8f) })
+            Effect.gradientFade {
+                type(GradientFade.SYMMETRIC)
+                strength(40)
+                y(0.8f)
+            })
         cldAssert(
             "e_gradient_fade:symmetric:50,x_25",
-            Transformation().gradientFade { symmetric(true).strength(50).x(25) })
-        cldAssert(
-            "e_gradient_fade:symmetric:10",
-            Transformation().gradientFade { symmetric(true).strength(10) })
-        cldAssert(
-            "e_gradient_fade:symmetric,x_0.3",
-            Transformation().gradientFade { symmetric(true).x(0.3f) })
-        cldAssert(
-            "e_gradient_fade:symmetric,y_30",
-            Transformation().gradientFade { symmetric(true).y(30) })
+            Effect.gradientFade {
+                type(GradientFade.SYMMETRIC)
+                strength(50)
+                x(25)
+            })
     }
-
-
 }

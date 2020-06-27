@@ -1,23 +1,32 @@
 package com.cloudinary.transformation.effect
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.ParamsAction
+import com.cloudinary.transformation.cldAsEffect
+import com.cloudinary.transformation.layer.MediaSource
 import com.cloudinary.util.cldPositiveNumber
 import com.cloudinary.util.cldRanged
-import com.cloudinary.util.cldToString
 
 class Effect(private val action: Action) : Action by action {
 
     companion object {
 
-        fun makeTransparent(options: (MakeTransparentBuilder.() -> Unit)? = null): Effect {
+        fun makeTransparent(level: Int? = null, options: (MakeTransparentBuilder.() -> Unit)? = null): Effect {
             val builder = MakeTransparentBuilder()
+            options?.let { builder.it() }
+            level?.let { builder.level(it) }
+            return builder.build()
+        }
+
+        fun waveform(options: (WaveformBuilder.() -> Unit)? = null): Effect {
+            val builder = WaveformBuilder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun waveform() = Effect(Flag.Waveform().cldAsFlag().asAction())
         fun accelerate(percent: Int? = null) = effect("accelerate", percent?.cldRanged(-50, 100))
-        fun deshake(factor: DeShakeFactor? = null) = effect("deshake", factor)
+        fun deshake(factor: DeshakeFactor? = null) = effect("deshake", factor)
         fun noise(level: Int? = null) = effect("noise", level?.cldRanged(0, 100))
         fun boomerang() = effect("boomerang")
         fun reverse() = effect("reverse")
@@ -35,7 +44,7 @@ class Effect(private val action: Action) : Action by action {
 
         fun sepia(level: Int? = null) = effect("sepia", level?.cldRanged(1, 100))
 
-        fun simulateColorblind(condition: ColorBlindCondition? = null) = effect("simulate_colorblind", condition)
+        fun simulateColorBlind(condition: SimulateColorBlind? = null) = effect("simulate_colorblind", condition)
 
         fun cartoonify(options: (CartoonifyBuilder.() -> Unit)? = null): Effect {
             val builder = CartoonifyBuilder()
@@ -68,7 +77,15 @@ class Effect(private val action: Action) : Action by action {
 
         fun blur(strength: Int? = null) = effect("blur", strength?.cldRanged(1, 2000))
 
-        fun vignette(level: Int? = null) = effect("vignette", level) // TODO range
+        fun outline(width: Int? = null, blur: Int? = null, options: (OutlineBuilder.() -> Unit)? = null): Effect {
+            val builder = OutlineBuilder()
+            width?.let { builder.width(it) }
+            blur?.let { builder.blur(it) }
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun vignette(level: Int? = null) = effect("vignette", level.cldRanged(0, 100))
 
         fun trim(options: (TrimBuilder.() -> Unit)? = null): Effect {
             val builder = TrimBuilder()
@@ -76,7 +93,7 @@ class Effect(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun artistic(filter: ArtisticFilter) = effect("art", filter)
+        fun artisticFilter(filter: ArtisticFilter) = effect("art", filter)
 
         fun negate() = effect("negate")
 
@@ -86,7 +103,7 @@ class Effect(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun redeye() = effect("redeye")
+        fun redEye() = effect("redeye")
 
         fun pixelateRegion(options: (PixelateRegionBuilder.() -> Unit)? = null): Effect {
             val builder = PixelateRegionBuilder()
@@ -94,7 +111,7 @@ class Effect(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun assistColorblind(options: (AssistColorblindBuilder.() -> Unit)? = null): Effect {
+        fun assistColorBlind(options: (AssistColorblindBuilder.() -> Unit)? = null): Effect {
             val builder = AssistColorblindBuilder()
             options?.let { builder.it() }
             return builder.build()
@@ -104,26 +121,27 @@ class Effect(private val action: Action) : Action by action {
 
         fun grayscale() = effect("grayscale")
 
-        fun oilPaint(level: Int? = null) = effect("oil_paint", level) // TODO range
+        fun gradientFade(strength: Int? = null, options: (GradientFadeBuilder.() -> Unit)? = null): Effect {
+            val builder = GradientFadeBuilder()
+            strength?.let { builder.strength(strength) }
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
-        fun advRedeye() = effect("adv_redeye")
+        fun oilPaint(level: Int? = null) = effect("oil_paint", level.cldRanged(0, 100))
+
+        fun advancedRedEye() = effect("adv_redeye")
 
         fun pixelate(squareSize: Int? = null) = effect("pixelate", squareSize?.cldRanged(1, 200))
 
         fun blurFaces(strength: Any? = null) = effect("blur_faces", strength)
+
+        fun styleTransfer(source: MediaSource, options: (StyleTransferBuilder.() -> Unit)? = null): Effect {
+            val builder = StyleTransferBuilder(source)
+            options?.let { builder.it() }
+            return Effect(builder.build())
+        }
     }
-}
-
-class Region(x: Int? = null, y: Int? = null, width: Int? = null, height: Int? = null) {
-    internal val list = listOfNotNull(x?.cldAsX(), y?.cldAsY(), width?.cldAsWidth(), height?.cldAsHeight())
-}
-
-sealed class AssistColorBlindType(value: Any) : ParamValue(listOf(value)) {
-    class Stripes(strength: Any) : AssistColorBlindType(strength.cldToString()) {
-        constructor(strength: Int) : this(strength as Any)
-    }
-
-    class XRay : AssistColorBlindType("xray")
 }
 
 enum class DitherFilter(internal val value: Int) {
@@ -148,11 +166,11 @@ enum class DitherFilter(internal val value: Int) {
     CIRCLES_7X7_WHITE(18);
 
     override fun toString(): String {
-        return value.cldToString()
+        return value.toString()
     }
 }
 
-enum class ImproveMode(internal val value: String) {
+enum class Improve(internal val value: String) {
     OUTDOOR("outdoor"),
     INDOOR("indoor");
 
@@ -161,7 +179,7 @@ enum class ImproveMode(internal val value: String) {
     }
 }
 
-enum class ColorBlindCondition(internal val value: String) {
+enum class SimulateColorBlind(internal val value: String) {
     DEUTERANOPIA("deuteranopia"),
     PROTANOPIA("protanopia"),
     TRITANOPIA("tritanopia"),
@@ -176,7 +194,6 @@ enum class ColorBlindCondition(internal val value: String) {
 }
 
 enum class ArtisticFilter(private val value: String) {
-
     AL_DENTE("al_dente"),
     ATHENA("athena"),
     AUDREY("audrey"),
@@ -204,20 +221,20 @@ enum class ArtisticFilter(private val value: String) {
     }
 }
 
-enum class DeShakeFactor(private val factor: Int) {
+enum class DeshakeFactor(private val factor: Int) {
     FACTOR16(16),
     FACTOR32(32),
     FACTOR48(48),
     FACTOR64(64);
 
     override fun toString(): String {
-        return factor.cldToString()
+        return factor.toString()
     }
 }
 
-internal fun effect(name: String, vararg values: Any?) = Effect(innerEffectAction(name, *values))
+internal fun effect(name: String, vararg values: Any?) = Effect(effectAction(name, *values))
 
-internal fun innerEffectAction(
+internal fun effectAction(
     name: String,
     vararg values: Any?
 ): ParamsAction {
@@ -225,6 +242,16 @@ internal fun innerEffectAction(
 
     // This list was generated using partition by type, however the compiler does not detect it. 100% safe cast.
     @Suppress("UNCHECKED_CAST") val list = listOf((listOf(name) + paramValues).cldAsEffect()) + (params as List<Param>)
-    val action = ParamsAction(list)
-    return action
+    return ParamsAction(list)
+}
+
+enum class Outline(internal val value: String) {
+    INNER("inner"),
+    INNER_FILL("inner_fill"),
+    OUTER("outer"),
+    FILL("fill"), ;
+
+    override fun toString(): String {
+        return value
+    }
 }

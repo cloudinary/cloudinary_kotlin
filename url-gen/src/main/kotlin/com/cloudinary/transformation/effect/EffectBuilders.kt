@@ -1,6 +1,10 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.gravity.Gravity
+import com.cloudinary.transformation.layer.LayerAction
+import com.cloudinary.transformation.layer.MediaSource
+import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.util.cldRanged
 
 class PreviewBuilder : TransformationComponentBuilder {
@@ -22,6 +26,16 @@ class PreviewBuilder : TransformationComponentBuilder {
     )
 }
 
+class WaveformBuilder : TransformationComponentBuilder {
+    private var color: Any? = null
+    private var background: Any? = null
+
+    fun color(color: Color) = apply { this.color = color }
+    fun background(color: Color) = apply { this.background = color }
+
+    override fun build() =
+        Effect(ParamsAction(Flag.waveform().cldAsFlag(), color?.cldAsColor(), background?.cldAsBackground()))
+}
 
 class ColorizeBuilder : TransformationComponentBuilder {
     private var level: Any? = null
@@ -43,17 +57,18 @@ class AssistColorblindBuilder : TransformationComponentBuilder {
     private var strength: Any? = null
     private var type: Any? = null
 
-    override fun build() = effect("assist_colorblind", type ?: strength?.run {
-        AssistColorBlindType.Stripes(
-            this
-        )
-    })
+    override fun build() = effect("assist_colorblind", type, strength)
 
-    fun strength(strength: Int) = apply { this.strength = strength }
+    fun stripes(strength: Int) = stripes(strength as Any)
+    fun stripes(strength: Any) = apply {
+        type = null
+        this.strength = strength
+    }
 
-    fun strength(strength: Any) = apply { this.strength = strength }
-
-    fun type(type: AssistColorBlindType) = apply { this.type = type }
+    fun xRay() = apply {
+        type = "xray"
+        strength = null
+    }
 }
 
 class VectorizeBuilder : TransformationComponentBuilder {
@@ -115,6 +130,29 @@ class CartoonifyBuilder : TransformationComponentBuilder {
         )
 }
 
+class OutlineBuilder
+    : TransformationComponentBuilder {
+
+    private var mode: Outline? = null
+    private var color: Color? = null
+    private var width: Int? = null
+    private var blur: Int? = null
+
+    fun mode(mode: Outline) = apply { this.mode = mode }
+    fun color(color: Color) = apply { this.color = color }
+    fun color(color: String) = apply { this.color = Color.parseString(color) }
+    fun width(width: Int) = apply { this.width = width }
+    fun blur(blur: Int) = apply { this.blur = blur }
+
+
+    override fun build(): Effect {
+        val values = listOfNotNull(mode, width?.cldRanged(1, 100), blur?.cldRanged(0, 200))
+        val params = listOfNotNull(color?.cldAsColor())
+
+        return Effect(effectAction("outline", *((values + params).toTypedArray())))
+    }
+}
+
 class TrimBuilder : TransformationComponentBuilder {
     private var colorSimilarity: Any? = null
     private var colorOverride: Any? = null
@@ -149,34 +187,34 @@ abstract class BaseRegionEffectBuilder(protected val name: String) : Transformat
 }
 
 class BlurRegionBuilder : BaseRegionEffectBuilder("blur_region") {
-    var strength: Any? = null
+    private var strength: Any? = null
 
     fun strength(strength: Int) = apply { this.strength = strength }
 
     override fun build() = effect(
         name,
-        strength, // TODO range
+        strength.cldRanged(1, 2000),
         x?.cldAsX(),
         y?.cldAsY(),
         width?.cldAsWidth(),
         height?.cldAsHeight(),
-        gravity?.cldAsGravity()
+        gravity
     )
 }
 
 class PixelateRegionBuilder : BaseRegionEffectBuilder("pixelate_region") {
-    var squareSize: Any? = null
+    private var squareSize: Any? = null
 
     fun squareSize(squareSize: Int) = apply { this.squareSize = squareSize }
 
     override fun build() = effect(
         name,
-        squareSize, // TODO range
+        squareSize.cldRanged(1, 200),
         x?.cldAsX(),
         y?.cldAsY(),
         width?.cldAsWidth(),
         height?.cldAsHeight(),
-        gravity?.cldAsGravity()
+        gravity
     )
 }
 
@@ -211,4 +249,79 @@ class MakeTransparentBuilder : TransformationComponentBuilder {
     fun color(color: Color) = apply { this.color = color }
 
     override fun build() = effect("make_transparent", level.cldRanged(0, 100), color?.cldAsColor())
+}
+
+class GradientFadeBuilder : TransformationComponentBuilder {
+    private var strength: Any? = null
+    private var type: Any? = null
+    private var x: Any? = null
+    private var y: Any? = null
+
+    fun strength(strength: Any) = apply { this.strength = strength }
+    fun strength(strength: Int) = apply { this.strength = strength }
+    fun type(type: String) = apply { this.type = type }
+    fun type(type: GradientFade) = apply { this.type = type }
+    fun x(x: Any) = apply { this.x = x }
+    fun y(y: Any) = apply { this.y = y }
+    fun x(x: Int) = apply { this.x = x }
+    fun y(y: Int) = apply { this.y = y }
+    fun x(x: Float) = apply { this.x = x }
+    fun y(y: Float) = apply { this.y = y }
+
+    override fun build(): Effect {
+        val values = listOfNotNull(type, strength?.cldRanged(0, 100))
+        val params = listOfNotNull(x?.cldAsX(), y?.cldAsY())
+
+        return effect(
+            "gradient_fade",
+            *((values + params).toTypedArray())
+        )
+    }
+}
+
+enum class GradientFade(private val value: String) {
+    SYMMETRIC("symmetric"),
+    SYMMETRIC_PAD("symmetric_pad");
+
+    override fun toString() = value
+}
+
+class StyleTransferBuilder(private val source: MediaSource) : TransformationComponentBuilder,
+    ITransformable<StyleTransferBuilder> {
+    private var preserveColor: Boolean = false
+    private var strength: Int? = null
+    private var transformation: Transformation? = null
+
+    fun preserveColor() = apply { this.preserveColor = true }
+    fun strength(strength: Int) = apply { this.strength = strength }
+    fun transformation(transformation: Transformation) =
+        apply { this.transformation = transformation }
+
+    fun transformation(transformation: Transformation.Builder.() -> Unit) = apply {
+        val builder = Transformation.Builder()
+        builder.transformation()
+        this.transformation = builder.build()
+    }
+
+    override fun build() = Effect(
+        LayerAction(
+            buildLayerComponent(
+                source,
+                transformation,
+                paramName = "layer",
+                paramKey = "l",
+                extraParams = listOf(
+                    listOfNotNull(
+                        "style_transfer",
+                        strength?.cldRanged(0, 100),
+                        if (preserveColor) "preserve_color" else null
+                    ).cldAsEffect()
+                )
+            )
+        )
+    )
+
+    override fun add(action: Action) = apply {
+        this.transformation = (transformation ?: Transformation()).add(action)
+    }
 }

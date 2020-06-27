@@ -44,7 +44,7 @@ val PREDEFINED_VARS = mapOf(
 
 val PATTERN = getPattern()
 
-class Expression(values: List<Any> = listOf()) : ParamValue(values.cldAsParamValueContent(), "_") {
+class Expression(values: List<Any> = listOf()) : ParamValue(values.cldAsParamValueContent(), "_", true) {
     constructor(value: Any) : this(listOf(value))
 
     fun gt(value: Any): Expression {
@@ -191,18 +191,9 @@ private fun getPattern(): Pattern {
         sb.append(Pattern.quote(op)).append("|")
     }
     sb.deleteCharAt(sb.length - 1)
-    sb.append(")(?=[ _])|").append(PREDEFINED_VARS.keys.joinToString("|")).append(")")
+    sb.append(")(?=[ _])|").append(PREDEFINED_VARS.keys.joinToString("|", transform = { "(?<!\\$)$it" })).append(")")
     pattern = sb.toString()
     return Pattern.compile(pattern)
 }
 
 internal fun String.asVariableName() = if (startsWith("\$")) this else "\$${this}"
-internal fun Any.asVariableValue(): Any {
-    if (this !is String) return this
-
-    var normalized = this
-    if (!this.startsWith("!")) normalized = "!${normalized}"
-    if (!this.endsWith("!")) normalized = "${normalized}!"
-
-    return normalized
-}

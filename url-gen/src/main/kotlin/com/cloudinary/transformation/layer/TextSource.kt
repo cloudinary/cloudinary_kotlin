@@ -1,10 +1,11 @@
 package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.layer.BaseTextLayer.Builder
+import com.cloudinary.transformation.layer.BaseTextSource.Builder
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
+@TransformationDsl
 internal interface ITextLayerBuilder {
     var style: TextStyle?
     var background: Color?
@@ -15,11 +16,11 @@ internal interface ITextLayerBuilder {
     fun style(style: TextStyle): Builder
     fun style(style: TextStyle.Builder.() -> Unit): Builder
     fun background(background: Color): Builder
-    fun textColor(textColor: Color): Builder
-    fun build(): BaseTextLayer
+    fun color(textColor: Color): Builder
+    fun build(): BaseTextSource
 }
 
-open class BaseTextLayer internal constructor(
+open class BaseTextSource internal constructor(
     type: String,
     value: String,
     fontFamily: String? = null,
@@ -28,7 +29,7 @@ open class BaseTextLayer internal constructor(
     background: Color? = null,
     textColor: Color? = null
 ) :
-    Layer(
+    Source(
         listOfNotNull(
             type,
             ParamValue(
@@ -42,18 +43,17 @@ open class BaseTextLayer internal constructor(
         ),
         listOfNotNull(
             background?.cldAsBackground(),
-            textColor?.let { ColorParam(it) }
+            textColor?.cldAsColor()
         )
     ) {
 
-    @TransformationDsl
     class Builder(
         private val type: String,
         private val value: String
     ) : ITextLayerBuilder {
 
-        var fontFamily: String? = null
-        var fontSize: Any? = null
+        private var fontFamily: String? = null
+        private var fontSize: Any? = null
         override var style: TextStyle? = null
         override var background: Color? = null
         override var textColor: Color? = null
@@ -79,35 +79,35 @@ open class BaseTextLayer internal constructor(
         }
 
         override fun background(background: Color) = apply { this.background = background }
-        override fun textColor(textColor: Color) = apply { this.textColor = textColor }
+        override fun color(textColor: Color) = apply { this.textColor = textColor }
 
-        override fun build() = BaseTextLayer(type, value, fontFamily, fontSize, style, background, textColor)
+        override fun build() = BaseTextSource(type, value, fontFamily, fontSize, style, background, textColor)
     }
 }
 
-class TextLayer(
+class TextSource(
     text: String,
     fontFamily: String? = null,
     fontSize: Any? = null,
     style: TextStyle? = null,
     background: Color? = null,
     textColor: Color? = null
-) : BaseTextLayer("text", encode(text), fontFamily, fontSize, style, background, textColor) {
+) : BaseTextSource("text", encode(text), fontFamily, fontSize, style, background, textColor) {
     class Builder internal constructor(
         text: String,
-        b: BaseTextLayer.Builder = Builder("text", encode(text))
+        b: BaseTextSource.Builder = Builder("text", encode(text))
     ) : ITextLayerBuilder by b
 }
 
-class SubtitlesLayer(
+class SubtitlesSource(
     publicId: String,
     style: TextStyle? = null,
     background: Color? = null,
     textColor: Color? = null
-) : BaseTextLayer("subtitles", publicId, null, null, style, background, textColor) {
+) : BaseTextSource("subtitles", publicId, null, null, style, background, textColor) {
     class Builder internal constructor(
         private val publicId: String,
-        b: BaseTextLayer.Builder = Builder("subtitles", publicId)
+        b: BaseTextSource.Builder = Builder("subtitles", publicId)
     ) : ITextLayerBuilder by b
 }
 
@@ -117,7 +117,7 @@ class TextStyle(
     fontAntialias: FontAntialias? = null,
     fontHinting: FontHinting? = null,
     textDecoration: TextDecoration? = null,
-    textAlign: TextAlign? = null,
+    textAlignment: TextAlignment? = null,
     stroke: Stroke? = null,
     letterSpacing: Any? = null,
     lineSpacing: Any? = null
@@ -128,7 +128,7 @@ class TextStyle(
         fontAntialias?.let { NamedValue("antialias", fontAntialias, "_") },
         fontHinting?.let { NamedValue("hinting", fontHinting, "_") },
         textDecoration,
-        textAlign,
+        textAlignment,
         stroke,
         letterSpacing?.let { NamedValue("letter_spacing", letterSpacing, "_") },
         lineSpacing?.let { NamedValue("line_spacing", lineSpacing, "_") }
@@ -141,7 +141,7 @@ class TextStyle(
         private var fontAntialias: FontAntialias? = null
         private var fontHinting: FontHinting? = null
         private var textDecoration: TextDecoration? = null
-        private var textAlign: TextAlign? = null
+        private var textAlignment: TextAlignment? = null
         private var stroke: Stroke? = null
         private var letterSpacing: Any? = null
         private var lineSpacing: Any? = null
@@ -151,7 +151,7 @@ class TextStyle(
         fun fontAntialias(fontAntialias: FontAntialias) = apply { this.fontAntialias = fontAntialias }
         fun fontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
         fun textDecoration(textDecoration: TextDecoration) = apply { this.textDecoration = textDecoration }
-        fun textAlign(textAlign: TextAlign) = apply { this.textAlign = textAlign }
+        fun textAlignment(textAlignment: TextAlignment) = apply { this.textAlignment = textAlignment }
         fun stroke(stroke: Stroke) = apply { this.stroke = stroke }
         fun letterSpacing(letterSpacing: Any) = apply { this.letterSpacing = letterSpacing }
         fun lineSpacing(lineSpacing: Any) = apply { this.lineSpacing = lineSpacing }
@@ -164,7 +164,7 @@ class TextStyle(
             fontAntialias,
             fontHinting,
             textDecoration,
-            textAlign,
+            textAlignment,
             stroke,
             letterSpacing,
             lineSpacing
@@ -200,7 +200,7 @@ enum class TextDecoration(private val value: String) {
     }
 }
 
-enum class TextAlign(private val value: String) {
+enum class TextAlignment(private val value: String) {
     LEFT("left"),
     CENTER("center"),
     RIGHT("right"),

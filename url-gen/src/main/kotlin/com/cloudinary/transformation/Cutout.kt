@@ -5,7 +5,7 @@ import com.cloudinary.transformation.layer.*
 
 class Cutout private constructor(components: LayerComponents) : LayerAction(components) {
 
-    class Builder(private val source: Layer) : TransformationComponentBuilder {
+    class Builder(private val source: Source) : TransformationComponentBuilder {
         private var transformation: Transformation? = null
         private var position: Position? = null
 

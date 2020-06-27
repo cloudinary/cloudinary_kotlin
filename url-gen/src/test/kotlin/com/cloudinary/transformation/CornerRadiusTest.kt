@@ -7,8 +7,9 @@ class CornerRadiusTest {
     @Test
     fun testCornerRadius() {
         cldAssert("r_20", Transformation().roundCorners(20))
-        // TODO - how are arrays handles in this syntax?
-//        cldAssert("r_20:0", Transformation().cornersRadius { pixels(20, 0) })
-//        cldAssert("r_max", Transformation().cornersRadius { max() })
+        cldAssert("r_20:30", Transformation().roundCorners(20, 30))
+        cldAssert("r_20:30:40", Transformation().roundCorners(20, 30, 40))
+        cldAssert("r_20:30:40:50", Transformation().roundCorners(20, 30, 40, 50))
+        cldAssert("r_max", Transformation().roundCorners(RoundCorners.max()))
     }
 }

@@ -2,22 +2,26 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.ParamsAction
-import com.cloudinary.transformation.effect.innerEffectAction
+import com.cloudinary.transformation.asAction
+import com.cloudinary.transformation.cldAsOpacity
+import com.cloudinary.transformation.effect.Improve
+import com.cloudinary.transformation.effect.effectAction
 import com.cloudinary.util.cldRanged
 
 class Adjust(private val action: Action) : Action by action {
 
     companion object {
-        fun opacity(level: Int) = Adjust(ParamsAction(Param("opacity", "o", level)))
+        fun opacity(level: Int) = Adjust(level.cldAsOpacity().asAction())
 
-        fun improve(blend: Int? = null, options: (ImproveBuilder.() -> Unit)? = null): Adjust {
+        fun improve(blend: Int? = null, mode: Improve? = null, options: (ImproveBuilder.() -> Unit)? = null): Adjust {
             val builder = ImproveBuilder()
-            blend?.let { builder.blend(blend) }
+            mode?.let { builder.mode(mode) }
+            blend?.let { builder.blend(it) }
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun tint(vararg values: Any?) = adjustEffect("tint", *values)
 
         fun vibrance(level: Int? = null) = adjustEffect("vibrance", level?.cldRanged(-100, 100))
 
@@ -43,7 +47,7 @@ class Adjust(private val action: Action) : Action by action {
 
         fun hue(level: Int? = null) = adjustEffect("hue", level?.cldRanged(-100, 100))
 
-        fun gamma(level: Int? = null) = adjustEffect("gamma", level) // TODO range
+        fun gamma(level: Int? = null) = adjustEffect("gamma", level.cldRanged(-50, 150))
 
         fun contrast(level: Int? = null) = adjustEffect("contrast", level?.cldRanged(-100, 100))
 
@@ -67,4 +71,4 @@ class Adjust(private val action: Action) : Action by action {
     }
 }
 
-internal fun adjustEffect(name: String, vararg values: Any?) = Adjust(innerEffectAction(name, *values))
+internal fun adjustEffect(name: String, vararg values: Any?) = Adjust(effectAction(name, *values))

@@ -2,7 +2,7 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.effect.ImproveMode
+import com.cloudinary.transformation.effect.Improve
 import com.cloudinary.util.cldRanged
 
 
@@ -35,9 +35,9 @@ class ReplaceColorBuilder(private val to: Color) : TransformationComponentBuilde
 }
 
 class ImproveBuilder : TransformationComponentBuilder {
-    private var mode: ImproveMode? = null
+    private var mode: Improve? = null
     private var blend: Int? = null
-    fun mode(mode: ImproveMode) = apply { this.mode = mode }
+    fun mode(mode: Improve) = apply { this.mode = mode }
     fun blend(blend: Int) = apply { this.blend = blend }
 
     override fun build() = adjustEffect("improve", mode, blend?.cldRanged(0, 100))

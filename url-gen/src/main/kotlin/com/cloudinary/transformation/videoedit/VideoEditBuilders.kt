@@ -8,19 +8,26 @@ class TrimBuilder : TransformationComponentBuilder {
     private var duration: Any? = null
 
     // TODO what do we accept here? strings with % and replace? strings with `p`? the word 'auto` as string for start offset?
-    fun startOffset(offset: Double) = apply { this.startOffset = offset }
+    fun startOffset(offset: Float) = apply { this.startOffset = offset }
+    fun startOffset(offset: Int) = apply { this.startOffset = offset }
     fun startOffset(offset: String) = apply { this.startOffset = offset }
-    fun endOffset(offset: Double) = apply { this.endOffset = offset }
+    fun endOffset(offset: Float) = apply { this.endOffset = offset }
+    fun endOffset(offset: Int) = apply { this.endOffset = offset }
     fun endOffset(offset: String) = apply { this.endOffset = offset }
-    fun duration(duration: Double) = apply { this.duration = duration }
+    fun duration(duration: Float) = apply { this.duration = duration }
+    fun duration(duration: Int) = apply { this.duration = duration }
     fun duration(duration: String) = apply { this.duration = duration }
 
-    // TODO validations? at least one is necessary but three is too much
-    override fun build() = VideoEdit(
-        ParamsAction(
-            startOffset?.cldAsStartOffset(),
-            endOffset?.cldAsEndOffset(),
-            duration?.cldAsDuration()
+    // TODO validations?
+    override fun build(): VideoEdit {
+        require(listOfNotNull(startOffset, endOffset, duration).size in 1..2)
+
+        return VideoEdit(
+            ParamsAction(
+                startOffset?.cldAsStartOffset(),
+                endOffset?.cldAsEndOffset(),
+                duration?.cldAsDuration()
+            )
         )
-    )
+    }
 }

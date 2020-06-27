@@ -47,6 +47,13 @@ class Cloudinary(val config: Configuration) {
 
     companion object {
         /**
+         * This flag determines whether to throw an error when a transformation is created with invalid arguments.
+         * When false a warning is written to the log and no error is thrown.
+         * Default: false.
+         */
+        var throwOnInvalidTransformations: Boolean = false
+
+        /**
          * Init the singleton instance.
          */
         @Synchronized

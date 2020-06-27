@@ -5,7 +5,7 @@ import com.cloudinary.transformation.layer.*
 class Displace private constructor(components: LayerComponents) : LayerAction(components) {
 
     companion object {
-        fun displace(source: Layer, transformation: Transformation? = null, position: Position? = null) =
+        fun displace(source: Source, transformation: Transformation? = null, position: Position? = null) =
             Displace(
                 buildLayerComponent(
                     source,
@@ -19,11 +19,11 @@ class Displace private constructor(components: LayerComponents) : LayerAction(co
     }
 
     class Builder private constructor(
-        private val source: Layer,
+        private val source: Source,
         private var transformation: Transformation? = null,
         private var position: Position? = null
     ) : TransformationComponentBuilder {
-        constructor(layer: Layer) : this(layer, null, null)
+        constructor(source: Source) : this(source, null, null)
 
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun position(position: (Position.Builder.() -> Unit)? = null): Builder {

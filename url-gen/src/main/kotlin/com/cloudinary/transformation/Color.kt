@@ -1,3 +1,4 @@
+
 package com.cloudinary.transformation
 
 import com.cloudinary.util.cldRemovePound
@@ -589,6 +590,7 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
     object GRAY50 : Color("gray50")
     object GREY50 : Color("grey50")
     object GRAY : Color("gray")
+    object GREY : Color("grey")
     object GRAY49 : Color("gray49")
     object GREY49 : Color("grey49")
     object GRAY48 : Color("gray48")
@@ -627,6 +629,7 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
     object GREY33 : Color("grey33")
     object GRAY32 : Color("gray32")
     object GREY32 : Color("grey32")
+
     object GRAY31 : Color("gray31")
     object GREY31 : Color("grey31")
     object GRAY30 : Color("gray30")
@@ -695,5 +698,4 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
     object OPAQUE : Color("opaque")
     object NONE : Color("none")
     object TRANSPARENT : Color("transparent")
-
 }

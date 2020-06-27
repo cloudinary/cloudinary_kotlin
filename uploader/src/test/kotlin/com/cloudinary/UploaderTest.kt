@@ -3,7 +3,6 @@ package com.cloudinary
 import com.cloudinary.http.ApacheHttpClient45Factory
 import com.cloudinary.http.HttpUrlConnectionFactory
 import com.cloudinary.http.OkHttpClientFactory
-import com.cloudinary.transformation.EagerTransformation
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
@@ -258,7 +257,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val transformation = Transformation().resize(scale { width(2.0) })
         val response = uploader.upload(srcTestImage) {
             params {
-                eager = listOf(EagerTransformation(transformation, "png"))
+                eager = listOf(EagerTransformation(transformation, Extension.PNG))
                 tags = defaultTags
             }
         }
@@ -727,7 +726,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val url = cloudinary.url {
             transformation(transformation)
-            format(Format.png())
+            extension(Extension.PNG)
             version(explicitData.version!!.toString())
         }.generate(publicId)!!
 

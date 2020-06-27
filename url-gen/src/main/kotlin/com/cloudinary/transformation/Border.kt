@@ -20,16 +20,13 @@ class Border(private val action: Action) : Action by action {
         fun color(color: String) = apply { this.color = Color.parseString(color) }
         fun color(color: Color) = apply { this.color = color }
 
-        // TODO simplify
-        override fun build() = Border(
-            ParamsAction(
-                Param(
-                    "border",
-                    "bo",
-                    ParamValue(listOf("${width}px", type, color).cldAsParamValueContent(), "_")
-                )
+        override fun build() =
+            Border(
+                ParamValue(
+                    listOf("${width}px", type, color).cldAsParamValueContent(),
+                    "_"
+                ).cldAsBorder().asAction()
             )
-        )
     }
 }
 

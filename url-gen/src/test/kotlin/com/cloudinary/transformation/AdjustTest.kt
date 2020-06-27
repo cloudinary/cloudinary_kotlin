@@ -2,10 +2,18 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.adjust.Adjust
-import com.cloudinary.transformation.effect.ImproveMode
+import com.cloudinary.transformation.effect.Improve
 import org.junit.Test
 
 class AdjustTest {
+
+    @Test
+    fun testTint() {
+        cldAssert("e_tint:50:red:blue", Adjust.tint("50:red:blue"))
+        cldAssert("e_tint:50:red:blue", Adjust.tint(50, "red", "blue"))
+        cldAssert("e_tint:50:red:blue", Adjust.tint(50, Color.RED, Color.BLUE))
+    }
+
     @Test
     fun testAutoContrast() {
         cldAssert("e_auto_contrast", Adjust.autoContrast())
@@ -40,8 +48,12 @@ class AdjustTest {
     @Test
     fun fillLight() {
         cldAssert("e_fill_light", Adjust.fillLight())
-        cldAssert("e_fill_light:70", Adjust.fillLight { bias(70) })
-        cldAssert("e_fill_light:70:20", Adjust.fillLight { bias(20).blend(70) })
+        cldAssert("e_fill_light:70", Adjust.fillLight {
+            bias(70)
+        })
+        cldAssert("e_fill_light:70:20", Adjust.fillLight {
+            bias(20).blend(70)
+        })
     }
 
     @Test
@@ -94,12 +106,15 @@ class AdjustTest {
         )
         cldAssert(
             "e_replace_color:2F4F4F:20",
-            Adjust.replaceColor(Color.Rgb("2F4F4F")) { tolerance(20) }
+            Adjust.replaceColor(Color.Rgb("2F4F4F")) {
+                tolerance(20)
+            }
         )
         cldAssert(
             "e_replace_color:silver:50:89b8ed",
             Adjust.replaceColor(Color.SILVER) {
-                tolerance(50).from(Color.Rgb("#89b8ed"))
+                tolerance(50)
+                from(Color.Rgb("#89b8ed"))
             }
         )
     }
@@ -111,12 +126,14 @@ class AdjustTest {
         cldAssert("e_improve:50", Adjust.improve {
             blend(50)
         })
+
         cldAssert("e_improve:indoor", Adjust.improve {
-            mode(ImproveMode.INDOOR)
+            mode(Improve.INDOOR)
         })
+
         cldAssert("e_improve:outdoor:30", Adjust.improve {
             blend(30)
-            mode(ImproveMode.OUTDOOR)
+            mode(Improve.OUTDOOR)
         })
     }
 
@@ -130,14 +147,12 @@ class AdjustTest {
     fun unsharpMask() {
         cldAssert("e_sharpen", Adjust.sharpen())
         cldAssert("e_sharpen:400", Adjust.sharpen(400))
-
     }
 
     @Test
     fun testUnsharpMask() {
         cldAssert("e_unsharp_mask", Adjust.unsharpMask())
         cldAssert("e_unsharp_mask:200", Adjust.unsharpMask(200))
-
     }
 
     @Test
