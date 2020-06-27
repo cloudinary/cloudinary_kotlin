@@ -48,6 +48,7 @@ const val remoteTestImageUrlString = "http://cloudinary.com/images/old_logo.png"
 private val srcTestImage = UploaderTest::class.java.getResource("/old_logo.png").file
 const val SRC_TEST_IMAGE_W = 241
 const val SRC_TEST_IMAGE_H = 51
+const val UPLOAD_PRESET = "sdk-test-upload-preset"
 
 enum class NetworkLayer {
     OkHttp,
@@ -95,6 +96,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             if (cloudinary.config.apiSecret == null) {
                 System.err.println("Please setup environment for Upload test to run")
             }
+
+            createUploadPreset(cloudinary, UPLOAD_PRESET)
 
             val setupTags = listOf(sdkTestTag, uploaderTag, archiveTag)
 
@@ -500,12 +503,10 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testUnsignedUpload() {
-        val uploadPresetName = "sdk-test-upload-preset"
-        createUploadPreset(cloudinary, uploadPresetName)
         // should support unsigned uploading using presets
         val response = uploader.upload(srcTestImage) {
             params {
-                uploadPreset = uploadPresetName
+                uploadPreset = UPLOAD_PRESET
                 tags = defaultTags
             }
             options {
@@ -513,7 +514,9 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        assertTrue(response.resultOrThrow().publicId?.matches("^upload_folder/[a-z0-9]+$".toRegex()) ?: false)
+        val result = response.resultOrThrow()
+        assertEquals(result.width, SRC_TEST_IMAGE_W)
+        assertEquals(result.height, SRC_TEST_IMAGE_H)
     }
 
     @Test

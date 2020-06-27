@@ -174,7 +174,7 @@ fun generateFile(): File {
 
 fun createUploadPreset(cloudinary: Cloudinary, preset: String): HttpResponse? {
     val apiUrl =
-        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/upload_presets?signed=true"
+        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/upload_presets?unsigned=true&name=$preset"
 
     return cloudinary.httpClientFactory.getClient().post(
         URL(apiUrl),
