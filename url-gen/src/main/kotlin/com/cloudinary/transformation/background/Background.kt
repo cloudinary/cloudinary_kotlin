@@ -2,7 +2,8 @@ package com.cloudinary.transformation.background
 
 import com.cloudinary.transformation.*
 
-class Background(private val action: Action) : Action by action {
+class Background(private val action: ParamsAction) : Action by action {
+    internal fun getParams() = action.params
 
     companion object {
         fun auto() = autoBackground()
