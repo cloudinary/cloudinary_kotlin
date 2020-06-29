@@ -13,6 +13,7 @@ class Delivery(private val action: Action) : Action by action {
         fun dpr(dpr: Float) = delivery(dpr.cldAsDpr())
         fun dpr(dpr: String) = delivery(dpr.cldAsDpr())
         fun fps(fps: Float) = FpsBuilder().fixed(fps).build()
+        fun fps(min: Float, max: Float) = FpsBuilder().min(min).max(max).build()
         fun fps(options: (FpsBuilder.() -> Unit)? = null): Delivery {
             val builder = FpsBuilder()
             options?.let { builder.options() }

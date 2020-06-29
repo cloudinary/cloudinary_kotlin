@@ -119,7 +119,7 @@ class CartoonifyBuilder : TransformationComponentBuilder {
 
     fun colorReduction(colorReduction: Any) = apply { this.colorReduction = colorReduction }
 
-    fun blackwhite(blackwhite: Boolean) = apply { this.blackwhite = blackwhite }
+    fun blackwhite(blackwhite: Boolean = true) = apply { this.blackwhite = blackwhite }
 
     override fun build(): Effect =
         effect(

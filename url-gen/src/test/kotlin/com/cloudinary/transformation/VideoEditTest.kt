@@ -14,7 +14,9 @@ class VideoEditTest {
     @Test
     fun testTrim() {
         cldAssert("so_auto", trim { startOffset("auto") })
-        cldAssert("so_2.63", trim { startOffset(2.63f) })
+        cldAssert("so_2.63", trim {
+            startOffset(2.63f)
+        })
         cldAssert("so_35.0p", trim { startOffset("35.0p") })
 
         cldAssert("eo_auto", trim { endOffset("auto") })

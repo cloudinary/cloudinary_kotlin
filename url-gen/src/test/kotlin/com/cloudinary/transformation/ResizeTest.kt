@@ -1,6 +1,7 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.background.PadBackground
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
@@ -245,6 +246,35 @@ class ResizeTest {
                 aspectRatio(1.5f)
                 dpr(2f)
                 gravity(Gravity.north())
+            }
+        )
+
+        cldAssert(
+            "ar_1.5,b_black,c_pad,h_100",
+            Resize.pad {
+                height(100)
+                aspectRatio(1.5f)
+                background(Color.BLACK)
+            }
+        )
+
+        cldAssert(
+            "ar_1.5,b_auto:predominant,c_pad,h_100",
+            Resize.pad {
+                height(100)
+                aspectRatio(1.5f)
+                background(PadBackground.predominant())
+            }
+        )
+
+        cldAssert(
+            "ar_1.5,b_auto:border_contrast,c_pad,h_100",
+            Resize.pad {
+                height(100)
+                aspectRatio(1.5f)
+                background(PadBackground.border {
+                    contrast()
+                })
             }
         )
     }

@@ -1,11 +1,8 @@
 package com.cloudinary.transformation.background
 
-import com.cloudinary.transformation.ParamValue
-import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.cldAsBackground
+import com.cloudinary.transformation.*
 import com.cloudinary.util.cldRanged
 
-// TODO gradient
 class BlurredBackgroundBuilder : TransformationComponentBuilder {
     private var intensity: Any? = null
     private var brightness: Any? = null
@@ -13,65 +10,77 @@ class BlurredBackgroundBuilder : TransformationComponentBuilder {
     fun intensity(intensity: Int) = apply { this.intensity = intensity }
     fun brightness(brightness: Int) = apply { this.brightness = brightness }
 
-    override fun build(): Background {
+    override fun build(): PadBackground {
         val value = ParamValue(listOfNotNull("blur", intensity?.cldRanged(1, 2000), brightness?.cldRanged(-300, 100)))
-        return background(value.cldAsBackground())
+        return PadBackground(value.cldAsBackground().asAction())
     }
 }
 
-class BorderBackgroundBuilder : TransformationComponentBuilder {
+class AutoBackgroundBuilder(private val type: String? = null) {
     private var contrast: Boolean = false
-//    private var gradient: Gradient? = null
+    private var gradient: Gradient? = null
 
-    fun contrast(contrast: Boolean) = apply { this.contrast = contrast }
-//    fun gradient(gradient: Gradient) = apply { this.gradient = gradient }
+    fun contrast(contrast: Boolean = true) = apply { this.contrast = contrast }
+    fun gradient(options: (GradientBuilder.() -> Unit)? = null) = apply {
+        val builder = GradientBuilder()
+        options?.let { builder.it() }
+        this.gradient = builder.build()
+    }
 
-    override fun build(): Background {
-        return autoBackground(
-            when {
-//                gradient != null -> gradient
-                contrast -> "border_contrast"
-                else -> "border"
-            }
+    fun build(): PadBackground {
+        val fullType = ParamValue(
+            listOfNotNull(
+                type,
+                if (gradient != null) "gradient" else null,
+                if (contrast) "contrast" else null
+            ),
+            "_"
         )
+
+        val gradientStr = gradient?.toString()
+        val gradientValue = if (gradientStr.isNullOrBlank()) null else gradientStr
+        val paramValue = ParamValue(
+            listOfNotNull(
+                "auto",
+                fullType,
+                gradientValue
+            )
+        )
+
+        return PadBackground(paramValue.cldAsBackground().asAction())
     }
 }
 
-class PredominantBackgroundBuilder : TransformationComponentBuilder {
-    private var contrast: Boolean = false
-    private var gradient: Any? = null
-
-    fun contrast(contrast: Boolean) = apply { this.contrast = contrast }
-//    fun gradient(options: (GradientBuilder.()->Unit)? = null){
-//        val builder = GradientBuilder()
-//        options?.let { builder.it() }
-//        this.gradient = builder.build()
-//    }
-
-    override fun build(): Background {
-        return autoBackground(
-            when {
-                gradient != null -> gradient
-                contrast -> "predominant_contrast"
-                else -> "predominant"
-            }
-        )
-    }
-}
-
+// horizontal, vertical, diagonal_desc, and diagonal_asc. Default: horizontal
 // TODO enum should be in Adjust file, not in the adjuserBuilders file.
-//enum class GradientDirection{
-//    HORIZONTAL
-//}
+enum class GradientDirection(private val value: String) {
+    HORIZONTAL("horizontal"),
+    VERTICAL("vertical"),
+    DIAGONAL_DESC("diagonal_desc"),
+    DIAGONAL_ASC("diagonal_asc");
 
-//class GradientBuilder() {
-//    private var palette: Any? = null
-//    private var colors:Int? = null
-//    private var direction: GradientDirection? = null
-//
-//    fun palette(vararg colors: String) = apply { this.palette = colors }
-//    fun direction(direction: GradientDirection) = apply { this.direction = direction }
-//    fun colors(colors: Int) = apply { this.colors = colors }
-//
-//    fun build(){}
-//}
+    override fun toString() = value
+}
+
+class GradientBuilder {
+    private var palette: ParamValue? = null
+    private var colors: Int? = null
+    private var direction: GradientDirection? = null
+
+    fun palette(vararg colors: Color) = apply {
+        this.palette = ParamValue(listOf("palette") + colors, separator = "_")
+    }
+
+    fun direction(direction: GradientDirection) = apply { this.direction = direction }
+    fun colors(colors: Int) = apply { this.colors = colors }
+
+    fun build() = Gradient(
+        listOfNotNull(
+            colors,
+            direction,
+            palette
+        )
+    )
+}
+
+class Gradient internal constructor(values: List<Any>) : ParamValue(values)

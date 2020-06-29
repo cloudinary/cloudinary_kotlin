@@ -30,8 +30,12 @@ class DeliveryTest {
     @Test
     fun testFps() {
         cldAssert("fps_20.2", Delivery.fps(20.2f))
+        cldAssert("fps_20.2-30.0", Delivery.fps(20.2f, 30f))
         cldAssert("fps_5.2-", Delivery.fps { min(5.2) })
-        cldAssert("fps_5-10", Delivery.fps { min(5).max(10) })
+        cldAssert("fps_5-10", Delivery.fps {
+            min(5)
+            max(10)
+        })
     }
 
     @Test

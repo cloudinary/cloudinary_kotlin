@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.resize
 
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.background.PadBackground
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.CropMode.*
 
@@ -100,8 +101,10 @@ interface HasMode : HasResizeAttribute {
 
 interface HasBackground : HasResizeAttribute {
     fun background(color: Color) = add(color.cldAsBackground())
-    // TODO needs to fix the background issue - it's both a class and a param.
-//    fun background(background: Background) = apply { this.background = background }
+
+    fun background(background: PadBackground) {
+        background.getParams().forEach { add(it.value) }
+    }
 }
 
 interface HasIgnoreAspectRatio : HasResizeAttribute {
