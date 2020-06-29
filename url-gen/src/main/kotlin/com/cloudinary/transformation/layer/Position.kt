@@ -49,7 +49,7 @@ class Position(internal val action: ParamsAction) : Action by action {
 
         fun tileMode(tileMode: TileMode) = apply { this.tileMode = tileMode }
 
-        fun allowOverflow(allowOverflow: Boolean) = apply {
+        fun allowOverflow(allowOverflow: Boolean = true) = apply {
             this.allowOverflow = allowOverflow
         }
     }

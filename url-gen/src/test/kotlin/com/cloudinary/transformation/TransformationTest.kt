@@ -68,7 +68,7 @@ class TransformationTest {
         )
         cldAssert("l_sample/e_cut_out,fl_layer_apply", Transformation().cutout(layer) {
             position {
-                allowOverflow(true)
+                allowOverflow()
             }
         })
     }
@@ -77,17 +77,17 @@ class TransformationTest {
     fun testClip() {
         cldAssert("fl_clip", Transformation().clip())
         cldAssert("fl_clip_evenodd", Transformation().clip {
-            evenOdd(true)
+            evenOdd()
         })
 
         cldAssert("fl_clip,pg_3", Transformation().clip(3))
         cldAssert("fl_clip,pg_name:my_path", Transformation().clip("my_path"))
         cldAssert("fl_clip_evenodd,pg_3", Transformation().clip(3) {
-            evenOdd(true)
+            evenOdd()
         })
 
         cldAssert("fl_clip_evenodd,pg_name:my_path", Transformation().clip("my_path") {
-            evenOdd(true)
+            evenOdd()
         })
     }
 

@@ -23,7 +23,7 @@ class ClippingPath(private val action: Action) : Action by action {
 
         fun number(number: Int) = apply { this.number = number }
         fun name(name: String) = apply { this.name = name }
-        fun evenOdd(evenOdd: Boolean) = apply { this.evenOdd = evenOdd }
+        fun evenOdd(evenOdd: Boolean = true) = apply { this.evenOdd = evenOdd }
 
         override fun build(): ClippingPath {
             val finalName = name

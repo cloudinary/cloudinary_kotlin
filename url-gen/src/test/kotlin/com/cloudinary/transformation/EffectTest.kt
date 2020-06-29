@@ -124,11 +124,11 @@ class EffectTest {
         cldAssert("e_cartoonify", Effect.cartoonify())
         cldAssert("e_cartoonify:20", Effect.cartoonify { lineStrength(20) })
         cldAssert("e_cartoonify:20:60", Effect.cartoonify { lineStrength(20).colorReduction(60) })
-        cldAssert("e_cartoonify:30:bw", Effect.cartoonify { lineStrength(30).blackwhite(true) })
+        cldAssert("e_cartoonify:30:bw", Effect.cartoonify { lineStrength(30).blackwhite() })
         cldAssert(
             "e_cartoonify:30:bw",
-            Effect.cartoonify { lineStrength(30).colorReduction(60).blackwhite(true) })
-        cldAssert("e_cartoonify:bw", Effect.cartoonify { colorReduction(60).blackwhite(true) })
+            Effect.cartoonify { lineStrength(30).colorReduction(60).blackwhite() })
+        cldAssert("e_cartoonify:bw", Effect.cartoonify { colorReduction(60).blackwhite() })
     }
 
     @Test

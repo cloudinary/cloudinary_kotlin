@@ -2,42 +2,42 @@ package com.cloudinary.transformation.background
 
 import com.cloudinary.transformation.*
 
-class Background(private val action: ParamsAction) : Action by action {
-    internal fun getParams() = action.params
-
+class PadBackground(action: ParamsAction) : Background(action) {
     companion object {
-        fun auto() = autoBackground()
-        fun blurred(options: (BlurredBackgroundBuilder.() -> Unit)? = null): Background {
+
+        fun blurred(options: (BlurredBackgroundBuilder.() -> Unit)? = null): PadBackground {
             val builder = BlurredBackgroundBuilder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun border(options: (BorderBackgroundBuilder.() -> Unit)? = null): Background {
-            val builder = BorderBackgroundBuilder()
+        fun auto() = AutoBackgroundBuilder().build()
+
+        // auto:border
+        fun border(options: (AutoBackgroundBuilder.() -> Unit)? = null): PadBackground {
+            val builder = AutoBackgroundBuilder("border")
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun predominant(options: (PredominantBackgroundBuilder.() -> Unit)? = null): Background {
-            val builder = PredominantBackgroundBuilder()
+        // auto:predominant
+        fun predominant(options: (AutoBackgroundBuilder.() -> Unit)? = null): PadBackground {
+            val builder = AutoBackgroundBuilder("predominant")
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun color(color: Color) =
-            background(color.cldAsBackground())
+        fun color(color: Color) = Background.color(color)
 
-        fun color(color: String) = background(
-            Color.parseString(color).cldAsBackground()
-        )
+        fun color(color: String) = Background.color(color)
     }
 }
 
-fun background(param: Param) =
-    Background(
-        ParamsAction(param)
-    )
+open class Background(private val action: ParamsAction) : Action by action {
+    internal fun getParams() = action.params
 
-fun autoBackground(vararg values: Any?) = background((listOf("auto") + values).cldAsBackground())
-
+    companion object {
+        fun color(color: Color) = Background(color.cldAsBackground().asAction())
+        fun color(color: String) = color(Color.parseString(color))
+    }
+}

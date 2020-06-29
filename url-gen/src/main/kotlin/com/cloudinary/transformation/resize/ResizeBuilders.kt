@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.resize
 
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.background.Background
+import com.cloudinary.transformation.background.PadBackground
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.CropMode.*
 
@@ -102,7 +102,7 @@ interface HasMode : HasResizeAttribute {
 interface HasBackground : HasResizeAttribute {
     fun background(color: Color) = add(color.cldAsBackground())
 
-    fun background(background: Background) {
+    fun background(background: PadBackground) {
         background.getParams().forEach { add(it.value) }
     }
 }
