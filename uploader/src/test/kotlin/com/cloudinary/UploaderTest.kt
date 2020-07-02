@@ -724,7 +724,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val explicitData = response.resultOrThrow()
 
-        val url = cloudinary.url {
+        val url = cloudinary.image {
             transformation(transformation)
             extension(Extension.PNG)
             version(explicitData.version!!.toString())
