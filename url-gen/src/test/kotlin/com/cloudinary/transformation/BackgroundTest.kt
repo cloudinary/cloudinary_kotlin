@@ -69,24 +69,22 @@ class BackgroundTest {
                 gradient {
                     direction(GradientDirection.HORIZONTAL)
                     colors(4)
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
                 }
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("b_auto:predominant_gradient:vertical:palette_red_green_blue",
             PadBackground.predominant {
                 gradient {
                     direction(GradientDirection.VERTICAL)
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
                 }
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
-
 
         cldAssert("b_auto:predominant_gradient:palette_red_green_blue",
             PadBackground.predominant {
-                gradient {
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
-                }
+                gradient()
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
 
@@ -125,23 +123,22 @@ class BackgroundTest {
                 gradient {
                     direction(GradientDirection.DIAGONAL_DESC)
                     colors(4)
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
                 }
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("b_auto:border_gradient:vertical:palette_red_green_blue",
             PadBackground.border {
                 gradient {
                     direction(GradientDirection.VERTICAL)
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
                 }
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("b_auto:border_gradient:palette_red_green_blue",
             PadBackground.border {
-                gradient {
-                    palette(Color.RED, Color.GREEN, Color.BLUE)
-                }
+                gradient()
+                palette(Color.RED, Color.GREEN, Color.BLUE)
             })
     }
 }
