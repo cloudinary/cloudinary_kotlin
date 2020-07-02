@@ -18,9 +18,27 @@ class Cloudinary(val config: Configuration) {
 
     val userAgent = "CloudinaryKotlin/$SDK_VERSION"
 
-    fun url(url: (Url.Builder.() -> Unit)? = null): Url {
-        val builder = Url.Builder(config)
-        url?.let { builder.it() }
+    fun raw(options: (Asset.AssetBuilder.() -> Unit)? = null): Asset {
+        val builder = Asset.AssetBuilder(config, "raw")
+        options?.let { builder.it() }
+        return builder.build()
+    }
+
+    fun image(options: (Asset.AssetBuilder.() -> Unit)? = null): Asset {
+        val builder = Asset.AssetBuilder(config, "image")
+        options?.let { builder.it() }
+        return builder.build()
+    }
+
+    fun media(options: (Asset.AssetBuilder.() -> Unit)? = null): Asset {
+        val builder = Asset.AssetBuilder(config)
+        options?.let { builder.it() }
+        return builder.build()
+    }
+
+    fun video(options: (Asset.AssetBuilder.() -> Unit)? = null): Asset {
+        val builder = Asset.AssetBuilder(config, "video")
+        options?.let { builder.it() }
         return builder.build()
     }
 

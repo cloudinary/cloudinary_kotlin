@@ -56,9 +56,8 @@ class AuthTokenTest {
             Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(privateCdn = true)))
         var message = "should add token if authToken is globally set and signed = true"
         var url =
-            cloudinary.url {
+            cloudinary.image {
                 signUrl(true)
-                resourceType("image")
                 deliveryType("authenticated")
                 version("1486020273")
             }.generate("sample.jpg")
@@ -68,9 +67,8 @@ class AuthTokenTest {
             url
         )
         message = "should add token for 'public' resource"
-        url = cloudinary.url {
+        url = cloudinary.image {
             signUrl(true)
-            resourceType("image")
             deliveryType("public")
             version("1486020273")
         }.generate("sample.jpg")
@@ -81,7 +79,7 @@ class AuthTokenTest {
         )
         message = "should not add token if signed is false"
         url =
-            cloudinary.url {
+            cloudinary.image {
                 resourceType("image")
                 deliveryType("authenticated")
                 version("1486020273")
@@ -94,7 +92,7 @@ class AuthTokenTest {
         )
         message =
             "should not add token if authToken is globally set but null auth token is explicitly set and signed = true"
-        url = cloudinary.url {
+        url = cloudinary.image {
             authToken(NULL_AUTH_TOKEN)
             signUrl(true)
             resourceType("image")
@@ -107,7 +105,7 @@ class AuthTokenTest {
             url
         )
         message = "explicit authToken should override global setting"
-        url = cloudinary.url {
+        url = cloudinary.image {
             signUrl(true)
             authToken(AuthToken(key = ALT_KEY, startTime = 222222222, duration = 100))
             resourceType("image")
@@ -122,7 +120,7 @@ class AuthTokenTest {
             url
         )
         message = "should compute expiration as start time + duration"
-        url = cloudinary.url {
+        url = cloudinary.image {
             signUrl(true)
             authToken(AuthToken(key = KEY, startTime = 11111111, duration = 300))
             deliveryType("authenticated")

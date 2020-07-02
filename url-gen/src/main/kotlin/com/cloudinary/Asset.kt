@@ -18,7 +18,7 @@ internal const val DEFAULT_RESOURCE_TYPE = "image"
 internal const val DEFAULT_DELIVERY_TYPE = "upload"
 
 @TransformationDsl
-data class Url constructor(
+class Asset constructor(
     private val config: Configuration,
     private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
@@ -126,11 +126,14 @@ data class Url constructor(
     }
 
     @TransformationDsl
-    class Builder(private val config: Configuration) : ITransformable<Builder> {
+    class AssetBuilder internal constructor(
+        private val config: Configuration,
+        private var resourceType: String = DEFAULT_RESOURCE_TYPE
+    ) :
+        ITransformable<AssetBuilder> {
         private var cloudName: String = config.cloudName
         private var publicId: String? = null
         private var deliveryType: String? = null
-        private var resourceType: String = DEFAULT_RESOURCE_TYPE
         private var extension: Extension? = null
         private var version: String? = null
         private var transformation: Transformation? = null
@@ -153,6 +156,12 @@ data class Url constructor(
         fun extension(extension: Extension) = apply { this.extension = extension }
         fun version(version: String?) = apply { this.version = version }
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: (Transformation.Builder.() -> Unit)? = null) = apply {
+            val builder = Transformation.Builder()
+            transformation?.let { builder.it() }
+            this.transformation = builder.build()
+        }
+
         fun signUrl(signUrl: Boolean) = apply { this.signUrl = signUrl }
         fun authToken(authToken: AuthToken) = apply { this.authToken = authToken }
         fun source(source: String?) = apply { this.source = source }
@@ -167,7 +176,7 @@ data class Url constructor(
 
         override fun add(action: Action) = apply { transformation = (transformation ?: Transformation()).add(action) }
 
-        fun build() = Url(
+        fun build() = Asset(
             config,
             cloudName,
             publicId,
