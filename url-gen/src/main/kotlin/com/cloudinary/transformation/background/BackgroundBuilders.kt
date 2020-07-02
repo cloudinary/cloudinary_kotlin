@@ -16,9 +16,15 @@ class BlurredBackgroundBuilder : TransformationComponentBuilder {
     }
 }
 
+@TransformationDsl
 class AutoBackgroundBuilder(private val type: String? = null) {
     private var contrast: Boolean = false
     private var gradient: Gradient? = null
+    private var palette: ParamValue? = null
+
+    fun palette(vararg colors: Color) = apply {
+        this.palette = ParamValue(listOf("palette") + colors, separator = "_")
+    }
 
     fun contrast(contrast: Boolean = true) = apply { this.contrast = contrast }
     fun gradient(options: (GradientBuilder.() -> Unit)? = null) = apply {
@@ -43,7 +49,8 @@ class AutoBackgroundBuilder(private val type: String? = null) {
             listOfNotNull(
                 "auto",
                 fullType,
-                gradientValue
+                gradientValue,
+                palette
             )
         )
 
@@ -62,14 +69,10 @@ enum class GradientDirection(private val value: String) {
     override fun toString() = value
 }
 
+@TransformationDsl
 class GradientBuilder {
-    private var palette: ParamValue? = null
     private var colors: Int? = null
     private var direction: GradientDirection? = null
-
-    fun palette(vararg colors: Color) = apply {
-        this.palette = ParamValue(listOf("palette") + colors, separator = "_")
-    }
 
     fun direction(direction: GradientDirection) = apply { this.direction = direction }
     fun colors(colors: Int) = apply { this.colors = colors }
@@ -77,8 +80,7 @@ class GradientBuilder {
     fun build() = Gradient(
         listOfNotNull(
             colors,
-            direction,
-            palette
+            direction
         )
     )
 }
