@@ -8,6 +8,7 @@ import androidx.work.WorkManager
 import com.cloudinary.Cloudinary
 import com.cloudinary.android.uploader.*
 import com.cloudinary.android.uploader.request.*
+import com.cloudinary.config.DEFAULT_CHUNK_SIZE
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.upload.EagerTransformation
@@ -100,7 +101,7 @@ class WorkManagerTest {
     @Test
     fun testDataSerialization() {
         val request = buildUploadRequest()
-        val workManagerRequest = request.toUploadWorkRequest("tag", 7, 1000)
+        val workManagerRequest = request.toUploadWorkRequest("tag", 7, 1000, DEFAULT_CHUNK_SIZE.toLong())
         assertNotNull(workManagerRequest)
         val workSpec = workManagerRequest.workSpec
         val data = workSpec.input.keyValueMap

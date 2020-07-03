@@ -174,7 +174,7 @@ fun generateFile(): File {
 
 fun createUploadPreset(cloudinary: Cloudinary, preset: String): HttpResponse? {
     val apiUrl =
-        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/upload_presets?unsigned=true&name=$preset"
+        "${cloudinary.config.uploadPrefix}/v1_1/${cloudinary.config.cloudName}/upload_presets?unsigned=true&name=$preset"
 
     return cloudinary.httpClientFactory.getClient().post(
         URL(apiUrl),
@@ -185,7 +185,7 @@ fun createUploadPreset(cloudinary: Cloudinary, preset: String): HttpResponse? {
 
 fun doResourcesHaveTag(cloudinary: Cloudinary, tag: String, vararg publicIds: String): Boolean {
     val apiUrl =
-        "${cloudinary.config.uploadPrefix ?: "https://api.cloudinary.com"}/v1_1/${cloudinary.config.cloudName}/resources/image/tags/$tag"
+        "${cloudinary.config.uploadPrefix}/v1_1/${cloudinary.config.cloudName}/resources/image/tags/$tag"
     val res = cloudinary.httpClientFactory.getClient().get(
         URL(apiUrl),
         mapOf("Authorization" to "Basic " + Base64Coder.encodeString(cloudinary.config.apiKey + ":" + cloudinary.config.apiSecret))

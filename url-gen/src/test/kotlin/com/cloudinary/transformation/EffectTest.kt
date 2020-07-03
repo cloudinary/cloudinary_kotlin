@@ -337,7 +337,6 @@ class EffectTest {
             }
         )
 
-        val t = Transformation().resize(Resize.scale(200)).effect(Effect.sepia())
         cldAssert(
             "l_lighthouse/c_scale,w_200/e_sepia/e_style_transfer:34,fl_layer_apply",
             Effect.styleTransfer(lighthouse) {

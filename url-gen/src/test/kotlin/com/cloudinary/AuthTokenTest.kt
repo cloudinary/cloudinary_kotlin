@@ -1,5 +1,6 @@
 package com.cloudinary
 
+import com.cloudinary.config.AuthTokenConfig
 import com.cloudinary.config.Configuration
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.assertEquals
@@ -9,9 +10,9 @@ import java.util.*
 import java.util.regex.Pattern
 
 class AuthTokenTest {
-    private val authToken = AuthToken(key = KEY, duration = 300, startTime = 11111111)
+    private val authTokenConfig = AuthTokenConfig(key = KEY, duration = 300, startTime = 11111111)
     private val tempConfig = Configuration.fromUri("cloudinary://a:b@test123")
-    private val cloudinary = Cloudinary(tempConfig.copy(urlConfig = tempConfig.urlConfig.copy(authToken = authToken)))
+    private val cloudinary = Cloudinary(tempConfig.copy(authTokenConfig = authTokenConfig))
 
     @Test
     @Throws(Exception::class)
@@ -137,7 +138,7 @@ class AuthTokenTest {
     fun testConfiguration() {
         val cloudinary =
             Cloudinary("cloudinary://a:b@test123?load_strategies=false&auth_token[key]=aabbcc112233&auth_token[duration]=200")
-        assertEquals(cloudinary.config.authToken, AuthToken(key = "aabbcc112233", duration = 200))
+        assertEquals(AuthToken(cloudinary.config.authTokenConfig!!), AuthToken(key = "aabbcc112233", duration = 200))
     }
 
     @Test

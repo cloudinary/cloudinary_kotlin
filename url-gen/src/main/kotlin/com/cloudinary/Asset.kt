@@ -28,7 +28,7 @@ class Asset constructor(
     private val version: String? = null,
     private val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
-    private val authToken: AuthToken? = config.authToken,
+    private val authToken: AuthToken? = config.authTokenConfig?.let { AuthToken(it) },
     private val source: String? = null,
     private val urlSuffix: String? = null,
     private val useRootPath: Boolean = config.useRootPath,
@@ -138,7 +138,7 @@ class Asset constructor(
         private var version: String? = null
         private var transformation: Transformation? = null
         private var signUrl: Boolean = false
-        private var authToken: AuthToken? = config.authToken
+        private var authToken: AuthToken? = config.authTokenConfig?.let { AuthToken(it) }
         private var source: String? = null
         private var urlSuffix: String? = null
         private var useRootPath: Boolean = config.useRootPath
@@ -324,6 +324,7 @@ fun unsignedDownloadUrlPrefix(
 
 private class FinalizedSource(val source: String, val sourceToSign: String)
 
+// TODO add all supported extensions
 enum class Extension(private val value: String) {
     JPG("jpg"),
     WEBP("webp"),
