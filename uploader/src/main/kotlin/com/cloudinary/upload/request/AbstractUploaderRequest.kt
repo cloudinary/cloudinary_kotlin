@@ -8,7 +8,7 @@ import com.cloudinary.upload.response.UploaderResponse
 abstract class AbstractUploaderRequest<T> internal constructor(
     protected val uploader: Uploader,
     val options: UploaderOptions,
-    internal val configuration: Configuration,
+    val configuration: Configuration,
     val payload: Payload<*>? = null,
     internal val progressCallback: ProgressCallback? = null
 ) {

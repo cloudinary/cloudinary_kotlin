@@ -113,7 +113,7 @@ internal class WorkManagerAsyncDispatcher : AsyncWorkDispatcher {
 
             // first worker: split into chunk-size files
             // second worker and onward: upload workers per chunk, sequential.
-            val chunkSize = request.options.chunkSize.toLong()
+            val chunkSize = request.options.chunkSize ?: request.configuration.apiConfig.chunkSize
 
             // TODO - serialize pre-process chain to inputData
             val splitRequest = request.toSplitRequest(tag, chunkSize, length)
@@ -123,7 +123,7 @@ internal class WorkManagerAsyncDispatcher : AsyncWorkDispatcher {
             var chain = WorkManager.getInstance(context).beginWith(splitRequest)
 
             for (i: Int in 0 until workersCount) {
-                chain = chain.then(request.toUploadWorkRequest(tag, i, length))
+                chain = chain.then(request.toUploadWorkRequest(tag, i, length, chunkSize))
             }
 
             chain.enqueue()
@@ -194,11 +194,11 @@ private fun InputStream.getRealLength(): Long {
 
 private fun UploadRequest.toSplitRequest(
     tag: String,
-    chunkSize: Long,
+    chunkSize: Int,
     totalLength: Long
 ): OneTimeWorkRequest {
     val dataBuilder = Data.Builder()
-        .putLong(CHUNK_SIZE_DATA_KEY, chunkSize)
+        .putInt(CHUNK_SIZE_DATA_KEY, chunkSize)
         .putLong(TOTAL_LENGTH_DATA_KEY, totalLength)
 
     when (payload) {
@@ -214,11 +214,16 @@ private fun UploadRequest.toSplitRequest(
         .build()
 }
 
-internal fun UploadRequest.toUploadWorkRequest(tag: String, index: Int, totalLength: Long): OneTimeWorkRequest {
+internal fun UploadRequest.toUploadWorkRequest(
+    tag: String,
+    index: Int,
+    totalLength: Long,
+    chunkSize: Int
+): OneTimeWorkRequest {
     val builder = OneTimeWorkRequestBuilder<UploadWorker>()
         .setConstraints(adaptConstraints(this.asyncUploadConfig))
         .setInitialDelay(asyncUploadConfig.initialDelay, TimeUnit.MILLISECONDS)
-        .setInputData(toWorkManagerData(index, totalLength))
+        .setInputData(toWorkManagerData(index, totalLength, chunkSize))
         .addTag(tag)
         .setBackoffCriteria(
             adaptBackoffCriteria(asyncUploadConfig.backoffPolicy),
@@ -261,7 +266,7 @@ private fun adaptBackoffCriteria(backoffPolicy: BackoffPolicy): androidx.work.Ba
     }
 }
 
-private fun UploadRequest.toWorkManagerData(index: Int, totalLength: Long): Data {
+private fun UploadRequest.toWorkManagerData(index: Int, totalLength: Long, chunkSize: Int): Data {
     val networkRequest = Uploader.prepareNetworkRequest("upload", this, ::toUploadResult)
 
     val prefixedParams = networkRequest.params.mapKeys { "$PARAM_DATA_KEY_PREFIX${it.key}" }
@@ -273,7 +278,7 @@ private fun UploadRequest.toWorkManagerData(index: Int, totalLength: Long): Data
         putString(FILENAME_DATA_KEY, networkRequest.filename)
         putString(API_URL_DATA_KEY, networkRequest.url)
         putInt(FILE_INDEX_DATA_KEY, index)
-        putInt(CHUNK_SIZE_DATA_KEY, options.chunkSize)
+        putInt(CHUNK_SIZE_DATA_KEY, chunkSize)
         putLong(TOTAL_LENGTH_DATA_KEY, totalLength)
         putInt(MAX_RETRIES_DATA_KEY, asyncUploadConfig.maxErrorRetries)
     }.build()

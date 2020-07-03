@@ -1,5 +1,6 @@
 package com.cloudinary
 
+import com.cloudinary.config.IAuthTokenConfig
 import com.cloudinary.util.cldHexStringToByteArray
 import com.cloudinary.util.cldUrlEncode
 import com.cloudinary.util.toHex
@@ -26,18 +27,14 @@ data class AuthToken(
     val duration: Long = 0,
     private val isNullToken: Boolean = false
 ) {
-    companion object {
-        fun fromParams(params: Map<*, *>): AuthToken {
-            return AuthToken(
-                key = (params["key"] ?: error("Must provide Auth Token key")).toString(),
-                startTime = params["start_time"]?.toString()?.toLong() ?: 0,
-                expiration = params["expiration"]?.toString()?.toLong() ?: 0,
-                ip = params["ip"]?.toString(),
-                acl = params["acl"]?.toString(),
-                duration = params["duration"]?.toString()?.toLong() ?: 0
-            )
-        }
-    }
+    constructor(config: IAuthTokenConfig) : this(
+        key = config.key,
+        ip = config.ip,
+        acl = config.acl,
+        startTime = config.startTime ?: 0,
+        expiration = config.expiration ?: 0,
+        duration = config.duration ?: 0
+    )
 
     /**
      * Generate a URL token for the given URL.

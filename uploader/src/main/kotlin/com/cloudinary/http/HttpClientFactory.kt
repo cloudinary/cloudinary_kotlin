@@ -31,7 +31,7 @@ class OkHttpClientFactory(
         return OkHttpClientAdapter(
             OkHttpClient.Builder()
                 .readTimeout(config.readTimeout.toLong(), TimeUnit.SECONDS)
-                .connectTimeout(config.connectTimeout.toLong(), TimeUnit.SECONDS)
+                .connectTimeout(config.connectionTimeout.toLong(), TimeUnit.SECONDS)
                 .addInterceptor {
                     it.proceed(
                         it.request().newBuilder()

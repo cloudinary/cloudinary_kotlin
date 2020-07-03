@@ -14,7 +14,6 @@ import com.cloudinary.util.*
 import java.io.InputStream
 import java.util.*
 
-private const val DEFAULT_PREFIX = "https://api.cloudinary.com"
 private const val DEFAULT_RESOURCE_TYPE = "image"
 private const val API_VERSION = "v1_1"
 
@@ -37,9 +36,10 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
         val payload = request.payload
         val value = payload.value
 
+        val chunkSize = request.options.chunkSize ?: request.configuration.chunkSize
         // if it's a remote url or the total size is known and smaller than chunk size we fallback to
         // a regular upload api (no need for chunks)
-        if ((value is String && value.cldIsRemoteUrl()) || (payload.length in 1 until request.options.chunkSize)) {
+        if ((value is String && value.cldIsRemoteUrl()) || (payload.length in 1 until chunkSize.toLong())) {
             return callApi(request, "upload", ::toUploadResult)
         }
 
@@ -49,7 +49,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
                 request.params,
                 request.options.resourceType,
                 request.options.filename ?: payload.name,
-                request.options.chunkSize,
+                chunkSize,
                 payload.length,
                 uniqueUploadId,
                 request.progressCallback
@@ -161,7 +161,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
             val paramsMap = request.buildParams()
 
             val config = request.configuration
-            val prefix = config.uploadPrefix ?: DEFAULT_PREFIX
+            val prefix = config.uploadPrefix
             val cloudName = config.cloudName
             val resourceType =
                 if (action != "delete_by_token") (request.options.resourceType ?: DEFAULT_RESOURCE_TYPE) else null

@@ -20,7 +20,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
         val httpConn = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = HttpGet.METHOD_NAME
             readTimeout = config.readTimeout * 1000
-            connectTimeout = config.connectTimeout * 1000
+            connectTimeout = config.connectionTimeout * 1000
             setRequestProperty("User-Agent", userAgent)
             headers.entries.forEach { setRequestProperty(it.key, it.value) }
         }
@@ -45,7 +45,7 @@ class HttpUrlConnectionAdapter(private val userAgent: String, private val config
             doOutput = true
             doInput = true
             readTimeout = config.readTimeout * 1000
-            connectTimeout = config.connectTimeout * 1000
+            connectTimeout = config.connectionTimeout * 1000
             setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
             setRequestProperty("User-Agent", userAgent)
