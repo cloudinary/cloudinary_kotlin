@@ -15,6 +15,9 @@ site:
 Editorial:
   primaryColor: '#5BC7EF'
   legacySearch: false
+  extraCss:
+    - asset: 'assets/styles.scss'
+      download: false
   social:
     github: 'cloudinary/cloudinary_kotlin'
   metaComponents:
