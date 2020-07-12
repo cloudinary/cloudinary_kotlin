@@ -1,8 +1,5 @@
-plugins {
-    base
-    id("org.jetbrains.dokka") version "0.10.1"
-    kotlin("jvm") version "1.3.72" apply false
-}
+import java.io.FileInputStream
+import java.util.*
 
 buildscript {
     repositories {
@@ -22,13 +19,6 @@ allprojects {
     }
 }
 
-dependencies {
-    // Make the root project archives configuration depend on every subproject
-    subprojects.forEach {
-        archives(it)
-    }
-}
-
 fun generateAndLoadLocalGradleProperties() {
     // Create default local gradle properties (ignored by git)
     val file = File("gradle-local.properties")
@@ -42,8 +32,8 @@ fun generateAndLoadLocalGradleProperties() {
 }
 
 fun loadExtraProperties(file: File) {
-    val props = java.util.Properties()
-    props.load(java.io.FileInputStream(file))
+    val props = Properties()
+    props.load(FileInputStream(file))
 
     props.forEach { key, value ->
         project.ext[key.toString()] = value
@@ -52,11 +42,3 @@ fun loadExtraProperties(file: File) {
 
 generateAndLoadLocalGradleProperties()
 
-tasks {
-    val dokka by getting(org.jetbrains.dokka.gradle.DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-
-        subProjects = listOf("url-gen")
-    }
-}
