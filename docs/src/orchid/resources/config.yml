@@ -1,0 +1,29 @@
+kotlindoc:
+  sourceDirs:
+    - './../../../../url-gen/src/main/kotlin'
+  sourcePages:
+    menu:
+      - type: 'sourcedocPageLinks'
+        moduleType: 'kotlindoc'
+        itemTitleType: 'SIGNATURE'
+        includeItems: true
+site:
+  about:
+    siteName: Cloudinary Kotlin SDK
+    siteDescription: Use Cloudinary's Kotlin SDK to seamlessly add advanced media optimization, manipulation and delivery to your existing Kotlin or Java projects. The SDK can be used for Android applications as well as any backend Kotlin projects.
+
+Editorial:
+  primaryColor: '#5BC7EF'
+  legacySearch: false
+  extraCss:
+    - asset: 'assets/styles.scss'
+      download: false
+  social:
+    github: 'cloudinary/cloudinary_kotlin'
+  metaComponents:
+    - type: 'orchidSearch'
+  menu:
+    - type: 'separator'
+      title: 'API Docs'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'

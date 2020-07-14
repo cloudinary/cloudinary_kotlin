@@ -1,3 +1,4 @@
 rootProject.name = 'cloudinary_kotlin'
 include 'url-gen', 'uploader'
 include ':uploader-android'
+include ':docs'

@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700|Montserrat:400,500,600');
+
+
+body {
+      font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #3C3C3C;
+      background-color: white;
+}
+h1, h2, h3, h4, h5 {
+    font-family: 'Open Sans', Arial, sans-serif;
+}
+
+#header {
+    a {
+           &:hover {
+                color: #3C3C3C !important;
+            }
+    }
+    .logo {
+        font-size: 1.3em;
+        }
+}
+
+.logo {
+    &:before {
+        content: "";
+        background: url("https://res.cloudinary.com/cloudinary/image/upload/c_scale,w_30/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.png") no-repeat;
+        width: 30px;
+        height: 30px;
+        display: block;
+        float: left;
+        margin: 0px 6px 0px 0px;
+    }
+
+}
+
+#siteNav.menu {
+.major {
+    &:before {
+        content: "";
+        background: url("https://res.cloudinary.com/cloudinary/image/upload/c_scale,w_30/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.png") no-repeat;
+        width: 30px;
+        height: 30px;
+        display: block;
+        float: left;
+        margin: 0px 6px 0px 0px;
+    }
+}
+}
+
+.menu > ul > li > ul a, .menu > ul > li > ul span {
+    font-size: 0.7em;
+}
+
+#sidebar h2 {
+    overflow-wrap: anywhere;
+}
