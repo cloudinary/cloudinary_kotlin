@@ -16,21 +16,19 @@ Add the SDK to your project as a dependency, we recommend using a build manageme
 Add the Cloudinary Kotlin SDK to the dependencies section of your `build.gradle` file.
 
 ```
-compile group: 'com.cloudinary', name: 'TODO: Add Kotlin name', version: '[Cloudinary API version, e.g. 1.1.3]'
+implementation 'com.cloudinary:kotlin-url-gen:0.0.1-alpha.1''
 ```
 
 **Using Maven**:
 
 Add the Cloudinary Kotlin SDK to the list of dependencies in your `pom.xml` file.
 ```xml
-<dependencies>
-  ...
-  <dependency>
-    <groupId>com.cloudinary</groupId>
-    <artifactId>TODO: Add Kotlin name</artifactId>
-    <version>[Cloudinary API version, e.g. 1.1.3]</version>
-  </dependency>
-</dependencies>
+<dependency>
+  <groupId>com.cloudinary</groupId>
+  <artifactId>kotlin-url-gen</artifactId>
+  <version>0.0.1-alpha.1</version>
+  <type>pom</type>
+</dependency>
 ```
 
 ## Configuration
