@@ -3,7 +3,7 @@ package com.cloudinary
 import com.cloudinary.config.Configuration
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
-var instance: Cloudinary? = null
+private var instance: Cloudinary? = null
 const val SDK_VERSION = "0.0.1-alpha.1"
 
 class Cloudinary(val config: Configuration) {
@@ -43,6 +43,7 @@ class Cloudinary(val config: Configuration) {
     }
 
     /**
+     * @suppress
      *  ***INTERNAL USE ONLY*** get a custom extensions (property) from this cloudinary instance. A default
      *  must be provided - this method always returns a value.
      */
@@ -54,6 +55,7 @@ class Cloudinary(val config: Configuration) {
     }
 
     /**
+     * * @suppress
      *  ***INTERNAL USE ONLY*** Set a custom extensions (property) on this cloudinary instance.
      */
     fun setExtension(name: String, extension: Any) {

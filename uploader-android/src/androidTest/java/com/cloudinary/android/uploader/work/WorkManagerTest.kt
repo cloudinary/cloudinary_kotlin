@@ -101,7 +101,7 @@ class WorkManagerTest {
     @Test
     fun testDataSerialization() {
         val request = buildUploadRequest()
-        val workManagerRequest = request.toUploadWorkRequest("tag", 7, 1000, DEFAULT_CHUNK_SIZE.toLong())
+        val workManagerRequest = request.toUploadWorkRequest("tag", 7, 1000, DEFAULT_CHUNK_SIZE)
         assertNotNull(workManagerRequest)
         val workSpec = workManagerRequest.workSpec
         val data = workSpec.input.keyValueMap

@@ -690,7 +690,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val token = uploadResponse.data!!.deleteToken!!
+        val token =
+            uploadResponse.resultOrThrow().deleteToken ?: throw Error("Delete token returned from upload is null")
 
         val response = uploader.deleteByToken(token) {
             options {
@@ -709,7 +710,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        val publicId = uploadResponse.resultOrThrow().publicId!!
+        val publicId = uploadResponse.resultOrThrow().publicId ?: throw Error("Public Id returned from upload is null")
 
         val transformation = Transformation().resize(scale {
             width(2.0)
@@ -767,7 +768,6 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }
 
         assertTrue(response.resultOrThrow().cssUrl!!.contains("c_scale,w_100"))
-
 
         response = uploader.generateSprite(spriteTestTag) {
             transformation {
@@ -967,7 +967,6 @@ class UploaderTest(networkLayer: NetworkLayer) {
             response.error?.error?.message?.contains(expectedMessage) ?: false
         )
     }
-
 }
 
 private fun <T> UploaderResponse<T>.resultOrThrow(): T {
