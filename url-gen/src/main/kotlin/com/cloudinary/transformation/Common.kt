@@ -93,6 +93,9 @@ interface Action {
     override fun toString(): String
 }
 
+/**
+ *  @suppress
+ */
 @DslMarker
 annotation class TransformationDsl
 
@@ -137,6 +140,6 @@ class RawAction(private val value: String) : Action {
 }
 
 /**
- * Convers a collection of parameters to a map of param_key to param - to be used in ParamsAction, mainly.
+ * Converts a collection of parameters to a map of param_key to param - to be used in ParamsAction, mainly.
  */
 internal fun Collection<Param>.cldToActionMap() = associateBy { it.hashKey }

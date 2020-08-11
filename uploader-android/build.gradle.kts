@@ -33,6 +33,11 @@ android {
     packagingOptions {
         exclude("META-INF/proguard/coroutines.pro")
     }
+
+    compileOptions {
+        setTargetCompatibility(JavaVersion.VERSION_1_8)
+        setSourceCompatibility(JavaVersion.VERSION_1_8)
+    }
 }
 
 fun getCloudinaryUrl() = findProperty("cloudinaryUrl") ?: System.getenv("CLOUDINARY_URL")
@@ -42,9 +47,9 @@ dependencies {
 
     api(project(":uploader"))
     implementation("androidx.work:work-runtime-ktx:$workVersion")
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.core:core-ktx:1.3.0")
-    testImplementation("junit:junit:4.12")
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.core:core-ktx:1.3.1")
+    testImplementation("junit:junit:4.13")
 
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")

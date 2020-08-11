@@ -230,7 +230,7 @@ private fun finalizeSource(
     return FinalizedSource(mutableSource, sourceToSign)
 }
 
-fun finalizeResourceType(
+private fun finalizeResourceType(
     resourceType: String?,
     type: String?,
     urlSuffix: String?,
@@ -280,7 +280,7 @@ fun finalizeResourceType(
     return result
 }
 
-fun unsignedDownloadUrlPrefix(
+private fun unsignedDownloadUrlPrefix(
     cloudName: String?,
     privateCdn: Boolean,
     cname: String?,

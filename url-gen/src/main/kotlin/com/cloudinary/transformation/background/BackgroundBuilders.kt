@@ -58,8 +58,6 @@ class AutoBackgroundBuilder(private val type: String? = null) {
     }
 }
 
-// horizontal, vertical, diagonal_desc, and diagonal_asc. Default: horizontal
-// TODO enum should be in Adjust file, not in the adjuserBuilders file.
 enum class GradientDirection(private val value: String) {
     HORIZONTAL("horizontal"),
     VERTICAL("vertical"),

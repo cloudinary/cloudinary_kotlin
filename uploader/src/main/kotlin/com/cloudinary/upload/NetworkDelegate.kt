@@ -57,7 +57,6 @@ class NetworkDelegate(private val clientFactory: HttpClientFactory) {
                         unknownErrorResponse,
                         content
                     )
-
                 } else {
                     val uploaderError: UploadError = content?.let { extractUploadError(it) }
                         ?: error?.let { UploadError(Error(it)) }
@@ -66,7 +65,7 @@ class NetworkDelegate(private val clientFactory: HttpClientFactory) {
                     UploaderResponse<T>(statusCode, null, uploaderError, content)
                 }
             } else {
-                UploaderResponse<T>(
+                UploaderResponse(
                     statusCode,
                     null,
                     unknownErrorResponse,

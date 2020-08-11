@@ -12,9 +12,9 @@ import java.util.regex.Pattern
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-val NULL_AUTH_TOKEN = AuthToken(key = "", isNullToken = true)
-const val AUTH_TOKEN_NAME = "__cld_token__"
-val UNSAFE_URL_CHARS_PATTERN =
+internal val NULL_AUTH_TOKEN = AuthToken(key = "", isNullToken = true)
+private const val AUTH_TOKEN_NAME = "__cld_token__"
+private val UNSAFE_URL_CHARS_PATTERN =
     Pattern.compile("[ \"#%&'/:;<=>?@\\[\\\\\\]^`{|}~]")!!
 
 data class AuthToken(

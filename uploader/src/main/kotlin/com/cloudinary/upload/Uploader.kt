@@ -153,6 +153,9 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
     }
 
     companion object {
+        /**
+         * TODO Internal
+         */
         fun <T> prepareNetworkRequest(
             action: String,
             request: AbstractUploaderRequest<*>,
@@ -191,16 +194,17 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
                 request.progressCallback
             )
         }
+
+        private fun requiresSigning(
+            action: String,
+            params: Map<String, Any>,
+            request: AbstractUploaderRequest<*>
+        ): Boolean {
+            val missingSignature = params["signature"]?.toString().isNullOrBlank()
+            val signedRequest = !request.options.unsigned
+            val actionRequiresSigning = action != "delete_by_token"
+            return missingSignature && signedRequest && actionRequiresSigning
+        }
     }
 }
 
-private fun requiresSigning(
-    action: String,
-    params: Map<String, Any>,
-    request: AbstractUploaderRequest<*>
-): Boolean {
-    val missingSignature = params["signature"]?.toString().isNullOrBlank()
-    val signedRequest = !request.options.unsigned
-    val actionRequiresSigning = action != "delete_by_token"
-    return missingSignature && signedRequest && actionRequiresSigning
-}
