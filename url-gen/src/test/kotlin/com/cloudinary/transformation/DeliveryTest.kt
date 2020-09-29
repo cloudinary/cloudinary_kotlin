@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 
-import com.cloudinary.transformation.delivery.ColorSpace
+import com.cloudinary.transformation.delivery.ColorSpaceEnum
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.delivery.Dpr
 
@@ -12,7 +12,7 @@ class DeliveryTest {
 
     @Test
     fun testFallbackImage() {
-        cldAssert("d_sample", Delivery.fallbackImage("sample"))
+        cldAssert("d_sample", Delivery.defaultImage("sample"))
     }
 
     @Test
@@ -40,15 +40,15 @@ class DeliveryTest {
 
     @Test
     fun testColorSpace() {
-        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpace.Cmyk))
-        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpace.KeepCmyk))
-        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpace.NoCmyk))
-        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpace.SRgb))
-        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpace.TinySRgb))
+        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceEnum.Cmyk))
+        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceEnum.KeepCmyk))
+        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceEnum.NoCmyk))
+        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceEnum.SRgb))
+        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceEnum.TinySRgb))
 
         cldAssert(
             "cs_icc:file.extension",
-            Delivery.colorSpace(ColorSpace.CsIcc("file.extension"))
+            Delivery.colorSpace(ColorSpaceEnum.CsIcc("file.extension"))
         )
     }
 
