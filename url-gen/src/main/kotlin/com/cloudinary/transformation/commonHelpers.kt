@@ -1,6 +1,45 @@
 package com.cloudinary.transformation
 
 /**
+ * returns a valid component string generated from the given params collection:
+ * 1. Sort by key
+ * 2. Merge params with identical keys (e.g. fl_a,fl_b turns to fl_a.b)
+ * 3. Join to string with a comma separator
+ */
+internal fun Collection<Param?>.toComponentString(): String = asComponentString(*(this.toTypedArray()))
+
+internal fun asComponentString(vararg params: Param?): String {
+    var lastKey = ""
+    var first = true
+
+    return buildString {
+        params.filterNotNull().sortedWith(compareBy({ it.key }, { it.value.toString() })).forEach { param ->
+            if (param.key == lastKey) {
+                append("$PARAM_VALUE_JOINER${param.value}")
+            } else {
+                if (!first) append(PARAM_SEPARATOR)
+                append(param)
+            }
+
+            lastKey = param.key
+            first = false
+        }
+    }
+}
+
+/**
+ * Joins the given string with the values using the given separator (or used default  - colon)
+ */
+internal fun String.joinWithValues(
+    vararg values: Any?,
+    separator: String = DEFAULT_VALUES_SEPARATOR
+): String {
+    return values.filterNotNull().joinToString(separator = separator).let {
+        if (it.isEmpty()) this else "$this$separator$it"
+    }
+}
+
+/**
  * Marker interface for values to be used in ParamValue instances.
  */
 interface ParamValueContent {
@@ -99,10 +138,11 @@ interface Action {
 @DslMarker
 annotation class TransformationDsl
 
+
 /**
  * This class is used for all actions that are based on a list of parameters.
  */
-class ParamsAction(internal val params: Map<String, Param>) : Action {
+open class ParamsAction(internal val params: Map<String, Param>) : Action {
     constructor(params: Collection<Param>) : this(params.cldToActionMap())
     constructor(vararg params: Param?) : this(params.toList().filterNotNull())
 

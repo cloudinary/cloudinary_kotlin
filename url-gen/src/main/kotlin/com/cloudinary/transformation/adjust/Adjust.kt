@@ -2,42 +2,146 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.asAction
-import com.cloudinary.transformation.cldAsOpacity
-import com.cloudinary.transformation.effect.Improve
-import com.cloudinary.transformation.effect.effectAction
+import com.cloudinary.transformation.Transformation.Companion.transformation
+import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldRanged
 
-class Adjust(private val action: Action) : Action by action {
+val s = """"
+{
+    "actionName": "Opacity",
+    "level": 7
+}
+"""
 
+class Opacity internal constructor(val level: Any) : Adjust() {
+    override fun toString(): String {
+        return "o_$level"
+    }
+}
+
+class ViesusCorrect internal constructor() : Adjust() {
+    override fun toString(): String {
+        return "e_viesus_correct"
+    }
+}
+
+class Improve(val mode: ImproveMode? = null, val blend: Int? = null) : Adjust() {
+    override fun toString(): String {
+        return "e_improve".joinWithValues(mode, blend)
+    }
+}
+
+class ReplaceColor(val to: Color, val tolerance: Int? = null, val from: Color? = null) : Adjust() {
+    init {
+        tolerance?.cldRanged(0, 100)
+    }
+
+    override fun toString(): String {
+        val toStr = to.toString()
+        val fromStr = from?.toString() ?: ""
+
+        return "e_replace_color".joinWithValues(to, tolerance, from)
+    }
+}
+
+class FillLight(val blend: Any? = null, val bias: Any? = null) : Adjust() {
+
+    init {
+        blend?.cldRanged(0, 100)
+        bias?.cldRanged(-100, 100)
+    }
+
+    override fun toString(): String {
+        return "e_fill_light".joinWithValues(
+            blend?.cldRanged(0, 100),
+            bias?.cldRanged(-100, 100)
+        )
+    }
+}
+
+// TODO align with spec
+class Tint(vararg val values: Any?) : Adjust() {
+    override fun toString(): String {
+        return "e_tint".joinWithValues(*values)
+    }
+}
+
+abstract class LevelAdjust(val name: String, val level: Any? = null) : Adjust() {
+    override fun toString(): String {
+        return "e_$name".joinWithValues(level)
+    }
+}
+
+class Vibrance(level: Int? = null) : LevelAdjust("vibrance", level?.cldRanged(-100, 100))
+class AutoColor(level: Int? = null) : LevelAdjust("auto_color", level?.cldRanged(0, 100))
+class Brightness(level: Int? = null) : LevelAdjust("brightness", level?.cldRanged(-99, 100))
+class AutoBrightness(level: Int? = null) : LevelAdjust("auto_brightness", level?.cldRanged(0, 100))
+class BrightnessHSB(level: Int? = null) : LevelAdjust("brightness_hsb", level?.cldRanged(-99, 100))
+class AutoContrast(level: Int? = null) : LevelAdjust("auto_contrast", level?.cldRanged(0, 100))
+class UnsharpMask(level: Int? = null) : LevelAdjust("unsharp_mask", level?.cldRanged(1, 2000))
+class Hue(level: Int? = null) : LevelAdjust("hue", level?.cldRanged(-100, 100))
+class Gamma(level: Int? = null) : LevelAdjust("gamma", level.cldRanged(-50, 150))
+class Contrast(level: Int? = null) : LevelAdjust("contrast", level?.cldRanged(-100, 100))
+class Blue(level: Int? = null) : LevelAdjust("blue", level?.cldRanged(-100, 100))
+class Green(level: Int? = null) : LevelAdjust("green", level?.cldRanged(-100, 100))
+class Red(level: Int? = null) : LevelAdjust("red", level?.cldRanged(-100, 100))
+class OpacityThreshold(level: Int? = null) : LevelAdjust("opacity_threshold", level?.cldRanged(1, 100))
+class Saturation(level: Int? = null) : LevelAdjust("saturation", level?.cldRanged(-100, 100))
+class Sharpen(val strength: Int?) : Adjust() {
+    override fun toString(): String {
+        return "e_sharpen".joinWithValues(strength)
+    }
+
+}
+
+fun asdasd() {
+    transformation {
+        adjust(Adjust.replaceColor(Color.RED) {
+            from(Color.BLUE)
+            tolerance(3)
+        })
+    }
+}
+
+abstract class Adjust : Action {
     companion object {
-        fun opacity(level: Int) = Adjust(level.cldAsOpacity().asAction())
+        fun opacity(level: Int) = Opacity(level)
 
-        fun improve(blend: Int? = null, mode: Improve? = null, options: (ImproveBuilder.() -> Unit)? = null): Adjust {
-            val builder = ImproveBuilder()
-            mode?.let { builder.mode(mode) }
-            blend?.let { builder.blend(it) }
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun tint(vararg values: Any?) = Tint(*values)
 
-        fun tint(vararg values: Any?) = adjustEffect("tint", *values)
+        fun vibrance(level: Int? = null) = Vibrance(level)
 
-        fun vibrance(level: Int? = null) = adjustEffect("vibrance", level?.cldRanged(-100, 100))
+        fun autoColor(level: Int? = null) = AutoColor(level)
 
-        fun autoColor(level: Int? = null) = adjustEffect("auto_color", level?.cldRanged(0, 100))
+        fun brightness(level: Int? = null) = Brightness(level)
 
-        fun brightness(level: Int? = null) = adjustEffect("brightness", level?.cldRanged(-99, 100))
+        fun autoBrightness(level: Int? = null) = AutoBrightness(level)
 
-        fun autoBrightness(level: Int? = null) = adjustEffect("auto_brightness", level?.cldRanged(0, 100))
+        fun brightnessHSB(level: Int? = null) = BrightnessHSB(level)
 
-        fun brightnessHSB(level: Int? = null) = adjustEffect("brightness_hsb", level?.cldRanged(-99, 100))
+        fun autoContrast(level: Int? = null) = AutoContrast(level)
 
-        fun autoContrast(level: Int? = null) = adjustEffect("auto_contrast", level?.cldRanged(0, 100))
+        fun unsharpMask(level: Int? = null) = UnsharpMask(level)
 
-        fun unsharpMask(level: Int? = null) = adjustEffect("unsharp_mask", level?.cldRanged(1, 2000))
+        fun viesusCorrect() = ViesusCorrect()
 
-        fun viesusCorrect() = adjustEffect("viesus_correct")
+        fun hue(level: Int? = null) = Hue(level)
+
+        fun gamma(level: Int? = null) = Gamma(level.cldRanged(-50, 150))
+
+        fun contrast(level: Int? = null) = Contrast(level)
+
+        fun blue(level: Int? = null) = Blue(level)
+
+        fun green(level: Int? = null) = Green(level)
+
+        fun red(level: Int? = null) = Red(level)
+
+        fun opacityThreshold(level: Int? = null) = OpacityThreshold(level)
+
+        fun saturation(level: Int? = null) = Saturation(level)
+
+        fun sharpen(strength: Int? = null) = Sharpen(strength?.cldRanged(1, 2000))
 
         fun replaceColor(to: Color, options: (ReplaceColorBuilder.() -> Unit)? = null): Adjust {
             val builder = ReplaceColorBuilder(to)
@@ -45,30 +149,25 @@ class Adjust(private val action: Action) : Action by action {
             return builder.build()
         }
 
-        fun hue(level: Int? = null) = adjustEffect("hue", level?.cldRanged(-100, 100))
-
-        fun gamma(level: Int? = null) = adjustEffect("gamma", level.cldRanged(-50, 150))
-
-        fun contrast(level: Int? = null) = adjustEffect("contrast", level?.cldRanged(-100, 100))
-
-        fun blue(level: Int? = null) = adjustEffect("blue", level?.cldRanged(-100, 100))
-
-        fun green(level: Int? = null) = adjustEffect("green", level?.cldRanged(-100, 100))
-
-        fun red(level: Int? = null) = adjustEffect("red", level?.cldRanged(-100, 100))
-
-        fun opacityThreshold(level: Int? = null) = adjustEffect("opacity_threshold", level?.cldRanged(1, 100))
-
-        fun saturation(level: Int? = null) = adjustEffect("saturation", level?.cldRanged(-100, 100))
-
-        fun sharpen(strength: Int? = null) = adjustEffect("sharpen", strength?.cldRanged(1, 2000))
-
         fun fillLight(options: (FillLightBuilder.() -> Unit)? = null): Adjust {
             val builder = FillLightBuilder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun improve(options: (ImproveBuilder.() -> Unit)? = null): Adjust {
+            val builder = ImproveBuilder()
             options?.let { builder.it() }
             return builder.build()
         }
     }
 }
 
-internal fun adjustEffect(name: String, vararg values: Any?) = Adjust(effectAction(name, *values))
+enum class ImproveMode(internal val value: String) {
+    OUTDOOR("outdoor"),
+    INDOOR("indoor");
+
+    override fun toString(): String {
+        return value
+    }
+}

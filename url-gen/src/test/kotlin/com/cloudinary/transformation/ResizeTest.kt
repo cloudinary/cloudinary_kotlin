@@ -1,46 +1,45 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.background.PadBackground
+import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.Resize
+import com.cloudinary.transformation.resize.Resize.Companion.scale
 import org.junit.Test
 
 class ResizeTest {
 
     @Test
     fun testScale() {
-        cldAssert("c_scale,w_100", Resize.scale {
+        cldAssert("c_scale,w_100", scale {
             width(100)
         })
-        cldAssert("c_scale,w_100", Resize.scale(100))
+        cldAssert("c_scale,w_100", scale(100))
 
-        cldAssert("c_scale,w_1.0", Resize.scale
-        {
+        cldAssert("c_scale,w_1.0", scale {
             width(1f)
         })
-        cldAssert("c_scale,h_100,w_100", Resize.scale {
+        cldAssert("c_scale,h_100,w_100", scale {
             width(100)
             height(100)
         })
-        cldAssert("c_scale,h_100,w_100", Resize.scale {
+        cldAssert("c_scale,h_100,w_100", scale {
             width(100)
             height(100)
         })
-        cldAssert("c_scale,h_1.1,w_0.5", Resize.scale {
+        cldAssert("c_scale,h_1.1,w_0.5", scale {
             width(0.5f)
             height(1.1f)
         })
-        cldAssert("ar_1.5,c_scale,w_100", Resize.scale {
+        cldAssert("ar_1.5,c_scale,w_100", scale {
             width(100)
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_scale,dpr_2.0,h_100",
-            Resize.scale {
+            "ar_1.5,c_scale,h_100",
+            scale {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
@@ -66,11 +65,10 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_fit,dpr_2.0,h_100",
+            "ar_1.5,c_fit,h_100",
             Resize.fit {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
@@ -96,11 +94,10 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_limit,dpr_2.0,h_100",
+            "ar_1.5,c_limit,h_100",
             Resize.limitFit {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
@@ -126,11 +123,10 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_mfit,dpr_2.0,h_100",
+            "ar_1.5,c_mfit,h_100",
             Resize.minimumFit {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
@@ -156,18 +152,16 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_fill,dpr_2.0,h_100",
+            "ar_1.5,c_fill,h_100",
             Resize.fill {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             })
         cldAssert(
-            "ar_1.5,c_fill,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_fill,g_north,h_100",
             Resize.fill {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
@@ -194,19 +188,17 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_lfill,dpr_2.0,h_100",
+            "ar_1.5,c_lfill,h_100",
             Resize.limitFill {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
         cldAssert(
-            "ar_1.5,c_lfill,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_lfill,g_north,h_100",
             Resize.limitFill {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
@@ -233,18 +225,16 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_pad,dpr_2.0,h_100",
+            "ar_1.5,c_pad,h_100",
             Resize.pad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             })
         cldAssert(
-            "ar_1.5,c_pad,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_pad,g_north,h_100",
             Resize.pad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
@@ -254,7 +244,7 @@ class ResizeTest {
             Resize.pad {
                 height(100)
                 aspectRatio(1.5f)
-                background(Color.BLACK)
+                background(Background.color(Color.BLACK))
             }
         )
 
@@ -263,7 +253,7 @@ class ResizeTest {
             Resize.pad {
                 height(100)
                 aspectRatio(1.5f)
-                background(PadBackground.predominant())
+                background(Background.predominant())
             }
         )
 
@@ -272,7 +262,7 @@ class ResizeTest {
             Resize.pad {
                 height(100)
                 aspectRatio(1.5f)
-                background(PadBackground.border {
+                background(Background.border {
                     contrast()
                 })
             }
@@ -300,19 +290,17 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_lpad,dpr_2.0,h_100",
+            "ar_1.5,c_lpad,h_100",
             Resize.limitPad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
         cldAssert(
-            "ar_1.5,c_lpad,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_lpad,g_north,h_100",
             Resize.limitPad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
@@ -339,19 +327,17 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_mpad,dpr_2.0,h_100",
+            "ar_1.5,c_mpad,h_100",
             Resize.minimumPad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
         cldAssert(
-            "ar_1.5,c_mpad,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_mpad,g_north,h_100",
             Resize.minimumPad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
@@ -400,20 +386,18 @@ class ResizeTest {
             }
         )
         cldAssert(
-            "ar_1.5,c_fill_pad,dpr_2.0,g_auto,h_100",
+            "ar_1.5,c_fill_pad,g_auto,h_100",
             Resize.fillPad {
                 height(100)
                 gravity(Gravity.auto())
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
         cldAssert(
-            "ar_1.5,c_fill_pad,dpr_2.0,g_auto,h_100",
+            "ar_1.5,c_fill_pad,g_auto,h_100",
             Resize.fillPad {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.auto())
             })
     }
@@ -439,27 +423,24 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_crop,dpr_2.0,h_100",
+            "ar_1.5,c_crop,h_100",
             Resize.crop {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             })
         cldAssert(
-            "ar_1.5,c_crop,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_crop,g_north,h_100",
             Resize.crop {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
         cldAssert(
-            "ar_1.5,c_crop,dpr_2.0,g_north,h_100,z_1.5",
+            "ar_1.5,c_crop,g_north,h_100,z_1.5",
             Resize.crop {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
                 zoom(1.5f)
             }
@@ -487,28 +468,25 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_thumb,dpr_2.0,h_100",
+            "ar_1.5,c_thumb,h_100",
             Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
         cldAssert(
-            "ar_1.5,c_thumb,dpr_2.0,g_north,h_100",
+            "ar_1.5,c_thumb,g_north,h_100",
             Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
             }
         )
         cldAssert(
-            "ar_1.5,c_thumb,dpr_2.0,g_north,h_100,z_1.5",
+            "ar_1.5,c_thumb,g_north,h_100,z_1.5",
             Resize.thumbnail {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
                 gravity(Gravity.north())
                 zoom(1.5f)
             }
@@ -538,11 +516,10 @@ class ResizeTest {
                 aspectRatio(1.5f)
             })
         cldAssert(
-            "ar_1.5,c_imagga_scale,dpr_2.0,h_100",
+            "ar_1.5,c_imagga_scale,h_100",
             Resize.imaggaScale {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
@@ -568,18 +545,16 @@ class ResizeTest {
             aspectRatio(1.5f)
         })
         cldAssert(
-            "ar_1.5,c_imagga_crop,dpr_2.0,h_100",
+            "ar_1.5,c_imagga_crop,h_100",
             Resize.imaggaCrop {
                 height(100)
                 aspectRatio(1.5f)
-                dpr(2f)
             }
         )
     }
 
     @Test
     fun testGenericResize() {
-
         cldAssert(
             "c_mycrop,fl_ignore_aspect_ratio,g_west,h_2.5,w_1.5,x_4.5,y_5.5,z_3.5",
             Resize.generic("mycrop") {

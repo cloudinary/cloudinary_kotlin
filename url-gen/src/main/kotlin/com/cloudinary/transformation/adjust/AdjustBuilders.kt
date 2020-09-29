@@ -2,8 +2,6 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.effect.Improve
-import com.cloudinary.util.cldRanged
 
 
 class FillLightBuilder : TransformationComponentBuilder {
@@ -12,11 +10,7 @@ class FillLightBuilder : TransformationComponentBuilder {
 
     fun blend(blend: Int) = apply { this.blend = blend }
     fun bias(bias: Int) = apply { this.bias = bias }
-    override fun build() = adjustEffect(
-        "fill_light",
-        blend.cldRanged(0, 100),
-        bias?.cldRanged(-100, 100)
-    )
+    override fun build() = FillLight(blend, bias)
 }
 
 class ReplaceColorBuilder(private val to: Color) : TransformationComponentBuilder {
@@ -26,19 +20,14 @@ class ReplaceColorBuilder(private val to: Color) : TransformationComponentBuilde
     fun from(from: Color) = apply { this.from = from }
     fun tolerance(tolerance: Int) = apply { this.tolerance = tolerance }
 
-    override fun build() = adjustEffect(
-        "replace_color",
-        to.withoutRgbPrefix(),
-        tolerance?.cldRanged(0, 100),
-        from?.withoutRgbPrefix()
-    )
+    override fun build() = ReplaceColor(to.withoutRgbPrefix(), tolerance, from?.withoutRgbPrefix())
 }
 
 class ImproveBuilder : TransformationComponentBuilder {
-    private var mode: Improve? = null
+    private var mode: ImproveMode? = null
     private var blend: Int? = null
-    fun mode(mode: Improve) = apply { this.mode = mode }
+    fun mode(mode: ImproveMode) = apply { this.mode = mode }
     fun blend(blend: Int) = apply { this.blend = blend }
 
-    override fun build() = adjustEffect("improve", mode, blend?.cldRanged(0, 100))
+    override fun build() = Improve(mode, blend)
 }
