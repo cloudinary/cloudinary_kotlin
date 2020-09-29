@@ -2,16 +2,9 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.Transformation.Companion.transformation
+import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldRanged
-
-val s = """"
-{
-    "actionName": "Opacity",
-    "level": 7
-}
-"""
 
 class Opacity internal constructor(val level: Any) : Adjust() {
     override fun toString(): String {
@@ -29,6 +22,15 @@ class Improve(val mode: ImproveMode? = null, val blend: Int? = null) : Adjust() 
     override fun toString(): String {
         return "e_improve".joinWithValues(mode, blend)
     }
+
+    class Builder : TransformationComponentBuilder {
+        private var mode: ImproveMode? = null
+        private var blend: Int? = null
+        fun mode(mode: ImproveMode) = apply { this.mode = mode }
+        fun blend(blend: Int) = apply { this.blend = blend }
+
+        override fun build() = Improve(mode, blend)
+    }
 }
 
 class ReplaceColor(val to: Color, val tolerance: Int? = null, val from: Color? = null) : Adjust() {
@@ -37,11 +39,19 @@ class ReplaceColor(val to: Color, val tolerance: Int? = null, val from: Color? =
     }
 
     override fun toString(): String {
-        val toStr = to.toString()
-        val fromStr = from?.toString() ?: ""
-
         return "e_replace_color".joinWithValues(to, tolerance, from)
     }
+
+    class Builder(private val to: Color) : TransformationComponentBuilder {
+        private var from: Color? = null
+        private var tolerance: Int? = null
+
+        fun from(from: Color) = apply { this.from = from }
+        fun tolerance(tolerance: Int) = apply { this.tolerance = tolerance }
+
+        override fun build() = ReplaceColor(to.withoutRgbPrefix(), tolerance, from?.withoutRgbPrefix())
+    }
+
 }
 
 class FillLight(val blend: Any? = null, val bias: Any? = null) : Adjust() {
@@ -56,6 +66,15 @@ class FillLight(val blend: Any? = null, val bias: Any? = null) : Adjust() {
             blend?.cldRanged(0, 100),
             bias?.cldRanged(-100, 100)
         )
+    }
+
+    class Builder : TransformationComponentBuilder {
+        private var blend: Any? = null
+        private var bias: Any? = null
+
+        fun blend(blend: Int) = apply { this.blend = blend }
+        fun bias(bias: Int) = apply { this.bias = bias }
+        override fun build() = FillLight(blend, bias)
     }
 }
 
@@ -92,15 +111,6 @@ class Sharpen(val strength: Int?) : Adjust() {
         return "e_sharpen".joinWithValues(strength)
     }
 
-}
-
-fun asdasd() {
-    transformation {
-        adjust(Adjust.replaceColor(Color.RED) {
-            from(Color.BLUE)
-            tolerance(3)
-        })
-    }
 }
 
 abstract class Adjust : Action {
@@ -143,20 +153,20 @@ abstract class Adjust : Action {
 
         fun sharpen(strength: Int? = null) = Sharpen(strength?.cldRanged(1, 2000))
 
-        fun replaceColor(to: Color, options: (ReplaceColorBuilder.() -> Unit)? = null): Adjust {
-            val builder = ReplaceColorBuilder(to)
+        fun replaceColor(to: Color, options: (ReplaceColor.Builder.() -> Unit)? = null): Adjust {
+            val builder = ReplaceColor.Builder(to)
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun fillLight(options: (FillLightBuilder.() -> Unit)? = null): Adjust {
-            val builder = FillLightBuilder()
+        fun fillLight(options: (FillLight.Builder.() -> Unit)? = null): Adjust {
+            val builder = FillLight.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun improve(options: (ImproveBuilder.() -> Unit)? = null): Adjust {
-            val builder = ImproveBuilder()
+        fun improve(options: (Improve.Builder.() -> Unit)? = null): Adjust {
+            val builder = Improve.Builder()
             options?.let { builder.it() }
             return builder.build()
         }

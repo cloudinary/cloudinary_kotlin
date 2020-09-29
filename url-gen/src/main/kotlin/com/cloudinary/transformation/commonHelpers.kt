@@ -34,9 +34,9 @@ internal fun String.joinWithValues(
     vararg values: Any?,
     separator: String = DEFAULT_VALUES_SEPARATOR
 ): String {
-    return values.filterNotNull().joinToString(separator = separator).let {
-        if (it.isEmpty()) this else "$this$separator$it"
-    }
+    val nonNull = values.filterNotNull()
+    if (nonNull.isEmpty()) return this
+    return "$this$separator${values.filterNotNull().joinToString(separator = separator)}"
 }
 
 /**
