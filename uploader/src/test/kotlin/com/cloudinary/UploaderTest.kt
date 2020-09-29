@@ -254,7 +254,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testEager() {
-        val transformation = Transformation().resize(scale { width(2.0) })
+        val transformation = Transformation().resize(scale { width(2.0f) })
         val response = uploader.upload(srcTestImage) {
             params {
                 eager = listOf(EagerTransformation(transformation, Extension.PNG))
@@ -270,7 +270,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testUploadAsync() {
-        val transformation = Transformation().resize(scale { width(2.0) })
+        val transformation = Transformation().resize(scale { width(2.0f) })
 
         val response = uploader.upload(srcTestImage) {
             params {
@@ -713,7 +713,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val publicId = uploadResponse.resultOrThrow().publicId ?: throw Error("Public Id returned from upload is null")
 
         val transformation = Transformation().resize(scale {
-            width(2.0)
+            width(2.0f)
         })
         val response = uploader.explicit(publicId) {
             params {
@@ -792,7 +792,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val response = uploader.multi(multiTestTag) {
             transformation {
                 resize(Resize.crop {
-                    width(0.5)
+                    width(0.5f)
                 })
             }
         }

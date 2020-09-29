@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.adjust.Adjust
-import com.cloudinary.transformation.effect.Improve
+import com.cloudinary.transformation.adjust.ImproveMode
 import org.junit.Test
 
 class AdjustTest {
@@ -122,18 +122,18 @@ class AdjustTest {
     @Test
     fun improve() {
         cldAssert("e_improve", Adjust.improve())
-        cldAssert("e_improve:50", Adjust.improve(50))
+
         cldAssert("e_improve:50", Adjust.improve {
             blend(50)
         })
 
         cldAssert("e_improve:indoor", Adjust.improve {
-            mode(Improve.INDOOR)
+            mode(ImproveMode.INDOOR)
         })
 
         cldAssert("e_improve:outdoor:30", Adjust.improve {
             blend(30)
-            mode(Improve.OUTDOOR)
+            mode(ImproveMode.OUTDOOR)
         })
     }
 

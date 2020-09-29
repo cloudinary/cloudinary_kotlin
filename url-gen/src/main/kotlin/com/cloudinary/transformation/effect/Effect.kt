@@ -170,15 +170,6 @@ enum class DitherFilter(internal val value: Int) {
     }
 }
 
-enum class Improve(internal val value: String) {
-    OUTDOOR("outdoor"),
-    INDOOR("indoor");
-
-    override fun toString(): String {
-        return value
-    }
-}
-
 enum class SimulateColorBlind(internal val value: String) {
     DEUTERANOPIA("deuteranopia"),
     PROTANOPIA("protanopia"),

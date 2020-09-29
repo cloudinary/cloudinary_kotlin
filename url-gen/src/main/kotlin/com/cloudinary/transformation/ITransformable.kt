@@ -1,7 +1,6 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.transformation.adjust.Adjust
-import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.layer.LayerAction
@@ -134,8 +133,8 @@ interface ITransformable<T> {
     fun getSmartObject(smartObject: SmartObject) = add(smartObject.cldAsPage().asAction())
     fun getLayer(layer: PsdLayer) = add(layer.cldAsPage().asAction())
 
-    fun background(background: Background) = add(background)
-    fun background(color: Color) = add(ParamsAction(color.cldAsBackground()))
+    fun backgroundColor(backgroundColor: BackgroundColor) = add(backgroundColor)
+    fun backgroundColor(color: Color) = backgroundColor(BackgroundColor(color))
 
     fun roundCorners(vararg radius: Int) = add(RoundCorners.radius(*radius))
     fun roundCorners(radius: RoundCorners) = add(radius)

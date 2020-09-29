@@ -1,11 +1,11 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.BackgroundColor.Companion.color
 import com.cloudinary.transformation.CustomFunction.Companion.wasm
 import com.cloudinary.transformation.Transformation.Companion.transformation
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
-import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.effect.Effect.Companion.sepia
@@ -118,8 +118,8 @@ class TransformationTest {
 
     @Test
     fun testBackground() {
-        cldAssert("b_white", Transformation().background(Background.color(Color.WHITE)))
-        cldAssert("b_white", Transformation().background(Color.WHITE))
+        cldAssert("b_white", Transformation().backgroundColor(color(Color.WHITE)))
+        cldAssert("b_white", Transformation().backgroundColor(Color.WHITE))
     }
 
     @Test
@@ -268,7 +268,6 @@ class TransformationTest {
                 }
                 overlay(image("sample")) {
                     transformation {
-
                         resize(scale {
                             width(100)
                         })

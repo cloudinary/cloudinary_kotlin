@@ -72,13 +72,14 @@ open class Gravity internal constructor(value: ParamValue) : Param("gravity", "g
         fun objects(objectGravity: IObjectGravity, vararg objects: IObjectGravity) =
             Gravity(ParamValue(listOf(objectGravity) + objects))
 
+        fun auto(vararg objects: IAutoObjectGravity) =
+            Gravity(ParamValue(listOf("auto") + objects))
+
         fun auto(focalPoint: FocalPoint? = null) =
             Gravity(ParamValue(listOfNotNull("auto", focalPoint)))
 
         fun autoClassic() = Gravity(ParamValue(listOf("auto", "classic")))
 
-        fun auto(vararg objects: IAutoObjectGravity) =
-            Gravity(ParamValue(listOf("auto") + objects))
     }
 }
 
