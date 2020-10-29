@@ -1,4 +1,4 @@
-# Cloudinary Kotlin SDK Beta
+# Cloudinary Kotlin SDK Beta 
 
 Cloudinary is a cloud service that offers a solution to a web application's entire image management pipeline.
 
