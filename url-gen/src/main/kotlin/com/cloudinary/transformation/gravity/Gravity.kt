@@ -1,85 +1,67 @@
 package com.cloudinary.transformation.gravity
 
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.joinWithValues
 
 // TODO these classes don't yet make enough sense
-open class Gravity internal constructor(value: ParamValue) : Param("gravity", "g", value) {
-    internal constructor(direction: Direction) : this(
-        ParamValue(direction)
-    )
-
-    internal constructor(focus: FocalPoint) : this(
-        ParamValue(
-            focus
-        )
-    )
-
+abstract class Gravity {
     companion object {
         fun south() =
-            Gravity(Direction.SOUTH)
+            GravityByDirection(Direction.SOUTH)
 
         fun southEast() =
-            Gravity(Direction.SOUTH_EAST)
+            GravityByDirection(Direction.SOUTH_EAST)
 
         fun southWest() =
-            Gravity(Direction.SOUTH_WEST)
+            GravityByDirection(Direction.SOUTH_WEST)
 
         fun north() =
-            Gravity(Direction.NORTH)
+            GravityByDirection(Direction.NORTH)
 
         fun northEast() =
-            Gravity(Direction.NORTH_EAST)
+            GravityByDirection(Direction.NORTH_EAST)
 
         fun northWest() =
-            Gravity(Direction.NORTH_WEST)
+            GravityByDirection(Direction.NORTH_WEST)
 
         fun east() =
-            Gravity(Direction.EAST)
+            GravityByDirection(Direction.EAST)
 
         fun west() =
-            Gravity(Direction.WEST)
+            GravityByDirection(Direction.WEST)
 
         fun center() =
-            Gravity(Direction.CENTER)
+            GravityByDirection(Direction.CENTER)
 
-        fun advancedFace() =
-            Gravity(FocalPoint.ADVANCED_FACE)
+        fun ocrText() = GravityByOcr()
 
-        fun advancedFaces() =
-            Gravity(FocalPoint.ADVANCED_FACES)
+        fun objects(objectGravity: IGravityObject, vararg objects: IGravityObject) =
+            GravityByObjects(listOf(objectGravity) + objects)
 
-        fun advancedEyes() =
-            Gravity(FocalPoint.ADVANCED_EYES)
+        fun auto(vararg objects: IAutoGravityObject) = GravityByAutoAlgorithm(objects.toList())
+    }
+}
 
-        fun ocrText() = Gravity(ParamValue("ocr_text"))
+class GravityByDirection internal constructor(private val direction: Direction) : Gravity() {
+    override fun toString(): String {
+        return direction.toString()
+    }
+}
 
-        fun body() =
-            Gravity(FocalPoint.BODY)
+class GravityByObjects internal constructor(private val objects: List<IGravityObject>) : Gravity() {
+    override fun toString(): String {
+        return objects.joinToString(":")
+    }
+}
 
-        fun face() =
-            Gravity(FocalPoint.FACE)
+class GravityByAutoAlgorithm internal constructor(private val objects: List<IAutoGravityObject>) : Gravity() {
+    override fun toString(): String {
+        return "auto".joinWithValues(*objects.toTypedArray())
+    }
+}
 
-        fun faces() =
-            Gravity(FocalPoint.FACES)
-
-        fun noFaces() =
-            Gravity(FocalPoint.NO_FACES)
-
-        fun customNoOverride() =
-            Gravity(FocalPoint.CUSTOM_NO_OVERRIDE)
-
-        fun objects(objectGravity: IObjectGravity, vararg objects: IObjectGravity) =
-            Gravity(ParamValue(listOf(objectGravity) + objects))
-
-        fun auto(vararg objects: IAutoObjectGravity) =
-            Gravity(ParamValue(listOf("auto") + objects))
-
-        fun auto(focalPoint: FocalPoint? = null) =
-            Gravity(ParamValue(listOfNotNull("auto", focalPoint)))
-
-        fun autoClassic() = Gravity(ParamValue(listOf("auto", "classic")))
-
+class GravityByOcr : Gravity() {
+    override fun toString(): String {
+        return "ocr_text"
     }
 }
 
@@ -98,20 +80,3 @@ internal enum class Direction(private val value: String) {
         return value
     }
 }
-
-enum class FocalPoint(private val value: String) {
-    ADVANCED_FACE("adv_face"),
-    ADVANCED_FACES("adv_faces"),
-    ADVANCED_EYES("adv_eyes"),
-    BODY("body"),
-    FACE("face"),
-    FACES("faces"),
-    NO_FACES("no_faces"),
-    CUSTOM_NO_OVERRIDE("custom_no_override"),
-    NONE("none");
-
-    override fun toString(): String {
-        return value
-    }
-}
-

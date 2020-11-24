@@ -32,7 +32,7 @@ class GradientFadeTest {
         cldAssert(
             "e_gradient_fade:symmetric,y_0.8",
             Effect.gradientFade {
-                type(GradientFade.SYMMETRIC)
+                type(GradientFade.GradientFadeType.SYMMETRIC)
                 y(0.8)
 
             }
@@ -41,14 +41,14 @@ class GradientFadeTest {
         cldAssert(
             "e_gradient_fade:symmetric:40,y_0.8",
             Effect.gradientFade {
-                type(GradientFade.SYMMETRIC)
+                type(GradientFade.GradientFadeType.SYMMETRIC)
                 strength(40)
                 y(0.8f)
             })
         cldAssert(
             "e_gradient_fade:symmetric:50,x_25",
             Effect.gradientFade {
-                type(GradientFade.SYMMETRIC)
+                type(GradientFade.GradientFadeType.SYMMETRIC)
                 strength(50)
                 x(25)
             })

@@ -1,20 +1,14 @@
 package com.cloudinary.transformation.background
 
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.cldAsBackground
 
 abstract class Background {
 
     override fun toString(): String {
-        return toParam().toString()
+        return getValues()
     }
 
     protected abstract fun getValues(): String
-
-    fun toParam(): Param {
-        return getValues().cldAsBackground()
-    }
 
     companion object {
 

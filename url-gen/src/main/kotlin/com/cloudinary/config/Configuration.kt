@@ -3,11 +3,11 @@ package com.cloudinary.config
 import java.net.URI
 
 data class Configuration(
-    val accountConfig: CloudConfig,
+    val cloudConfig: CloudConfig,
     val urlConfig: UrlConfig,
     val apiConfig: ApiConfig,
     val authTokenConfig: AuthTokenConfig?
-) : IUrlConfig by urlConfig, ICloudConfig by accountConfig, IApiConfig by apiConfig {
+) : IUrlConfig by urlConfig, ICloudConfig by cloudConfig, IApiConfig by apiConfig {
 
     companion object {
         fun fromUri(uri: String): Configuration {

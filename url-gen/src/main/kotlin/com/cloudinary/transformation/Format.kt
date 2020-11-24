@@ -1,39 +1,69 @@
 package com.cloudinary.transformation
 
-class Format(private val action: Action) : Action by action {
+sealed class FormatType(private val value: String) {
+    class auto : FormatType("auto")
+    class ai : FormatType("ai")
+    class gif : FormatType("gif")
+    class bmp : FormatType("bmp")
+    class webp : FormatType("webp")
+    class djvu : FormatType("djvu")
+    class ps : FormatType("ps")
+    class ept : FormatType("ept")
+    class eps : FormatType("eps")
+    class eps3 : FormatType("eps3")
+    class fxb : FormatType("fbx")
+    class flif : FormatType("flif")
+    class gltf : FormatType("gltf")
+    class heif : FormatType("heif")
+    class heic : FormatType("heic")
+    class ico : FormatType("ico")
+    class indd : FormatType("indd")
+    class jpg : FormatType("jpg")
+    class jpe : FormatType("jpe")
+    class jpeg : FormatType("jpeg")
+    class jp2 : FormatType("jp2")
+    class wdp : FormatType("wdp")
+    class jxr : FormatType("jxr")
+    class hdp : FormatType("hdp")
+    class pdf : FormatType("pdf")
+    class png : FormatType("png")
+    class spd : FormatType("psd")
+    class arw : FormatType("arw")
+    class cr2 : FormatType("cr2")
+    class svg : FormatType("svg")
+    class tga : FormatType("tga")
+    class tif : FormatType("tif")
+    class tiff : FormatType("tiff")
+    class avif : FormatType("avif")
+    class video3g2 : FormatType("3g2")
+    class video3gp : FormatType("3gp")
+    class videoAvi : FormatType("avi")
+    class videoFlv : FormatType("flv")
+    class videoM3u8 : FormatType("m3u8")
+    class videoTs : FormatType("ts")
+    class videoMov : FormatType("mov")
+    class videoMkv : FormatType("mkv")
+    class videoMp4 : FormatType("mp4")
+    class videoMpeg : FormatType("mpeg")
+    class videoMpd : FormatType("mpd")
+    class videoMxf : FormatType("mxf")
+    class videoOgv : FormatType("ogv")
+    class videoWebm : FormatType("webm")
+    class videoWmv : FormatType("wmv")
+    class videoM2ts : FormatType("m2ts")
+    class videoMts : FormatType("mts")
+    class audioAac : FormatType("aac")
+    class audioAiff : FormatType("aiff")
+    class audioAmr : FormatType("amr")
+    class audioFlac : FormatType("flac")
+    class audioM4a : FormatType("m4a")
+    class audioMp3 : FormatType("mp3")
+    class audioOgg : FormatType("ogg")
+    class audioOpus : FormatType("opus")
+    class audioWav : FormatType("wav")
+    class custom(customFormat: String) : FormatType(customFormat)
 
-    companion object {
-        fun auto(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "auto")
-        fun jpg(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "jpg")
-        fun webp(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "webp")
-        fun jp2(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "jp2")
-        fun png(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "png")
-        fun webm(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "webm")
-        fun mp4(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "mp4")
-        fun gif(options: (FormatBuilder.() -> Unit)? = null) = buildFormat(options, "gif")
+    override fun toString(): String {
+        return value
     }
-}
-
-internal fun buildFormat(
-    options: (FormatBuilder.() -> Unit)?,
-    format: String
-): Format {
-    val builder = FormatBuilder(format)
-    options?.let { builder.options() }
-    return builder.build()
-}
-
-class FormatBuilder(private val format: String) : TransformationComponentBuilder {
-    private var lossy: Boolean = false
-
-    fun lossy(lossy: Boolean) = apply { this.lossy = lossy }
-
-    override fun build() = Format(
-        ParamsAction(
-            listOfNotNull(
-                format.cldAsFormat(),
-                if (lossy) Flag.lossy().cldAsFlag() else null
-            )
-        )
-    )
 }

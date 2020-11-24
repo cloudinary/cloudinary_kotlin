@@ -1,40 +1,47 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.transformation.layer.*
+import com.cloudinary.transformation.layer.buildLayerComponent
+import com.cloudinary.transformation.layer.position.LayerPosition
+import com.cloudinary.transformation.layer.source.LayerSource
 
-class Displace private constructor(components: LayerComponents) : LayerAction(components) {
-
-    companion object {
-        fun displace(source: Source, transformation: Transformation? = null, position: Position? = null) =
-            Displace(
-                buildLayerComponent(
-                    source,
-                    transformation,
-                    position,
-                    paramName = "layer",
-                    paramKey = "l",
-                    extraParams = listOf(listOfNotNull("displace").cldAsEffect())
-                )
-            )
+class Displace private constructor(
+    private val source: LayerSource,
+    private val transformation: Transformation? = null, // imageTransformation
+    private val position: LayerPosition? = null
+) : Action {
+    override fun toString(): String {
+        return buildLayerComponent(
+            "l",
+            source,
+            transformation,
+            position,
+            extras = listOf(Param("e", "displace"))
+        )
     }
 
-    class Builder private constructor(
-        private val source: Source,
-        private var transformation: Transformation? = null,
-        private var position: Position? = null
-    ) : TransformationComponentBuilder {
-        constructor(source: Source) : this(source, null, null)
+    class Builder(private val source: LayerSource) : TransformationComponentBuilder {
+        private var transformation: Transformation? = null
+        private var position: LayerPosition? = null
 
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun position(position: (Position.Builder.() -> Unit)? = null): Builder {
-            val builder = Position.Builder()
+
+        fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
+            val builder = Transformation.Builder()
+            builder.transformation()
+            transformation(builder.build())
+            return this
+        }
+
+        fun position(position: LayerPosition) = apply { this.position = position }
+
+        fun position(position: (LayerPosition.Builder.() -> Unit)? = null): Builder {
+            val builder = LayerPosition.Builder()
             position?.let { builder.it() }
             position(builder.build())
             return this
         }
 
-        fun position(position: Position) = apply { this.position = position }
-        override fun build() = displace(source, transformation, position)
+        override fun build() = Displace(source, transformation, position)
     }
 }
 

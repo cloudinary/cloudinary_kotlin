@@ -1,9 +1,15 @@
 package com.cloudinary.transformation
 
-import com.cloudinary.util.cldRemovePound
 
-sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
-    constructor(color: String) : this(listOf(color))
+sealed class Color(private val value: String, private val prefix: String? = null) {
+
+    override fun toString(): String {
+        return if (prefix != null) {
+            "$prefix:$value"
+        } else {
+            value
+        }
+    }
 
     companion object {
         fun parseString(color: String) = when {
@@ -12,18 +18,12 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
         }
     }
 
-    internal fun withoutRgbPrefix(): Color {
-        val valueContent = values.first()
-        return if (valueContent is NamedValue && valueContent.name == "rgb") FromValues(
-            listOf(SimpleValue(valueContent.value)) + values.subList(
-                1,
-                values.size
-            )
-        ) else this
+
+    fun toString(includePrefix: Boolean): String {
+        return if (includePrefix) toString() else value
     }
 
-    private class FromValues(values: List<Any>) : Color(values)
-    class Rgb(hex: String) : Color(listOf(NamedValue("rgb", hex.cldRemovePound())))
+    class Rgb(hex: String) : Color(hex.cldRemoveColorPrefixes(), "rgb")
     class Named(name: String) : Color(name)
 
     /**
@@ -3381,3 +3381,5 @@ sealed class Color(values: List<Any?>) : ParamValue(values.filterNotNull()) {
      */
     object TRANSPARENT : Color("transparent")
 }
+
+internal fun String.cldRemoveColorPrefixes() = replaceFirst("#", "").replaceFirst("rgb", "").replaceFirst(":", "")

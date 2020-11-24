@@ -1,12 +1,16 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.Expression.Companion.aspectRatio
-import com.cloudinary.transformation.Expression.Companion.faceCount
-import com.cloudinary.transformation.Expression.Companion.height
-import com.cloudinary.transformation.Expression.Companion.pageCount
-import com.cloudinary.transformation.Expression.Companion.width
-import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.Transformation.Companion.transformation
+import com.cloudinary.transformation.effect.Effect.Companion.grayscale
+import com.cloudinary.transformation.effect.Effect.Companion.sepia
+import com.cloudinary.transformation.expression.Expression
+import com.cloudinary.transformation.expression.Expression.Companion.aspectRatio
+import com.cloudinary.transformation.expression.Expression.Companion.faceCount
+import com.cloudinary.transformation.expression.Expression.Companion.height
+import com.cloudinary.transformation.expression.Expression.Companion.pageCount
+import com.cloudinary.transformation.expression.Expression.Companion.width
+import com.cloudinary.transformation.expression.IfCondition.Companion.ifCondition
 import org.junit.Test
 
 class ConditionsTest {
@@ -22,30 +26,40 @@ class ConditionsTest {
                 "/e_grayscale"
 
         cldAssert(
-            allOperators,
-            Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
-                .effect(Effect.grayscale())
-        )
-
-        cldAssert(
-            allOperators,
-            Transformation().ifCondition(Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"))
-                .effect(Effect.grayscale())
-        )
-
-        cldAssert(
-            "$allOperators/if_else/e_sepia:30",
+            "$allOperators/if_end",
             Transformation().ifCondition(
-                width().eq(0)
-                    .and(height().ne(0))
-                    .or(aspectRatio().lt(0))
-                    .and(pageCount().gt(0))
-                    .and(faceCount().lte(0))
-                    .and(width().gte(0))
+                ifCondition(
+                    Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"),
+                    transformation {
+                        effect(
+                            grayscale()
+                        )
+                    })
             )
-                .effect(Effect.grayscale())
-                .ifElse()
-                .effect(Effect.sepia(30))
+        )
+
+        val condition = width().eq(0)
+            .and(height().ne(0))
+            .or(aspectRatio().lt(0))
+            .and(pageCount().gt(0))
+            .and(faceCount().lte(0))
+            .and(width().gte(0))
+
+        val actual =
+            transformation {
+                ifCondition(ifCondition(condition,
+                    transformation {
+                        effect(grayscale())
+                    }
+                ) {
+                    otherwise {
+                        effect(sepia(30))
+                    }
+                })
+            }
+        cldAssert(
+            "$allOperators/if_else/e_sepia:30/if_end",
+            actual
         )
     }
 }

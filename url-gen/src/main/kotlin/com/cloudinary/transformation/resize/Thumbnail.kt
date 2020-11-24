@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.resize
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.gravity.Gravity
 
 class Thumbnail(
@@ -16,11 +17,11 @@ class Thumbnail(
     override val actionType = "thumb"
 
     override fun params(): Collection<Param?> {
-        return super.params() + listOf(
-            gravity,
-            zoom?.cldAsZoom(),
-            x?.cldAsX(),
-            y?.cldAsY()
+        return super.params() + listOfNotNull(
+            gravity?.let { Param("g", it) },
+            x?.let { Param("x", it) },
+            y?.let { Param("y", it) },
+            zoom?.let { Param("z", it) }
         )
     }
 

@@ -13,7 +13,7 @@ class Fill(
     override val actionType = "fill"
 
     override fun params(): Collection<Param?> {
-        return super.params() + gravity
+        return if (gravity == null) super.params() else super.params() + Param("g", gravity)
     }
 
     class Builder : BaseBuilder<Builder>() {
