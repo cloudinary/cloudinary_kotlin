@@ -1,10 +1,7 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-
-import com.cloudinary.transformation.delivery.ColorSpaceEnum
-import com.cloudinary.transformation.delivery.Delivery
-import com.cloudinary.transformation.delivery.Dpr
+import com.cloudinary.transformation.delivery.*
 
 import org.junit.Test
 
@@ -28,23 +25,12 @@ class DeliveryTest {
     }
 
     @Test
-    fun testFps() {
-        cldAssert("fps_20.2", Delivery.fps(20.2f))
-        cldAssert("fps_20.2-30.0", Delivery.fps(20.2f, 30f))
-        cldAssert("fps_5.2-", Delivery.fps { min(5.2) })
-        cldAssert("fps_5-10", Delivery.fps {
-            min(5)
-            max(10)
-        })
-    }
-
-    @Test
     fun testColorSpace() {
-        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceEnum.Cmyk))
-        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceEnum.KeepCmyk))
-        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceEnum.NoCmyk))
-        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceEnum.SRgb))
-        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceEnum.TinySRgb))
+        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceEnum.Cmyk()))
+        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceEnum.KeepCmyk()))
+        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceEnum.NoCmyk()))
+        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceEnum.SRgb()))
+        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceEnum.TinySRgb()))
 
         cldAssert(
             "cs_icc:file.extension",
@@ -58,29 +44,23 @@ class DeliveryTest {
     }
 
     @Test
-    fun testKeyframeInterval() {
-        cldAssert("ki_0.3", Delivery.keyframeInterval(.3f))
-    }
-
-    @Test
     fun testQuality() {
 
-        cldAssert("q_100", Quality.level(100))
-        cldAssert("q_100:420", Quality.level(100) {
+        cldAssert("q_100", Delivery.quality(100))
+        cldAssert("q_100:420", Delivery.quality(100) {
             chromaSubSampling(ChromaSubSampling.C_420)
         })
 
         cldAssert("q_auto", Quality.auto())
         cldAssert("q_auto:low", Quality.low())
 
-        cldAssert("q_70:qmax_80", Quality.level(70) {
+        cldAssert("q_70:qmax_80", Delivery.quality(70) {
             quantization(80)
         })
 
-        cldAssert("q_jpegmini", Quality.jpegMini())
-        cldAssert("q_jpegmini:0", Quality.jpegMini(JpegMini.BEST))
-        cldAssert("q_jpegmini:1", Quality.jpegMini(JpegMini.HIGH))
-        cldAssert("q_jpegmini:2", Quality.jpegMini(JpegMini.MEDIUM))
+        cldAssert("q_jpegmini:0", Delivery.quality(Quality.jpegminiBest()))
+        cldAssert("q_jpegmini:1", Delivery.quality(Quality.jpegminiHigh()))
+        cldAssert("q_jpegmini:2", Delivery.quality(Quality.jpegminiMedium()))
     }
 
     @Test

@@ -1,16 +1,14 @@
 package com.cloudinary.transformation
 
-open class FlagsParam(flag: Any) : Param("flags", "fl", ParamValue(flag)) {
-    constructor(flag: Flag) : this(flag as Any)
-
-    // flag param is allowed to appear several time per action, so the hashing key includes the flag value itself.
-    private val _hashKey: String = "fl_$flag"
-
-    override val hashKey = _hashKey
+class FlagAction(private val value: Flag) : Action {
+    override fun toString() = value.toString()
 }
 
 // Make these objects instead of classes
-class Flag(vararg items: Any?) : ParamValue(items.toList().filterNotNull()) {
+class Flag(vararg values: Any?) {
+
+    val values: List<Any> = values.toList().filterNotNull()
+
     companion object {
         fun anyFormat() = Flag("any_format")
         fun attachment(name: String? = null) = Flag("attachment", name)
@@ -53,6 +51,10 @@ class Flag(vararg items: Any?) : ParamValue(items.toList().filterNotNull()) {
         fun splice() = Flag("splice")
         fun truncateTS() = Flag("truncate_ts")
         fun waveform() = Flag("waveform")
+    }
+
+    override fun toString(): String {
+        return "fl_${values.joinToString(":")}"
     }
 }
 

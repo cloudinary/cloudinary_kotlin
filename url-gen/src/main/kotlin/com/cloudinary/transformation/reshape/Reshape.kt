@@ -1,29 +1,23 @@
 package com.cloudinary.transformation.reshape
 
 import com.cloudinary.transformation.Action
-import com.cloudinary.transformation.effect.effectAction
-import com.cloudinary.util.cldRanged
 
-class Reshape(private val action: Action) : Action by action {
+abstract class Reshape : Action {
 
     companion object {
 
-        fun shear(options: ShearBuilder.() -> Unit): Reshape {
-            val builder = ShearBuilder()
+        fun shear(options: Shear.Builder.() -> Unit): Shear {
+            val builder = Shear.Builder()
             builder.options()
             return builder.build()
         }
 
-        fun distort(options: DistortBuilder.() -> Unit): Reshape {
-            val builder = DistortBuilder()
+        fun distort(options: Distort.Builder.() -> Unit): Distort {
+            val builder = Distort.Builder()
             builder.options()
             return builder.build()
         }
 
-        fun distortArc(degrees: Int) = reshape("distort", "arc", degrees.cldRanged(-360, 360))
+        fun distortArc(degrees: Int) = DistortArc(degrees)
     }
-
 }
-
-internal fun reshape(name: String, vararg values: Any?) = Reshape(effectAction(name, *values))
-

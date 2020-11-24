@@ -3,6 +3,7 @@ package com.cloudinary
 
 import com.cloudinary.config.Configuration
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.URL
@@ -24,7 +25,7 @@ class Asset constructor(
     private val publicId: String? = null,
     private val deliveryType: String? = null,
     private val resourceType: String = DEFAULT_RESOURCE_TYPE,
-    private val extension: Extension? = null,
+    private val extension: FormatType? = null,
     private val version: String? = null,
     private val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
@@ -53,7 +54,8 @@ class Asset constructor(
         }
 
         if (deliveryType == "fetch" && mutableExtension != null) {
-            mutableTransformation = mutableTransformation.format(mutableExtension.toFormat())
+//            mutableTransformation = mutableTransformation.format(mutableExtension.toFormat())
+            mutableTransformation = mutableTransformation.delivery(Delivery.format(mutableExtension))
             mutableExtension = null
         }
 
@@ -134,7 +136,7 @@ class Asset constructor(
         private var cloudName: String = config.cloudName
         private var publicId: String? = null
         private var deliveryType: String? = null
-        private var extension: Extension? = null
+        private var extension: FormatType? = null
         private var version: String? = null
         private var transformation: Transformation? = null
         private var signUrl: Boolean = false
@@ -153,7 +155,7 @@ class Asset constructor(
         fun publicId(publicId: String) = apply { this.publicId = publicId }
         fun deliveryType(type: String?) = apply { this.deliveryType = type }
         fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
-        fun extension(extension: Extension) = apply { this.extension = extension }
+        fun extension(extension: FormatType) = apply { this.extension = extension }
         fun version(version: String?) = apply { this.version = version }
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun transformation(transformation: (Transformation.Builder.() -> Unit)? = null) = apply {
@@ -202,7 +204,7 @@ class Asset constructor(
 
 private fun finalizeSource(
     source: String,
-    extension: Extension?,
+    extension: FormatType?,
     urlSuffix: String?
 ): FinalizedSource {
     var mutableSource = source.cldMergeSlashedInUrl()
@@ -323,18 +325,3 @@ private fun unsignedDownloadUrlPrefix(
 }
 
 private class FinalizedSource(val source: String, val sourceToSign: String)
-
-// TODO add all supported extensions
-enum class Extension(private val value: String) {
-    JPG("jpg"),
-    WEBP("webp"),
-    JP2("jp2"),
-    PNG("png"),
-    WEBM("webm"),
-    MP4("mp4"),
-    GIF("gif");
-
-    override fun toString() = value
-
-    internal fun toFormat() = buildFormat(null, value)
-}

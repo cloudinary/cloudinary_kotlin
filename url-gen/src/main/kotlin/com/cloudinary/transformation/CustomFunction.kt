@@ -3,32 +3,29 @@ package com.cloudinary.transformation
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldToUrlSafeBase64
 
-class CustomFunction(private val action: Action) : Action by action {
+abstract class CustomFunction : Action {
 
     companion object {
-        fun wasm(publicId: String) = Builder(publicId).type(Type.WASM).build()
-        fun remote(url: String) = Builder(url).type(Type.REMOTE).build()
-        fun preprocessRemote(url: String) = Builder(url).type(Type.PRE_PROCESS).build()
+        fun wasm(publicId: String) = WasmCustomFunction(publicId)
+        fun remote(url: String) = RemoteCustomFunction(url)
+        fun preprocessRemote(url: String) = PreprocessCustomFunction(url)
     }
+}
 
-    private class Builder(private val source: String) : TransformationComponentBuilder {
-        private var type: Type = Type.WASM
-
-        fun type(type: Type) = apply { this.type = type }
-
-        override fun build() = when (type) {
-            Type.PRE_PROCESS -> buildAction(listOf("pre", "remote", source.cldToUrlSafeBase64()))
-            Type.REMOTE -> buildAction(listOf("remote", source.cldToUrlSafeBase64()))
-            Type.WASM -> buildAction(listOf("wasm", source.cldEncodePublicId()))
-        }
-
-        private fun buildAction(values: List<Any>) =
-            CustomFunction(ParamsAction(Param("custom_function", "fn", ParamValue(values))))
+class RemoteCustomFunction(private val url: String) : CustomFunction() {
+    override fun toString(): String {
+        return "fn_remote:${url.cldToUrlSafeBase64()}"
     }
+}
 
-    enum class Type {
-        PRE_PROCESS,
-        REMOTE,
-        WASM
+class PreprocessCustomFunction(private val url: String) : CustomFunction() {
+    override fun toString(): String {
+        return "fn_pre:remote:${url.cldToUrlSafeBase64()}"
+    }
+}
+
+class WasmCustomFunction(private val wasmPublicId: String) : CustomFunction() {
+    override fun toString(): String {
+        return "fn_wasm:${wasmPublicId.cldEncodePublicId()}"
     }
 }

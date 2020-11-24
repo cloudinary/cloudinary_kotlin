@@ -1,10 +1,8 @@
 package com.cloudinary.transformation.resize
 
-import com.cloudinary.transformation.Expression
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.background.Background
-import com.cloudinary.transformation.cldAsX
-import com.cloudinary.transformation.cldAsY
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.gravity.Gravity
 
 open class Pad(
@@ -20,12 +18,11 @@ open class Pad(
     override val actionType = "pad"
 
     override fun params(): Collection<Param?> {
-        return super.params() + listOf(
-            gravity,
-            x?.cldAsX(),
-            y?.cldAsY(),
-            background?.toParam()
-        )
+        return super.params() + listOfNotNull(
+            background?.let { Param("b", it) },
+            gravity?.let { Param("g", it) },
+            x?.let { Param("x", it) },
+            y?.let { Param("y", it) })
     }
 
     open class Builder : BaseBuilder<Builder>() {
