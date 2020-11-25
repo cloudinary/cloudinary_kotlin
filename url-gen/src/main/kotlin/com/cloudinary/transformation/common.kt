@@ -24,25 +24,6 @@ class Param(val key: String, val value: Any) {
     }
 }
 
-internal fun asComposnentString(vararg params: Param?): String {
-    var lastKey = ""
-    var first = true
-
-    return buildString {
-        params.filterNotNull().sortedWith(compareBy({ it.key }, { it.value.toString() })).forEach { param ->
-            if (param.key == lastKey) {
-                append("$PARAM_VALUE_JOINER${param.value}")
-            } else {
-                if (!first) append(PARAM_SEPARATOR)
-                append(param)
-            }
-
-            lastKey = param.key
-            first = false
-        }
-    }
-}
-
 /**
  * Joins the given string with the values using the given separator (or used default  - colon)
  */
