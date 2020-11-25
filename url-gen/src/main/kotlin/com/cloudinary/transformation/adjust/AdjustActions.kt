@@ -108,6 +108,7 @@ class Green(level: Int? = null) : LevelAdjust("green", level?.cldRanged(-100, 10
 class Red(level: Int? = null) : LevelAdjust("red", level?.cldRanged(-100, 100))
 class OpacityThreshold(level: Int? = null) : LevelAdjust("opacity_threshold", level?.cldRanged(1, 100))
 class Saturation(level: Int? = null) : LevelAdjust("saturation", level?.cldRanged(-100, 100))
+
 class Sharpen(private val strength: Int?) : Adjust() {
     init {
         strength?.cldRanged(1, 2000)
@@ -116,7 +117,6 @@ class Sharpen(private val strength: Int?) : Adjust() {
     override fun toString(): String {
         return "e_sharpen".joinWithValues(strength)
     }
-
 }
 
 enum class ImproveMode(internal val value: String) {
