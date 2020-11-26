@@ -9,7 +9,7 @@ import org.junit.Test
 import kotlin.test.assertTrue
 
 class PositionTest {
-    val layerBuilder = NonVideoOnImageOverlay.Builder(LayerSource.image("sample"))
+    val layerBuilder = Overlay.Builder(LayerSource.image("sample"))
 
     @Test
     fun testOnImagePosition() {

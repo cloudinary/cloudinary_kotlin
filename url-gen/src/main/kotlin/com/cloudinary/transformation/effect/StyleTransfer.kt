@@ -1,37 +1,39 @@
-package com.cloudinary.transformation
+package com.cloudinary.transformation.effect
 
+import com.cloudinary.transformation.*
 import com.cloudinary.transformation.layer.buildLayerComponent
-import com.cloudinary.transformation.layer.position.LayerPosition
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.layer.source.LayerSource
 import com.cloudinary.transformation.layer.source.TextSource
+import com.cloudinary.util.cldRanged
 
-class Cutout private constructor(
+class StyleTransfer private constructor(
     private val source: LayerSource,
-    private val position: LayerPosition? = null
+    private val strength: Any? = null,
+    private val preserveColor: Boolean = false
 ) : Action {
 
     companion object {
-        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): Cutout {
+        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): StyleTransfer {
             val builder = Builder(source)
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun image(options: (ImageBuilder.() -> Unit)? = null): Cutout {
+        fun image(options: (ImageBuilder.() -> Unit)? = null): StyleTransfer {
             val builder = ImageBuilder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun fetch(options: (FetchBuilder.() -> Unit)? = null): Cutout {
+        fun fetch(options: (FetchBuilder.() -> Unit)? = null): StyleTransfer {
             val builder = FetchBuilder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun text(options: (TextBuilder.() -> Unit)? = null): Cutout {
+        fun text(options: (TextBuilder.() -> Unit)? = null): StyleTransfer {
             val builder = TextBuilder()
             options?.let { builder.it() }
             return builder.build()
@@ -42,9 +44,23 @@ class Cutout private constructor(
         return buildLayerComponent(
             "l",
             source,
-            position,
-            extras = listOf(Param("e", "cut_out"))
+            extras = listOfNotNull(
+                Param(
+                    "e", "style_transfer"
+                        .joinWithValues(
+                            strength?.cldRanged(0, 100),
+                            if (preserveColor) "preserve_color" else null
+                        )
+                )
+            )
         )
+    }
+
+    @TransformationDsl
+    class Builder(source: LayerSource) : BaseBuilder() {
+        init {
+            this.source = source
+        }
     }
 
     class FetchBuilder : BaseBuilder() {
@@ -77,27 +93,20 @@ class Cutout private constructor(
         fun source(source: ImageSource) = apply { this.source = source }
     }
 
-    class Builder(source: LayerSource) : BaseBuilder() {
-        init {
-            this.source = source
-        }
-    }
-
     abstract class BaseBuilder : TransformationComponentBuilder {
-        protected var position: LayerPosition? = null
         protected var source: LayerSource? = null
+        private var strength: Any? = null
+        private var preserveColor: Boolean = false
 
-        fun position(position: LayerPosition) = apply { this.position = position }
-        fun position(position: (LayerPosition.Builder.() -> Unit)? = null) = apply {
-            val builder = LayerPosition.Builder()
-            position?.let { builder.it() }
-            position(builder.build())
-        }
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Any) = apply { this.strength = strength }
 
-        override fun build(): Cutout {
+        fun preserveColor(preserveColor: Boolean = true) = apply { this.preserveColor = preserveColor }
+
+        override fun build(): StyleTransfer {
             val safeSource = source
             require(safeSource != null) { "A source must be provided" }
-            return Cutout(safeSource, position)
+            return StyleTransfer(safeSource, strength, preserveColor)
         }
     }
 }

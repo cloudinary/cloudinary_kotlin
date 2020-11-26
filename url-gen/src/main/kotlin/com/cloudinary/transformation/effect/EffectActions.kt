@@ -1,8 +1,6 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.layer.buildLayerComponent
-import com.cloudinary.transformation.layer.source.LayerSource
 import com.cloudinary.util.cldRanged
 
 class GradientFade private constructor(
@@ -605,51 +603,5 @@ class OrderedDither internal constructor(private val filter: DitherFilter?) : Ef
         override fun toString(): String {
             return value.toString()
         }
-    }
-}
-
-class StyleTransfer private constructor(
-    private val source: LayerSource,
-    private val strength: Any? = null,
-    private val preserveColor: Boolean = false,
-    private val transformation: Transformation? = null // imageTransformation
-) : Action {
-    override fun toString(): String {
-        return buildLayerComponent(
-            "l",
-            source,
-            transformation,
-            extras = listOfNotNull(
-                Param(
-                    "e", "style_transfer"
-                        .joinWithValues(
-                            strength?.cldRanged(0, 100),
-                            if (preserveColor) "preserve_color" else null
-                        )
-                )
-            )
-        )
-    }
-
-    @TransformationDsl
-    class Builder(private val source: LayerSource) : TransformationComponentBuilder {
-        private var strength: Any? = null
-        private var preserveColor: Boolean = false
-        private var transformation: Transformation? = null
-
-        fun strength(strength: Int) = apply { this.strength = strength }
-        fun strength(strength: Any) = apply { this.strength = strength }
-
-        fun preserveColor(preserveColor: Boolean = true) = apply { this.preserveColor = preserveColor }
-
-        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun transformation(transformation: Transformation.Builder.() -> Unit): Builder {
-            val builder = Transformation.Builder()
-            builder.transformation()
-            transformation(builder.build())
-            return this
-        }
-
-        override fun build() = StyleTransfer(source, strength, preserveColor, transformation)
     }
 }

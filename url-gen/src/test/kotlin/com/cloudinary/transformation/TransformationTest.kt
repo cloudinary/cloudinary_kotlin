@@ -15,10 +15,14 @@ import com.cloudinary.transformation.gravity.Gravity.Companion.east
 import com.cloudinary.transformation.gravity.Gravity.Companion.west
 import com.cloudinary.transformation.layer.BlendMode
 import com.cloudinary.transformation.layer.Overlay
-import com.cloudinary.transformation.layer.Overlay.Companion.imageOnImage
+import com.cloudinary.transformation.layer.Overlay.Companion.source
 import com.cloudinary.transformation.layer.Underlay
-import com.cloudinary.transformation.layer.source.*
+import com.cloudinary.transformation.layer.source.FontHinting
+import com.cloudinary.transformation.layer.source.FontWeight
+import com.cloudinary.transformation.layer.source.ImageSource
+import com.cloudinary.transformation.layer.source.LayerSource.Companion.image
 import com.cloudinary.transformation.layer.source.LayerSource.Companion.text
+import com.cloudinary.transformation.layer.source.Stroke
 import com.cloudinary.transformation.reshape.Reshape.Companion.distortArc
 import com.cloudinary.transformation.resize.Resize.Companion.scale
 import com.cloudinary.transformation.transcode.AudioCodecType
@@ -43,10 +47,13 @@ class TransformationTest {
 
     @Test
     fun testCutter() {
-        cldAssert("l_sample/fl_cutter,fl_layer_apply", Transformation().cutter(imageSource))
+        cldAssert("l_sample/fl_cutter,fl_layer_apply", Transformation().cutter(ImageSource("sample")))
         cldAssert(
             "l_sample/e_sepia/fl_cutter,fl_layer_apply",
-            Transformation().cutter(imageSource) { transformation(sepiaTransformation) })
+            Transformation().cutter(Cutter.source(image("sample") {
+                transformation(sepiaTransformation)
+            }))
+        )
     }
 
     @Test
@@ -54,9 +61,10 @@ class TransformationTest {
         cldAssert("l_sample/e_anti_removal,fl_layer_apply", Transformation().antiRemoval(imageSource))
         cldAssert(
             "l_sample/e_sepia/e_anti_removal,fl_layer_apply",
-            Transformation().antiRemoval(imageSource) {
+            Transformation().antiRemoval(AntiRemoval.source(image("sample") {
                 transformation(sepiaTransformation)
-            })
+            }))
+        )
     }
 
     @Test
@@ -131,8 +139,11 @@ class TransformationTest {
     @Test
     fun testDisplace() {
         cldAssert(
-            "l_radialize/e_displace,fl_layer_apply",
-            Transformation().displace(LayerSource.image("radialize"))
+            "l_radialize/e_displace,fl_layer_apply,x_50",
+            Transformation().displace(Displace.image {
+                source("radialize")
+                x(50)
+            })
         )
     }
 
@@ -174,8 +185,8 @@ class TransformationTest {
 
     @Test
     fun testLayer() {
-        cldAssert("l_sample/fl_layer_apply", Transformation().overlay(imageOnImage(imageSource)))
-        cldAssert("u_sample/fl_layer_apply", Transformation().underlay(Underlay.image(imageSource)))
+        cldAssert("l_sample/fl_layer_apply", Transformation().overlay(source(imageSource)))
+        cldAssert("u_sample/fl_layer_apply", Transformation().underlay(Underlay.source(imageSource)))
     }
 
     @Test
@@ -208,6 +219,7 @@ class TransformationTest {
         cldAssert("fl_layer_apply", Transformation().addFlag(Flag.layerApply()))
     }
 
+
     @Test
     fun textComplexTransformation() {
         val transformation =
@@ -218,11 +230,14 @@ class TransformationTest {
                     width(4)
                     color(Color.RED)
                 }
-                overlay(imageOnImage("sample") {
-                    transformation {
-                        resize(scale {
-                            width(100)
-                        })
+                overlay(Overlay.image {
+                    source("sample") {
+                        transformation {
+                            resize(scale {
+                                width(100)
+                            })
+
+                        }
                     }
                     position {
                         gravity(east())
@@ -230,24 +245,25 @@ class TransformationTest {
                     }
                     blendMode(BlendMode.screen())
                 })
-                overlay(Overlay.textOnImage(
-                    text("hello world") {
-                        style {
-                            fontSize(21)
-                            fontFamily("Arial")
-                            fontWeight(FontWeight.BOLD)
-                            fontHinting(FontHinting.FULL)
-                            stroke(Stroke.STROKE)
-                            letterSpacing(12f)
+                overlay(
+                    source(
+                        text("hello world") {
+                            style {
+                                fontSize(21)
+                                fontFamily("Arial")
+                                fontWeight(FontWeight.BOLD)
+                                fontHinting(FontHinting.FULL)
+                                stroke(Stroke.STROKE)
+                                letterSpacing(12f)
+                            }
+                            backgroundColor(Color.RED)
+                            textColor(Color.BLUE)
+                        }) {
+                        position {
+                            x(20)
+                            gravity(west())
                         }
-                        backgroundColor(Color.RED)
-                        textColor(Color.BLUE)
-                    }) {
-                    position {
-                        x(20)
-                        gravity(west())
-                    }
-                })
+                    })
                 rotate(Rotate.byAngle(25))
                 delivery(Delivery.format(FormatType.png()))
             }
