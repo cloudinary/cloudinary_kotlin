@@ -22,13 +22,12 @@ class CutoutTest {
 
         cldAssert(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply",
-            Transformation().cutout(ImageSource("ring2")) { transformation(tr) }
+            Transformation().cutout(ImageSource("ring2", transformation = tr))
         )
 
         cldAssert(
             "l_ring2/c_scale,h_200,w_200/r_max/e_cut_out,fl_layer_apply,g_north,x_100",
-            Transformation().cutout(ImageSource("ring2")) {
-                transformation(tr)
+            Transformation().cutout(ImageSource("ring2", transformation = tr)) {
                 position(pos)
             }
         )

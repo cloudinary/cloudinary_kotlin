@@ -2,14 +2,15 @@ package com.cloudinary.transformation.layer.source
 
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.expression.Expression
-
 
 class SubtitlesSource private constructor(
     private val publicId: String,
     private val style: Any,
     private val background: Color? = null,
-    private val textColor: Color? = null
+    private val textColor: Color? = null,
+    override val transformation: Transformation? = null
 ) : BaseVideoSource {
 
     // CODE SMELL: since the container of this source may need to resort the params, we cannot fully encapsulate
@@ -52,11 +53,19 @@ class SubtitlesSource private constructor(
 
         fun backgroundColor(background: Color) = apply { this.background = background }
         fun textColor(textColor: Color) = apply { this.textColor = textColor }
+        private var transformation: Transformation? = null
+
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: Transformation.Builder.() -> Unit) = apply {
+            val builder = Transformation.Builder()
+            builder.transformation()
+            this.transformation = builder.build()
+        }
 
         fun build(): SubtitlesSource {
             val safeStyle = style
             require(safeStyle != null) { "A style must be provided (font + font size are mandatory)." }
-            return SubtitlesSource(publicId, safeStyle, background, textColor)
+            return SubtitlesSource(publicId, safeStyle, background, textColor, transformation)
         }
     }
 }

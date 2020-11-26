@@ -13,43 +13,37 @@ class CutterTest {
     fun testCutter() {
         var expected = "l_hexagon_sample/c_scale,fl_relative,h_1.0,w_1.0/fl_cutter,fl_layer_apply"
 
-        val source = LayerSource.image("hexagon_sample")
         val scale = Resize.scale {
             width(1f)
             height(1f)
             resizeMode(ResizeMode.relative())
         }
 
-        var actualFromBuilder = Cutter.Builder(source)
-            .transformation(
-                Transformation().resize(scale)
-
-            ).build()
-
-        var actualFromDsl = Transformation().cutter(source) {
-            transformation(Transformation().resize(scale))
+        val source = LayerSource.image("hexagon_sample") {
+            transformation {
+                resize(scale)
+            }
         }
 
-        cldAssert(expected, actualFromBuilder)
-        cldAssert(expected, actualFromDsl)
+        var actual = Transformation().cutter(source)
+
+        cldAssert(expected, actual)
 
         val position = LayerPosition.Builder().x(50).tileMode(TileMode.TILED).build()
         val crop = Resize.crop {
             width(100)
             height(50)
         }
-        actualFromBuilder = Cutter.Builder(source)
-            .transformation(Transformation().resize(crop))
-            .position(position)
-            .build()
 
-        actualFromDsl = Transformation().cutter(source) {
-            transformation(Transformation().resize(crop))
+        actual = Transformation().cutter(LayerSource.image("hexagon_sample") {
+            transformation {
+                resize(crop)
+            }
+        }) {
             position(position)
         }
 
         expected = "l_hexagon_sample/c_crop,h_50,w_100/fl_cutter,fl_layer_apply,fl_tiled,x_50"
-        cldAssert(expected, actualFromBuilder)
-        cldAssert(expected, actualFromDsl)
+        cldAssert(expected, actual)
     }
 }

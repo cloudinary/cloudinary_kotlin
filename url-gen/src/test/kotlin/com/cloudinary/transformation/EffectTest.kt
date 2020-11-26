@@ -309,13 +309,27 @@ class EffectTest {
 
         cldAssert(
             "l_lighthouse/c_scale,w_200/e_sepia/e_style_transfer:34,fl_layer_apply",
-            Effect.styleTransfer(lighthouse) {
-                strength(34)
+            Effect.styleTransfer(LayerSource.image("lighthouse") {
                 transformation {
                     resize(Resize.scale(200))
                     effect(Effect.sepia())
                 }
+            }) {
+                strength(34)
             })
+
+        cldAssert(
+            "l_lighthouse/c_scale,w_200/e_sepia/e_style_transfer:34,fl_layer_apply",
+            Effect.styleTransfer(StyleTransfer.image {
+                source("lighthouse") {
+                    transformation {
+                        resize(Resize.scale(200))
+                        effect(Effect.sepia())
+                    }
+                }
+                strength(34)
+            })
+        )
 
         cldAssert(
             "l_lighthouse/e_style_transfer:preserve_color,fl_layer_apply",

@@ -8,8 +8,6 @@ import com.cloudinary.transformation.expression.IfCondition
 import com.cloudinary.transformation.expression.Variable
 import com.cloudinary.transformation.layer.Overlay
 import com.cloudinary.transformation.layer.Underlay
-import com.cloudinary.transformation.layer.source.FetchSource
-import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.layer.source.LayerSource
 import com.cloudinary.transformation.psdtools.PSDTools
 import com.cloudinary.transformation.reshape.Reshape
@@ -125,10 +123,7 @@ interface ITransformable<T> {
     fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
     fun displace(displace: Displace) = add(displace)
-    fun displace(source: ImageSource, options: (Displace.Builder.() -> Unit)? = null) =
-        addWithBuilder(Displace.Builder(source), options)
-
-    fun displace(source: FetchSource, options: Displace.Builder.() -> Unit) =
+    fun displace(source: LayerSource, options: (Displace.Builder.() -> Unit)? = null) =
         addWithBuilder(Displace.Builder(source), options)
 
     // effects

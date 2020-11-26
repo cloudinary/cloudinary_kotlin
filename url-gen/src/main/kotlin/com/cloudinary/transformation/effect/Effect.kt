@@ -109,6 +109,8 @@ abstract class Effect : Action {
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun styleTransfer(styleTransfer: StyleTransfer) = styleTransfer
     }
 }
 

@@ -1,10 +1,13 @@
 package com.cloudinary.transformation.layer.source
 
 import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.Transformation
 import com.cloudinary.util.cldSmartUrlEncode
 import java.util.regex.Pattern
 
 interface LayerSource {
+    val transformation: Transformation?
+
     companion object {
         fun text(text: String, options: (TextSource.Builder.() -> Unit)? = null) = text(text as Any, options)
         fun text(text: Any, options: (TextSource.Builder.() -> Unit)? = null): TextSource {

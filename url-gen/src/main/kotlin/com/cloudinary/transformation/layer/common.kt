@@ -1,14 +1,16 @@
 package com.cloudinary.transformation.layer
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.DEFAULT_COMPONENT_SEPARATOR
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.transformation.layer.position.BaseLayerPosition
 import com.cloudinary.transformation.layer.position.TimelinePosition
 import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.toComponentString
 
 internal fun buildLayerComponent(
     sourceParamKey: String,
     source: LayerSource,
-    transformation: Transformation? = null,
     position: BaseLayerPosition? = null,
     blendMode: BlendMode? = null,
     timelinePosition: TimelinePosition? = null,
@@ -32,7 +34,7 @@ internal fun buildLayerComponent(
         if (blendMode != null) add(Param("e", blendMode))
     }.toComponentString()
 
-    return sourceComponent.joinWithValues(transformation, lastComponent, separator = DEFAULT_COMPONENT_SEPARATOR)
+    return sourceComponent.joinWithValues(source.transformation, lastComponent, separator = DEFAULT_COMPONENT_SEPARATOR)
 }
 
 sealed class BlendMode(private val value: String) {
