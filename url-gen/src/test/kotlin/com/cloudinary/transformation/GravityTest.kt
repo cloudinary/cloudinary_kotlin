@@ -11,6 +11,9 @@ class GravityTest {
     @Test
     fun testGravity() {
         cldAssert("cat:bird", Gravity.objects(GravityObject.CAT, GravityObject.BIRD))
+        cldAssert("cat:bird:auto:microwave_30:bottle_avoid", Gravity.objects(GravityObject.CAT, GravityObject.BIRD) {
+            fallbackGravity(Gravity.auto(GravityObject.MICROWAVE.weight(30), GravityObject.BOTTLE.avoid()))
+        })
         cldAssert("west", Gravity.west())
         cldAssert("ocr_text", Gravity.ocrText())
 

@@ -1,5 +1,6 @@
 package com.cloudinary.transformation.gravity
 
+import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.transformation.joinWithValues
 
 // TODO these classes don't yet make enough sense
@@ -34,8 +35,15 @@ abstract class Gravity {
 
         fun ocrText() = GravityByOcr()
 
-        fun objects(objectGravity: IGravityObject, vararg objects: IGravityObject) =
-            GravityByObjects(listOf(objectGravity) + objects)
+        fun objects(
+            objectGravity: GravityObject,
+            vararg objects: GravityObject,
+            options: (GravityByObjects.Builder.() -> Unit)? = null
+        ): GravityByObjects {
+            val builder = GravityByObjects.Builder(mutableListOf(objectGravity).also { it.addAll(objects) })
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
         fun auto(vararg objects: IAutoGravityObject) = GravityByAutoAlgorithm(objects.toList())
     }
@@ -47,9 +55,22 @@ class GravityByDirection internal constructor(private val direction: Direction) 
     }
 }
 
-class GravityByObjects internal constructor(private val objects: List<IGravityObject>) : Gravity() {
+class GravityByObjects internal constructor(
+    private val objects: List<GravityObject>,
+    private val fallbackGravity: GravityByAutoAlgorithm? = null
+) : Gravity() {
     override fun toString(): String {
-        return objects.joinToString(":")
+        return objects.joinToString(":").joinWithValues(fallbackGravity)
+    }
+
+    @TransformationDsl
+    class Builder(private val objects: MutableList<GravityObject>) {
+        private var fallbackGravity: GravityByAutoAlgorithm? = null
+
+        fun fallbackGravity(gravity: GravityByAutoAlgorithm) = apply { this.fallbackGravity = gravity }
+        fun build(): GravityByObjects {
+            return GravityByObjects(objects, fallbackGravity)
+        }
     }
 }
 
