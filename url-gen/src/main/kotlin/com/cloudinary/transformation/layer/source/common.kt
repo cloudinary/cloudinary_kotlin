@@ -10,6 +10,7 @@ interface LayerSource {
 
     companion object {
         fun text(text: String, options: (TextSource.Builder.() -> Unit)? = null) = text(text as Any, options)
+
         fun text(text: Any, options: (TextSource.Builder.() -> Unit)? = null): TextSource {
             val builder = TextSource.Builder(text)
             options?.let { builder.it() }
@@ -46,9 +47,9 @@ interface LayerSource {
 
 interface BaseVideoSource : LayerSource
 
-class TextStyle(
-    private val fontFamily: String? = null,
-    private val fontSize: Any? = null,
+class TextStyle internal constructor(
+    private val fontFamily: Any,
+    private val fontSize: Any,
     private val fontWeight: FontWeight? = null,
     private val fontStyle: FontStyle? = null,
     private val fontAntialias: FontAntialias? = null,
@@ -76,9 +77,9 @@ class TextStyle(
         ).joinToString("_")
     }
 
-    class Builder {
-        private var fontFamily: String? = null
-        private var fontSize: Any? = null
+    class Builder(private val fontFamily: Any, private val fontSize: Any) {
+        constructor(fontFamily: String, fontSize: Int) : this(fontFamily as Any, fontSize as Any)
+
         private var fontWeight: FontWeight? = null
         private var fontStyle: FontStyle? = null
         private var fontAntialias: FontAntialias? = null
@@ -89,9 +90,6 @@ class TextStyle(
         private var letterSpacing: Any? = null
         private var lineSpacing: Any? = null
 
-        fun fontFamily(fontFamily: String) = apply { this.fontFamily = fontFamily }
-        fun fontSize(fontSize: Int) = apply { this.fontSize = fontSize }
-        fun fontSize(fontSize: Any) = apply { this.fontSize = fontSize }
         fun fontStyle(fontStyle: FontStyle) = apply { this.fontStyle = fontStyle }
         fun fontAntialias(fontAntialias: FontAntialias) = apply { this.fontAntialias = fontAntialias }
         fun fontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
@@ -122,7 +120,9 @@ class TextStyle(
 
 enum class FontWeight(private val value: String) {
     NORMAL("normal"),
-    BOLD("bold");
+    BOLD("bold"),
+    THIN("thin"),
+    LIGHT("light");
 
     override fun toString(): String {
         return value

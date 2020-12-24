@@ -41,6 +41,8 @@ sealed class BlendMode(private val value: String) {
     class screen : BlendMode("screen")
     class multiply : BlendMode("multiply")
     class overlay : BlendMode("overlay")
+    class mask : BlendMode("mask")
+    class antiRemoval : BlendMode("anti_removal")
 
     override fun toString(): String {
         return value

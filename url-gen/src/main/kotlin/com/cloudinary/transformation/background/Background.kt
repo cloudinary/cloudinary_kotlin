@@ -18,18 +18,32 @@ abstract class Background {
             return builder.build()
         }
 
-        fun auto() = AutoBackground.Builder().build()
+        fun auto() = AutoBackground()
 
         // auto:border
-        fun border(options: (AutoBackground.Builder.() -> Unit)? = null): Background {
-            val builder = AutoBackground.Builder("border")
+        fun border(options: (BorderBackground.Builder.() -> Unit)? = null): Background {
+            val builder = BorderBackground.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        // auto:border_gradient
+        fun borderGradient(options: (BorderGradientBackground.Builder.() -> Unit)? = null): Background {
+            val builder = BorderGradientBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
         // auto:predominant
-        fun predominant(options: (AutoBackground.Builder.() -> Unit)? = null): Background {
-            val builder = AutoBackground.Builder("predominant")
+        fun predominant(options: (PredominantBackground.Builder.() -> Unit)? = null): Background {
+            val builder = PredominantBackground.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        // auto:predominant
+        fun predominantGradient(options: (PredominantGradientBackground.Builder.() -> Unit)? = null): Background {
+            val builder = PredominantGradientBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
         }

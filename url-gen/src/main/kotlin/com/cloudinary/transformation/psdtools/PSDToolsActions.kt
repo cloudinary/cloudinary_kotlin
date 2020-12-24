@@ -64,7 +64,7 @@ class GetLayer private constructor(
     private val names: List<Any> = emptyList()
 ) : PSDTools() {
     init {
-        require(numbers.isNotEmpty() || names.isNotEmpty()) { "Either later names or indices must be populated" }
+        require(numbers.isNotEmpty() || names.isNotEmpty()) { "Either layer names or indices must be populated" }
         require(!(numbers.isNotEmpty() && names.isNotEmpty())) { "The list should contain either only names or indices - not both" }
     }
 

@@ -6,14 +6,15 @@ import com.cloudinary.transformation.gravity.Gravity
 
 class Thumbnail(
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
+    // TODO - limit gravity to face/faces only?
     val gravity: Gravity? = null,
     val zoom: Any? = null,
     val x: Any? = null,
     val y: Any? = null
 ) :
-    Resize(dimensions, mode, ignoreAspectRatio) {
+    Resize(dimensions, relative, regionRelative) {
     override val actionType = "thumb"
 
     override fun params(): Collection<Param?> {
@@ -66,8 +67,8 @@ class Thumbnail(
 
         override fun build() = Thumbnail(
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity,
             zoom,
             x,

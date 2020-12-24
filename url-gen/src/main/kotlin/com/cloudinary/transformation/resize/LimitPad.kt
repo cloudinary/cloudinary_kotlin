@@ -1,24 +1,24 @@
 package com.cloudinary.transformation.resize
 
 import com.cloudinary.transformation.background.Background
-import com.cloudinary.transformation.gravity.Gravity
+import com.cloudinary.transformation.gravity.CompassGravity
 
 class LimitPad(
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
-    gravity: Gravity? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
+    gravity: CompassGravity? = null,
     x: Any? = null,
     y: Any? = null,
     background: Background? = null
-) : Pad(dimensions, mode, ignoreAspectRatio, gravity, x, y, background) {
+) : Pad(dimensions, relative, regionRelative, gravity, x, y, background) {
     override val actionType = "lpad"
 
     class Builder : Pad.Builder() {
         override fun build() = LimitPad(
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity,
             x,
             y,

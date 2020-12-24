@@ -8,15 +8,15 @@ import com.cloudinary.transformation.gravity.Gravity
 class GenericResize(
     cropMode: String,
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
     val gravity: Gravity? = null,
     val zoom: Any? = null,
     val x: Any? = null,
     val y: Any? = null,
     val background: Background? = null
 ) :
-    Resize(dimensions, mode, ignoreAspectRatio) {
+    Resize(dimensions, relative, regionRelative) {
     override val actionType = cropMode
 
     override fun params(): Collection<Param?> {
@@ -76,8 +76,8 @@ class GenericResize(
         override fun build() = GenericResize(
             cropMode,
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity,
             zoom,
             x,

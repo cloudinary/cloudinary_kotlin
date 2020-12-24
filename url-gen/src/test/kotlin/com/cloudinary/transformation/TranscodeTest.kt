@@ -8,12 +8,12 @@ import org.junit.Test
 class TranscodeTest {
     @Test
     fun testAudioCodec() {
-        cldAssert("ac_aac", Transcode.audioCodec(AudioCodecType.AAC))
+        cldAssert("ac_aac", Transcode.audioCodec(AudioCodec.AAC))
     }
 
     @Test
     fun testAudioFrequency() {
-        cldAssert("af_8000", Transcode.audioFrequency(AudioFrequencyType.FREQ8000))
+        cldAssert("af_8000", Transcode.audioFrequency(AudioFrequency.FREQ8000))
     }
 
     @Test
@@ -23,8 +23,12 @@ class TranscodeTest {
 
     @Test
     fun toAnimated() {
-        cldAssert("f_webp,fl_awebp", Transcode.toAnimated("webp"))
-        cldAssert("dl_100,f_gif,vs_3", Transcode.toAnimated("gif") {
+        cldAssert("f_webp,fl_animated,fl_awebp", Transcode.toAnimated("webp"))
+        cldAssert("dl_100,f_gif,fl_animated,vs_3", Transcode.toAnimated("gif") {
+            delay(100)
+            videoSampling(3)
+        })
+        cldAssert("dl_100,f_webp,fl_animated,fl_awebp,vs_3", Transcode.toAnimated("webp") {
             delay(100)
             videoSampling(3)
         })
@@ -58,11 +62,7 @@ class TranscodeTest {
     @Test
     fun testFps() {
         cldAssert("fps_20.2", Transcode.fps(20.2f))
-        cldAssert("fps_20.2-30.0", Transcode.fps(20.2f, 30f))
-        cldAssert("fps_5.2-", Transcode.fps { min(5.2) })
-        cldAssert("fps_5-10", Transcode.fps {
-            min(5)
-            max(10)
-        })
+        cldAssert("fps_20.2-", Transcode.fpsRange(20.2f))
+        cldAssert("fps_20.2-30.0", Transcode.fpsRange(20.2f, 30f))
     }
 }

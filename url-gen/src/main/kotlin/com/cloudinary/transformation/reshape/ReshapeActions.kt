@@ -1,9 +1,16 @@
 package com.cloudinary.transformation.reshape
 
+import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.joinWithValues
+import com.cloudinary.transformation.layer.buildLayerComponent
+import com.cloudinary.transformation.layer.position.LayerPosition
+import com.cloudinary.transformation.layer.source.FetchSource
+import com.cloudinary.transformation.layer.source.ImageSource
+import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.TextSource
 import com.cloudinary.util.cldRanged
-import com.cloudinary.util.validateAllNotNull
 
 class Shear private constructor(
     private val skewX: Any? = null,
@@ -17,6 +24,8 @@ class Shear private constructor(
         private var skewX: Any? = null
         private var skewY: Any? = null
 
+        fun skewX(skewX: Any) = apply { this.skewX = skewX }
+        fun skewY(skewY: Any) = apply { this.skewY = skewY }
         fun skewX(skewX: Int) = apply { this.skewX = skewX }
         fun skewY(skewY: Int) = apply { this.skewY = skewY }
 
@@ -24,7 +33,7 @@ class Shear private constructor(
     }
 }
 
-class DistortArc(private val degrees: Int) : Reshape() {
+class DistortArc(private val degrees: Any) : Reshape() {
     init {
         degrees.cldRanged(-360, 360)
     }
@@ -34,75 +43,103 @@ class DistortArc(private val degrees: Int) : Reshape() {
     }
 }
 
-class Distort private constructor(
-    private val topLeftX: Any,
-    private val topLeftY: Any,
-    private val topRightX: Any,
-    private val topRightY: Any,
-    private val bottomRightX: Any,
-    private val bottomRightY: Any,
-    private val bottomLeftX: Any,
-    private val bottomLeftY: Any
-) : Reshape() {
+class Distort internal constructor(private val points: List<Any>) : Reshape() {
+    override fun toString(): String {
+        return "e_distort:${points.joinToString(separator = ":")}"
+    }
+}
+
+class CutByImage private constructor(
+    private val source: LayerSource,
+    private val position: LayerPosition? = null
+) : Action {
+
+    companion object {
+        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): CutByImage {
+            val builder = Builder(source)
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun image(options: (ImageBuilder.() -> Unit)? = null): CutByImage {
+            val builder = ImageBuilder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun fetch(options: (FetchBuilder.() -> Unit)? = null): CutByImage {
+            val builder = FetchBuilder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun text(options: (TextBuilder.() -> Unit)? = null): CutByImage {
+            val builder = TextBuilder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+    }
 
     override fun toString(): String {
-        return "e_distort".joinWithValues(
-            topLeftX,
-            topLeftY,
-            topRightX,
-            topRightY,
-            bottomRightX,
-            bottomRightY,
-            bottomLeftX,
-            bottomLeftY
+        return buildLayerComponent(
+            "l",
+            source,
+            position,
+            extras = listOf(Param("fl", "cutter"))
         )
     }
 
-    class Builder : TransformationComponentBuilder {
-        private var topLeftX: Any? = null
-        private var topLeftY: Any? = null
-        private var topRightX: Any? = null
-        private var topRightY: Any? = null
-        private var bottomRightX: Any? = null
-        private var bottomRightY: Any? = null
-        private var bottomLeftX: Any? = null
-        private var bottomLeftY: Any? = null
+    class FetchBuilder : BaseBuilder() {
+        fun source(publicId: String, source: (FetchSource.Builder.() -> Unit)? = null) = apply {
+            val builder = FetchSource.Builder(publicId)
+            source?.let { builder.it() }
+            source(builder.build())
+        }
 
-        fun topLeft(x: Int, y: Int) = apply { this.topLeftX = x; this.topLeftY = y }
-        fun topLeft(x: Any, y: Any) = apply { this.topLeftX = x; this.topLeftY = y }
+        fun source(source: FetchSource) = apply { this.source = source }
+    }
 
-        fun topRight(x: Int, y: Int) = apply { this.topRightX = x; this.topRightY = y }
-        fun topRight(x: Any, y: Any) = apply { this.topRightX = x; this.topRightY = y }
+    class TextBuilder : BaseBuilder() {
+        fun source(publicId: String, source: (TextSource.Builder.() -> Unit)? = null) = apply {
+            val builder = TextSource.Builder(publicId)
+            source?.let { builder.it() }
+            source(builder.build())
+        }
 
-        fun bottomRight(x: Int, y: Int) = apply { this.bottomRightX = x; this.bottomRightY = y }
-        fun bottomRight(x: Any, y: Any) = apply { this.bottomRightX = x; this.bottomRightY = y }
+        fun source(source: TextSource) = apply { this.source = source }
+    }
 
-        fun bottomLeft(x: Int, y: Int) = apply { this.bottomLeftX = x; this.bottomLeftY = y }
-        fun bottomLeft(x: Any, y: Any) = apply { this.bottomLeftX = x; this.bottomLeftY = y }
+    class ImageBuilder : BaseBuilder() {
+        fun source(publicId: String, source: (ImageSource.Builder.() -> Unit)? = null) = apply {
+            val builder = ImageSource.Builder(publicId)
+            source?.let { builder.it() }
+            source(builder.build())
+        }
 
-        override fun build(): Distort {
-            // TODO compiler contracts
-            validateAllNotNull(
-                topLeftX,
-                topLeftY,
-                topRightX,
-                topRightY,
-                bottomRightX,
-                bottomRightY,
-                bottomLeftX,
-                bottomLeftY
-            )
+        fun source(source: ImageSource) = apply { this.source = source }
+    }
 
-            return Distort(
-                topLeftX!!,
-                topLeftY!!,
-                topRightX!!,
-                topRightY!!,
-                bottomRightX!!,
-                bottomRightY!!,
-                bottomLeftX!!,
-                bottomLeftY!!
-            )
+    class Builder(source: LayerSource) : BaseBuilder() {
+        init {
+            this.source = source
+        }
+    }
+
+    abstract class BaseBuilder : TransformationComponentBuilder {
+        protected var position: LayerPosition? = null
+        protected var source: LayerSource? = null
+
+        fun position(position: LayerPosition) = apply { this.position = position }
+        fun position(position: (LayerPosition.Builder.() -> Unit)? = null) = apply {
+            val builder = LayerPosition.Builder()
+            position?.let { builder.it() }
+            position(builder.build())
+        }
+
+        override fun build(): CutByImage {
+            val safeSource = source
+            require(safeSource != null) { "A source must be provided" }
+            return CutByImage(safeSource, position)
         }
     }
 }

@@ -7,7 +7,7 @@ import com.cloudinary.transformation.toComponentString
 import com.cloudinary.util.cldRealPositive
 import java.util.*
 
-class StreamingProfile(private val profile: StreamingProfileType) {
+class StreamingProfile internal constructor(private val profile: Any) {
     override fun toString(): String {
         return "sp_$profile"
     }
@@ -24,6 +24,7 @@ class ToAnimated(
         return listOfNotNull(
             delay?.let { Param("dl", it) },
             Param("f", animatedFormat),
+            Param("fl", "animated"),
             if (animatedFormat.toLowerCase(Locale.ROOT) == "webp") Param("fl", "awebp") else null,
             sampling?.let { Param("vs", it) }
         ).toComponentString()
@@ -117,22 +118,23 @@ class Fps private constructor(private val fixed: Any?, private val min: Any?, pr
     }
 }
 
-class AudioFrequency(private val audioFrequency: AudioFrequencyType) : Transcode() {
+class AudioFrequencyTranscode(private val audioFrequency: AudioFrequency) : Transcode() {
     override fun toString(): String {
         return "af_${audioFrequency}"
     }
 }
 
-class AudioCodec(private val codec: AudioCodecType) : Transcode() {
+class AudioCodecTranscode(private val codec: AudioCodec) : Transcode() {
     override fun toString(): String {
         return "ac_$codec"
     }
 }
 
-enum class AudioCodecType(private val value: String) {
+enum class AudioCodec(private val value: String) {
     NONE("none"),
     AAC("aac"),
     VORBIS("vorbis"),
+    OPUS("opus"),
     MP3("mp3");
 
     override fun toString(): String {
@@ -140,7 +142,7 @@ enum class AudioCodecType(private val value: String) {
     }
 }
 
-enum class AudioFrequencyType(private val frequency: Int) {
+enum class AudioFrequency(private val frequency: Int) {
     FREQ8000(8000),
     FREQ11025(11025),
     FREQ16000(16000),

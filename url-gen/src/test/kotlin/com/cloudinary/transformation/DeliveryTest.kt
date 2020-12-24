@@ -2,13 +2,12 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.delivery.*
-
 import org.junit.Test
 
 class DeliveryTest {
 
     @Test
-    fun testFallbackImage() {
+    fun testDefaultImage() {
         cldAssert("d_sample", Delivery.defaultImage("sample"))
     }
 
@@ -26,21 +25,16 @@ class DeliveryTest {
 
     @Test
     fun testColorSpace() {
-        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceEnum.Cmyk()))
-        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceEnum.KeepCmyk()))
-        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceEnum.NoCmyk()))
-        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceEnum.SRgb()))
-        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceEnum.TinySRgb()))
+        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceType.Cmyk()))
+        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceType.KeepCmyk()))
+        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceType.NoCmyk()))
+        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceType.SRgb()))
+        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceType.TinySRgb()))
 
         cldAssert(
             "cs_icc:file.extension",
-            Delivery.colorSpace(ColorSpaceEnum.CsIcc("file.extension"))
+            Delivery.colorSpaceFromIcc("file.extension")
         )
-    }
-
-    @Test
-    fun testDefaultImage() {
-        cldAssert("d_image_id.ext", Delivery.defaultImage("image_id.ext"))
     }
 
     @Test
@@ -48,11 +42,11 @@ class DeliveryTest {
 
         cldAssert("q_100", Delivery.quality(100))
         cldAssert("q_100:420", Delivery.quality(100) {
-            chromaSubSampling(ChromaSubSampling.C_420)
+            chromaSubSampling(ChromaSubSampling.chroma420)
         })
 
         cldAssert("q_auto", Quality.auto())
-        cldAssert("q_auto:low", Quality.low())
+        cldAssert("q_auto:low", Quality.autoLow())
 
         cldAssert("q_70:qmax_80", Delivery.quality(70) {
             quantization(80)
@@ -68,5 +62,25 @@ class DeliveryTest {
         cldAssert("fl_any_format,q_auto", Quality.auto {
             anyFormat()
         })
+    }
+
+    @Test
+    fun testFormat() {
+        cldAssert(
+            "f_png",
+            Delivery.format(FormatType.png())
+        )
+
+        cldAssert("f_jpg,fl_progressive:semi",
+            Delivery.format(FormatType.jpg()) {
+                progressive(ProgressiveMode.semi())
+            })
+
+        cldAssert("f_jpg,fl_lossy,fl_preserve_transparency,fl_progressive",
+            Delivery.format(FormatType.jpg()) {
+                lossy()
+                progressive()
+                preserveTransparency()
+            })
     }
 }

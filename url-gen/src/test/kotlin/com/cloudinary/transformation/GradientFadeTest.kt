@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.effect.Effect
-import com.cloudinary.transformation.effect.GradientFade
+import com.cloudinary.transformation.effect.GradientFadeType
 import org.junit.Test
 
 class GradientFadeTest {
@@ -12,14 +12,14 @@ class GradientFadeTest {
             "e_gradient_fade:40,y_0.8",
             Effect.gradientFade {
                 strength(40)
-                y(0.8)
+                verticalStartPoint(0.8)
             }
         )
         cldAssert(
             "e_gradient_fade:50,x_0.4",
             Effect.gradientFade {
                 strength(50)
-                x(0.4)
+                horizontalStartPoint(0.4)
             }
         )
         cldAssert(
@@ -32,8 +32,8 @@ class GradientFadeTest {
         cldAssert(
             "e_gradient_fade:symmetric,y_0.8",
             Effect.gradientFade {
-                type(GradientFade.GradientFadeType.SYMMETRIC)
-                y(0.8)
+                type(GradientFadeType.SYMMETRIC)
+                verticalStartPoint(0.8)
 
             }
         )
@@ -41,16 +41,16 @@ class GradientFadeTest {
         cldAssert(
             "e_gradient_fade:symmetric:40,y_0.8",
             Effect.gradientFade {
-                type(GradientFade.GradientFadeType.SYMMETRIC)
+                type(GradientFadeType.SYMMETRIC)
                 strength(40)
-                y(0.8f)
+                verticalStartPoint(0.8f)
             })
         cldAssert(
             "e_gradient_fade:symmetric:50,x_25",
             Effect.gradientFade {
-                type(GradientFade.GradientFadeType.SYMMETRIC)
+                type(GradientFadeType.SYMMETRIC)
                 strength(50)
-                x(25)
+                horizontalStartPoint(25)
             })
     }
 }

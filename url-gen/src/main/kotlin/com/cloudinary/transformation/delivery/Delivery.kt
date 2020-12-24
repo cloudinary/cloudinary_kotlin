@@ -8,7 +8,10 @@ abstract class Delivery : Action {
     companion object {
         fun defaultImage(publicId: String) = DefaultImage(publicId)
         fun density(density: Int) = Density(density)
-        fun colorSpace(colorSpace: ColorSpaceEnum) = ColorSpace(colorSpace)
+        fun density(density: Expression) = Density(density)
+        fun density(density: String) = Density(density)
+        fun colorSpace(colorSpace: ColorSpaceType) = ColorSpace(colorSpace)
+        fun colorSpaceFromIcc(publicId: String) = ColorSpaceFromIcc(publicId)
 
         fun dpr(dpr: Dpr) = dpr
         fun dpr(dpr: Float) = Dpr.fromFloat(dpr)
@@ -28,23 +31,5 @@ abstract class Delivery : Action {
             options?.let { builder.it() }
             return builder.build()
         }
-    }
-}
-
-sealed class ColorSpaceEnum(private val value: Any) {
-
-    class SRgb : ColorSpaceEnum("srgb")
-    class TinySRgb : ColorSpaceEnum("tinysrgb")
-    class Cmyk : ColorSpaceEnum("cmyk")
-    class NoCmyk : ColorSpaceEnum("no_cmyk")
-    class KeepCmyk : ColorSpaceEnum("keep_cmyk")
-    class CsIcc(private val publicId: String) : ColorSpaceEnum("icc") {
-        override fun toString(): String {
-            return "${super.toString()}:$publicId"
-        }
-    }
-
-    override fun toString(): String {
-        return value.toString()
     }
 }

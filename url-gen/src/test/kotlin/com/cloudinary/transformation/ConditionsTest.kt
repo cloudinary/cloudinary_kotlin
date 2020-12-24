@@ -4,13 +4,13 @@ import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Transformation.Companion.transformation
 import com.cloudinary.transformation.effect.Effect.Companion.grayscale
 import com.cloudinary.transformation.effect.Effect.Companion.sepia
+import com.cloudinary.transformation.expression.Conditional.Companion.ifCondition
 import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.expression.Expression.Companion.aspectRatio
 import com.cloudinary.transformation.expression.Expression.Companion.faceCount
 import com.cloudinary.transformation.expression.Expression.Companion.height
 import com.cloudinary.transformation.expression.Expression.Companion.pageCount
 import com.cloudinary.transformation.expression.Expression.Companion.width
-import com.cloudinary.transformation.expression.IfCondition.Companion.ifCondition
 import org.junit.Test
 
 class ConditionsTest {

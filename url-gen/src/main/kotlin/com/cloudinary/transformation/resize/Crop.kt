@@ -6,14 +6,14 @@ import com.cloudinary.transformation.gravity.Gravity
 
 class Crop(
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
     val gravity: Gravity? = null,
     val zoom: Any? = null,
     val x: Any? = null,
     val y: Any? = null
 ) :
-    Resize(dimensions, mode, ignoreAspectRatio) {
+    Resize(dimensions, relative, regionRelative) {
     override val actionType = "crop"
 
     override fun params(): Collection<Param?> {
@@ -66,8 +66,8 @@ class Crop(
 
         override fun build() = Crop(
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity,
             zoom,
             x,

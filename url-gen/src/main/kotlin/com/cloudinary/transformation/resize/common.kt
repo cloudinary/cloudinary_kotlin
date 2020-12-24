@@ -10,8 +10,8 @@ class Dimensions(val width: Any? = null, val height: Any? = null, val aspectRati
 
 abstract class Resize(
     val dimensions: Dimensions,
-    val mode: ResizeMode?,
-    val ignoreAspectRatio: Boolean?
+    val relative: Boolean?,
+    var regionRelative: Boolean?
 ) : Action {
 
     abstract val actionType: String
@@ -21,9 +21,13 @@ abstract class Resize(
             Param("c", actionType),
             dimensions.width?.let { Param("w", it) },
             dimensions.height?.let { Param("h", it) },
-            dimensions.aspectRatio?.let { Param("ar", it) },
-            if (ignoreAspectRatio == true) Param("fl", "ignore_aspect_ratio") else null,
-            mode?.let { Param("fl", mode) }
+            if (relative == true) Param("fl", "relative") else null,
+            if (regionRelative == true) Param("fl", "region_relative") else null,
+            dimensions.aspectRatio?.let {
+                if (dimensions.aspectRatio == AspectRatio.IGNORE_INITIAL_ASPECT_RATIO)
+                    Param("fl", "ignore_aspect_ratio")
+                else Param("ar", it)
+            }
         )
     }
 
@@ -188,8 +192,8 @@ abstract class BaseBuilder<B> : TransformationComponentBuilder {
     protected var width: Any? = null
     protected var height: Any? = null
     protected var aspectRatio: Any? = null
-    protected var mode: ResizeMode? = null
-    protected var ignoreAspectRatio: Boolean? = null
+    protected var relative: Boolean? = null
+    protected var regionRelative: Boolean? = null
 
     abstract fun getThis(): B
 
@@ -222,21 +226,27 @@ abstract class BaseBuilder<B> : TransformationComponentBuilder {
     fun aspectRatio(aspectRatio: Expression) = aspectRatio(aspectRatio as Any)
     fun aspectRatio(aspectRatio: Int) = aspectRatio(aspectRatio as Any)
     fun aspectRatio(aspectRatio: Float) = aspectRatio(aspectRatio as Any)
+    fun aspectRatio(aspectRatio: AspectRatio) = aspectRatio(aspectRatio as Any)
 
-    fun resizeMode(mode: ResizeMode): B {
-        this.mode = mode
+    fun relative(): B {
+        this.relative = true
         return getThis()
     }
 
-    fun ignoreAspectRatio(ignoreAspectRatio: Boolean = true): B {
-        this.ignoreAspectRatio = ignoreAspectRatio
+    fun regionRelative(): B {
+        this.regionRelative = true
         return getThis()
     }
 }
 
-sealed class ResizeMode(private val value: String) {
-    class relative : ResizeMode("relative")
-    class regionRelative : ResizeMode("region_relative")
+enum class AspectRatio(private val value: String) {
+    AR1X1("1:1"),
+    AR5X4("5:4"),
+    AR4X3("4:3"),
+    AR3X2("3:2"),
+    AR16X9("16:9"),
+    AR3X1("3:1"),
+    IGNORE_INITIAL_ASPECT_RATIO("fl_ignore_aspect_ratio");
 
     override fun toString(): String {
         return value

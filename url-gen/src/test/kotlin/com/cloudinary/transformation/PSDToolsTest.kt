@@ -26,6 +26,7 @@ class PSDToolsTest {
     @Test
     fun testGetSmartObject() {
         cldAssert("pg_embedded:3", PSDTools.smartObject { this.byIndex(3) })
+        cldAssert("pg_embedded:name:foo;bar", PSDTools.smartObject { this.byFilename("foo").byFilename("bar") })
     }
 
     @Test

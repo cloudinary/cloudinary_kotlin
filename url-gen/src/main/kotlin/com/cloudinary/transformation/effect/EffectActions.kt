@@ -1,13 +1,15 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.effect.AssistColorblind.Type.STRIPES
+import com.cloudinary.transformation.effect.AssistColorblind.Type.XRAY
 import com.cloudinary.util.cldRanged
 
 class GradientFade private constructor(
     private val strength: Any?,
     private val type: Any?,
-    private val x: Any?,
-    private val y: Any?
+    private val horizontalStartPoint: Any?,
+    private val verticalStartPoint: Any?
 ) : Effect() {
     init {
         strength?.cldRanged(0, 100)
@@ -16,37 +18,32 @@ class GradientFade private constructor(
     override fun toString(): String {
         return asComponentString(
             "e_gradient_fade".joinWithValues(type, strength),
-            x?.let { "x_$x" },
-            y?.let { "y_$y" }
+            horizontalStartPoint?.let { "x_$horizontalStartPoint" },
+            verticalStartPoint?.let { "y_$verticalStartPoint" }
         )
-    }
-
-    enum class GradientFadeType(private val value: String) {
-        SYMMETRIC("symmetric"),
-        SYMMETRIC_PAD("symmetric_pad");
-
-        override fun toString() = value
     }
 
     class Builder : TransformationComponentBuilder {
 
         private var strength: Any? = null
         private var type: Any? = null
-        private var x: Any? = null
-        private var y: Any? = null
+        private var horizontalStartPoint: Any? = null
+        private var verticalStartPoint: Any? = null
 
         fun strength(strength: Any) = apply { this.strength = strength }
         fun strength(strength: Int) = apply { this.strength = strength }
         fun type(type: String) = apply { this.type = type }
         fun type(type: GradientFadeType) = apply { this.type = type }
-        fun x(x: Any) = apply { this.x = x }
-        fun y(y: Any) = apply { this.y = y }
-        fun x(x: Int) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun x(x: Float) = apply { this.x = x }
-        fun y(y: Float) = apply { this.y = y }
+        fun horizontalStartPoint(horizontalStartPoint: Any) = apply { this.horizontalStartPoint = horizontalStartPoint }
+        fun verticalStartPoint(verticalStartPoint: Any) = apply { this.verticalStartPoint = verticalStartPoint }
+        fun horizontalStartPoint(horizontalStartPoint: Int) = apply { this.horizontalStartPoint = horizontalStartPoint }
+        fun verticalStartPoint(verticalStartPoint: Int) = apply { this.verticalStartPoint = verticalStartPoint }
+        fun horizontalStartPoint(horizontalStartPoint: Float) =
+            apply { this.horizontalStartPoint = horizontalStartPoint }
 
-        override fun build() = GradientFade(strength, type, x, y)
+        fun verticalStartPoint(verticalStartPoint: Float) = apply { this.verticalStartPoint = verticalStartPoint }
+
+        override fun build() = GradientFade(strength, type, horizontalStartPoint, verticalStartPoint)
     }
 }
 
@@ -84,13 +81,13 @@ class Grayscale internal constructor() : Effect() {
     }
 }
 
-class OilPaint(private val level: Int?) : Effect() {
+class OilPaint(private val strength: Int?) : Effect() {
     init {
-        level.cldRanged(0, 100)
+        strength.cldRanged(0, 100)
     }
 
     override fun toString(): String {
-        return "e_oil_paint".joinWithValues(level)
+        return "e_oil_paint".joinWithValues(strength)
     }
 }
 
@@ -101,23 +98,23 @@ class AdvancedRedEye : Effect() {
 
 }
 
-class Pixelate internal constructor(private val pixelWidth: Int?, private val region: Region?) : Effect() {
+class Pixelate internal constructor(private val squareSize: Int?, private val region: Region?) : Effect() {
     init {
-        pixelWidth?.cldRanged(1, 200)
+        squareSize?.cldRanged(1, 200)
     }
 
     override fun toString(): String {
         return when (region) {
-            is Region.Faces -> "e_pixelate_faces".joinWithValues(pixelWidth)
-            is Region.OcrText -> "e_pixelate_faces".joinWithValues(pixelWidth) + ",g_ocr_text"
-            is Custom -> "e_pixelate_region".joinWithValues(pixelWidth).joinWithValues(
+            is Region.Faces -> "e_pixelate_faces".joinWithValues(squareSize)
+            is Region.OcrText -> "e_pixelate_faces".joinWithValues(squareSize) + ",g_ocr_text"
+            is Custom -> "e_pixelate_region".joinWithValues(squareSize).joinWithValues(
                 region.height?.let { "h_$it" },
                 region.width?.let { "w_$it" },
                 region.x?.let { "x_$it" },
                 region.y?.let { "y_$it" },
                 separator = ","
             )
-            null -> "e_pixelate".joinWithValues(pixelWidth)
+            null -> "e_pixelate".joinWithValues(squareSize)
         }
     }
 }
@@ -132,35 +129,36 @@ class Artistic internal constructor(private val filter: ArtisticFilter) : Effect
     override fun toString(): String {
         return "e_art".joinWithValues(filter)
     }
+}
 
-    enum class ArtisticFilter(private val value: String) {
-        AL_DENTE("al_dente"),
-        ATHENA("athena"),
-        AUDREY("audrey"),
-        AURORA("aurora"),
-        DAGUERRE("daguerre"),
-        EUCALYPTUS("eucalyptus"),
-        FES("fes"),
-        FROST("frost"),
-        HAIRSPRAY("hairspray"),
-        HOKUSAI("hokusai"),
-        INCOGNITO("incognito"),
-        LINEN("linen"),
-        PEACOCK("peacock"),
-        PRIMAVERA("primavera"),
-        QUARTZ("quartz"),
-        RED_ROCK("red_rock"),
-        REFRESH("refresh"),
-        SIZZLE("sizzle"),
-        SONNET("sonnet"),
-        UKULELE("ukulele"),
-        ZORRO("zorro");
+enum class ArtisticFilter(private val value: String) {
+    AL_DENTE("al_dente"),
+    ATHENA("athena"),
+    AUDREY("audrey"),
+    AURORA("aurora"),
+    DAGUERRE("daguerre"),
+    EUCALYPTUS("eucalyptus"),
+    FES("fes"),
+    FROST("frost"),
+    HAIRSPRAY("hairspray"),
+    HOKUSAI("hokusai"),
+    INCOGNITO("incognito"),
+    LINEN("linen"),
+    PEACOCK("peacock"),
+    PRIMAVERA("primavera"),
+    QUARTZ("quartz"),
+    RED_ROCK("red_rock"),
+    REFRESH("refresh"),
+    SIZZLE("sizzle"),
+    SONNET("sonnet"),
+    UKULELE("ukulele"),
+    ZORRO("zorro");
 
-        override fun toString(): String {
-            return value
-        }
+    override fun toString(): String {
+        return value
     }
 }
+
 
 class Trim private constructor(
     private val colorSimilarity: Any?,
@@ -186,102 +184,107 @@ class Trim private constructor(
 }
 
 class Outline private constructor(
-    private val mode: Mode?,
+    private val mode: OutlineMode?,
     private val color: Color?,
     private val width: Int?,
-    private val blur: Int?
+    private val blurLevel: Int?
 ) : Effect() {
     init {
         width?.cldRanged(1, 100)
-        blur?.cldRanged(0, 200)
+        blurLevel?.cldRanged(0, 200)
     }
 
     override fun toString(): String {
         return asComponentString(
             color?.let { "co_$color" },
-            "e_outline".joinWithValues(mode, width, blur)
+            "e_outline".joinWithValues(mode, width, blurLevel)
         )
-    }
-
-    enum class Mode(internal val value: String) {
-        INNER("inner"),
-        INNER_FILL("inner_fill"),
-        OUTER("outer"),
-        FILL("fill");
-
-        override fun toString(): String {
-            return value
-        }
     }
 
     class Builder
         : TransformationComponentBuilder {
 
-        private var mode: Mode? = null
+        private var mode: OutlineMode? = null
         private var color: Color? = null
         private var width: Int? = null
-        private var blur: Int? = null
+        private var blurLevel: Int? = null
 
-        fun mode(mode: Mode) = apply { this.mode = mode }
+        fun mode(mode: OutlineMode) = apply { this.mode = mode }
         fun color(color: Color) = apply { this.color = color }
         fun color(color: String) = apply { this.color = Color.parseString(color) }
         fun width(width: Int) = apply { this.width = width }
-        fun blur(blur: Int) = apply { this.blur = blur }
+        fun blurLevel(blurLevel: Int) = apply { this.blurLevel = blurLevel }
 
 
-        override fun build() = Outline(mode, color, width, blur)
+        override fun build() = Outline(mode, color, width, blurLevel)
+    }
+}
+
+enum class OutlineMode(internal val value: String) {
+    INNER("inner"),
+    INNER_FILL("inner_fill"),
+    OUTER("outer"),
+    FILL("fill");
+
+    override fun toString(): String {
+        return value
     }
 }
 
 class Vectorize(
-    private val colors: Any?,
-    private val detail: Any?,
-    private val despeckle: Any?,
+    private val numOfColors: Any?,
+    private val detailsLevel: Any?,
+    private val despeckleLevel: Any?,
     private val paths: Any?,
-    private val corners: Any?
+    private val cornersLevel: Any?
 ) : Effect() {
     override fun toString(): String {
         return "e_vectorize".joinWithValues(
-            colors?.let { "colors:$it" },
-            detail?.let { "detail:$it" },
-            despeckle?.let { "despeckle:$it" },
+            numOfColors?.let { "colors:$it" },
+            detailsLevel?.let { "detail:$it" },
+            despeckleLevel?.let { "despeckle:$it" },
             paths?.let { "paths:$it" },
-            corners?.let { "corners:$it" }
+            cornersLevel?.let { "corners:$it" }
         )
     }
 
     class Builder : TransformationComponentBuilder {
-        private var colors: Any? = null
-        private var detail: Any? = null
-        private var despeckle: Any? = null
+        private var numOfColors: Any? = null
+        private var detailsLevel: Any? = null
+        private var despeckleLevel: Any? = null
         private var paths: Any? = null
-        private var corners: Any? = null
+        private var cornersLevel: Any? = null
 
-        fun colors(colors: Int) = apply { this.colors = colors }
-        fun colors(colors: Any) = apply { this.colors = colors }
-        fun colors(colors: Float) = apply { this.colors = colors }
+        fun numOfColors(numOfColors: Int) = apply { this.numOfColors = numOfColors }
+        fun numOfColors(numOfColors: Any) = apply { this.numOfColors = numOfColors }
+        fun numOfColors(numOfColors: Float) = apply { this.numOfColors = numOfColors }
 
-        fun detail(detail: Int) = apply { this.detail = detail }
-        fun detail(detail: Float) = apply { this.detail = detail }
-        fun detail(detail: Any) = apply { this.detail = detail }
+        fun detailsLevel(detailsLevel: Int) = apply { this.detailsLevel = detailsLevel }
+        fun detailsLevel(detailsLevel: Float) = apply { this.detailsLevel = detailsLevel }
+        fun detailsLevel(detailsLevel: Any) = apply { this.detailsLevel = detailsLevel }
 
-        fun despeckle(despeckle: Int) = apply { this.despeckle = despeckle }
-        fun despeckle(despeckle: Float) = apply { this.despeckle = despeckle }
-        fun despeckle(despeckle: Any) = apply { this.despeckle = despeckle }
+        fun despeckleLevel(despeckleLevel: Int) = apply { this.despeckleLevel = despeckleLevel }
+        fun despeckleLevel(despeckleLevel: Float) = apply { this.despeckleLevel = despeckleLevel }
+        fun despeckleLevel(despeckleLevel: Any) = apply { this.despeckleLevel = despeckleLevel }
 
         fun paths(paths: Int) = apply { this.paths = paths }
         fun paths(paths: Any) = apply { this.paths = paths }
 
-        fun corners(corners: Int) = apply { this.corners = corners }
-        fun corners(corners: Any) = apply { this.corners = corners }
+        fun cornersLevel(cornersLevel: Int) = apply { this.cornersLevel = cornersLevel }
+        fun cornersLevel(cornersLevel: Any) = apply { this.cornersLevel = cornersLevel }
 
-        override fun build() = Vectorize(colors, detail, despeckle, paths, corners)
+        override fun build() = Vectorize(numOfColors, detailsLevel, despeckleLevel, paths, cornersLevel)
     }
 }
 
 class AssistColorblind private constructor(private val type: Type?, private val strength: Any?) : Effect() {
     override fun toString(): String {
-        return "e_assist_colorblind".joinWithValues(type, strength)
+
+        return "e_assist_colorblind" + when {
+            strength != null -> ":$strength"
+            type != null -> ":$type"
+            else -> ""
+        }
     }
 
     enum class Type(private val value: String) {
@@ -292,20 +295,20 @@ class AssistColorblind private constructor(private val type: Type?, private val 
     }
 
     class Builder : TransformationComponentBuilder {
-        private var strength: Any? = null
+        private var stripesStrength: Any? = null
         private var type: Type? = null
 
-        override fun build() = AssistColorblind(type, strength)
+        override fun build() = AssistColorblind(type, stripesStrength)
 
-        fun stripes(strength: Int) = stripes(strength as Any)
-        fun stripes(strength: Any) = apply {
-            type = null
-            this.strength = strength
+        fun stripesStrength(strength: Int) = stripesStrength(strength as Any)
+        fun stripesStrength(strength: Any) = apply {
+            type = STRIPES
+            this.stripesStrength = strength
         }
 
         fun xRay() = apply {
-            type = Type.XRAY
-            strength = null
+            type = XRAY
+            stripesStrength = null
         }
     }
 }
@@ -313,8 +316,8 @@ class AssistColorblind private constructor(private val type: Type?, private val 
 class Shadow internal constructor(
     private val strength: Any?,
     private val color: Color?,
-    private val x: Any?,
-    private val y: Any?
+    private val offsetX: Any?,
+    private val offsetY: Any?
 ) : Effect() {
 
     init {
@@ -325,94 +328,94 @@ class Shadow internal constructor(
         return asComponentString(
             color?.let { "co_$color" },
             "e_shadow".joinWithValues(strength),
-            x?.let { "x_$x" },
-            y?.let { "y_$y" }
+            offsetX?.let { "x_$offsetX" },
+            offsetY?.let { "y_$offsetY" }
         )
     }
 
     class Builder : TransformationComponentBuilder {
         private var strength: Any? = null
         private var color: Color? = null
-        private var x: Any? = null
-        private var y: Any? = null
+        private var offsetX: Any? = null
+        private var offsetY: Any? = null
 
         fun strength(strength: Any) = apply { this.strength = strength }
         fun strength(strength: Int) = apply { this.strength = strength }
         fun color(color: Color?) = apply { this.color = color }
-        fun x(x: Any) = apply { this.x = x }
-        fun y(y: Any) = apply { this.y = y }
-        fun x(x: Int) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
+        fun offsetX(offsetX: Any) = apply { this.offsetX = offsetX }
+        fun offsetX(offsetX: Int) = apply { this.offsetX = offsetX }
+        fun offsetY(offsetY: Any) = apply { this.offsetY = offsetY }
+        fun offsetY(offsetY: Int) = apply { this.offsetY = offsetY }
 
-        override fun build() = Shadow(strength, color, x, y)
+        override fun build() = Shadow(strength, color, offsetX, offsetY)
     }
 
 }
 
 class Cartoonify(
-    private val lineStrength: Any?, private val colorReduction: Any?, private val blackwhite: Boolean
+    private val lineStrength: Any?, private val colorReductionLevel: Any?, private val blackwhite: Boolean
 ) : Effect() {
     override fun toString(): String {
-        return "e_cartoonify".joinWithValues(lineStrength, if (blackwhite) "bw" else colorReduction)
+        return "e_cartoonify".joinWithValues(lineStrength, if (blackwhite) "bw" else colorReductionLevel)
     }
 
     class Builder : TransformationComponentBuilder {
         private var lineStrength: Any? = null
-        private var colorReduction: Any? = null
+        private var colorReductionLevel: Any? = null
         private var blackwhite: Boolean = false
 
         fun lineStrength(lineStrength: Int) = apply { this.lineStrength = lineStrength }
 
         fun lineStrength(lineStrength: Any) = apply { this.lineStrength = lineStrength }
 
-        fun colorReduction(colorReduction: Int) = apply { this.colorReduction = colorReduction }
+        fun colorReduction(colorReduction: Int) = apply { this.colorReductionLevel = colorReduction }
 
-        fun colorReduction(colorReduction: Any) = apply { this.colorReduction = colorReduction }
+        fun colorReduction(colorReduction: Any) = apply { this.colorReductionLevel = colorReduction }
 
         fun blackwhite(blackwhite: Boolean = true) = apply { this.blackwhite = blackwhite }
 
-        override fun build() = Cartoonify(lineStrength, colorReduction, blackwhite)
+        override fun build() = Cartoonify(lineStrength, colorReductionLevel, blackwhite)
     }
 }
 
-class SimulateColorBlind internal constructor(private val condition: Type?) : Effect() {
-    enum class Type(internal val value: String) {
-        DEUTERANOPIA("deuteranopia"),
-        PROTANOPIA("protanopia"),
-        TRITANOPIA("tritanopia"),
-        TRITANOMALY("tritanomaly"),
-        DEUTERANOMALY("deuteranomaly"),
-        CONEMONOCHROMACY("cone_monochromacy"),
-        RODMONOCHROMACY("rod_monochromacy"), ;
-
-        override fun toString(): String {
-            return value
-        }
-    }
-
+class SimulateColorBlind internal constructor(private val condition: SimulateColorBlindType?) : Effect() {
     override fun toString(): String {
         return "e_simulate_colorblind".joinWithValues(condition)
     }
 }
 
-class MakeTransparent private constructor(private val level: Int?, private val color: Any?) : Effect() {
+enum class SimulateColorBlindType(internal val value: String) {
+    DEUTERANOPIA("deuteranopia"),
+    PROTANOPIA("protanopia"),
+    TRITANOPIA("tritanopia"),
+    TRITANOMALY("tritanomaly"),
+    DEUTERANOMALY("deuteranomaly"),
+    CONEMONOCHROMACY("cone_monochromacy"),
+    RODMONOCHROMACY("rod_monochromacy"), ;
+
+    override fun toString(): String {
+        return value
+    }
+}
+
+class MakeTransparent private constructor(private val tolerance: Any?, private val color: Any?) : Effect() {
     init {
-        level.cldRanged(0, 100)
+        tolerance?.cldRanged(0, 100)
         color?.let { "co_$color" }
     }
 
     override fun toString(): String {
-        return (color?.let { "co_$it," } ?: "") + "e_make_transparent".joinWithValues(level)
+        return (color?.let { "co_$it," } ?: "") + "e_make_transparent".joinWithValues(tolerance)
     }
 
     class Builder : TransformationComponentBuilder {
-        private var level: Int? = null
+        private var tolerance: Any? = null
         private var color: Color? = null
 
-        fun level(level: Int) = apply { this.level = level }
+        fun tolerance(tolerance: Int) = apply { this.tolerance = tolerance }
         fun color(color: Color) = apply { this.color = color }
 
-        override fun build() = MakeTransparent(level, color)
+        override fun build() = MakeTransparent(tolerance, color)
     }
 }
 
@@ -436,13 +439,13 @@ class Waveform private constructor(private var color: Any?, private val backgrou
     }
 }
 
-class Accelerate internal constructor(private val percent: Int?) : Effect() {
+class Accelerate internal constructor(private val rate: Int?) : Effect() {
     init {
-        percent?.cldRanged(-50, 100)
+        rate?.cldRanged(-50, 100)
     }
 
     override fun toString(): String {
-        return "e_accelerate".joinWithValues(percent)
+        return "e_accelerate".joinWithValues(rate)
     }
 }
 /*
@@ -556,52 +559,59 @@ class Preview private constructor(
     }
 }
 
-class Fade internal constructor(private val milliseconds: Long?) : Effect() {
+class Fade internal constructor(private val duration: Long?) : Effect() {
     override fun toString(): String {
-        return "e_fade".joinWithValues(milliseconds)
+        return "e_fade".joinWithValues(duration)
     }
 }
 
-class Loop internal constructor(private val loops: Int?) : Effect() {
+class Loop internal constructor(private val additionalIterations: Int?) : Effect() {
     override fun toString(): String {
-        return "e_loop".joinWithValues(loops)
+        return "e_loop".joinWithValues(additionalIterations)
     }
 }
 
-class Blackwhite internal constructor(private val balance: Int?) : Effect() {
+class Blackwhite internal constructor(private val threshold: Int?) : Effect() {
     override fun toString(): String {
-        return "e_blackwhite".joinWithValues(balance)
+        return "e_blackwhite".joinWithValues(threshold)
     }
 }
 
-class OrderedDither internal constructor(private val filter: DitherFilter?) : Effect() {
+class DitherEffect internal constructor(private val filter: Dither?) : Effect() {
     override fun toString(): String {
         return "e_ordered_dither".joinWithValues(filter)
     }
+}
 
-    enum class DitherFilter(internal val value: Int) {
-        THRESHOLD_1X1_NON_DITHER(0),
-        CHECKERBOARD_2X1_DITHER(1),
-        ORDERED_2X2_DISPERSED(2),
-        ORDERED_3X3_DISPERSED(3),
-        ORDERED_4X4_DISPERSED(4),
-        ORDERED_8X8_DISPERSED(5),
-        HALFTONE_4X4_ANGLED(6),
-        HALFTONE_6X6_ANGLED(7),
-        HALFTONE_8X8_ANGLED(8),
-        HALFTONE_4X4_ORTHOGONAL(9),
-        HALFTONE_6X6_ORTHOGONAL(10),
-        HALFTONE_8X8_ORTHOGONAL(11),
-        HALFTONE_16X16_ORTHOGONAL(12),
-        CIRCLES_5X5_BLACK(13),
-        CIRCLES_5X5_WHITE(14),
-        CIRCLES_6X6_BLACK(15),
-        CIRCLES_6X6_WHITE(16),
-        CIRCLES_7X7_BLACK(17),
-        CIRCLES_7X7_WHITE(18);
+enum class Dither(internal val value: Int) {
+    THRESHOLD_1X1_NON_DITHER(0),
+    CHECKERBOARD_2X1_DITHER(1),
+    ORDERED_2X2_DISPERSED(2),
+    ORDERED_3X3_DISPERSED(3),
+    ORDERED_4X4_DISPERSED(4),
+    ORDERED_8X8_DISPERSED(5),
+    HALFTONE_4X4_ANGLED(6),
+    HALFTONE_6X6_ANGLED(7),
+    HALFTONE_8X8_ANGLED(8),
+    HALFTONE_4X4_ORTHOGONAL(9),
+    HALFTONE_6X6_ORTHOGONAL(10),
+    HALFTONE_8X8_ORTHOGONAL(11),
+    HALFTONE_16X16_ORTHOGONAL(12),
+    CIRCLES_5X5_BLACK(13),
+    CIRCLES_5X5_WHITE(14),
+    CIRCLES_6X6_BLACK(15),
+    CIRCLES_6X6_WHITE(16),
+    CIRCLES_7X7_BLACK(17),
+    CIRCLES_7X7_WHITE(18);
 
-        override fun toString(): String {
-            return value.toString()
-        }
+    override fun toString(): String {
+        return value.toString()
     }
+}
+
+enum class GradientFadeType(private val value: String) {
+    SYMMETRIC("symmetric"),
+    SYMMETRIC_PAD("symmetric_pad");
+
+    override fun toString() = value
 }
