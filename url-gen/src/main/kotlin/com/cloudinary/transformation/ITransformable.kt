@@ -2,10 +2,10 @@ package com.cloudinary.transformation
 
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.delivery.Delivery
-import com.cloudinary.transformation.doctools.DocTools
 import com.cloudinary.transformation.effect.Effect
-import com.cloudinary.transformation.expression.IfCondition
+import com.cloudinary.transformation.expression.Conditional
 import com.cloudinary.transformation.expression.Variable
+import com.cloudinary.transformation.extract.Extract
 import com.cloudinary.transformation.layer.Overlay
 import com.cloudinary.transformation.layer.Underlay
 import com.cloudinary.transformation.layer.source.LayerSource
@@ -43,31 +43,6 @@ interface ITransformable<T> {
         builderAction?.let { builder.builderAction() }
         return add(builder.build())
     }
-
-
-    /**
-     * Trims pixels according to the transparency levels of a given overlay image.
-     *
-     * Whenever the overlay image is opaque, the original is shown, and wherever the overlay is transparent,
-     * the result will be transparent as well.
-     *
-     * @param cutter The cutter action to add
-     * @return TODO DOC new transformation
-     */
-    fun cutter(cutter: Cutter) = add(cutter)
-
-    /**
-     * Trims pixels according to the transparency levels of a given overlay image.
-     *
-     * Whenever the overlay image is opaque, the original is shown, and wherever the overlay is transparent,
-     * the result will be transparent as well.
-     *
-     * @param source The overlay image to use
-     * @param cutter The cutter action to add TODO DOC builder receiver param
-     * @return TODO DOC new transformation
-     */
-    fun cutter(source: LayerSource, cutter: (Cutter.Builder.() -> Unit)? = null) =
-        addWithBuilder(Cutter.Builder(source), cutter)
 
     fun cutout(cutout: Cutout) = add(cutout)
 
@@ -138,7 +113,7 @@ interface ITransformable<T> {
     // delivery
     fun delivery(delivery: Delivery) = add(delivery)
 
-    fun docTools(docTools: DocTools) = add(docTools)
+    fun extract(extract: Extract) = add(extract)
 
     fun psdTools(psdTools: PSDTools) = add(psdTools)
 
@@ -157,17 +132,15 @@ interface ITransformable<T> {
     // layer
     fun underlay(underlay: Underlay) = add(underlay)
 
-    fun add3dLut(lutFilePublicId: String) = add(Add3DLut(lutFilePublicId))
-
     // TODO encode? create class for this?
     fun namedTransformation(name: String) = add("t_$name")
 
     // variables
-    fun variable(variable: Variable) = add(variable)
+    fun addVariable(variable: Variable) = add(variable)
 
-    fun variable(name: String, value: Any) = variable(Variable.set(name, value))
+    fun addVariable(name: String, value: Any) = addVariable(Variable.set(name, value))
 
-    fun ifCondition(condition: IfCondition) = add(condition)
+    fun ifCondition(condition: Conditional) = add(condition)
 
     // TODO what is this - create class?
     fun prefix(prefix: String) = add("p_$prefix")

@@ -37,11 +37,7 @@ class Variable private constructor(
             return builder.build()
         }
 
-        fun setReference(name: String, value: String, options: (Builder.() -> Unit)? = null): Variable {
-            val builder = Builder(name, value, "ref")
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun setAssetReference(name: String, value: String): Variable = Builder(name, value, "ref").build()
 
         fun setFromContext(name: String, value: String, options: (Builder.() -> Unit)? = null): Variable {
             val builder = Builder(name, value, "ctx")
@@ -65,11 +61,10 @@ class Variable private constructor(
         TransformationComponentBuilder {
         constructor(name: String, value: Any) : this(name, value, null)
 
-
         private var convertTo: ConvertTo? = null
 
-        fun convertToFloat() = apply { this.convertTo = ConvertTo.FLOAT }
-        fun convertToInt() = apply { this.convertTo = ConvertTo.INTEGER }
+        fun asFloat() = apply { this.convertTo = ConvertTo.FLOAT }
+        fun asInteger() = apply { this.convertTo = ConvertTo.INTEGER }
 
         override fun build(): Variable {
             return Variable(name, value, convertTo, prefix)

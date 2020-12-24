@@ -2,9 +2,9 @@ package com.cloudinary.transformation.layer
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Color
+import com.cloudinary.transformation.gravity.FocusOn
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.gravity.Gravity.Companion.north
-import com.cloudinary.transformation.gravity.GravityObject
 import com.cloudinary.transformation.layer.BlendMode.multiply
 import com.cloudinary.transformation.layer.position.LayerPosition
 import com.cloudinary.transformation.layer.position.VideoPosition
@@ -14,7 +14,7 @@ import com.cloudinary.transformation.resize.Resize.Companion.scale
 import org.junit.Test
 
 class OverlayTest {
-    private val position = LayerPosition.Builder().gravity(Gravity.objects(GravityObject.CAT)).x(20).build()
+    private val position = LayerPosition.Builder().gravity(Gravity.focusOn(FocusOn.CAT)).x(20).build()
     private val videoPosition = VideoPosition.Builder().gravity(north()).x(20).build()
 
     @Test
@@ -45,10 +45,7 @@ class OverlayTest {
 
         overlay = Overlay.text {
             source("hello world!") {
-                style {
-                    fontFamily("Arial")
-                    fontSize(17)
-                }
+                style("Arial", 17)
                 textColor(Color.RED)
                 backgroundColor(Color.GREEN)
                 transformation { resize(scale { width(250) }) }

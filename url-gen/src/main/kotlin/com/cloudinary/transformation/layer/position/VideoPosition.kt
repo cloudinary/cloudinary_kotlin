@@ -1,24 +1,24 @@
 package com.cloudinary.transformation.layer.position
 
 import com.cloudinary.transformation.TransformationDsl
-import com.cloudinary.transformation.gravity.GravityByDirection
+import com.cloudinary.transformation.gravity.CompassGravity
 
 class VideoPosition private constructor(
     x: Any?,
     y: Any?,
-    gravity: GravityByDirection?
+    gravity: CompassGravity?
 ) :
     BaseLayerPosition(x, y, gravity) {
 
     @TransformationDsl
     class Builder {
-        private var gravity: GravityByDirection? = null
+        private var gravity: CompassGravity? = null
         private var x: Any? = null
         private var y: Any? = null
 
         fun build() = VideoPosition(x, y, gravity)
 
-        fun gravity(gravity: GravityByDirection) = apply {
+        fun gravity(gravity: CompassGravity) = apply {
             this.gravity = gravity
         }
 

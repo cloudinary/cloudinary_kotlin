@@ -13,6 +13,7 @@ abstract class VideoEdit : Action {
         }
 
         fun volume(level: Int) = Volume(level)
+        fun volume(level: Any) = Volume(level)
         fun volume(volume: Volume) = volume
 
         fun concatenate(source: VideoSource, options: (Concatenate.Builder.() -> Unit)? = null): Concatenate {

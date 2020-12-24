@@ -1,5 +1,7 @@
 package com.cloudinary.transformation
 
+import com.cloudinary.transformation.delivery.ProgressiveMode
+
 class FlagAction(private val value: Flag) : Action {
     override fun toString() = value.toString()
 }
@@ -55,15 +57,5 @@ class Flag(vararg values: Any?) {
 
     override fun toString(): String {
         return "fl_${values.joinToString(":")}"
-    }
-}
-
-enum class ProgressiveMode(private val value: String) {
-    Semi("semi"),
-    Steep("steep"),
-    None("none");
-
-    override fun toString(): String {
-        return value
     }
 }

@@ -24,7 +24,11 @@ abstract class Adjust : Action {
 
         fun unsharpMask(level: Int? = null) = UnsharpMask(level)
 
-        fun viesusCorrect() = ViesusCorrect()
+        fun viesusCorrect(options: (ViesusCorrect.Builder.() -> Unit)? = null): ViesusCorrect {
+            val builder = ViesusCorrect.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
         fun hue(level: Int? = null) = Hue(level)
 
@@ -44,11 +48,13 @@ abstract class Adjust : Action {
 
         fun sharpen(strength: Int? = null) = Sharpen(strength)
 
-        fun replaceColor(to: Color, options: (ReplaceColor.Builder.() -> Unit)? = null): Adjust {
-            val builder = ReplaceColor.Builder(to)
+        fun replaceColor(toColor: Color, options: (ReplaceColor.Builder.() -> Unit)? = null): Adjust {
+            val builder = ReplaceColor.Builder(toColor)
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun recolor(colorMatrix: Array<FloatArray>) = Recolor(colorMatrix)
 
         fun fillLight(options: (FillLight.Builder.() -> Unit)? = null): Adjust {
             val builder = FillLight.Builder()
@@ -61,6 +67,8 @@ abstract class Adjust : Action {
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun by3DLut(publicId: String) = By3DLut(publicId)
     }
 }
 

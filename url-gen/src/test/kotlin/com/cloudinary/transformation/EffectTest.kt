@@ -91,14 +91,14 @@ class EffectTest {
     @Test
     fun testAssistColorBlind() {
         cldAssert("e_assist_colorblind", Effect.assistColorBlind())
-        cldAssert("e_assist_colorblind:8", Effect.assistColorBlind { stripes(8) })
+        cldAssert("e_assist_colorblind:8", Effect.assistColorBlind { stripesStrength(8) })
         cldAssert(
             "e_assist_colorblind:xray", Effect.assistColorBlind { xRay() })
 
 
         cldAssert(
             "e_assist_colorblind:\$var1",
-            Effect.assistColorBlind { stripes("\$var1") })
+            Effect.assistColorBlind { stripesStrength("\$var1") })
     }
 
     @Test
@@ -106,7 +106,7 @@ class EffectTest {
         cldAssert("e_simulate_colorblind", Effect.simulateColorBlind())
         cldAssert(
             "e_simulate_colorblind:deuteranopia",
-            Effect.simulateColorBlind(SimulateColorBlind.Type.DEUTERANOPIA)
+            Effect.simulateColorBlind(SimulateColorBlindType.DEUTERANOPIA)
         )
     }
 
@@ -115,7 +115,7 @@ class EffectTest {
         cldAssert("e_vectorize", Effect.vectorize())
         cldAssert(
             "e_vectorize:colors:15:detail:2:despeckle:0.5:paths:4:corners:5",
-            Effect.vectorize { colors(15).detail(2).despeckle(0.5f).paths(4).corners(5) })
+            Effect.vectorize { numOfColors(15).detailsLevel(2).despeckleLevel(0.5f).paths(4).cornersLevel(5) })
     }
 
     @Test
@@ -133,7 +133,7 @@ class EffectTest {
     @Test
     fun testArtistic() {
         cldAssert(
-            "e_art:al_dente", Effect.artisticFilter(Artistic.ArtisticFilter.AL_DENTE)
+            "e_art:al_dente", Effect.artisticFilter(ArtisticFilter.AL_DENTE)
         )
     }
 
@@ -152,7 +152,7 @@ class EffectTest {
     @Test
     fun testMakeTransparent() {
         cldAssert("e_make_transparent", Effect.makeTransparent())
-        cldAssert("e_make_transparent:50", Effect.makeTransparent { level(50) })
+        cldAssert("e_make_transparent:50", Effect.makeTransparent { tolerance(50) })
     }
 
     @Test
@@ -162,7 +162,7 @@ class EffectTest {
         })
         cldAssert("co_rgb:0e80d8,e_make_transparent:10", Effect.makeTransparent {
             color(Color.Rgb("0e80d8"))
-            level(10)
+            tolerance(10)
         })
     }
 
@@ -241,7 +241,7 @@ class EffectTest {
     fun testOrderedDither() {
         cldAssert(
             "e_ordered_dither:0",
-            Effect.orderedDither(OrderedDither.DitherFilter.THRESHOLD_1X1_NON_DITHER)
+            Effect.dither(Dither.THRESHOLD_1X1_NON_DITHER)
         )
     }
 
@@ -255,7 +255,7 @@ class EffectTest {
             Effect.shadow { strength(50).color(Color.GREEN) })
         cldAssert(
             "co_green,e_shadow:50,x_20,y_-20",
-            Effect.shadow { strength(50).color(Color.GREEN).x(20).y(-20) }
+            Effect.shadow { strength(50).color(Color.GREEN).offsetX(20).offsetY(-20) }
         )
     }
 
@@ -263,13 +263,13 @@ class EffectTest {
     fun testOutline() {
         cldAssert("e_outline", Effect.outline())
         cldAssert("e_outline:inner_fill", Effect.outline {
-            mode(Outline.Mode.INNER_FILL)
+            mode(OutlineMode.INNER_FILL)
         })
 
         cldAssert(
             "co_red,e_outline:inner_fill:5",
             Effect.outline {
-                mode(Outline.Mode.INNER_FILL)
+                mode(OutlineMode.INNER_FILL)
                 width(5)
                 color(Color.RED)
             })
@@ -277,8 +277,8 @@ class EffectTest {
         cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Effect.outline {
-                mode(Outline.Mode.INNER_FILL)
-                blur(200)
+                mode(OutlineMode.INNER_FILL)
+                blurLevel(200)
                 width(5)
                 color(Color.RED)
             })
@@ -286,8 +286,8 @@ class EffectTest {
         cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Effect.outline {
-                mode(Outline.Mode.INNER_FILL)
-                blur(200)
+                mode(OutlineMode.INNER_FILL)
+                blurLevel(200)
                 width(5)
                 color("red")
             })

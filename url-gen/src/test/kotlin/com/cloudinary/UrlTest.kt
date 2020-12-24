@@ -149,7 +149,7 @@ class UrlTest {
     }
 
     @Test
-    fun testFormat() { // should use format from options
+    fun testExtension() { // should use format from options
         val result = cloudinary.image {
             extension(FormatType.jpg())
         }.generate("test")

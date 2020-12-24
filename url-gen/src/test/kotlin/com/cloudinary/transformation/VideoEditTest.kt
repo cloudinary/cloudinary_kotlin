@@ -14,7 +14,6 @@ class VideoEditTest {
 
     @Test
     fun testTrim() {
-        cldAssert("so_auto", trim { startOffset("auto") })
         cldAssert("so_2.63", trim {
             startOffset(2.63f)
         })
@@ -57,7 +56,8 @@ class VideoEditTest {
     @Test
     fun testVolume() {
         cldAssert("e_volume:50", VideoEdit.volume(50))
-        cldAssert("e_volume:50", VideoEdit.volume(Volume.level(50)))
+        cldAssert("e_volume:50", VideoEdit.volume(Volume.byPercent(50)))
+        cldAssert("e_volume:10db", VideoEdit.volume(Volume.byDecibels(10)))
         cldAssert("e_volume:mute", VideoEdit.volume(Volume.mute()))
     }
 }

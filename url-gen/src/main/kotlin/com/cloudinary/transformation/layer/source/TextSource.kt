@@ -5,10 +5,10 @@ import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.expression.Expression
 
-class TextSource private constructor(
+class TextSource internal constructor(
     private val text: Any,
     private val style: Any,
-    private val background: Color? = null,
+    private val backgroundColor: Color? = null,
     private val textColor: Color? = null,
     override val transformation: Transformation? = null
 ) : LayerSource {
@@ -17,7 +17,7 @@ class TextSource private constructor(
     // the inner structure. The extras are excluded from the toString() method.
     override fun extraComponents(): List<Param> {
         return listOfNotNull(
-            background?.let { Param("b", it) },
+            backgroundColor?.let { Param("b", it) },
             textColor?.let { Param("co", it) }
         )
     }
@@ -44,20 +44,23 @@ class TextSource private constructor(
     class Builder(private val text: Any) {
 
         private var style: Any? = null
-        private var background: Color? = null
+        private var backgroundColor: Color? = null
         private var textColor: Color? = null
 
         fun style(style: TextStyle) = apply { this.style = style }
         fun style(style: String) = apply { this.style = style }
         fun style(style: Expression) = apply { this.style = style }
 
-        fun style(options: TextStyle.Builder.() -> Unit) = apply {
-            val builder = TextStyle.Builder()
-            builder.options()
+        fun style(fontFamily: String, fontSize: Int, options: (TextStyle.Builder.() -> Unit)? = null) =
+            style(fontFamily as Any, fontSize as Any, options)
+
+        fun style(fontFamily: Any, fontSize: Any, options: (TextStyle.Builder.() -> Unit)? = null) = apply {
+            val builder = TextStyle.Builder(fontFamily, fontSize)
+            options?.let { builder.it() }
             style(builder.build())
         }
 
-        fun backgroundColor(background: Color) = apply { this.background = background }
+        fun backgroundColor(background: Color) = apply { this.backgroundColor = background }
         fun textColor(textColor: Color) = apply { this.textColor = textColor }
         private var transformation: Transformation? = null
 
@@ -71,7 +74,7 @@ class TextSource private constructor(
         fun build(): TextSource {
             val safeStyle = style
             require(safeStyle != null) { "A style must be provided (font + font size are mandatory)." }
-            return TextSource(text, safeStyle, background, textColor, transformation)
+            return TextSource(text, safeStyle, backgroundColor, textColor, transformation)
         }
     }
 }

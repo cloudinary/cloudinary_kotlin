@@ -10,7 +10,6 @@ class Trim(
 ) : VideoEdit() {
 
     init {
-
         require(listOfNotNull(startOffset, endOffset, duration).size in 1..2)
     }
 
@@ -27,7 +26,6 @@ class Trim(
         private var endOffset: Any? = null
         private var duration: Any? = null
 
-        // TODO what do we accept here? strings with % and replace? strings with `p`? the word 'auto` as string for start offset?
         fun startOffset(offset: Float) = apply { this.startOffset = offset }
         fun startOffset(offset: Int) = apply { this.startOffset = offset }
         fun startOffset(offset: String) = apply { this.startOffset = offset }
@@ -38,23 +36,22 @@ class Trim(
         fun duration(duration: Int) = apply { this.duration = duration }
         fun duration(duration: String) = apply { this.duration = duration }
 
-        // TODO validations?
         override fun build(): Trim {
             return Trim(startOffset, endOffset, duration)
-
         }
     }
 
 }
 
-class Volume internal constructor(private val value: Any) : VideoEdit() {
+class Volume internal constructor(private val value: Any, private val suffix: String? = null) : VideoEdit() {
     companion object {
         fun mute() = Volume("mute")
-        fun level(level: Int) = Volume(level)
+        fun byPercent(percentage: Int) = Volume(percentage)
+        fun byDecibels(decibels: Int) = Volume(decibels, "db")
     }
 
     override fun toString(): String {
-        return "e_volume".joinWithValues(value)
+        return "e_volume".joinWithValues(value) + (suffix ?: "")
     }
 
 }

@@ -2,8 +2,8 @@ package com.cloudinary.transformation.layer
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Color
+import com.cloudinary.transformation.gravity.FocusOn
 import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.gravity.GravityObject
 import com.cloudinary.transformation.layer.position.LayerPosition
 import com.cloudinary.transformation.layer.source.LayerSource.Companion.fetch
 import com.cloudinary.transformation.layer.source.LayerSource.Companion.image
@@ -11,7 +11,7 @@ import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class UnderlayTest {
-    private val position = LayerPosition.Builder().gravity(Gravity.objects(GravityObject.CAT)).x(20).build()
+    private val position = LayerPosition.Builder().gravity(Gravity.focusOn(FocusOn.CAT)).x(20).build()
 
     @Test
     fun testUnderlay() {
@@ -42,10 +42,7 @@ class UnderlayTest {
 
         underlay = Underlay.text {
             source("hello world!") {
-                style {
-                    fontFamily("Arial")
-                    fontSize(17)
-                }
+                style("Arial", 17)
                 textColor(Color.RED)
                 backgroundColor(Color.GREEN)
                 transformation { resize(Resize.scale { width(250) }) }

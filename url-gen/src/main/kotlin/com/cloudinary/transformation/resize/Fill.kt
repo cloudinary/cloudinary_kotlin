@@ -5,11 +5,11 @@ import com.cloudinary.transformation.gravity.Gravity
 
 class Fill(
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
     val gravity: Gravity? = null
 ) :
-    Resize(dimensions, mode, ignoreAspectRatio) {
+    Resize(dimensions, relative, regionRelative) {
     override val actionType = "fill"
 
     override fun params(): Collection<Param?> {
@@ -27,8 +27,8 @@ class Fill(
 
         override fun build() = Fill(
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity
         )
     }

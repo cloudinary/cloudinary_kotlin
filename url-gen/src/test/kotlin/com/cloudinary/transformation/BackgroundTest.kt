@@ -1,8 +1,8 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.background.AutoBackground.GradientDirection
 import com.cloudinary.transformation.background.Background
+import com.cloudinary.transformation.background.GradientDirection
 import org.junit.Test
 
 class BackgroundTest {
@@ -34,109 +34,86 @@ class BackgroundTest {
     @Test
     fun testBackgroundGradient() {
         // predominant
-        cldAssert("auto:predominant_gradient",
-            Background.predominant {
-                gradient()
-            }
+        cldAssert(
+            "auto:predominant_gradient",
+            Background.predominantGradient()
         )
 
         cldAssert("auto:predominant_gradient:2",
-            Background.predominant {
-                gradient {
-                    colors(2)
-                }
+            Background.predominantGradient {
+                gradientColors(2)
             }
         )
 
         cldAssert("auto:predominant_gradient:diagonal_desc",
-            Background.predominant {
-                gradient {
-                    direction(GradientDirection.DIAGONAL_DESC)
-                }
+            Background.predominantGradient {
+                gradientDirection(GradientDirection.DIAGONAL_DESC)
             })
 
         cldAssert("auto:predominant_gradient:4:diagonal_asc",
-            Background.predominant {
-                gradient {
-                    direction(GradientDirection.DIAGONAL_ASC)
-                    colors(4)
-                }
+            Background.predominantGradient {
+                gradientDirection(GradientDirection.DIAGONAL_ASC)
+                gradientColors(4)
             })
 
         cldAssert("auto:predominant_gradient:4:horizontal:palette_red_green_blue",
-            Background.predominant {
-                gradient {
-                    direction(GradientDirection.HORIZONTAL)
-                    colors(4)
-                }
+            Background.predominantGradient {
+                gradientDirection(GradientDirection.HORIZONTAL)
+                gradientColors(4)
+
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("auto:predominant_gradient:vertical:palette_red_green_blue",
-            Background.predominant {
-                gradient {
-                    direction(GradientDirection.VERTICAL)
-                }
+            Background.predominantGradient {
+                gradientDirection(GradientDirection.VERTICAL)
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("auto:predominant_gradient:palette_red_green_blue",
-            Background.predominant {
-                gradient()
+            Background.predominantGradient {
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
 
         // border
-        cldAssert("auto:border_gradient",
-            Background.border {
-                gradient()
-            }
+        cldAssert(
+            "auto:border_gradient",
+            Background.borderGradient()
         )
 
         cldAssert("auto:border_gradient:2",
-            Background.border {
-                gradient {
-                    colors(2)
-                }
+            Background.borderGradient {
+                gradientColors(2)
             }
         )
 
         cldAssert("auto:border_gradient:diagonal_desc",
-            Background.border {
-                gradient {
-                    direction(GradientDirection.DIAGONAL_DESC)
-                }
+            Background.borderGradient {
+                gradientDirection(GradientDirection.DIAGONAL_DESC)
             })
 
         cldAssert("auto:border_gradient:4:diagonal_desc",
-            Background.border {
-                gradient {
-                    direction(GradientDirection.DIAGONAL_DESC)
-                    colors(4)
-                }
+            Background.borderGradient {
+                gradientDirection(GradientDirection.DIAGONAL_DESC)
+                gradientColors(4)
             })
 
         cldAssert("auto:border_gradient:4:diagonal_desc:palette_red_green_blue",
-            Background.border {
-                gradient {
-                    direction(GradientDirection.DIAGONAL_DESC)
-                    colors(4)
-                }
+            Background.borderGradient {
+                gradientDirection(GradientDirection.DIAGONAL_DESC)
+                gradientColors(4)
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("auto:border_gradient:vertical:palette_red_green_blue",
-            Background.border {
-                gradient {
-                    direction(GradientDirection.VERTICAL)
-                }
+            Background.borderGradient {
+                gradientDirection(GradientDirection.VERTICAL)
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
 
         cldAssert("auto:border_gradient:palette_red_green_blue",
-            Background.border {
-                gradient()
+            Background.borderGradient {
                 palette(Color.RED, Color.GREEN, Color.BLUE)
             })
     }

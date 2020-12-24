@@ -7,20 +7,32 @@ abstract class CustomFunction : Action {
 
     companion object {
         fun wasm(publicId: String) = WasmCustomFunction(publicId)
-        fun remote(url: String) = RemoteCustomFunction(url)
-        fun preprocessRemote(url: String) = PreprocessCustomFunction(url)
+
+        fun remote(url: String, options: (RemoteCustomFunction.Builder.() -> Unit)? = null): RemoteCustomFunction {
+            val builder = RemoteCustomFunction.Builder(url)
+            options?.let { builder.it() }
+            return builder.build()
+        }
     }
 }
 
-class RemoteCustomFunction(private val url: String) : CustomFunction() {
+class RemoteCustomFunction(private val url: String, private val preprocess: Boolean? = null) : CustomFunction() {
     override fun toString(): String {
-        return "fn_remote:${url.cldToUrlSafeBase64()}"
+        val base64Url = url.cldToUrlSafeBase64()
+        return if (preprocess == true) {
+            return "fn_pre:remote:$base64Url"
+        } else {
+            "fn_remote:$base64Url"
+        }
     }
-}
 
-class PreprocessCustomFunction(private val url: String) : CustomFunction() {
-    override fun toString(): String {
-        return "fn_pre:remote:${url.cldToUrlSafeBase64()}"
+    class Builder(val url: String) : TransformationComponentBuilder {
+        private var preprocess: Boolean? = null
+
+        fun preprocess() = apply { this.preprocess = true }
+        override fun build(): RemoteCustomFunction {
+            return RemoteCustomFunction(url, preprocess)
+        }
     }
 }
 

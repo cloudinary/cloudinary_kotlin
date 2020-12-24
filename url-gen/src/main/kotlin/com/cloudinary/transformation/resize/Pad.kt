@@ -3,18 +3,18 @@ package com.cloudinary.transformation.resize
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.expression.Expression
-import com.cloudinary.transformation.gravity.Gravity
+import com.cloudinary.transformation.gravity.CompassGravity
 
 open class Pad(
     dimensions: Dimensions,
-    mode: ResizeMode? = null,
-    ignoreAspectRatio: Boolean? = null,
-    val gravity: Gravity? = null,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
+    val gravity: CompassGravity? = null,
     val x: Any? = null,
     val y: Any? = null,
     val background: Background? = null
 ) :
-    Resize(dimensions, mode, ignoreAspectRatio) {
+    Resize(dimensions, relative, regionRelative) {
     override val actionType = "pad"
 
     override fun params(): Collection<Param?> {
@@ -26,12 +26,12 @@ open class Pad(
     }
 
     open class Builder : BaseBuilder<Builder>() {
-        protected var gravity: Gravity? = null
+        protected var gravity: CompassGravity? = null
         protected var x: Any? = null
         protected var y: Any? = null
         protected var background: Background? = null
 
-        fun gravity(gravity: Gravity) = apply {
+        fun gravity(gravity: CompassGravity) = apply {
             this.gravity = gravity
         }
 
@@ -61,8 +61,8 @@ open class Pad(
 
         override fun build() = Pad(
             Dimensions(width, height, aspectRatio),
-            mode,
-            ignoreAspectRatio,
+            relative,
+            regionRelative,
             gravity,
             x,
             y,

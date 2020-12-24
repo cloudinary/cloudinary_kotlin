@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.adjust.Adjust
-import com.cloudinary.transformation.adjust.ImproveMode
+import com.cloudinary.transformation.adjust.ImproveModeType
 import org.junit.Test
 
 class AdjustTest {
@@ -12,6 +12,11 @@ class AdjustTest {
         cldAssert("e_tint:50:red:blue", Adjust.tint("50:red:blue"))
         cldAssert("e_tint:50:red:blue", Adjust.tint(50, "red", "blue"))
         cldAssert("e_tint:50:red:blue", Adjust.tint(50, Color.RED, Color.BLUE))
+    }
+
+    @Test
+    fun test3DLut() {
+        cldAssert("l_lut:iwltbap_aspen.3dl", Adjust.by3DLut("iwltbap_aspen.3dl"))
     }
 
     @Test
@@ -128,12 +133,12 @@ class AdjustTest {
         })
 
         cldAssert("e_improve:indoor", Adjust.improve {
-            mode(ImproveMode.INDOOR)
+            mode(ImproveModeType.INDOOR)
         })
 
         cldAssert("e_improve:outdoor:30", Adjust.improve {
             blend(30)
-            mode(ImproveMode.OUTDOOR)
+            mode(ImproveModeType.OUTDOOR)
         })
     }
 
@@ -175,5 +180,32 @@ class AdjustTest {
     @Test
     fun viesusCorrect() {
         cldAssert("e_viesus_correct", Adjust.viesusCorrect())
+        cldAssert("e_viesus_correct:skin_saturation", Adjust.viesusCorrect {
+            skinSaturation()
+        })
+        cldAssert("e_viesus_correct:skin_saturation_20", Adjust.viesusCorrect {
+            skinSaturation(20)
+        })
+        cldAssert("e_viesus_correct:no_redeye:skin_saturation_20", Adjust.viesusCorrect {
+            skinSaturation(20)
+            noRedEye()
+        })
+        cldAssert("e_viesus_correct:no_redeye", Adjust.viesusCorrect {
+            noRedEye()
+        })
+    }
+
+    @Test
+    fun recolor() {
+        cldAssert(
+            "e_recolor:0.1:0.2:0.3:0.4:0.5:0.6:0.7:0.8:0.9",
+            Adjust.recolor(
+                arrayOf(
+                    floatArrayOf(0.1F, 0.2F, 0.3F),
+                    floatArrayOf(0.4F, 0.5F, 0.6F),
+                    floatArrayOf(0.7F, 0.8F, 0.9F)
+                )
+            )
+        )
     }
 }

@@ -13,6 +13,13 @@ class Underlay private constructor(
     private val position: LayerPosition? = null,
     private val blendMode: BlendMode? = null
 ) : Action {
+
+    init {
+        require(source is ImageSource || source is FetchSource || source is TextSource) {
+            "Source must be one of ImageSource, FetchSource or TextSource"
+        }
+    }
+
     companion object {
         fun image(options: (ImageBuilder.() -> Unit)? = null): Underlay {
             val builder = ImageBuilder()

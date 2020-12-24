@@ -11,11 +11,21 @@ import com.cloudinary.util.cldRanged
 class StyleTransfer private constructor(
     private val source: LayerSource,
     private val strength: Any? = null,
-    private val preserveColor: Boolean = false
+    private val preserveColor: Boolean? = null
 ) : Action {
 
+    init {
+        strength?.cldRanged(0, 100)
+    }
+
     companion object {
-        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): StyleTransfer {
+        fun source(source: ImageSource, options: (Builder.() -> Unit)? = null): StyleTransfer {
+            val builder = Builder(source)
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun source(source: FetchSource, options: (Builder.() -> Unit)? = null): StyleTransfer {
             val builder = Builder(source)
             options?.let { builder.it() }
             return builder.build()
@@ -49,7 +59,7 @@ class StyleTransfer private constructor(
                     "e", "style_transfer"
                         .joinWithValues(
                             strength?.cldRanged(0, 100),
-                            if (preserveColor) "preserve_color" else null
+                            if (preserveColor == true) "preserve_color" else null
                         )
                 )
             )
