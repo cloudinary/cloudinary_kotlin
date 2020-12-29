@@ -22,8 +22,23 @@ repositories {
 orchid {
     theme = "Editorial"
     version = "1.0.0"
-    srcDir  = "src/orchid/resources"
+    srcDir = "src/orchid/resources"
     destDir = "build"
     runTask = "build"
-    baseUrl= "./"
+    baseUrl = "./"
 }
+
+task appendIndexHtmlToLinks {
+    doLast {
+        new File("$buildDir").eachFileRecurse(groovy.io.FileType.FILES) {
+            if (it.name == 'index.html') {
+                def text = it.text
+                it.withWriter { w ->
+                    w << text.replaceAll('<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary/([a-z0-9/]+)">', '<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary/$1/index.html">')
+                }
+            }
+        }
+    }
+}
+
+tasks.getByName("orchidBuild").finalizedBy("appendIndexHtmlToLinks")
