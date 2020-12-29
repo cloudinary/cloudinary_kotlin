@@ -34,7 +34,7 @@ task appendIndexHtmlToLinks {
             if (it.name == 'index.html') {
                 def text = it.text
                 it.withWriter { w ->
-                    w << text.replaceAll('<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary/([a-z0-9/]+)">', '<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary/$1/index.html">')
+                    w << text.replaceAll('<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary([a-z0-9/]*)">', '<a href="/documentation/sdks/kotlin/kotlindoc/com/cloudinary$1/index.html">')
                 }
             }
         }
