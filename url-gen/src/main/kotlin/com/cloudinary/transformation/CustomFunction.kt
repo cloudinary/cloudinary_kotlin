@@ -3,32 +3,41 @@ package com.cloudinary.transformation
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldToUrlSafeBase64
 
-class CustomFunction(private val action: Action) : Action by action {
+abstract class CustomFunction : Action {
 
     companion object {
-        fun wasm(publicId: String) = Builder(publicId).type(Type.WASM).build()
-        fun remote(url: String) = Builder(url).type(Type.REMOTE).build()
-        fun preprocessRemote(url: String) = Builder(url).type(Type.PRE_PROCESS).build()
-    }
+        fun wasm(publicId: String) = WasmCustomFunction(publicId)
 
-    private class Builder(private val source: String) : TransformationComponentBuilder {
-        private var type: Type = Type.WASM
-
-        fun type(type: Type) = apply { this.type = type }
-
-        override fun build() = when (type) {
-            Type.PRE_PROCESS -> buildAction(listOf("pre", "remote", source.cldToUrlSafeBase64()))
-            Type.REMOTE -> buildAction(listOf("remote", source.cldToUrlSafeBase64()))
-            Type.WASM -> buildAction(listOf("wasm", source.cldEncodePublicId()))
+        fun remote(url: String, options: (RemoteCustomFunction.Builder.() -> Unit)? = null): RemoteCustomFunction {
+            val builder = RemoteCustomFunction.Builder(url)
+            options?.let { builder.it() }
+            return builder.build()
         }
+    }
+}
 
-        private fun buildAction(values: List<Any>) =
-            CustomFunction(ParamsAction(Param("custom_function", "fn", ParamValue(values))))
+class RemoteCustomFunction(private val url: String, private val preprocess: Boolean? = null) : CustomFunction() {
+    override fun toString(): String {
+        val base64Url = url.cldToUrlSafeBase64()
+        return if (preprocess == true) {
+            return "fn_pre:remote:$base64Url"
+        } else {
+            "fn_remote:$base64Url"
+        }
     }
 
-    enum class Type {
-        PRE_PROCESS,
-        REMOTE,
-        WASM
+    class Builder(val url: String) : TransformationComponentBuilder {
+        private var preprocess: Boolean? = null
+
+        fun preprocess() = apply { this.preprocess = true }
+        override fun build(): RemoteCustomFunction {
+            return RemoteCustomFunction(url, preprocess)
+        }
+    }
+}
+
+class WasmCustomFunction(private val wasmPublicId: String) : CustomFunction() {
+    override fun toString(): String {
+        return "fn_wasm:${wasmPublicId.cldEncodePublicId()}"
     }
 }

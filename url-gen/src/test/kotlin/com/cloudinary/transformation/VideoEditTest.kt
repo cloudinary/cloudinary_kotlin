@@ -2,18 +2,18 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Transformation.Companion.transformation
-import com.cloudinary.transformation.layer.Source
+import com.cloudinary.transformation.layer.source.LayerSource
 import com.cloudinary.transformation.videoedit.VideoEdit
 import com.cloudinary.transformation.videoedit.VideoEdit.Companion.concatenate
 import com.cloudinary.transformation.videoedit.VideoEdit.Companion.trim
 import com.cloudinary.transformation.videoedit.Volume
+import org.junit.Ignore
 import org.junit.Test
 
 class VideoEditTest {
 
     @Test
     fun testTrim() {
-        cldAssert("so_auto", trim { startOffset("auto") })
         cldAssert("so_2.63", trim {
             startOffset(2.63f)
         })
@@ -37,10 +37,12 @@ class VideoEditTest {
     }
 
     @Test
+    @Ignore("Not yet implemented")
     fun testConcatenate() {
+        // TODO not implemented yet
         cldAssert("l_video:dog/du_5,so_0/fl_layer_apply.splice",
             transformation {
-                videoEdit(concatenate(Source.video("dog")) {
+                videoEdit(concatenate(LayerSource.video("dog")) {
                     transformation {
                         videoEdit(trim {
                             startOffset(0)
@@ -54,7 +56,8 @@ class VideoEditTest {
     @Test
     fun testVolume() {
         cldAssert("e_volume:50", VideoEdit.volume(50))
-        cldAssert("e_volume:50", VideoEdit.volume(Volume.level(50)))
+        cldAssert("e_volume:50", VideoEdit.volume(Volume.byPercent(50)))
+        cldAssert("e_volume:10db", VideoEdit.volume(Volume.byDecibels(10)))
         cldAssert("e_volume:mute", VideoEdit.volume(Volume.mute()))
     }
 }

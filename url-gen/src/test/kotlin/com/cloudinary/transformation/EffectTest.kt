@@ -2,8 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.effect.*
-import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.layer.Source
+import com.cloudinary.transformation.layer.source.LayerSource
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
@@ -17,7 +16,7 @@ class EffectTest {
     @Test
     fun testDeshake() {
         cldAssert("e_deshake", Effect.deshake())
-        cldAssert("e_deshake:16", Effect.deshake(DeshakeFactor.FACTOR16))
+        cldAssert("e_deshake:16", Effect.deshake(Deshake.DeshakeFactor.FACTOR16))
     }
 
     @Test
@@ -92,14 +91,14 @@ class EffectTest {
     @Test
     fun testAssistColorBlind() {
         cldAssert("e_assist_colorblind", Effect.assistColorBlind())
-        cldAssert("e_assist_colorblind:8", Effect.assistColorBlind { stripes(8) })
+        cldAssert("e_assist_colorblind:8", Effect.assistColorBlind { stripesStrength(8) })
         cldAssert(
             "e_assist_colorblind:xray", Effect.assistColorBlind { xRay() })
 
 
         cldAssert(
             "e_assist_colorblind:\$var1",
-            Effect.assistColorBlind { stripes("\$var1") })
+            Effect.assistColorBlind { stripesStrength("\$var1") })
     }
 
     @Test
@@ -107,7 +106,7 @@ class EffectTest {
         cldAssert("e_simulate_colorblind", Effect.simulateColorBlind())
         cldAssert(
             "e_simulate_colorblind:deuteranopia",
-            Effect.simulateColorBlind(SimulateColorBlind.DEUTERANOPIA)
+            Effect.simulateColorBlind(SimulateColorBlindType.DEUTERANOPIA)
         )
     }
 
@@ -116,7 +115,7 @@ class EffectTest {
         cldAssert("e_vectorize", Effect.vectorize())
         cldAssert(
             "e_vectorize:colors:15:detail:2:despeckle:0.5:paths:4:corners:5",
-            Effect.vectorize { colors(15).detail(2).despeckle(0.5f).paths(4).corners(5) })
+            Effect.vectorize { numOfColors(15).detailsLevel(2).despeckleLevel(0.5f).paths(4).cornersLevel(5) })
     }
 
     @Test
@@ -153,7 +152,7 @@ class EffectTest {
     @Test
     fun testMakeTransparent() {
         cldAssert("e_make_transparent", Effect.makeTransparent())
-        cldAssert("e_make_transparent:50", Effect.makeTransparent { level(50) })
+        cldAssert("e_make_transparent:50", Effect.makeTransparent { tolerance(50) })
     }
 
     @Test
@@ -163,7 +162,7 @@ class EffectTest {
         })
         cldAssert("co_rgb:0e80d8,e_make_transparent:10", Effect.makeTransparent {
             color(Color.Rgb("0e80d8"))
-            level(10)
+            tolerance(10)
         })
     }
 
@@ -203,75 +202,48 @@ class EffectTest {
     fun testPixelate() {
         cldAssert("e_pixelate", Effect.pixelate())
         cldAssert("e_pixelate:3", Effect.pixelate(3))
-    }
 
-    @Test
-    fun testPixelateRegion() {
         cldAssert(
             "e_pixelate_region:20,h_40,w_40,x_20,y_20",
-            Effect.pixelateRegion {
-                this.squareSize(20)
+            Effect.pixelate(20, Region.custom {
                 x(20)
                 y(20)
                 width(40)
                 height(40)
             })
+        )
 
-        cldAssert(
-            "e_pixelate_region:20,g_face,h_40,w_40",
-            Effect.pixelateRegion {
-                this.squareSize(20)
-                gravity(Gravity.face())
-                width(40)
-                height(40)
-            })
-    }
-
-    @Test
-    fun testPixelateFaces() {
-        cldAssert("e_pixelate_faces", Effect.pixelateFaces())
-        cldAssert("e_pixelate_faces:7", Effect.pixelateFaces(7))
+        cldAssert("e_pixelate_faces", Effect.pixelate(region = Region.Faces()))
+        cldAssert("e_pixelate_faces:7", Effect.pixelate(7, Region.Faces()))
+        cldAssert("e_pixelate_region:7,g_ocr_text", Effect.pixelate(7, Region.OcrText()))
     }
 
     @Test
     fun testBlur() {
         cldAssert("e_blur", Effect.blur())
         cldAssert("e_blur:300", Effect.blur(300))
-    }
 
-    @Test
-    fun testBlurRegion() {
         cldAssert(
             "e_blur_region:200,h_40,w_40,x_10,y_20",
-            Effect.blurRegion {
-                strength(200)
+            Effect.blur(200, Region.custom {
                 x(10)
                 y(20)
                 width(40)
                 height(40)
             })
+        )
 
-        cldAssert(
-            "e_blur_region:200,g_face,h_40,w_40",
-            Effect.blurRegion {
-                strength(200)
-                gravity(Gravity.face())
-                width(40)
-                height(40)
-            })
-    }
 
-    @Test
-    fun testBlurFaces() {
-        cldAssert("e_blur_faces", Effect.blurFaces())
-        cldAssert("e_blur_faces:600", Effect.blurFaces(600))
+        cldAssert("e_blur_faces", Effect.blur(region = Region.Faces()))
+        cldAssert("e_blur_faces:600", Effect.blur(600, Region.Faces()))
+        cldAssert("e_blur_region:600,g_ocr_text", Effect.blur(600, Region.OcrText()))
     }
 
     @Test
     fun testOrderedDither() {
         cldAssert(
             "e_ordered_dither:0",
-            Effect.orderedDither(DitherFilter.THRESHOLD_1X1_NON_DITHER)
+            Effect.dither(Dither.THRESHOLD_1X1_NON_DITHER)
         )
     }
 
@@ -285,7 +257,7 @@ class EffectTest {
             Effect.shadow { strength(50).color(Color.GREEN) })
         cldAssert(
             "co_green,e_shadow:50,x_20,y_-20",
-            Effect.shadow { strength(50).color(Color.GREEN).x(20).y(-20) }
+            Effect.shadow { strength(50).color(Color.GREEN).offsetX(20).offsetY(-20) }
         )
     }
 
@@ -293,13 +265,13 @@ class EffectTest {
     fun testOutline() {
         cldAssert("e_outline", Effect.outline())
         cldAssert("e_outline:inner_fill", Effect.outline {
-            mode(Outline.INNER_FILL)
+            mode(OutlineMode.INNER_FILL)
         })
 
         cldAssert(
             "co_red,e_outline:inner_fill:5",
             Effect.outline {
-                mode(Outline.INNER_FILL)
+                mode(OutlineMode.INNER_FILL)
                 width(5)
                 color(Color.RED)
             })
@@ -307,8 +279,8 @@ class EffectTest {
         cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Effect.outline {
-                mode(Outline.INNER_FILL)
-                blur(200)
+                mode(OutlineMode.INNER_FILL)
+                blurLevel(200)
                 width(5)
                 color(Color.RED)
             })
@@ -316,8 +288,8 @@ class EffectTest {
         cldAssert(
             "co_red,e_outline:inner_fill:5:200",
             Effect.outline {
-                mode(Outline.INNER_FILL)
-                blur(200)
+                mode(OutlineMode.INNER_FILL)
+                blurLevel(200)
                 width(5)
                 color("red")
             })
@@ -325,7 +297,7 @@ class EffectTest {
 
     @Test
     fun testStyleTransfer() {
-        val lighthouse = Source.image("lighthouse")
+        val lighthouse = LayerSource.image("lighthouse")
         cldAssert(
             "l_lighthouse/e_style_transfer,fl_layer_apply",
             Effect.styleTransfer(lighthouse)
@@ -339,17 +311,31 @@ class EffectTest {
 
         cldAssert(
             "l_lighthouse/c_scale,w_200/e_sepia/e_style_transfer:34,fl_layer_apply",
-            Effect.styleTransfer(lighthouse) {
-                strength(34)
+            Effect.styleTransfer(LayerSource.image("lighthouse") {
                 transformation {
                     resize(Resize.scale(200))
                     effect(Effect.sepia())
                 }
+            }) {
+                strength(34)
             })
 
         cldAssert(
+            "l_lighthouse/c_scale,w_200/e_sepia/e_style_transfer:34,fl_layer_apply",
+            Effect.styleTransfer(StyleTransfer.image {
+                source("lighthouse") {
+                    transformation {
+                        resize(Resize.scale(200))
+                        effect(Effect.sepia())
+                    }
+                }
+                strength(34)
+            })
+        )
+
+        cldAssert(
             "l_lighthouse/e_style_transfer:preserve_color,fl_layer_apply",
-            Effect.styleTransfer(Source.image("lighthouse")) { preserveColor() }
+            Effect.styleTransfer(LayerSource.image("lighthouse")) { preserveColor() }
         )
     }
 }

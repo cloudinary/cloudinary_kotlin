@@ -1,50 +1,35 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.*
-import com.cloudinary.util.cldRealPositive
+import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.FormatType
+import com.cloudinary.transformation.expression.Expression
 
-class Delivery(private val action: Action) : Action by action {
-
-
+abstract class Delivery : Action {
     companion object {
-        fun fallbackImage(publicId: String) = delivery(publicId.cldAsFallbackImage())
-        fun density(density: Int) = delivery(density.cldAsDensity())
-        fun dpr(dpr: Dpr) = delivery(dpr)
-        fun dpr(dpr: Float) = delivery(dpr.cldAsDpr())
-        fun dpr(dpr: String) = delivery(dpr.cldAsDpr())
-        fun fps(fps: Float) = FpsBuilder().fixed(fps).build()
-        fun fps(min: Float, max: Float) = FpsBuilder().min(min).max(max).build()
-        fun fps(options: (FpsBuilder.() -> Unit)? = null): Delivery {
-            val builder = FpsBuilder()
-            options?.let { builder.options() }
+        fun defaultImage(publicId: String) = DefaultImage(publicId)
+        fun density(density: Int) = Density(density)
+        fun density(density: Expression) = Density(density)
+        fun density(density: String) = Density(density)
+        fun colorSpace(colorSpace: ColorSpaceType) = ColorSpace(colorSpace)
+        fun colorSpaceFromIcc(publicId: String) = ColorSpaceFromIcc(publicId)
+
+        fun dpr(dpr: Dpr) = dpr
+        fun dpr(dpr: Float) = Dpr.fromFloat(dpr)
+        fun dpr(dpr: Expression) = Dpr.fromExpression(dpr)
+        fun dpr(dpr: String) = Dpr.fromString(dpr)
+
+        fun quality(quality: Quality) = quality
+        fun quality(level: Any, options: (Quality.Builder.() -> Unit)? = null): Quality {
+            val builder = Quality.Builder(level)
+            options?.let { builder.it() }
             return builder.build()
         }
 
-        fun defaultImage(publicId: String) = delivery(publicId.cldAsDefaultImage())
-
-        fun colorSpace(colorSpace: ColorSpace) = delivery(colorSpace.cldAsColorSpace())
-
-        fun keyframeInterval(seconds: Float) = delivery((seconds.cldRealPositive().cldAsKeyframeInterval()))
+        fun format(format: Format) = format
+        fun format(format: FormatType, options: (Format.Builder.() -> Unit)? = null): Format {
+            val builder = Format.Builder(format)
+            options?.let { builder.it() }
+            return builder.build()
+        }
     }
 }
-
-class Dpr internal constructor(value: Any) : Param("dpr", "dpr", value) {
-    companion object {
-        fun auto() = Dpr("auto")
-    }
-}
-
-sealed class ColorSpace(value: Any) : ParamValue(value) {
-    constructor(value: String) : this(ParamValue(value))
-
-    object SRgb : ColorSpace("srgb")
-    object TinySRgb : ColorSpace("tinysrgb")
-    object Cmyk : ColorSpace("cmyk")
-    object NoCmyk : ColorSpace("no_cmyk")
-    object KeepCmyk : ColorSpace("keep_cmyk")
-    class CsIcc(publicId: String) : ColorSpace(
-        ParamValue(listOfNotNull("icc", publicId))
-    )
-}
-
-internal fun delivery(vararg params: Param) = Delivery(ParamsAction(params.toList()))

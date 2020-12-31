@@ -1,13 +1,11 @@
 package com.cloudinary.transformation
 
-const val ACTIONS_SEPARATOR = "/"
-
 @TransformationDsl
 class Transformation(private val actions: List<Action> = emptyList()) : ITransformable<Transformation> {
 
     constructor(action: Action) : this(listOf(action))
 
-    override fun toString() = actions.joinToString(ACTIONS_SEPARATOR)
+    override fun toString() = actions.joinToString(DEFAULT_COMPONENT_SEPARATOR)
 
     override fun add(action: Action) = Transformation(actions + action)
 

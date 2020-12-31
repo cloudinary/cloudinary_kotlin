@@ -3,7 +3,7 @@ package com.cloudinary
 import com.cloudinary.http.ApacheHttpClient45Factory
 import com.cloudinary.http.HttpUrlConnectionFactory
 import com.cloudinary.http.OkHttpClientFactory
-import com.cloudinary.transformation.Format
+import com.cloudinary.transformation.FormatType
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
@@ -254,10 +254,10 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testEager() {
-        val transformation = Transformation().resize(scale { width(2.0) })
+        val transformation = Transformation().resize(scale { width(2.0f) })
         val response = uploader.upload(srcTestImage) {
             params {
-                eager = listOf(EagerTransformation(transformation, Extension.PNG))
+                eager = listOf(EagerTransformation(transformation, FormatType.png()))
                 tags = defaultTags
             }
         }
@@ -270,7 +270,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testUploadAsync() {
-        val transformation = Transformation().resize(scale { width(2.0) })
+        val transformation = Transformation().resize(scale { width(2.0f) })
 
         val response = uploader.upload(srcTestImage) {
             params {
@@ -713,7 +713,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val publicId = uploadResponse.resultOrThrow().publicId ?: throw Error("Public Id returned from upload is null")
 
         val transformation = Transformation().resize(scale {
-            width(2.0)
+            width(2.0f)
         })
         val response = uploader.explicit(publicId) {
             params {
@@ -727,7 +727,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val url = cloudinary.image {
             transformation(transformation)
-            extension(Extension.PNG)
+            extension(FormatType.png())
             version(explicitData.version!!.toString())
         }.generate(publicId)!!
 
@@ -775,7 +775,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
                     width(100)
                 })
             }
-            format = Format.jpg()
+            format = FormatType.jpg()
         }
 
         assertTrue(response.resultOrThrow().cssUrl!!.contains("c_scale,w_100/f_jpg"))
@@ -792,7 +792,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val response = uploader.multi(multiTestTag) {
             transformation {
                 resize(Resize.crop {
-                    width(0.5)
+                    width(0.5f)
                 })
             }
         }
@@ -946,7 +946,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val res = uploader.upload(srcTestImage) {
             configuration =
                 cld.config.copy(
-                    accountConfig = cld.config.accountConfig.copy(
+                    cloudConfig = cld.config.cloudConfig.copy(
                         apiKey = "bad_secret"
                     )
                 )

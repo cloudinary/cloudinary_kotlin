@@ -12,7 +12,7 @@ import java.util.regex.Pattern
 /**
  * If the param is null the original string is returned unchanged.
  */
-internal fun String.cldJoinWithOrReturnOriginal(separator: String, toJoin: Any?): String? {
+internal fun String.cldJoinWithOrReturnOriginal(separator: String, toJoin: Any?): String {
     return if (toJoin != null) this + separator + toJoin.toString() else this
 }
 
@@ -106,7 +106,6 @@ internal fun String.cldSmartUrlEncode() = URLEncoder.encode(this, "UTF-8")
     .replace("%3A", ":")
     .replace("+", "%20")
 
-internal fun String.cldRemovePound() = replaceFirst("#", "")
 
 /**
  *

@@ -1,88 +1,137 @@
 package com.cloudinary.transformation.gravity
 
-import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.ParamValue
+import com.cloudinary.transformation.TransformationDsl
+import com.cloudinary.transformation.joinWithValues
 
 // TODO these classes don't yet make enough sense
-open class Gravity internal constructor(value: ParamValue) : Param("gravity", "g", value) {
-    internal constructor(direction: Direction) : this(
-        ParamValue(direction)
-    )
-
-    internal constructor(focus: FocalPoint) : this(
-        ParamValue(
-            focus
-        )
-    )
-
+abstract class Gravity {
     companion object {
         fun south() =
-            Gravity(Direction.SOUTH)
+            CompassGravity(Compass.SOUTH)
 
         fun southEast() =
-            Gravity(Direction.SOUTH_EAST)
+            CompassGravity(Compass.SOUTH_EAST)
 
         fun southWest() =
-            Gravity(Direction.SOUTH_WEST)
+            CompassGravity(Compass.SOUTH_WEST)
 
         fun north() =
-            Gravity(Direction.NORTH)
+            CompassGravity(Compass.NORTH)
 
         fun northEast() =
-            Gravity(Direction.NORTH_EAST)
+            CompassGravity(Compass.NORTH_EAST)
 
         fun northWest() =
-            Gravity(Direction.NORTH_WEST)
+            CompassGravity(Compass.NORTH_WEST)
 
         fun east() =
-            Gravity(Direction.EAST)
+            CompassGravity(Compass.EAST)
 
         fun west() =
-            Gravity(Direction.WEST)
+            CompassGravity(Compass.WEST)
 
         fun center() =
-            Gravity(Direction.CENTER)
+            CompassGravity(Compass.CENTER)
 
-        fun advancedFace() =
-            Gravity(FocalPoint.ADVANCED_FACE)
+        fun ocr(options: (OcrGravity.Builder.() -> Unit)? = null): OcrGravity {
+            val builder = OcrGravity.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
-        fun advancedFaces() =
-            Gravity(FocalPoint.ADVANCED_FACES)
+        fun focusOn(
+            focusOn: FocusOn,
+            vararg focusOnObjects: FocusOn,
+            options: (FocusOnGravity.Builder.() -> Unit)? = null
+        ): FocusOnGravity {
+            val builder = FocusOnGravity.Builder(mutableListOf(focusOn).also { it.addAll(focusOnObjects) })
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
-        fun advancedEyes() =
-            Gravity(FocalPoint.ADVANCED_EYES)
+        fun auto(vararg objects: IAutoGravityObject, options: (AutoGravity.Builder.() -> Unit)? = null): AutoGravity {
+            val builder = AutoGravity.Builder()
+            builder.autoFocus(*objects)
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
-        fun ocrText() = Gravity(ParamValue("ocr_text"))
-
-        fun body() =
-            Gravity(FocalPoint.BODY)
-
-        fun face() =
-            Gravity(FocalPoint.FACE)
-
-        fun faces() =
-            Gravity(FocalPoint.FACES)
-
-        fun noFaces() =
-            Gravity(FocalPoint.NO_FACES)
-
-        fun customNoOverride() =
-            Gravity(FocalPoint.CUSTOM_NO_OVERRIDE)
-
-        fun objects(objectGravity: IObjectGravity, vararg objects: IObjectGravity) =
-            Gravity(ParamValue(listOf(objectGravity) + objects))
-
-        fun auto(focalPoint: FocalPoint? = null) =
-            Gravity(ParamValue(listOfNotNull("auto", focalPoint)))
-
-        fun autoClassic() = Gravity(ParamValue(listOf("auto", "classic")))
-
-        fun auto(vararg objects: IAutoObjectGravity) =
-            Gravity(ParamValue(listOf("auto") + objects))
+        fun compass(compass: Compass) = CompassGravity(compass)
     }
 }
 
-internal enum class Direction(private val value: String) {
+class CompassGravity internal constructor(private val compass: Compass) : Gravity() {
+    override fun toString(): String {
+        return compass.toString()
+    }
+}
+
+class FocusOnGravity internal constructor(
+    private val focusOnObjects: List<FocusOn>,
+    private val fallbackGravity: AutoGravity? = null
+) : Gravity() {
+    override fun toString(): String {
+        return focusOnObjects.joinToString(":").joinWithValues(fallbackGravity)
+    }
+
+    @TransformationDsl
+    class Builder(private val objects: MutableList<FocusOn>) {
+        private var fallbackGravity: AutoGravity? = null
+
+        fun fallbackGravity(gravity: AutoGravity) = apply { this.fallbackGravity = gravity }
+        fun build(): FocusOnGravity {
+            return FocusOnGravity(objects, fallbackGravity)
+        }
+    }
+}
+
+class AutoGravity internal constructor(private val objects: List<IAutoGravityObject>) : Gravity() {
+    override fun toString(): String {
+        return "auto".joinWithValues(*objects.toTypedArray())
+    }
+
+    @TransformationDsl
+    class Builder {
+        val objects = mutableListOf<IAutoGravityObject>()
+
+        fun autoFocus(vararg objects: IAutoGravityObject) = apply {
+            this.objects.addAll(objects)
+        }
+
+        fun build(): AutoGravity {
+            return AutoGravity(objects)
+        }
+    }
+}
+
+class AutoFocus {
+
+    companion object {
+        fun focusOn(focus: FocusOn, options: (AutoGravityObject.Builder.() -> Unit)? = null): AutoGravityObject {
+            val builder = AutoGravityObject.Builder(focus)
+            options?.let { builder.it() }
+            return builder.build()
+        }
+    }
+}
+
+class OcrGravity(private val avoid: Boolean? = null) : Gravity() {
+    override fun toString(): String {
+        return "ocr_text".joinWithValues(avoid?.let { "avoid" }, separator = "_")
+    }
+
+    class Builder {
+        var avoid: Boolean? = null
+
+        fun avoid() = apply { this.avoid = true }
+
+        fun build(): OcrGravity {
+            return OcrGravity(avoid)
+        }
+    }
+}
+
+enum class Compass(private val value: String) {
     NORTH("north"),
     NORTH_EAST("north_east"),
     NORTH_WEST("north_west"),
@@ -97,20 +146,3 @@ internal enum class Direction(private val value: String) {
         return value
     }
 }
-
-enum class FocalPoint(private val value: String) {
-    ADVANCED_FACE("adv_face"),
-    ADVANCED_FACES("adv_faces"),
-    ADVANCED_EYES("adv_eyes"),
-    BODY("body"),
-    FACE("face"),
-    FACES("faces"),
-    NO_FACES("no_faces"),
-    CUSTOM_NO_OVERRIDE("custom_no_override"),
-    NONE("none");
-
-    override fun toString(): String {
-        return value
-    }
-}
-

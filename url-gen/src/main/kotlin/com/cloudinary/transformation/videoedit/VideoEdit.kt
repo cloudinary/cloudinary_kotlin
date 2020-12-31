@@ -1,36 +1,25 @@
 package com.cloudinary.transformation.videoedit
 
-import com.cloudinary.transformation.*
-import com.cloudinary.transformation.layer.LayerAction
-import com.cloudinary.transformation.layer.MediaSource
+import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.layer.source.VideoSource
 
-class VideoEdit(action: Action) : Action by action {
+abstract class VideoEdit : Action {
     companion object {
 
-        fun trim(options: TrimBuilder.() -> Unit): VideoEdit {
-            val builder = TrimBuilder()
+        fun trim(options: Trim.Builder.() -> Unit): Trim {
+            val builder = Trim.Builder()
             builder.options()
             return builder.build()
         }
 
-        fun volume(level: Int) = VideoEdit(ParamsAction(Volume.level(level)))
-        fun volume(volume: Volume) = VideoEdit(ParamsAction(volume))
+        fun volume(level: Int) = Volume(level)
+        fun volume(level: Any) = Volume(level)
+        fun volume(volume: Volume) = volume
 
-        // TODO transition
-        fun concatenate(source: MediaSource, options: (LayerAction.Builder.() -> Unit)? = null): VideoEdit {
-            val builder = LayerAction.Builder(source)
+        fun concatenate(source: VideoSource, options: (Concatenate.Builder.() -> Unit)? = null): Concatenate {
+            val builder = Concatenate.Builder(source)
             options?.let { builder.it() }
-            builder.flagKey(Flag.splice())
-            return VideoEdit(builder.build())
+            return builder.build()
         }
-    }
-}
-
-// TODO this isn't great code, redesign
-class Volume private constructor(vararg values: Any) :
-    Param("volume", "e", ParamValue(values)) {
-    companion object {
-        fun mute() = Volume("volume", "mute")
-        fun level(level: Int) = Volume("volume", level)
     }
 }

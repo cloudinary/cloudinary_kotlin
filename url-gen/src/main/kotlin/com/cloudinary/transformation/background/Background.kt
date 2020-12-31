@@ -1,43 +1,55 @@
 package com.cloudinary.transformation.background
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.Color
 
-class PadBackground(action: ParamsAction) : Background(action) {
+abstract class Background {
+
+    override fun toString(): String {
+        return getValues()
+    }
+
+    protected abstract fun getValues(): String
+
     companion object {
 
-        fun blurred(options: (BlurredBackgroundBuilder.() -> Unit)? = null): PadBackground {
-            val builder = BlurredBackgroundBuilder()
+        fun blurred(options: (BlurredBackground.Builder.() -> Unit)? = null): Background {
+            val builder = BlurredBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun auto() = AutoBackgroundBuilder().build()
+        fun auto() = AutoBackground()
 
         // auto:border
-        fun border(options: (AutoBackgroundBuilder.() -> Unit)? = null): PadBackground {
-            val builder = AutoBackgroundBuilder("border")
+        fun border(options: (BorderBackground.Builder.() -> Unit)? = null): Background {
+            val builder = BorderBackground.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        // auto:border_gradient
+        fun borderGradient(options: (BorderGradientBackground.Builder.() -> Unit)? = null): Background {
+            val builder = BorderGradientBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
         // auto:predominant
-        fun predominant(options: (AutoBackgroundBuilder.() -> Unit)? = null): PadBackground {
-            val builder = AutoBackgroundBuilder("predominant")
+        fun predominant(options: (PredominantBackground.Builder.() -> Unit)? = null): Background {
+            val builder = PredominantBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun color(color: Color) = Background.color(color)
+        // auto:predominant
+        fun predominantGradient(options: (PredominantGradientBackground.Builder.() -> Unit)? = null): Background {
+            val builder = PredominantGradientBackground.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
 
-        fun color(color: String) = Background.color(color)
-    }
-}
+        fun color(color: Color) = ColorBackground(color)
 
-open class Background(private val action: ParamsAction) : Action by action {
-    internal fun getParams() = action.params
-
-    companion object {
-        fun color(color: Color) = Background(color.cldAsBackground().asAction())
         fun color(color: String) = color(Color.parseString(color))
     }
 }

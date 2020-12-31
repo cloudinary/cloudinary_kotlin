@@ -2,73 +2,73 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.asAction
-import com.cloudinary.transformation.cldAsOpacity
-import com.cloudinary.transformation.effect.Improve
-import com.cloudinary.transformation.effect.effectAction
 import com.cloudinary.util.cldRanged
 
-class Adjust(private val action: Action) : Action by action {
-
+abstract class Adjust : Action {
     companion object {
-        fun opacity(level: Int) = Adjust(level.cldAsOpacity().asAction())
+        fun opacity(level: Int) = Opacity(level)
 
-        fun improve(blend: Int? = null, mode: Improve? = null, options: (ImproveBuilder.() -> Unit)? = null): Adjust {
-            val builder = ImproveBuilder()
-            mode?.let { builder.mode(mode) }
-            blend?.let { builder.blend(it) }
+        fun tint(vararg values: Any?) = Tint(*values)
+
+        fun vibrance(level: Int? = null) = Vibrance(level)
+
+        fun autoColor(level: Int? = null) = AutoColor(level)
+
+        fun brightness(level: Int? = null) = Brightness(level)
+
+        fun autoBrightness(level: Int? = null) = AutoBrightness(level)
+
+        fun brightnessHSB(level: Int? = null) = BrightnessHSB(level)
+
+        fun autoContrast(level: Int? = null) = AutoContrast(level)
+
+        fun unsharpMask(level: Int? = null) = UnsharpMask(level)
+
+        fun viesusCorrect(options: (ViesusCorrect.Builder.() -> Unit)? = null): ViesusCorrect {
+            val builder = ViesusCorrect.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun tint(vararg values: Any?) = adjustEffect("tint", *values)
+        fun hue(level: Int? = null) = Hue(level)
 
-        fun vibrance(level: Int? = null) = adjustEffect("vibrance", level?.cldRanged(-100, 100))
+        fun gamma(level: Int? = null) = Gamma(level.cldRanged(-50, 150))
 
-        fun autoColor(level: Int? = null) = adjustEffect("auto_color", level?.cldRanged(0, 100))
+        fun contrast(level: Int? = null) = Contrast(level)
 
-        fun brightness(level: Int? = null) = adjustEffect("brightness", level?.cldRanged(-99, 100))
+        fun blue(level: Int? = null) = Blue(level)
 
-        fun autoBrightness(level: Int? = null) = adjustEffect("auto_brightness", level?.cldRanged(0, 100))
+        fun green(level: Int? = null) = Green(level)
 
-        fun brightnessHSB(level: Int? = null) = adjustEffect("brightness_hsb", level?.cldRanged(-99, 100))
+        fun red(level: Int? = null) = Red(level)
 
-        fun autoContrast(level: Int? = null) = adjustEffect("auto_contrast", level?.cldRanged(0, 100))
+        fun opacityThreshold(level: Int? = null) = OpacityThreshold(level)
 
-        fun unsharpMask(level: Int? = null) = adjustEffect("unsharp_mask", level?.cldRanged(1, 2000))
+        fun saturation(level: Int? = null) = Saturation(level)
 
-        fun viesusCorrect() = adjustEffect("viesus_correct")
+        fun sharpen(strength: Int? = null) = Sharpen(strength)
 
-        fun replaceColor(to: Color, options: (ReplaceColorBuilder.() -> Unit)? = null): Adjust {
-            val builder = ReplaceColorBuilder(to)
+        fun replaceColor(toColor: Color, options: (ReplaceColor.Builder.() -> Unit)? = null): Adjust {
+            val builder = ReplaceColor.Builder(toColor)
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun hue(level: Int? = null) = adjustEffect("hue", level?.cldRanged(-100, 100))
+        fun recolor(colorMatrix: Array<FloatArray>) = Recolor(colorMatrix)
 
-        fun gamma(level: Int? = null) = adjustEffect("gamma", level.cldRanged(-50, 150))
-
-        fun contrast(level: Int? = null) = adjustEffect("contrast", level?.cldRanged(-100, 100))
-
-        fun blue(level: Int? = null) = adjustEffect("blue", level?.cldRanged(-100, 100))
-
-        fun green(level: Int? = null) = adjustEffect("green", level?.cldRanged(-100, 100))
-
-        fun red(level: Int? = null) = adjustEffect("red", level?.cldRanged(-100, 100))
-
-        fun opacityThreshold(level: Int? = null) = adjustEffect("opacity_threshold", level?.cldRanged(1, 100))
-
-        fun saturation(level: Int? = null) = adjustEffect("saturation", level?.cldRanged(-100, 100))
-
-        fun sharpen(strength: Int? = null) = adjustEffect("sharpen", strength?.cldRanged(1, 2000))
-
-        fun fillLight(options: (FillLightBuilder.() -> Unit)? = null): Adjust {
-            val builder = FillLightBuilder()
+        fun fillLight(options: (FillLight.Builder.() -> Unit)? = null): Adjust {
+            val builder = FillLight.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun improve(options: (Improve.Builder.() -> Unit)? = null): Adjust {
+            val builder = Improve.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun by3DLut(publicId: String) = By3DLut(publicId)
     }
 }
 
-internal fun adjustEffect(name: String, vararg values: Any?) = Adjust(effectAction(name, *values))
