@@ -106,7 +106,7 @@ class Pixelate internal constructor(private val squareSize: Int?, private val re
     override fun toString(): String {
         return when (region) {
             is Region.Faces -> "e_pixelate_faces".joinWithValues(squareSize)
-            is Region.OcrText -> "e_pixelate_faces".joinWithValues(squareSize) + ",g_ocr_text"
+            is Region.OcrText -> "e_pixelate_region".joinWithValues(squareSize) + ",g_ocr_text"
             is Custom -> "e_pixelate_region".joinWithValues(squareSize).joinWithValues(
                 region.height?.let { "h_$it" },
                 region.width?.let { "w_$it" },
@@ -508,7 +508,7 @@ class Blur internal constructor(private val strength: Int?, private val region: 
     override fun toString(): String {
         return when (region) {
             is Region.Faces -> "e_blur_faces".joinWithValues(strength)
-            is Region.OcrText -> "e_blur_faces".joinWithValues(strength) + ",g_ocr_text"
+            is Region.OcrText -> "e_blur_region".joinWithValues(strength) + ",g_ocr_text"
             is Custom -> "e_blur_region".joinWithValues(strength).joinWithValues(
                 region.height?.let { "h_$it" },
                 region.width?.let { "w_$it" },
