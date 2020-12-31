@@ -21,7 +21,7 @@ class LayerPosition private constructor(
                     gravity is FocusOnGravity ||
                     gravity is CompassGravity
         ) {
-            "Whenb provided, gravity must be one of OcrGravity, CompassGravity or FocusOnGravity"
+            "When provided, gravity must be one of OcrGravity, CompassGravity or FocusOnGravity"
         }
     }
 
