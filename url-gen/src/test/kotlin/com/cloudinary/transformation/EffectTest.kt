@@ -215,6 +215,7 @@ class EffectTest {
 
         cldAssert("e_pixelate_faces", Effect.pixelate(region = Region.Faces()))
         cldAssert("e_pixelate_faces:7", Effect.pixelate(7, Region.Faces()))
+        cldAssert("e_pixelate_region:7,g_ocr_text", Effect.pixelate(7, Region.OcrText()))
     }
 
     @Test
@@ -235,6 +236,7 @@ class EffectTest {
 
         cldAssert("e_blur_faces", Effect.blur(region = Region.Faces()))
         cldAssert("e_blur_faces:600", Effect.blur(600, Region.Faces()))
+        cldAssert("e_blur_region:600,g_ocr_text", Effect.blur(600, Region.OcrText()))
     }
 
     @Test
