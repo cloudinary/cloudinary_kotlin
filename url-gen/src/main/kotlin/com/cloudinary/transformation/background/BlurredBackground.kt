@@ -1,15 +1,13 @@
 package com.cloudinary.transformation.background
 
-import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldRanged
 
 class BlurredBackground(private val intensity: Int?, private val brightness: Int?) : Background() {
 
-    override fun getValues() = "blur".joinWithValues(intensity, brightness)
+    override fun getValues() = "blurred".joinWithValues(intensity, brightness)
 
-    @TransformationDsl
-    class Builder {
+    class Builder : BackgroundBuilder<BlurredBackground> {
         private var intensity: Int? = null
         private var brightness: Int? = null
 
@@ -21,6 +19,6 @@ class BlurredBackground(private val intensity: Int?, private val brightness: Int
         fun intensity(intensity: Int) = apply { this.intensity = intensity }
         fun brightness(brightness: Int) = apply { this.brightness = brightness }
 
-        fun build() = BlurredBackground(intensity, brightness)
+        override fun build() = BlurredBackground(intensity, brightness)
     }
 }

@@ -9,7 +9,7 @@ import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.effect.Effect.Companion.sepia
-import com.cloudinary.transformation.effect.GradientFadeType
+import com.cloudinary.transformation.effect.GradientFade
 import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.expression.Variable
 import com.cloudinary.transformation.gravity.Gravity.Companion.east
@@ -21,9 +21,8 @@ import com.cloudinary.transformation.layer.Underlay
 import com.cloudinary.transformation.layer.source.FontHinting
 import com.cloudinary.transformation.layer.source.FontWeight
 import com.cloudinary.transformation.layer.source.ImageSource
-import com.cloudinary.transformation.layer.source.LayerSource.Companion.image
-import com.cloudinary.transformation.layer.source.LayerSource.Companion.text
-import com.cloudinary.transformation.layer.source.Stroke
+import com.cloudinary.transformation.layer.source.Source.Companion.image
+import com.cloudinary.transformation.layer.source.Source.Companion.text
 import com.cloudinary.transformation.reshape.Reshape.Companion.distortArc
 import com.cloudinary.transformation.resize.Resize.Companion.scale
 import com.cloudinary.transformation.transcode.AudioCodec
@@ -101,16 +100,16 @@ class TransformationTest {
             verticalStartPoint(0.8)
         })
         cldAssert("e_gradient_fade:symmetric", Effect.gradientFade {
-            type(GradientFadeType.SYMMETRIC)
+            type(GradientFade.symmetric())
         })
         cldAssert("e_gradient_fade:symmetric_pad:50,x_0.2", Effect.gradientFade {
             strength(50)
-            type(GradientFadeType.SYMMETRIC_PAD)
+            type(GradientFade.symmetricPad())
             horizontalStartPoint(0.2)
         })
         cldAssert("e_gradient_fade:symmetric:25,x_0.15,y_0.15", Effect.gradientFade {
             strength(25)
-            type(GradientFadeType.SYMMETRIC)
+            type(GradientFade.symmetric())
             verticalStartPoint(0.15)
             horizontalStartPoint(0.15)
         })
@@ -150,12 +149,14 @@ class TransformationTest {
 
     @Test
     fun testAdjust() {
-        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma(50)))
+        cldAssert("e_gamma:50", Transformation().adjust(Adjust.gamma {
+            level(50)
+        }))
     }
 
     @Test
     fun testTranscode() {
-        cldAssert("ac_mp3", Transformation().transcode(Transcode.audioCodec(AudioCodec.MP3)))
+        cldAssert("ac_mp3", Transformation().transcode(Transcode.audioCodec(AudioCodec.mp3())))
     }
 
     @Test
@@ -191,6 +192,15 @@ class TransformationTest {
 
     @Test
     fun testVariable() {
+        // TODO known issue
+//        cldAssert(
+//            "\$mainvideowidth_500/c_scale,w_\$mainvideowidth",
+//            Transformation {
+//                addVariable(Variable.set("mainvideo_width", 500))
+//                resize(scale {
+//                    width(Expression.expression("\$mainvideo_width"))
+//                })
+//            })
         cldAssert(
             "\$myvar_cp_gt_10/\$myvar2_20/\$myvar3_30_to_f/\$myvar4_40_to_i/c_scale,w_\$myvar",
             Transformation()
@@ -292,27 +302,27 @@ class TransformationTest {
                     source(
                         text("hello world") {
                             style("Arial", 21) {
-                                fontWeight(FontWeight.BOLD)
-                                fontHinting(FontHinting.FULL)
-                                stroke(Stroke.STROKE)
+                                fontWeight(FontWeight.bold())
+                                fontHinting(FontHinting.full())
+                                stroke()
                                 letterSpacing(12f)
                             }
                             backgroundColor(Color.RED)
                             textColor(Color.BLUE)
                         }) {
                         position {
-                            x(20)
+                            offsetX(20)
                             gravity(west())
                         }
                     })
                 rotate(Rotate.byAngle(25))
-                delivery(Delivery.format(FormatType.png()))
+                delivery(Delivery.format(Format.png()))
             }
 
         cldAssert(
             "e_gradient_fade:3/o_80/bo_4px_solid_red/l_sample/c_scale,w_100/" +
                     "e_screen,fl_layer_apply,fl_no_overflow,g_east/" +
-                    "b_red,co_blue,l_text:Arial_21_bold_hinting_full_stroke_letter_spacing_12.0:hello world/" +
+                    "b_red,co_blue,l_text:Arial_21_bold_hinting_full_letter_spacing_12.0_stroke:hello world/" +
                     "fl_layer_apply,g_west,x_20/a_25/f_png",
             transformation
         )

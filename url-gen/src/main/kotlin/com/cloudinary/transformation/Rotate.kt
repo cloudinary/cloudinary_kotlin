@@ -12,16 +12,23 @@ class Rotate private constructor(private val rotation: Any) : Action {
         fun byAngle(angle: Int) = Rotate(angle)
         fun byAngle(angle: Expression) = Rotate(angle)
         fun byAngle(angle: String) = Rotate(angle)
-        fun mode(mode: Mode) = Rotate(mode)
+        fun mode(mode: RotationMode) = Rotate(mode)
     }
 }
 
-enum class Mode(private val value: String) {
-    AUTO_RIGHT("auto_right"),
-    AUTO_LEFT("auto_left"),
-    IGNORE("ignore"),
-    VERTICAL_FLIP("vflip"),
-    HORIZONTAL_FLIP("hflip");
+class RotationMode(private val value: String) {
+    companion object {
+        private val autoRight = RotationMode("auto_right")
+        fun autoRight() = autoRight
+        private val autoLeft = RotationMode("auto_left")
+        fun autoLeft() = autoLeft
+        private val ignore = RotationMode("ignore")
+        fun ignore() = ignore
+        private val verticalFlip = RotationMode("vflip")
+        fun verticalFlip() = verticalFlip
+        private val horizontalFlip = RotationMode("hflip")
+        fun horizontalFlip() = horizontalFlip
+    }
 
     override fun toString(): String {
         return value

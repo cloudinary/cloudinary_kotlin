@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.delivery
 
 import com.cloudinary.transformation.Action
-import com.cloudinary.transformation.FormatType
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.expression.Expression
 
 abstract class Delivery : Action {
@@ -10,24 +10,24 @@ abstract class Delivery : Action {
         fun density(density: Int) = Density(density)
         fun density(density: Expression) = Density(density)
         fun density(density: String) = Density(density)
-        fun colorSpace(colorSpace: ColorSpaceType) = ColorSpace(colorSpace)
-        fun colorSpaceFromIcc(publicId: String) = ColorSpaceFromIcc(publicId)
+        fun colorSpace(colorSpace: ColorSpace) = ColorSpaceAction(colorSpace)
+        fun colorSpaceFromICC(publicId: String) = ColorSpaceFromICC(publicId)
 
         fun dpr(dpr: Dpr) = dpr
         fun dpr(dpr: Float) = Dpr.fromFloat(dpr)
         fun dpr(dpr: Expression) = Dpr.fromExpression(dpr)
         fun dpr(dpr: String) = Dpr.fromString(dpr)
 
-        fun quality(quality: Quality) = quality
-        fun quality(level: Any, options: (Quality.Builder.() -> Unit)? = null): Quality {
-            val builder = Quality.Builder(level)
+        fun quality(quality: QualityAction) = quality
+        fun quality(level: Any, options: (QualityAction.Builder.() -> Unit)? = null): QualityAction {
+            val builder = QualityAction.Builder(level)
             options?.let { builder.it() }
             return builder.build()
         }
 
-        fun format(format: Format) = format
-        fun format(format: FormatType, options: (Format.Builder.() -> Unit)? = null): Format {
-            val builder = Format.Builder(format)
+        fun format(format: DeliveryFormat) = format
+        fun format(format: Format, options: (DeliveryFormat.Builder.() -> Unit)? = null): DeliveryFormat {
+            val builder = DeliveryFormat.Builder(format)
             options?.let { builder.it() }
             return builder.build()
         }

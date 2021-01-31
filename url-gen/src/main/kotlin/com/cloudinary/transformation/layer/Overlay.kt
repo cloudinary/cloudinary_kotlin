@@ -2,14 +2,14 @@ package com.cloudinary.transformation.layer
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.TransformationComponentBuilder
-import com.cloudinary.transformation.layer.position.LayerPosition
-import com.cloudinary.transformation.layer.position.TimelinePosition
+import com.cloudinary.transformation.layer.position.Position
+import com.cloudinary.transformation.layer.position.Timeline
 import com.cloudinary.transformation.layer.source.*
 
 class Overlay private constructor(
-    private val source: LayerSource,
-    private val position: LayerPosition? = null,
-    private val timelinePosition: TimelinePosition? = null,
+    private val source: Source,
+    private val position: Position? = null,
+    private val timeline: Timeline? = null,
     private val blendMode: BlendMode? = null
 ) : Action {
     companion object {
@@ -43,7 +43,7 @@ class Overlay private constructor(
             return builder.build()
         }
 
-        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): Overlay {
+        fun source(source: Source, options: (Builder.() -> Unit)? = null): Overlay {
             val builder = Builder(source)
             options?.let { builder.it() }
             return builder.build()
@@ -56,7 +56,7 @@ class Overlay private constructor(
             source,
             position,
             blendMode,
-            timelinePosition
+            timeline
         )
     }
 
@@ -110,22 +110,22 @@ class Overlay private constructor(
         fun source(source: ImageSource) = apply { this.source = source }
     }
 
-    class Builder(source: LayerSource) : BaseBuilder() {
+    class Builder(source: Source) : BaseBuilder() {
         init {
             this.source = source
         }
     }
 
     abstract class BaseBuilder : TransformationComponentBuilder {
-        protected var position: LayerPosition? = null
+        protected var position: Position? = null
         protected var blendMode: BlendMode? = null
-        protected var timelinePosition: TimelinePosition? = null
-        protected var source: LayerSource? = null
+        protected var timeline: Timeline? = null
+        protected var source: Source? = null
 
-        fun timelinePosition(timelinePosition: TimelinePosition) = apply { this.timelinePosition = timelinePosition }
-        fun position(position: LayerPosition) = apply { this.position = position }
-        fun position(position: (LayerPosition.Builder.() -> Unit)? = null) = apply {
-            val builder = LayerPosition.Builder()
+        fun timeline(timeline: Timeline) = apply { this.timeline = timeline }
+        fun position(position: Position) = apply { this.position = position }
+        fun position(position: (Position.Builder.() -> Unit)? = null) = apply {
+            val builder = Position.Builder()
             position?.let { builder.it() }
             position(builder.build())
         }
@@ -135,7 +135,7 @@ class Overlay private constructor(
         override fun build(): Overlay {
             val safeSource = source
             require(safeSource != null) { "A source must be provided" }
-            return Overlay(safeSource, position, timelinePosition, blendMode)
+            return Overlay(safeSource, position, timeline, blendMode)
         }
     }
 }

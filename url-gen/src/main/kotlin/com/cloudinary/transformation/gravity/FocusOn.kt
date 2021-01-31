@@ -3,23 +3,54 @@ package com.cloudinary.transformation.gravity
 import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.transformation.joinWithValues
 
-sealed class FocusOn(private val value: String) : IGravityObject, IAutoGravityObject {
-    object CAT : FocusOn("cat")
-    object DOG : FocusOn("dog")
-    object BIRD : FocusOn("bird")
-    object MICROWAVE : FocusOn("microwave")
-    object REFRIGERATOR : FocusOn("refrigerator")
-    object SINK : FocusOn("sink")
-    object SKATEBOARD : FocusOn("skateboard")
-    object BOTTLE : FocusOn("bottle")
-    object ADVANCED_FACE : FocusOn("adv_face")
-    object ADVANCED_FACES : FocusOn("adv_faces")
-    object ADVANCED_EYES : FocusOn("adv_eyes")
-    object BODY : FocusOn("body")
-    object FACE : FocusOn("face")
-    object FACES : FocusOn("faces")
-    object NO_FACES : FocusOn("no_faces")
-    object CUSTOM_NO_OVERRIDE : FocusOn("custom_no_override")
+class FocusOn(private val value: String) : IGravityObject, IAutoGravityObject {
+
+    companion object {
+        private val ocr = FocusOn("ocr")
+        fun ocr() = ocr
+        private val bicycle = FocusOn("bicycle")
+        fun bicycle() = bicycle
+        private val cat = FocusOn("cat")
+        fun cat() = cat
+        private val dog = FocusOn("dog")
+        fun dog() = dog
+        private val bird = FocusOn("bird")
+        fun bird() = bird
+        private val microwave = FocusOn("microwave")
+        fun microwave() = microwave
+        private val refrigerator = FocusOn("refrigerator")
+        fun refrigerator() = refrigerator
+        private val sink = FocusOn("sink")
+        fun sink() = sink
+        private val skateboard = FocusOn("skateboard")
+        fun skateboard() = skateboard
+        private val bottle = FocusOn("bottle")
+        fun bottle() = bottle
+        private val advancedFace = FocusOn("adv_face")
+        fun advancedFace() = advancedFace
+        private val advancedFaces = FocusOn("adv_faces")
+        fun advancedFaces() = advancedFaces
+        private val advancedEyes = FocusOn("adv_eyes")
+        fun advancedEyes() = advancedEyes
+        private val body = FocusOn("body")
+        fun body() = body
+        private val face = FocusOn("face")
+        fun face() = face
+        private val faces = FocusOn("faces")
+        fun faces() = faces
+        private val noFaces = FocusOn("no_faces")
+        fun noFaces() = noFaces
+        private val customNoOverride = FocusOn("custom_no_override")
+        fun customNoOverride() = customNoOverride
+        private val person = FocusOn("person")
+        fun person() = person
+
+        private val classic = FocusOn("classic")
+        fun classic() = classic
+
+        private val subject = FocusOn("subject")
+        fun subject() = subject
+    }
 
     override fun toString() = value
 }

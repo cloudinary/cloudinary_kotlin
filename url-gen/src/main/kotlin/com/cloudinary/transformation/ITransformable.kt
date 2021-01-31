@@ -8,7 +8,7 @@ import com.cloudinary.transformation.expression.Variable
 import com.cloudinary.transformation.extract.Extract
 import com.cloudinary.transformation.layer.Overlay
 import com.cloudinary.transformation.layer.Underlay
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.psdtools.PSDTools
 import com.cloudinary.transformation.reshape.Reshape
 import com.cloudinary.transformation.resize.Resize
@@ -46,7 +46,7 @@ interface ITransformable<T> {
 
     fun cutout(cutout: Cutout) = add(cutout)
 
-    fun cutout(source: LayerSource, cutout: (Cutout.Builder.() -> Unit)? = null) =
+    fun cutout(source: Source, cutout: (Cutout.Builder.() -> Unit)? = null) =
         addWithBuilder(Cutout.Builder(source), cutout)
 
     /**
@@ -67,7 +67,7 @@ interface ITransformable<T> {
      * @param antiRemoval The anti-removal action to add TODO DOC builder receiver param
      * @return TODO DOC new transformation
      */
-    fun antiRemoval(source: LayerSource, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
+    fun antiRemoval(source: Source, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
         addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
 
     /**
@@ -98,7 +98,7 @@ interface ITransformable<T> {
     fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
     fun displace(displace: Displace) = add(displace)
-    fun displace(source: LayerSource, options: (Displace.Builder.() -> Unit)? = null) =
+    fun displace(source: Source, options: (Displace.Builder.() -> Unit)? = null) =
         addWithBuilder(Displace.Builder(source), options)
 
     // effects
@@ -132,18 +132,20 @@ interface ITransformable<T> {
     // layer
     fun underlay(underlay: Underlay) = add(underlay)
 
-    // TODO encode? create class for this?
-    fun namedTransformation(name: String) = add("t_$name")
+    fun namedTransformation(namedTransformation: NamedTransformation) = add(namedTransformation)
+    fun namedTransformation(name: String) = add(NamedTransformation.name(name))
 
     // variables
     fun addVariable(variable: Variable) = add(variable)
 
     fun addVariable(name: String, value: Any) = addVariable(Variable.set(name, value))
 
-    fun ifCondition(condition: Conditional) = add(condition)
+    fun conditional(condition: Conditional) = add(condition)
 
     // TODO what is this - create class?
     fun prefix(prefix: String) = add("p_$prefix")
 
     fun addFlag(flag: Flag) = add(FlagAction(flag))
+
+    fun addFlag(flag: String) = add(FlagAction(flag))
 }

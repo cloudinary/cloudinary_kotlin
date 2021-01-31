@@ -1,18 +1,21 @@
 package com.cloudinary.transformation.effect
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.TransformationDsl
+import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.layer.source.TextSource
 import com.cloudinary.util.cldRanged
 
 class StyleTransfer private constructor(
-    private val source: LayerSource,
+    private val source: Source,
     private val strength: Any? = null,
     private val preserveColor: Boolean? = null
-) : Action {
+) : Effect() {
 
     init {
         strength?.cldRanged(0, 100)
@@ -58,8 +61,8 @@ class StyleTransfer private constructor(
                 Param(
                     "e", "style_transfer"
                         .joinWithValues(
-                            strength?.cldRanged(0, 100),
-                            if (preserveColor == true) "preserve_color" else null
+                            if (preserveColor == true) "preserve_color" else null,
+                            strength?.cldRanged(0, 100)
                         )
                 )
             )
@@ -67,7 +70,7 @@ class StyleTransfer private constructor(
     }
 
     @TransformationDsl
-    class Builder(source: LayerSource) : BaseBuilder() {
+    class Builder(source: Source) : BaseBuilder(), EffectBuilder {
         init {
             this.source = source
         }
@@ -104,7 +107,7 @@ class StyleTransfer private constructor(
     }
 
     abstract class BaseBuilder : TransformationComponentBuilder {
-        protected var source: LayerSource? = null
+        protected var source: Source? = null
         private var strength: Any? = null
         private var preserveColor: Boolean = false
 

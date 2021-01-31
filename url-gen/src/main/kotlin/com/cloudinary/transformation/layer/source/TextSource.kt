@@ -11,7 +11,7 @@ class TextSource internal constructor(
     private val backgroundColor: Color? = null,
     private val textColor: Color? = null,
     override val transformation: Transformation? = null
-) : LayerSource {
+) : Source {
 
     // CODE SMELL: since the container of this source may need to resort the params, we cannot fully encapsulate
     // the inner structure. The extras are excluded from the toString() method.
@@ -50,7 +50,7 @@ class TextSource internal constructor(
         fun style(style: TextStyle) = apply { this.style = style }
         fun style(style: String) = apply { this.style = style }
         fun style(style: Expression) = apply { this.style = style }
-
+        internal fun style(style: Any) = apply { this.style = style }
         fun style(fontFamily: String, fontSize: Int, options: (TextStyle.Builder.() -> Unit)? = null) =
             style(fontFamily as Any, fontSize as Any, options)
 

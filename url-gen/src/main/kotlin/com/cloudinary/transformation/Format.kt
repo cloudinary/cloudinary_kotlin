@@ -1,0 +1,135 @@
+package com.cloudinary.transformation
+
+
+class Format private constructor(private val value: String) {
+    companion object {
+        private val glb = Format("glb")
+        fun glb() = glb
+        private val auto = Format("auto")
+        fun auto() = auto
+        private val ai = Format("ai")
+        fun ai() = ai
+        private val gif = Format("gif")
+        fun gif() = gif
+        private val bmp = Format("bmp")
+        fun bmp() = bmp
+        private val webp = Format("webp")
+        fun webp() = webp
+        private val djvu = Format("djvu")
+        fun djvu() = djvu
+        private val ps = Format("ps")
+        fun ps() = ps
+        private val ept = Format("ept")
+        fun ept() = ept
+        private val eps = Format("eps")
+        fun eps() = eps
+        private val eps3 = Format("eps3")
+        fun eps3() = eps3
+        private val fxb = Format("fbx")
+        fun fxb() = fxb
+        private val flif = Format("flif")
+        fun flif() = flif
+        private val gltf = Format("gltf")
+        fun gltf() = gltf
+        private val heif = Format("heif")
+        fun heif() = heif
+        private val heic = Format("heic")
+        fun heic() = heic
+        private val ico = Format("ico")
+        fun ico() = ico
+        private val indd = Format("indd")
+        fun indd() = indd
+        private val jpg = Format("jpg")
+        fun jpg() = jpg
+        private val jpe = Format("jpe")
+        fun jpe() = jpe
+        private val jpeg = Format("jpeg")
+        fun jpeg() = jpeg
+        private val jp2 = Format("jp2")
+        fun jp2() = jp2
+        private val wdp = Format("wdp")
+        fun wdp() = wdp
+        private val jxr = Format("jxr")
+        fun jxr() = jxr
+        private val hdp = Format("hdp")
+        fun hdp() = hdp
+        private val pdf = Format("pdf")
+        fun pdf() = pdf
+        private val png = Format("png")
+        fun png() = png
+        private val spd = Format("psd")
+        fun spd() = spd
+        private val arw = Format("arw")
+        fun arw() = arw
+        private val cr2 = Format("cr2")
+        fun cr2() = cr2
+        private val svg = Format("svg")
+        fun svg() = svg
+        private val tga = Format("tga")
+        fun tga() = tga
+        private val tif = Format("tif")
+        fun tif() = tif
+        private val tiff = Format("tiff")
+        fun tiff() = tiff
+        private val avif = Format("avif")
+        fun avif() = avif
+        private val video3g2 = Format("3g2")
+        fun video3g2() = video3g2
+        private val video3gp = Format("3gp")
+        fun video3gp() = video3gp
+        private val videoAvi = Format("avi")
+        fun videoAvi() = videoAvi
+        private val videoFlv = Format("flv")
+        fun videoFlv() = videoFlv
+        private val videoM3u8 = Format("m3u8")
+        fun videoM3u8() = videoM3u8
+        private val videoTs = Format("ts")
+        fun videoTs() = videoTs
+        private val videoMov = Format("mov")
+        fun videoMov() = videoMov
+        private val videoMkv = Format("mkv")
+        fun videoMkv() = videoMkv
+        private val videoMp4 = Format("mp4")
+        fun videoMp4() = videoMp4
+        private val videoMpeg = Format("mpeg")
+        fun videoMpeg() = videoMpeg
+        private val videoMpd = Format("mpd")
+        fun videoMpd() = videoMpd
+        private val videoMxf = Format("mxf")
+        fun videoMxf() = videoMxf
+        private val videoOgv = Format("ogv")
+        fun videoOgv() = videoOgv
+        private val videoWebm = Format("webm")
+        fun videoWebm() = videoWebm
+        private val videoWmv = Format("wmv")
+        fun videoWmv() = videoWmv
+        private val videoM2ts = Format("m2ts")
+        fun videoM2ts() = videoM2ts
+        private val videoMts = Format("mts")
+        fun videoMts() = videoMts
+        private val audioAac = Format("aac")
+        fun audioAac() = audioAac
+        private val audioAiff = Format("aiff")
+        fun audioAiff() = audioAiff
+        private val audioAmr = Format("amr")
+        fun audioAmr() = audioAmr
+        private val audioFlac = Format("flac")
+        fun audioFlac() = audioFlac
+        private val audioM4a = Format("m4a")
+        fun audioM4a() = audioM4a
+        private val audioMp3 = Format("mp3")
+        fun audioMp3() = audioMp3
+        private val audioOgg = Format("ogg")
+        fun audioOgg() = audioOgg
+        private val audioOpus = Format("opus")
+        fun audioOpus() = audioOpus
+        private val audioWav = Format("wav")
+        fun audioWav() = audioWav
+
+        fun custom(customFormat: String) = Format(customFormat)
+    }
+
+    override fun toString(): String {
+        return value
+    }
+}

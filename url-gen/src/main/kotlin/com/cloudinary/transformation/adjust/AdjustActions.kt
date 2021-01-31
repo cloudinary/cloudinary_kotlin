@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Color
-import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldRanged
@@ -33,7 +33,7 @@ class ViesusCorrect internal constructor(
         return "e_viesus_correct".joinWithValues(redEyeStr, skinSaturationStr)
     }
 
-    class Builder : TransformationComponentBuilder {
+    class Builder : AdjustBuilder {
         private var noRedEye: Boolean? = null
         private var skinSaturation: Boolean? = null
         private var skinSaturationLevel: Int? = null
@@ -51,12 +51,14 @@ class ViesusCorrect internal constructor(
     }
 }
 
-class Recolor internal constructor(private val colorMatrix: Array<FloatArray>) : Adjust() {
+class Recolor internal constructor(private val colorMatrix: List<List<Float>>) : Adjust() {
+    constructor(colorMatrix: FloatArray) : this(buildFromList(colorMatrix))
+
     init {
         require(isValid(colorMatrix)) { "The color matrix must be 3 by 3 or 4 by 4" }
     }
 
-    fun isValid(colorMatrix: Array<FloatArray>): Boolean {
+    private fun isValid(colorMatrix: List<List<Float>>): Boolean {
         return colorMatrix.size == 3 && colorMatrix.all { it.size == 3 } ||
                 colorMatrix.size == 4 && colorMatrix.all { it.size == 4 }
     }
@@ -66,17 +68,37 @@ class Recolor internal constructor(private val colorMatrix: Array<FloatArray>) :
             it.joinToString(separator = ":")
         }
     }
+
+    companion object {
+        private fun buildFromList(colorMatrix: FloatArray): List<List<Float>> {
+            require(colorMatrix.size == 9 || colorMatrix.size == 16) { "The color matrix must consist of 9 or 16 values" }
+
+            return if (colorMatrix.size == 9)
+                listOf(
+                    colorMatrix.slice(0..2),
+                    colorMatrix.slice(3..5),
+                    colorMatrix.slice(6..8)
+                )
+            else
+                listOf(
+                    colorMatrix.slice(0..3),
+                    colorMatrix.slice(4..7),
+                    colorMatrix.slice(8..11),
+                    colorMatrix.slice(12..15)
+                )
+        }
+    }
 }
 
-class Improve(val mode: ImproveModeType? = null, val blend: Int? = null) : Adjust() {
+class Improve(val mode: ImproveMode? = null, val blend: Int? = null) : Adjust() {
     override fun toString(): String {
         return "e_improve".joinWithValues(mode, blend)
     }
 
-    class Builder : TransformationComponentBuilder {
-        private var mode: ImproveModeType? = null
+    class Builder : AdjustBuilder {
+        private var mode: ImproveMode? = null
         private var blend: Int? = null
-        fun mode(mode: ImproveModeType) = apply { this.mode = mode }
+        fun mode(mode: ImproveMode) = apply { this.mode = mode }
         fun blend(blend: Int) = apply { this.blend = blend }
 
         override fun build() = Improve(mode, blend)
@@ -96,11 +118,11 @@ class ReplaceColor(
         return "e_replace_color".joinWithValues(toColor.toString(false), tolerance, fromColor?.toString(false))
     }
 
-    class Builder(private val to: Color) : TransformationComponentBuilder {
+    class Builder(private val to: Color) : AdjustBuilder {
         private var from: Color? = null
         private var tolerance: Int? = null
 
-        fun from(from: Color) = apply { this.from = from }
+        fun fromColor(from: Color) = apply { this.from = from }
         fun tolerance(tolerance: Int) = apply { this.tolerance = tolerance }
 
         override fun build() = ReplaceColor(to, tolerance, from)
@@ -121,7 +143,7 @@ class FillLight(private val blend: Any? = null, private val bias: Any? = null) :
         )
     }
 
-    class Builder : TransformationComponentBuilder {
+    class Builder : AdjustBuilder {
         private var blend: Any? = null
         private var bias: Any? = null
 
@@ -144,30 +166,170 @@ abstract class LevelAdjust(protected val name: String, protected val level: Any?
     }
 }
 
-class Vibrance(level: Int? = null) : LevelAdjust("vibrance", level?.cldRanged(-100, 100))
-class AutoColor(level: Int? = null) : LevelAdjust("auto_color", level?.cldRanged(0, 100))
-class Brightness(level: Int? = null) : LevelAdjust("brightness", level?.cldRanged(-99, 100))
-class AutoBrightness(level: Int? = null) : LevelAdjust("auto_brightness", level?.cldRanged(0, 100))
-class BrightnessHSB(level: Int? = null) : LevelAdjust("brightness_hsb", level?.cldRanged(-99, 100))
-class AutoContrast(level: Int? = null) : LevelAdjust("auto_contrast", level?.cldRanged(0, 100))
-class UnsharpMask(strength: Int? = null) : LevelAdjust("unsharp_mask", strength?.cldRanged(1, 2000))
-class Hue(level: Int? = null) : LevelAdjust("hue", level?.cldRanged(-100, 100))
-class Gamma(level: Int? = null) : LevelAdjust("gamma", level.cldRanged(-50, 150))
-class Contrast(level: Int? = null) : LevelAdjust("contrast", level?.cldRanged(-100, 100))
-class Blue(level: Int? = null) : LevelAdjust("blue", level?.cldRanged(-100, 100))
-class Green(level: Int? = null) : LevelAdjust("green", level?.cldRanged(-100, 100))
-class Red(level: Int? = null) : LevelAdjust("red", level?.cldRanged(-100, 100))
-class OpacityThreshold(level: Int? = null) : LevelAdjust("opacity_threshold", level?.cldRanged(1, 100))
-class Saturation(level: Int? = null) : LevelAdjust("saturation", level?.cldRanged(-100, 100))
-class By3DLut(private val publicId: String) : Adjust() {
+class Vibrance(level: Any? = null) : LevelAdjust("vibrance", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustBuilder {
+        private var strength: Any? = null
+
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Expression) = apply { this.strength = strength }
+        fun strength(strength: String) = apply { this.strength = strength }
+
+        override fun build() = Vibrance(strength)
+    }
+
+}
+
+class AutoColor(private val blend: Any? = null) : Adjust() {
+    init {
+        blend?.cldRanged(0, 100)
+    }
+
+    override fun toString(): String {
+        return "e_auto_color".joinWithValues(blend)
+    }
+
+    class Builder : AdjustBuilder {
+        private var blend: Any? = null
+
+        fun blend(blend: Int) = apply { this.blend = blend }
+        fun blend(blend: Expression) = apply { this.blend = blend }
+        fun blend(blend: String) = apply { this.blend = blend }
+
+        override fun build() = AutoColor(blend)
+    }
+}
+
+class Brightness(level: Any? = null) : LevelAdjust("brightness", level?.cldRanged(-99, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Brightness(level)
+    }
+}
+
+class AutoBrightness(private val blend: Any? = null) : Adjust() {
+    init {
+        blend?.cldRanged(0, 100)
+    }
+
+    override fun toString(): String {
+        return "e_auto_brightness".joinWithValues(blend)
+    }
+
+    class Builder : AdjustBuilder {
+        private var blend: Any? = null
+
+        fun blend(blend: Int) = apply { this.blend = blend }
+        fun blend(blend: Expression) = apply { this.blend = blend }
+        fun blend(blend: String) = apply { this.blend = blend }
+
+        override fun build() = AutoBrightness(blend)
+    }
+}
+
+class BrightnessHSB(level: Any? = null) : LevelAdjust("brightness_hsb", level?.cldRanged(-99, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = BrightnessHSB(level)
+    }
+}
+
+class AutoContrast(private val blend: Any? = null) : Adjust() {
+    init {
+        blend?.cldRanged(0, 100)
+    }
+
+    override fun toString(): String {
+        return "e_auto_contrast".joinWithValues(blend)
+    }
+
+    class Builder : AdjustBuilder {
+        private var blend: Any? = null
+
+        fun blend(blend: Int) = apply { this.blend = blend }
+        fun blend(blend: Expression) = apply { this.blend = blend }
+        fun blend(blend: String) = apply { this.blend = blend }
+
+        override fun build() = AutoContrast(blend)
+    }
+}
+
+class UnsharpMask(strength: Any? = null) : LevelAdjust("unsharp_mask", strength?.cldRanged(1, 2000)) {
+    class Builder : AdjustBuilder {
+        private var strength: Any? = null
+
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Expression) = apply { this.strength = strength }
+        fun strength(strength: String) = apply { this.strength = strength }
+
+        override fun build() = UnsharpMask(strength)
+    }
+}
+
+class Hue(level: Any? = null) : LevelAdjust("hue", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Hue(level)
+    }
+}
+
+class Gamma(level: Any? = null) : LevelAdjust("gamma", level.cldRanged(-50, 150)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Gamma(level)
+    }
+}
+
+class Contrast(level: Any? = null) : LevelAdjust("contrast", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Contrast(level)
+    }
+}
+
+class Blue(level: Any? = null) : LevelAdjust("blue", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Blue(level)
+    }
+}
+
+class Green(level: Any? = null) : LevelAdjust("green", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Green(level)
+    }
+}
+
+class Red(level: Any? = null) : LevelAdjust("red", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Red(level)
+    }
+}
+
+class OpacityThreshold(level: Any? = null) : LevelAdjust("opacity_threshold", level?.cldRanged(1, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = OpacityThreshold(level)
+    }
+}
+
+class Saturation(level: Any? = null) : LevelAdjust("saturation", level?.cldRanged(-100, 100)) {
+    class Builder : AdjustLevelBuilder() {
+        override fun build() = Saturation(level)
+    }
+}
+
+class By3dLut(private val publicId: String) : Adjust() {
     override fun toString(): String {
         return "l_lut:${publicId.cldEncodePublicId()}"
     }
 }
 
-class Sharpen(private val strength: Int?) : Adjust() {
+class Sharpen(private val strength: Any?) : Adjust() {
     init {
         strength?.cldRanged(1, 2000)
+    }
+
+    class Builder : AdjustBuilder {
+        private var strength: Any? = null
+
+        fun strength(strength: Int) = apply { this.strength = strength }
+        fun strength(strength: Expression) = apply { this.strength = strength }
+        fun strength(strength: String) = apply { this.strength = strength }
+
+        override fun build() = Sharpen(strength)
     }
 
     override fun toString(): String {
@@ -175,11 +337,23 @@ class Sharpen(private val strength: Int?) : Adjust() {
     }
 }
 
-enum class ImproveModeType(internal val value: String) {
-    OUTDOOR("outdoor"),
-    INDOOR("indoor");
+class ImproveMode(internal val value: String) {
+    companion object {
+        private val outdoor = ImproveMode("outdoor")
+        fun outdoor() = outdoor
+        private val indoor = ImproveMode("indoor")
+        fun indoor() = indoor
+    }
 
     override fun toString(): String {
         return value
     }
+}
+
+abstract class AdjustLevelBuilder : AdjustBuilder {
+    protected var level: Any? = null
+
+    fun level(level: Int) = apply { this.level = level }
+    fun level(level: Expression) = apply { this.level = level }
+    fun level(level: String) = apply { this.level = level }
 }

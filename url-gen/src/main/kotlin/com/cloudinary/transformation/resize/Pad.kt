@@ -4,14 +4,15 @@ import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.background.Background
 import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.gravity.CompassGravity
+import com.cloudinary.transformation.gravity.Gravity
 
-open class Pad(
+abstract class BasePad(
     dimensions: Dimensions,
     relative: Boolean? = null,
     regionRelative: Boolean? = null,
-    val gravity: CompassGravity? = null,
-    val x: Any? = null,
-    val y: Any? = null,
+    val gravity: Gravity? = null,
+    val offsetX: Any? = null,
+    val offsetY: Any? = null,
     val background: Background? = null
 ) :
     Resize(dimensions, relative, regionRelative) {
@@ -21,51 +22,67 @@ open class Pad(
         return super.params() + listOfNotNull(
             background?.let { Param("b", it) },
             gravity?.let { Param("g", it) },
-            x?.let { Param("x", it) },
-            y?.let { Param("y", it) })
+            offsetX?.let { Param("x", it) },
+            offsetY?.let { Param("y", it) })
     }
 
-    open class Builder : BaseBuilder<Builder>() {
-        protected var gravity: CompassGravity? = null
-        protected var x: Any? = null
-        protected var y: Any? = null
+    abstract class BasePadBuilder : BaseBuilder<BasePadBuilder>() {
+        protected var offsetX: Any? = null
+        protected var offsetY: Any? = null
         protected var background: Background? = null
-
-        fun gravity(gravity: CompassGravity) = apply {
-            this.gravity = gravity
-        }
 
         fun background(background: Background) = apply {
             this.background = background
         }
 
-        private fun x(x: Any) = apply {
-            this.x = x
+        private fun offsetX(x: Any) = apply {
+            this.offsetX = x
         }
 
-        fun x(x: String) = x(x as Any)
-        fun x(x: Expression) = x(x as Any)
-        fun x(x: Int) = x(x as Any)
-        fun x(x: Float) = x(x as Any)
+        fun offsetX(x: String) = offsetX(x as Any)
+        fun offsetX(x: Expression) = offsetX(x as Any)
+        fun offsetX(x: Int) = offsetX(x as Any)
+        fun offsetX(x: Float) = offsetX(x as Any)
 
-        private fun y(y: Any) = apply {
-            this.y = y
+        private fun offsetY(y: Any) = apply {
+            this.offsetY = y
         }
 
-        fun y(y: String) = y(y as Any)
-        fun y(y: Expression) = y(y as Any)
-        fun y(y: Int) = y(y as Any)
-        fun y(y: Float) = y(y as Any)
+        fun offsetY(y: String) = offsetY(y as Any)
+        fun offsetY(y: Expression) = offsetY(y as Any)
+        fun offsetY(y: Int) = offsetY(y as Any)
+        fun offsetY(y: Float) = offsetY(y as Any)
 
         override fun getThis() = this
+    }
+}
+
+class Pad(
+    dimensions: Dimensions,
+    relative: Boolean? = null,
+    regionRelative: Boolean? = null,
+    gravity: CompassGravity? = null,
+    offsetX: Any? = null,
+    offsetY: Any? = null,
+    background: Background? = null
+) :
+    BasePad(dimensions, relative, regionRelative, gravity, offsetX, offsetY, background) {
+    override val actionType = "pad"
+
+    class Builder : BasePadBuilder() {
+        private var gravity: CompassGravity? = null
+
+        fun gravity(gravity: CompassGravity) = apply {
+            this.gravity = gravity
+        }
 
         override fun build() = Pad(
             Dimensions(width, height, aspectRatio),
             relative,
             regionRelative,
             gravity,
-            x,
-            y,
+            offsetX,
+            offsetY,
             background
         )
     }

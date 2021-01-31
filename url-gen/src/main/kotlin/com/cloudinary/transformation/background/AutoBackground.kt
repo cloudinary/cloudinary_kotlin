@@ -12,11 +12,17 @@ class AutoBackground : Background() {
     }
 }
 
-enum class GradientDirection(private val value: String) {
-    HORIZONTAL("horizontal"),
-    VERTICAL("vertical"),
-    DIAGONAL_DESC("diagonal_desc"),
-    DIAGONAL_ASC("diagonal_asc");
+class GradientDirection private constructor(private val value: String) {
+    companion object {
+        private val horizontal = GradientDirection("horizontal")
+        fun horizontal() = horizontal
+        private val vertical = GradientDirection("vertical")
+        fun vertical() = vertical
+        private val diagonal_desc = GradientDirection("diagonal_desc")
+        fun diagonalDesc() = diagonal_desc
+        private val diagonal_asc = GradientDirection("diagonal_asc")
+        fun diagonalAsc() = diagonal_asc
+    }
 
     override fun toString() = value
 }
@@ -31,8 +37,7 @@ class BorderBackground(private val contrast: Boolean? = null, private val palett
             .joinWithValues(palette?.let { "palette_" + it.joinToString(separator = "_") })
     }
 
-    @TransformationDsl
-    class Builder {
+    class Builder : BackgroundBuilder<BorderBackground> {
         private var contrast: Boolean? = null
         private var palette: List<Color>? = null
 
@@ -40,7 +45,7 @@ class BorderBackground(private val contrast: Boolean? = null, private val palett
         fun palette(colors: List<Color>) = apply { this.palette = colors }
         fun palette(vararg colors: Color) = apply { this.palette = colors.toList() }
 
-        fun build(): BorderBackground {
+        override fun build(): BorderBackground {
             return BorderBackground(contrast, palette)
         }
     }
@@ -68,8 +73,7 @@ class BorderGradientBackground(
                 palette?.let { "palette_" + it.joinToString(separator = "_") })
     }
 
-    @TransformationDsl
-    class Builder {
+    class Builder : BackgroundBuilder<BorderGradientBackground> {
         private var gradientColors: Int? = null
         private var gradientDirection: GradientDirection? = null
         private var contrast: Boolean? = null
@@ -83,7 +87,7 @@ class BorderGradientBackground(
         fun palette(colors: List<Color>) = apply { this.palette = colors }
         fun palette(vararg colors: Color) = apply { this.palette = colors.toList() }
 
-        fun build(): BorderGradientBackground {
+        override fun build(): BorderGradientBackground {
             return BorderGradientBackground(contrast, palette, gradientColors, gradientDirection)
         }
     }
@@ -101,7 +105,7 @@ class PredominantBackground(private val contrast: Boolean? = null, private val p
     }
 
     @TransformationDsl
-    class Builder {
+    class Builder : BackgroundBuilder<PredominantBackground> {
         private var contrast: Boolean? = null
         private var palette: List<Color>? = null
 
@@ -109,7 +113,7 @@ class PredominantBackground(private val contrast: Boolean? = null, private val p
         fun palette(colors: List<Color>) = apply { this.palette = colors }
         fun palette(vararg colors: Color) = apply { this.palette = colors.toList() }
 
-        fun build(): PredominantBackground {
+        override fun build(): PredominantBackground {
             return PredominantBackground(contrast, palette)
         }
     }
@@ -137,8 +141,7 @@ class PredominantGradientBackground(
                 palette?.let { "palette_" + it.joinToString(separator = "_") })
     }
 
-    @TransformationDsl
-    class Builder {
+    class Builder : BackgroundBuilder<PredominantGradientBackground> {
         private var gradientColors: Int? = null
         private var gradientDirection: GradientDirection? = null
         private var contrast: Boolean? = null
@@ -152,7 +155,7 @@ class PredominantGradientBackground(
         fun palette(colors: List<Color>) = apply { this.palette = colors }
         fun palette(vararg colors: Color) = apply { this.palette = colors.toList() }
 
-        fun build(): PredominantGradientBackground {
+        override fun build(): PredominantGradientBackground {
             return PredominantGradientBackground(contrast, palette, gradientColors, gradientDirection)
         }
     }

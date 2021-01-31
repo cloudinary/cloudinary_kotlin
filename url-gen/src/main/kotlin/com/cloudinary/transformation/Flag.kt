@@ -2,8 +2,8 @@ package com.cloudinary.transformation
 
 import com.cloudinary.transformation.delivery.ProgressiveMode
 
-class FlagAction(private val value: Flag) : Action {
-    override fun toString() = value.toString()
+class FlagAction(private val value: Any) : Action {
+    override fun toString() = if (value is Flag) value.toString() else "fl_$value"
 }
 
 // Make these objects instead of classes
@@ -45,7 +45,7 @@ class Flag(vararg values: Any?) {
         fun tiff8Lzw() = Flag("tiff8_lzw")
         fun tiled() = Flag("tiled")
         fun animated() = Flag("animated")
-        fun streamingAttachment() = Flag("streaming_attachment")
+        fun streamingAttachment(name: String) = Flag("streaming_attachment", name)
         fun hlsV3() = Flag("hlsv3")
         fun keepDar() = Flag("keep_dar")
         fun noStream() = Flag("no_stream")

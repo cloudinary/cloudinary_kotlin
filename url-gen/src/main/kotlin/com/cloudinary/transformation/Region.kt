@@ -3,8 +3,8 @@ package com.cloudinary.transformation
 import com.cloudinary.transformation.gravity.Gravity
 
 sealed class Region {
-    class Faces : Region()
-    class OcrText : Region()
+    class faces : Region()
+    class ocr : Region()
 
     companion object {
         fun custom(options: Custom.Builder.() -> Unit): Custom {

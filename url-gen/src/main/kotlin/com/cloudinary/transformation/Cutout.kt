@@ -1,19 +1,19 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.transformation.layer.buildLayerComponent
-import com.cloudinary.transformation.layer.position.LayerPosition
+import com.cloudinary.transformation.layer.position.Position
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.layer.source.TextSource
 
 class Cutout private constructor(
-    private val source: LayerSource,
-    private val position: LayerPosition? = null
+    private val source: Source,
+    private val position: Position? = null
 ) : Action {
 
     companion object {
-        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): Cutout {
+        fun source(source: Source, options: (Builder.() -> Unit)? = null): Cutout {
             val builder = Builder(source)
             options?.let { builder.it() }
             return builder.build()
@@ -77,19 +77,19 @@ class Cutout private constructor(
         fun source(source: ImageSource) = apply { this.source = source }
     }
 
-    class Builder(source: LayerSource) : BaseBuilder() {
+    class Builder(source: Source) : BaseBuilder() {
         init {
             this.source = source
         }
     }
 
     abstract class BaseBuilder : TransformationComponentBuilder {
-        protected var position: LayerPosition? = null
-        protected var source: LayerSource? = null
+        protected var position: Position? = null
+        protected var source: Source? = null
 
-        fun position(position: LayerPosition) = apply { this.position = position }
-        fun position(position: (LayerPosition.Builder.() -> Unit)? = null) = apply {
-            val builder = LayerPosition.Builder()
+        fun position(position: Position) = apply { this.position = position }
+        fun position(position: (Position.Builder.() -> Unit)? = null) = apply {
+            val builder = Position.Builder()
             position?.let { builder.it() }
             position(builder.build())
         }

@@ -4,15 +4,15 @@ import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.gravity.Gravity
 
 abstract class BaseLayerPosition internal constructor(
-    private val x: Any? = null,
-    private val y: Any? = null,
-    private val gravity: Gravity? = null
+    protected val offsetX: Any? = null,
+    protected val offsetY: Any? = null,
+    protected val gravity: Gravity? = null
 ) {
     internal open fun asParams(): List<Param> {
         return mutableListOf<Param>().apply {
             if (gravity != null) add(Param("g", gravity))
-            if (x != null) add(Param("x", x))
-            if (y != null) add(Param("y", y))
+            if (offsetX != null) add(Param("x", offsetX))
+            if (offsetY != null) add(Param("y", offsetY))
         }
     }
 }

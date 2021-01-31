@@ -10,8 +10,9 @@ class Conditional private constructor(
     private val elseTransformation: Any? = null
 ) : Action {
     override fun toString(): String {
+        val typedExpression = if (expression is Expression) expression else Expression.expression(expression.toString())
         val elseStr = elseTransformation?.let { "/if_else/$it" } ?: ""
-        return "if_${expression}/$transformation$elseStr/if_end"
+        return "if_${typedExpression}/$transformation$elseStr/if_end"
     }
 
     companion object {

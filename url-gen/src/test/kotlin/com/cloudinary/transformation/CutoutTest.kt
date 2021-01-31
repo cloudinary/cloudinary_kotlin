@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.layer.position.LayerPosition
+import com.cloudinary.transformation.layer.position.Position
 import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.junit.Test
 class CutoutTest {
     @Test
     fun testCutout() {
-        val pos = LayerPosition.Builder().gravity(Gravity.north()).x(100).build()
+        val pos = Position.Builder().gravity(Gravity.north()).offsetX(100).build()
         val tr = Transformation().resize(Resize.scale {
             width(200)
             height(200)

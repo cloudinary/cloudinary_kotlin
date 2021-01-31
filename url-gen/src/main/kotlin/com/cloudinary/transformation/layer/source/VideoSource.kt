@@ -1,5 +1,6 @@
 package com.cloudinary.transformation.layer.source
 
+import com.cloudinary.transformation.ITransformable
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.TransformationDsl
@@ -7,7 +8,7 @@ import com.cloudinary.util.cldEncodePublicId
 
 class VideoSource internal constructor(
     private val publicId: String,
-    override val transformation: Transformation? = null
+    override val transformation: ITransformable<Transformation>? = null
 ) : BaseVideoSource {
     override fun extraComponents(): List<Param> {
         return emptyList()
@@ -27,9 +28,11 @@ class VideoSource internal constructor(
 
     @TransformationDsl
     class Builder(private val publicId: String) {
-        private var transformation: Transformation? = null
+        private var transformation: ITransformable<Transformation>? = null
 
-        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transformation: ITransformable<Transformation>) =
+            apply { this.transformation = transformation }
+
         fun transformation(transformation: Transformation.Builder.() -> Unit) = apply {
             val builder = Transformation.Builder()
             builder.transformation()

@@ -4,14 +4,14 @@ import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.gravity.FocusOn
 import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.layer.position.LayerPosition
-import com.cloudinary.transformation.layer.source.LayerSource.Companion.fetch
-import com.cloudinary.transformation.layer.source.LayerSource.Companion.image
+import com.cloudinary.transformation.layer.position.Position
+import com.cloudinary.transformation.layer.source.Source.Companion.fetch
+import com.cloudinary.transformation.layer.source.Source.Companion.image
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class UnderlayTest {
-    private val position = LayerPosition.Builder().gravity(Gravity.focusOn(FocusOn.CAT)).x(20).build()
+    private val position = Position.Builder().gravity(Gravity.focusOn(FocusOn.cat())).offsetX(20).build()
 
     @Test
     fun testUnderlay() {

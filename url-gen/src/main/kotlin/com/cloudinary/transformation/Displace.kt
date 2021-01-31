@@ -3,17 +3,17 @@ package com.cloudinary.transformation
 import com.cloudinary.transformation.layer.buildLayerComponent
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.layer.source.TextSource
 
 class Displace private constructor(
-    private val source: LayerSource,
+    private val source: Source,
     private val x: Any? = null,
     private val y: Any? = null
 ) : Action {
 
     companion object {
-        fun source(source: LayerSource, options: (Builder.() -> Unit)? = null): Displace {
+        fun source(source: Source, options: (Builder.() -> Unit)? = null): Displace {
             val builder = Builder(source)
             options?.let { builder.it() }
             return builder.build()
@@ -76,14 +76,14 @@ class Displace private constructor(
         fun source(source: ImageSource) = apply { this.source = source }
     }
 
-    class Builder(source: LayerSource) : BaseBuilder() {
+    class Builder(source: Source) : BaseBuilder() {
         init {
             this.source = source
         }
     }
 
     abstract class BaseBuilder : TransformationComponentBuilder {
-        protected var source: LayerSource? = null
+        protected var source: Source? = null
         protected var x: Any? = null
         protected var y: Any? = null
 

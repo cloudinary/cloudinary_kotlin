@@ -24,7 +24,7 @@ abstract class Resize(
             if (relative == true) Param("fl", "relative") else null,
             if (regionRelative == true) Param("fl", "region_relative") else null,
             dimensions.aspectRatio?.let {
-                if (dimensions.aspectRatio == AspectRatio.IGNORE_INITIAL_ASPECT_RATIO)
+                if (dimensions.aspectRatio == AspectRatio.ignoreInitialAspectRatio())
                     Param("fl", "ignore_aspect_ratio")
                 else Param("ar", it)
             }
@@ -239,14 +239,25 @@ abstract class BaseBuilder<B> : TransformationComponentBuilder {
     }
 }
 
-enum class AspectRatio(private val value: String) {
-    AR1X1("1:1"),
-    AR5X4("5:4"),
-    AR4X3("4:3"),
-    AR3X2("3:2"),
-    AR16X9("16:9"),
-    AR3X1("3:1"),
-    IGNORE_INITIAL_ASPECT_RATIO("fl_ignore_aspect_ratio");
+class AspectRatio private constructor(private val value: String) {
+
+    companion object {
+        private val ar1X1 = AspectRatio("1:1")
+        private val ar5X4 = AspectRatio("5:4")
+        private val ar4X3 = AspectRatio("4:3")
+        private val ar3X2 = AspectRatio("3:2")
+        private val ar16X9 = AspectRatio("16:9")
+        private val ar3X1 = AspectRatio("3:1")
+        private val ignoreInitialAspectRatio = AspectRatio("fl_ignore_aspect_ratio")
+
+        fun ar1X1() = ar1X1
+        fun ar5X4() = ar5X4
+        fun ar4X3() = ar4X3
+        fun ar3X2() = ar3X2
+        fun ar16X9() = ar16X9
+        fun ar3X1() = ar3X1
+        fun ignoreInitialAspectRatio() = ignoreInitialAspectRatio
+    }
 
     override fun toString(): String {
         return value

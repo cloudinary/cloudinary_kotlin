@@ -1,13 +1,23 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.layer.position.LayerPosition
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.position.Position
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.reshape.Reshape
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
 
 class ReshapeTest {
+    @Test
+    fun testTrim() {
+        cldAssert("e_trim", Reshape.trim())
+        cldAssert("e_trim:30", Reshape.trim { colorSimilarity(30) })
+        cldAssert("e_trim:white", Reshape.trim { colorOverride(Color.WHITE) })
+        cldAssert(
+            "e_trim:30:white",
+            Reshape.trim { colorSimilarity(30).colorOverride(Color.WHITE) })
+    }
+
     @Test
     fun testShear() {
         cldAssert("e_shear:20:0", Reshape.shear {
@@ -42,7 +52,7 @@ class ReshapeTest {
             relative()
         }
 
-        val source = LayerSource.image("hexagon_sample") {
+        val source = Source.image("hexagon_sample") {
             transformation {
                 resize(scale)
             }
@@ -52,13 +62,13 @@ class ReshapeTest {
 
         cldAssert(expected, actual)
 
-        val position = LayerPosition.Builder().x(50).tiled().build()
+        val position = Position.Builder().offsetX(50).tiled().build()
         val crop = Resize.crop {
             width(100)
             height(50)
         }
 
-        actual = Reshape.cutByImage(LayerSource.image("hexagon_sample") {
+        actual = Reshape.cutByImage(Source.image("hexagon_sample") {
             transformation {
                 resize(crop)
             }

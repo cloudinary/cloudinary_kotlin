@@ -81,7 +81,7 @@ class AuthTokenTest {
         message = "should not add token if signed is false"
         url =
             cloudinary.image {
-                resourceType("image")
+                assetType("image")
                 deliveryType("authenticated")
                 version("1486020273")
             }
@@ -96,7 +96,7 @@ class AuthTokenTest {
         url = cloudinary.image {
             authToken(NULL_AUTH_TOKEN)
             signUrl(true)
-            resourceType("image")
+            assetType("image")
             deliveryType("authenticated")
             version("1486020273")
         }.generate("sample.jpg")
@@ -109,7 +109,7 @@ class AuthTokenTest {
         url = cloudinary.image {
             signUrl(true)
             authToken(AuthToken(key = ALT_KEY, startTime = 222222222, duration = 100))
-            resourceType("image")
+            assetType("image")
             deliveryType("authenticated")
             resize(Resize.scale {
                 width(300)

@@ -2,7 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.layer.position.LayerPosition
+import com.cloudinary.transformation.layer.position.Position
 import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.junit.Test
 class AntiRemovalTest {
     private val t = Transformation().resize(Resize.scale { width(100) })
     private val layer = ImageSource("sample", transformation = t)
-    private val pos = LayerPosition.Builder().gravity(Gravity.north()).x(25).build()
+    private val pos = Position.Builder().gravity(Gravity.north()).offsetX(25).build()
 
     @Test
     fun testAntiRemoval() {

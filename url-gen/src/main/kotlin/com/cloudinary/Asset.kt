@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException
 private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
 private const val SHARED_CDN = AKAMAI_SHARED_CDN
-internal const val DEFAULT_RESOURCE_TYPE = "image"
+internal const val DEFAULT_ASSET_TYPE = "image"
 internal const val DEFAULT_DELIVERY_TYPE = "upload"
 
 @TransformationDsl
@@ -24,8 +24,8 @@ class Asset constructor(
     private val cloudName: String = config.cloudName,
     private val publicId: String? = null,
     private val deliveryType: String? = null,
-    private val resourceType: String = DEFAULT_RESOURCE_TYPE,
-    private val extension: FormatType? = null,
+    private val resourceType: String = DEFAULT_ASSET_TYPE,
+    private val extension: Format? = null,
     private val version: String? = null,
     private val transformation: Transformation? = null,
     private val signUrl: Boolean = false,
@@ -54,7 +54,6 @@ class Asset constructor(
         }
 
         if (deliveryType == "fetch" && mutableExtension != null) {
-//            mutableTransformation = mutableTransformation.format(mutableExtension.toFormat())
             mutableTransformation = mutableTransformation.delivery(Delivery.format(mutableExtension))
             mutableExtension = null
         }
@@ -130,13 +129,13 @@ class Asset constructor(
     @TransformationDsl
     class AssetBuilder internal constructor(
         private val config: Configuration,
-        private var resourceType: String = DEFAULT_RESOURCE_TYPE
+        private var assetType: String = DEFAULT_ASSET_TYPE
     ) :
         ITransformable<AssetBuilder> {
         private var cloudName: String = config.cloudName
         private var publicId: String? = null
         private var deliveryType: String? = null
-        private var extension: FormatType? = null
+        private var extension: Format? = null
         private var version: String? = null
         private var transformation: Transformation? = null
         private var signUrl: Boolean = false
@@ -154,8 +153,8 @@ class Asset constructor(
         fun cloudName(cloudName: String) = apply { this.cloudName = cloudName }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
         fun deliveryType(type: String?) = apply { this.deliveryType = type }
-        fun resourceType(resourceType: String) = apply { this.resourceType = resourceType }
-        fun extension(extension: FormatType) = apply { this.extension = extension }
+        fun assetType(assetType: String) = apply { this.assetType = assetType }
+        fun extension(extension: Format) = apply { this.extension = extension }
         fun version(version: String?) = apply { this.version = version }
         fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
         fun transformation(transformation: (Transformation.Builder.() -> Unit)? = null) = apply {
@@ -183,7 +182,7 @@ class Asset constructor(
             cloudName,
             publicId,
             deliveryType,
-            resourceType,
+            assetType,
             extension,
             version,
             transformation,
@@ -204,7 +203,7 @@ class Asset constructor(
 
 private fun finalizeSource(
     source: String,
-    extension: FormatType?,
+    extension: Format?,
     urlSuffix: String?
 ): FinalizedSource {
     var mutableSource = source.cldMergeSlashedInUrl()
@@ -239,7 +238,7 @@ private fun finalizeResourceType(
     useRootPath: Boolean,
     shorten: Boolean
 ): String? {
-    var mutableResourceType: String? = resourceType ?: DEFAULT_RESOURCE_TYPE
+    var mutableResourceType: String? = resourceType ?: DEFAULT_ASSET_TYPE
     var mutableType: String? = type ?: DEFAULT_DELIVERY_TYPE
 
     if (!urlSuffix.isNullOrBlank()) {

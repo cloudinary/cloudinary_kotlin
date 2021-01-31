@@ -7,37 +7,31 @@ import com.cloudinary.transformation.joinWithValues
 abstract class Gravity {
     companion object {
         fun south() =
-            CompassGravity(Compass.SOUTH)
+            CompassGravity(Compass.south())
 
         fun southEast() =
-            CompassGravity(Compass.SOUTH_EAST)
+            CompassGravity(Compass.southEast())
 
         fun southWest() =
-            CompassGravity(Compass.SOUTH_WEST)
+            CompassGravity(Compass.southWest())
 
         fun north() =
-            CompassGravity(Compass.NORTH)
+            CompassGravity(Compass.north())
 
         fun northEast() =
-            CompassGravity(Compass.NORTH_EAST)
+            CompassGravity(Compass.northEast())
 
         fun northWest() =
-            CompassGravity(Compass.NORTH_WEST)
+            CompassGravity(Compass.northWest())
 
         fun east() =
-            CompassGravity(Compass.EAST)
+            CompassGravity(Compass.east())
 
         fun west() =
-            CompassGravity(Compass.WEST)
+            CompassGravity(Compass.west())
 
         fun center() =
-            CompassGravity(Compass.CENTER)
-
-        fun ocr(options: (OcrGravity.Builder.() -> Unit)? = null): OcrGravity {
-            val builder = OcrGravity.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+            CompassGravity(Compass.center())
 
         fun focusOn(
             focusOn: FocusOn,
@@ -49,7 +43,10 @@ abstract class Gravity {
             return builder.build()
         }
 
-        fun auto(vararg objects: IAutoGravityObject, options: (AutoGravity.Builder.() -> Unit)? = null): AutoGravity {
+        fun autoGravity(
+            vararg objects: IAutoGravityObject,
+            options: (AutoGravity.Builder.() -> Unit)? = null
+        ): AutoGravity {
             val builder = AutoGravity.Builder()
             builder.autoFocus(*objects)
             options?.let { builder.it() }
@@ -57,6 +54,8 @@ abstract class Gravity {
         }
 
         fun compass(compass: Compass) = CompassGravity(compass)
+
+        fun xyCenter() = XYCenterGravity()
     }
 }
 
@@ -115,34 +114,33 @@ class AutoFocus {
     }
 }
 
-class OcrGravity(private val avoid: Boolean? = null) : Gravity() {
-    override fun toString(): String {
-        return "ocr_text".joinWithValues(avoid?.let { "avoid" }, separator = "_")
+class Compass(private val value: String) {
+    companion object {
+        private val north = Compass("north")
+        fun north() = north
+        private val northEast = Compass("north_east")
+        fun northEast() = northEast
+        private val northWest = Compass("north_west")
+        fun northWest() = northWest
+        private val east = Compass("east")
+        fun east() = east
+        private val southEast = Compass("south_east")
+        fun southEast() = southEast
+        private val south = Compass("south")
+        fun south() = south
+        private val southWest = Compass("south_west")
+        fun southWest() = southWest
+        private val west = Compass("west")
+        fun west() = west
+        private val center = Compass("center")
+        fun center() = center
     }
-
-    class Builder {
-        var avoid: Boolean? = null
-
-        fun avoid() = apply { this.avoid = true }
-
-        fun build(): OcrGravity {
-            return OcrGravity(avoid)
-        }
-    }
-}
-
-enum class Compass(private val value: String) {
-    NORTH("north"),
-    NORTH_EAST("north_east"),
-    NORTH_WEST("north_west"),
-    EAST("east"),
-    SOUTH_EAST("south_east"),
-    SOUTH("south"),
-    SOUTH_WEST("south_west"),
-    WEST("west"),
-    CENTER("center");
 
     override fun toString(): String {
         return value
     }
+}
+
+class XYCenterGravity : Gravity() {
+    override fun toString() = "xy_center"
 }

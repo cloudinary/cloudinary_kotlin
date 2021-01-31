@@ -13,7 +13,7 @@ sealed class Color(private val value: String, private val prefix: String? = null
 
     companion object {
         fun parseString(color: String) = when {
-            color.startsWith("#") || color.startsWith("rgb:") -> Rgb(color)
+            color.startsWith("#") || color.startsWith("rgb:") -> rgb(color)
             else -> Named(color)
         }
     }
@@ -22,7 +22,7 @@ sealed class Color(private val value: String, private val prefix: String? = null
         return if (includePrefix) toString() else value
     }
 
-    class Rgb(hex: String) : Color(hex.cldRemoveColorPrefixes(), "rgb")
+    class rgb(hex: String) : Color(hex.cldRemoveColorPrefixes(), "rgb")
     class Named(name: String) : Color(name)
 
     /**
