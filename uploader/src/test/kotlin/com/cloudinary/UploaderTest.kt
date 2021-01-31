@@ -419,7 +419,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }
 
-        assertErrorMessage("Detection is invalid", response)
+        assertErrorMessage("Detection invalid mode", response)
     }
 
     @Test
@@ -961,11 +961,13 @@ class UploaderTest(networkLayer: NetworkLayer) {
         expectedMessage: String,
         response: UploaderResponse<*>
     ) {
-        assertNull(response.data)
-        assertNotNull(response.error)
-        Assert.assertTrue(
-            response.error?.error?.message?.contains(expectedMessage) ?: false
-        )
+        assertNull(response.data, "data should be null, expecting an error")
+        assertNotNull(response.error, "Error should NOT be null, expecting an error")
+        val message = response.error?.error?.message
+        assertNotNull(message, "Error message should NOT be null, expecting an error")
+
+        val testMsg = "Expected to contain: '$expectedMessage'. Actual error message: '$message'"
+        Assert.assertTrue(testMsg, message.contains(expectedMessage))
     }
 }
 
