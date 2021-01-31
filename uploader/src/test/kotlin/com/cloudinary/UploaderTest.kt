@@ -3,7 +3,7 @@ package com.cloudinary
 import com.cloudinary.http.ApacheHttpClient45Factory
 import com.cloudinary.http.HttpUrlConnectionFactory
 import com.cloudinary.http.OkHttpClientFactory
-import com.cloudinary.transformation.FormatType
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
@@ -257,7 +257,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val transformation = Transformation().resize(scale { width(2.0f) })
         val response = uploader.upload(srcTestImage) {
             params {
-                eager = listOf(EagerTransformation(transformation, FormatType.png()))
+                eager = listOf(EagerTransformation(transformation, Format.png()))
                 tags = defaultTags
             }
         }
@@ -727,7 +727,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val url = cloudinary.image {
             transformation(transformation)
-            extension(FormatType.png())
+            extension(Format.png())
             version(explicitData.version!!.toString())
         }.generate(publicId)!!
 
@@ -775,7 +775,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
                     width(100)
                 })
             }
-            format = FormatType.jpg()
+            format = Format.jpg()
         }
 
         assertTrue(response.resultOrThrow().cssUrl!!.contains("c_scale,w_100/f_jpg"))

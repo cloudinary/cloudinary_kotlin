@@ -11,17 +11,21 @@ class MinimumPad(
     x: Any? = null,
     y: Any? = null,
     background: Background? = null
-) : Pad(dimensions, relative, regionRelative, gravity, x, y, background) {
+) : BasePad(dimensions, relative, regionRelative, gravity, x, y, background) {
     override val actionType = "mpad"
 
-    class Builder : Pad.Builder() {
+    class Builder : BasePadBuilder() {
+        private var gravity: CompassGravity? = null
+
+        fun gravity(gravity: CompassGravity) = apply { this.gravity = gravity }
+
         override fun build() = MinimumPad(
             Dimensions(width, height, aspectRatio),
             relative,
             regionRelative,
             gravity,
-            x,
-            y,
+            offsetX,
+            offsetY,
             background
         )
     }

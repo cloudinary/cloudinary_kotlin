@@ -43,6 +43,16 @@ class ResizeTest {
                 aspectRatio(1.5f)
             }
         )
+
+        cldAssert("c_scale,w_100", scale {
+            width(100)
+            liquidRescaling(false)
+        })
+
+        cldAssert("c_scale,g_liquid,w_100", scale {
+            width(100)
+            liquidRescaling(true)
+        })
     }
 
     @Test
@@ -346,60 +356,60 @@ class ResizeTest {
 
     @Test
     fun testFillPad() {
-        cldAssert("c_fill_pad,g_north,w_100", Resize.fillPad {
+        cldAssert("c_fill_pad,g_auto,w_100", Resize.fillPad {
             width(100)
-            gravity(Gravity.north())
+            gravity(Gravity.autoGravity())
         })
-        cldAssert("c_fill_pad,g_north,w_1.0", Resize.fillPad {
+        cldAssert("c_fill_pad,g_auto,w_1.0", Resize.fillPad {
             width(1f)
-            gravity(Gravity.north())
+            gravity(Gravity.autoGravity())
         })
         cldAssert(
-            "c_fill_pad,g_north,h_100,w_100",
+            "c_fill_pad,g_auto,h_100,w_100",
             Resize.fillPad {
                 width(100)
                 height(100)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
             }
         )
         cldAssert(
-            "c_fill_pad,g_north,h_100,w_100",
+            "c_fill_pad,g_auto,h_100,w_100",
             Resize.fillPad {
                 width(100)
                 height(100)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
             }
         )
         cldAssert(
-            "c_fill_pad,g_north,h_1.1,w_0.5",
+            "c_fill_pad,g_auto,h_1.1,w_0.5",
             Resize.fillPad {
                 width(0.5f)
                 height(1.1f)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
             }
         )
         cldAssert(
-            "ar_1.5,c_fill_pad,g_north,w_100",
+            "ar_1.5,c_fill_pad,g_auto,w_100",
             Resize.fillPad {
                 width(100)
                 aspectRatio(1.5f)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
             }
         )
         cldAssert(
-            "ar_1.5,c_fill_pad,g_north,h_100",
+            "ar_1.5,c_fill_pad,g_auto,h_100",
             Resize.fillPad {
                 height(100)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
                 aspectRatio(1.5f)
             }
         )
         cldAssert(
-            "ar_1.5,c_fill_pad,g_north,h_100",
+            "ar_1.5,c_fill_pad,g_auto,h_100",
             Resize.fillPad {
                 height(100)
                 aspectRatio(1.5f)
-                gravity(Gravity.north())
+                gravity(Gravity.autoGravity())
             })
     }
 
@@ -563,7 +573,7 @@ class ResizeTest {
                 height(2.5f)
                 zoom(3.5f)
                 gravity(Gravity.west())
-                aspectRatio(AspectRatio.IGNORE_INITIAL_ASPECT_RATIO)
+                aspectRatio(AspectRatio.ignoreInitialAspectRatio())
                 x(4.5f)
                 y(5.5f)
             }

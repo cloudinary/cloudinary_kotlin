@@ -4,14 +4,8 @@ import com.cloudinary.transformation.Action
 
 abstract class PSDTools : Action {
     companion object {
-        fun clip(clippingPath: String, options: (Clip.Builder.() -> Unit)? = null): Clip {
-            val builder = Clip.Builder(clippingPath)
-            options?.let { builder.it() }
-            return builder.build()
-        }
-
-        fun clip(clippingPath: Int? = null, options: (Clip.Builder.() -> Unit)? = null): Clip {
-            val builder = Clip.Builder(clippingPath)
+        fun clip(options: (Clip.Builder.() -> Unit)? = null): Clip {
+            val builder = Clip.Builder()
             options?.let { builder.it() }
             return builder.build()
         }

@@ -4,10 +4,11 @@ import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.expression.Expression
+import com.cloudinary.transformation.joinWithValues
 
 class SubtitlesSource private constructor(
     private val publicId: String,
-    private val style: Any,
+    private val style: Any?,
     private val backgroundColor: Color? = null,
     private val textColor: Color? = null,
     override val transformation: Transformation? = null
@@ -24,7 +25,7 @@ class SubtitlesSource private constructor(
 
     // See comment above - this method does not include the extras!
     override fun toString(): String {
-        return "subtitles:$style:$publicId"
+        return "subtitles".joinWithValues(style, publicId)
     }
 
     companion object {
@@ -41,17 +42,17 @@ class SubtitlesSource private constructor(
         private var backgroundColor: Color? = null
         private var textColor: Color? = null
 
-        fun style(style: TextStyle) = apply { this.style = style }
-        fun style(style: String) = apply { this.style = style }
-        fun style(style: Expression) = apply { this.style = style }
+        fun textStyle(style: TextStyle) = apply { this.style = style }
+        fun textStyle(style: String) = apply { this.style = style }
+        fun textStyle(style: Expression) = apply { this.style = style }
 
-        fun style(fontFamily: String, fontSize: Int, options: (TextStyle.Builder.() -> Unit)? = null) =
-            style(fontFamily as Any, fontSize as Any, options)
+        fun textStyle(fontFamily: String, fontSize: Int, options: (TextStyle.Builder.() -> Unit)? = null) =
+            textStyle(fontFamily as Any, fontSize as Any, options)
 
-        fun style(fontFamily: Any, fontSize: Any, options: (TextStyle.Builder.() -> Unit)? = null) = apply {
+        fun textStyle(fontFamily: Any, fontSize: Any, options: (TextStyle.Builder.() -> Unit)? = null) = apply {
             val builder = TextStyle.Builder(fontFamily, fontSize)
             options?.let { builder.it() }
-            style(builder.build())
+            textStyle(builder.build())
         }
 
         fun backgroundColor(background: Color) = apply { this.backgroundColor = background }
@@ -67,7 +68,6 @@ class SubtitlesSource private constructor(
 
         fun build(): SubtitlesSource {
             val safeStyle = style
-            require(safeStyle != null) { "A style must be provided (font + font size are mandatory)." }
             return SubtitlesSource(publicId, safeStyle, backgroundColor, textColor, transformation)
         }
     }

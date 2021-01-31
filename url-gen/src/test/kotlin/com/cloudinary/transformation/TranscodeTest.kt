@@ -8,45 +8,49 @@ import org.junit.Test
 class TranscodeTest {
     @Test
     fun testAudioCodec() {
-        cldAssert("ac_aac", Transcode.audioCodec(AudioCodec.AAC))
+        cldAssert("ac_aac", Transcode.audioCodec(AudioCodec.aac()))
     }
 
     @Test
     fun testAudioFrequency() {
-        cldAssert("af_8000", Transcode.audioFrequency(AudioFrequency.FREQ8000))
+        cldAssert("af_8000", Transcode.audioFrequency(AudioFrequency.freq8000()))
     }
 
     @Test
     fun testStreamingProfile() {
-        cldAssert("sp_full_hd", Transcode.streamingProfile(StreamingProfileType.FULL_HD))
+        cldAssert("sp_full_hd", Transcode.streamingProfile(StreamingProfile.fullHd()))
     }
 
     @Test
     fun toAnimated() {
-        cldAssert("f_webp,fl_animated,fl_awebp", Transcode.toAnimated("webp"))
-        cldAssert("dl_100,f_gif,fl_animated,vs_3", Transcode.toAnimated("gif") {
-            delay(100)
-            videoSampling(3)
+        cldAssert("f_webp,fl_animated,fl_awebp", Transcode.toAnimated {
+            animatedFormat("webp")
         })
-        cldAssert("dl_100,f_webp,fl_animated,fl_awebp,vs_3", Transcode.toAnimated("webp") {
+        cldAssert("dl_100,f_gif,fl_animated,vs_3", Transcode.toAnimated {
+            animatedFormat("gif")
             delay(100)
-            videoSampling(3)
+            sampling(3)
+        })
+        cldAssert("dl_100,f_webp,fl_animated,fl_awebp,vs_3", Transcode.toAnimated {
+            animatedFormat("webp")
+            delay(100)
+            sampling(3)
         })
     }
 
     @Test
     fun testVideoCodec() {
 
-        cldAssert("vc_vp8", videoCodec(VideoCodecType.VP8))
+        cldAssert("vc_vp8", videoCodec(VideoCodec.vp8()))
 
-        cldAssert("vc_h264:baseline", videoCodec(VideoCodecType.H264) {
-            profile(VideoCodecProfile.BASELINE)
-        })
+        cldAssert("vc_h264:baseline", videoCodec(VideoCodec.h264 {
+            profile(VideoCodecProfile.baseline())
+        }))
 
-        cldAssert("vc_h264:high:3.1", videoCodec(VideoCodecType.H264) {
-            profile(VideoCodecProfile.HIGH)
-            level(VideoCodecLevel.VCL_31)
-        })
+        cldAssert("vc_h264:high:3.1", videoCodec(VideoCodec.h264 {
+            profile(VideoCodecProfile.high())
+            level(VideoCodecLevel.vcl31())
+        }))
     }
 
     @Test

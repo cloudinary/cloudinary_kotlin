@@ -1,13 +1,13 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
-import com.cloudinary.transformation.Transformation.Companion.transformation
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.videoedit.Concatenate
+import com.cloudinary.transformation.videoedit.Transition
 import com.cloudinary.transformation.videoedit.VideoEdit
 import com.cloudinary.transformation.videoedit.VideoEdit.Companion.concatenate
 import com.cloudinary.transformation.videoedit.VideoEdit.Companion.trim
 import com.cloudinary.transformation.videoedit.Volume
-import org.junit.Ignore
 import org.junit.Test
 
 class VideoEditTest {
@@ -37,20 +37,47 @@ class VideoEditTest {
     }
 
     @Test
-    @Ignore("Not yet implemented")
+    fun testPreview() {
+        cldAssert("e_preview:duration_12.0:max_seg_3:min_seg_dur_3", VideoEdit.preview {
+            duration(12f)
+            maximumSegments(3)
+            minimumSegmentDuration(3)
+        })
+    }
+
+    @Test
     fun testConcatenate() {
-        // TODO not implemented yet
-        cldAssert("l_video:dog/du_5,so_0/fl_layer_apply.splice",
-            transformation {
-                videoEdit(concatenate(LayerSource.video("dog")) {
-                    transformation {
-                        videoEdit(trim {
-                            startOffset(0)
-                            duration(5)
-                        })
-                    }
-                })
+
+        cldAssert(
+            "fl_splice,l_video:dog/e_noise:30/du_7.0/fl_layer_apply",
+            concatenate(Concatenate.videoSource("dog") {
+                transformation {
+                    effect(Effect.noise {
+                        level(30)
+                    })
+                    videoEdit(trim { duration(7f) })
+                }
             })
+        )
+
+        cldAssert("fl_splice,l_video:dog/fl_layer_apply,so_0",
+            concatenate(Concatenate.videoSource("dog")) {
+                prepend()
+            }
+        )
+
+        cldAssert("l_video:dog/e_transition,l_video:transition1/fl_layer_apply/fl_layer_apply",
+            concatenate(Concatenate.videoSource("dog")) {
+                transition(Transition.videoSource("transition1"))
+            }
+        )
+
+        cldAssert("du_5.0,l_sample/e_transition,l_video:transition1/fl_layer_apply/fl_layer_apply",
+            concatenate(Concatenate.imageSource("sample")) {
+                transition(Transition.videoSource("transition1"))
+                duration(5f)
+            }
+        )
     }
 
     @Test

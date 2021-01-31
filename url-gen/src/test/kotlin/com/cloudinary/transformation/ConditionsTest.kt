@@ -27,7 +27,7 @@ class ConditionsTest {
 
         cldAssert(
             "$allOperators/if_end",
-            Transformation().ifCondition(
+            Transformation().conditional(
                 ifCondition(
                     Expression("w = 0 && height != 0 || aspectRatio < 0 and pageCount > 0 and faceCount <= 0 and width >= 0"),
                     transformation {
@@ -47,18 +47,18 @@ class ConditionsTest {
 
         val actual =
             transformation {
-                ifCondition(ifCondition(condition,
+                conditional(ifCondition(condition,
                     transformation {
                         effect(grayscale())
                     }
                 ) {
                     otherwise {
-                        effect(sepia(30))
+                        effect(sepia())
                     }
                 })
             }
         cldAssert(
-            "$allOperators/if_else/e_sepia:30/if_end",
+            "$allOperators/if_else/e_sepia/if_end",
             actual
         )
     }

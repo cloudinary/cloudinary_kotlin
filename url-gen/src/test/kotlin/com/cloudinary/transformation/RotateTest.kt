@@ -17,6 +17,6 @@ class RotateTest {
         )
 
         cldAssert("a_-50", Transformation().rotate(Rotate.byAngle(-50)))
-        cldAssert("a_hflip", Transformation().rotate(Rotate.mode(Mode.HORIZONTAL_FLIP)))
+        cldAssert("a_hflip", Transformation().rotate(Rotate.mode(RotationMode.horizontalFlip())))
     }
 }

@@ -2,7 +2,7 @@ package com.cloudinary
 
 import com.cloudinary.config.Configuration
 import com.cloudinary.config.UrlConfig
-import com.cloudinary.transformation.FormatType
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Rotate
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.*
@@ -151,7 +151,7 @@ class UrlTest {
     @Test
     fun testExtension() { // should use format from options
         val result = cloudinary.image {
-            extension(FormatType.jpg())
+            extension(Format.jpg())
         }.generate("test")
         assertEquals(DEFAULT_UPLOAD_PATH + "test.jpg", result)
     }
@@ -215,7 +215,7 @@ class UrlTest {
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUrlSuffixWithSlash() {
         cloudinary.media {
-            resourceType("image")
+            assetType("image")
             urlSuffix("hello/world")
             privateCdn(true)
         }.generate("test")
@@ -252,7 +252,7 @@ class UrlTest {
             cloudinary.image {
                 urlSuffix("hello")
                 privateCdn(true)
-                extension(FormatType.jpg())
+                extension(Format.jpg())
             }.generate("test")
         assertEquals("http://test123-res.cloudinary.com/images/test/hello.jpg", actual)
     }
@@ -261,7 +261,7 @@ class UrlTest {
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
         var url = cloudinary.image {
-            extension(FormatType.jpg())
+            extension(Format.jpg())
             signUrl(true)
         }.generate("test")!!
         var matcher = pattern.matcher(url)
@@ -270,7 +270,7 @@ class UrlTest {
 
         var actual =
             cloudinary.image {
-                extension(FormatType.jpg())
+                extension(Format.jpg())
                 privateCdn(true)
                 signUrl(true)
                 urlSuffix("hello")
@@ -282,7 +282,7 @@ class UrlTest {
         )
 
         url = cloudinary.image {
-            extension(FormatType.jpg())
+            extension(Format.jpg())
             signUrl(true)
             rotate(Rotate.byAngle(0))
         }.generate("test")!!
@@ -290,7 +290,7 @@ class UrlTest {
         matcher.find()
         expectedSignature = url.substring(matcher.start(), matcher.end())
         actual = cloudinary.image {
-            extension(FormatType.jpg())
+            extension(Format.jpg())
             privateCdn(true)
             signUrl(true)
             urlSuffix("hello")
@@ -308,7 +308,7 @@ class UrlTest {
             cloudinary.image {
                 urlSuffix("hello")
                 privateCdn(true)
-                resourceType("raw")
+                assetType("raw")
             }.generate("test")
         assertEquals("http://test123-res.cloudinary.com/files/test/hello", actual)
     }
@@ -329,7 +329,7 @@ class UrlTest {
             cloudinary.image {
                 urlSuffix("hello")
                 privateCdn(true)
-                resourceType("image")
+                assetType("image")
                 deliveryType("authenticated")
             }
                 .generate("test")
@@ -342,7 +342,7 @@ class UrlTest {
             cloudinary.image {
                 urlSuffix("hello")
                 privateCdn(true)
-                resourceType("image")
+                assetType("image")
                 deliveryType("private")
             }
                 .generate("test")
@@ -389,7 +389,7 @@ class UrlTest {
         cloudinary.image {
             useRootPath(true)
             privateCdn(true)
-            resourceType("raw")
+            assetType("raw")
         }.generate("test")
     }
 
@@ -409,7 +409,7 @@ class UrlTest {
     fun testFetchFormat() { // should support format for fetch urls
         val result =
             cloudinary.image {
-                extension(FormatType.jpg())
+                extension(Format.jpg())
                 deliveryType("fetch")
             }.generate("http://cloudinary.com/images/old_logo.png")
         assertEquals(

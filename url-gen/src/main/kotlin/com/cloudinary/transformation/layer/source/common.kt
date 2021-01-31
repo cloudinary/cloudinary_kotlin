@@ -1,12 +1,14 @@
 package com.cloudinary.transformation.layer.source
 
+import com.cloudinary.transformation.ITransformable
 import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.util.cldSmartUrlEncode
+import java.beans.Expression
 import java.util.regex.Pattern
 
-interface LayerSource {
-    val transformation: Transformation?
+interface Source {
+    val transformation: ITransformable<Transformation>?
 
     companion object {
         fun text(text: String, options: (TextSource.Builder.() -> Unit)? = null) = text(text as Any, options)
@@ -14,6 +16,22 @@ interface LayerSource {
         fun text(text: Any, options: (TextSource.Builder.() -> Unit)? = null): TextSource {
             val builder = TextSource.Builder(text)
             options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun text(text: String, style: Expression, options: (TextSource.Builder.() -> Unit)? = null) =
+            text(text, style as Any, options)
+
+        fun text(text: String, style: TextStyle, options: (TextSource.Builder.() -> Unit)? = null) =
+            text(text, style as Any, options)
+
+        fun text(text: String, style: String, options: (TextSource.Builder.() -> Unit)? = null) =
+            text(text, style as Any, options)
+
+        private fun text(text: String, style: Any, options: (TextSource.Builder.() -> Unit)? = null): TextSource {
+            val builder = TextSource.Builder(text)
+            options?.let { builder.it() }
+            builder.style(style)
             return builder.build()
         }
 
@@ -45,7 +63,16 @@ interface LayerSource {
     fun extraComponents(): List<Param>
 }
 
-interface BaseVideoSource : LayerSource
+interface BaseVideoSource : Source
+
+private fun buildTextStyle(
+    fontFamily: Any,
+    fontSize: Any, options: (TextStyle.Builder.() -> Unit)? = null
+): TextStyle {
+    val builder = TextStyle.Builder(fontFamily, fontSize)
+    options?.let { builder.it() }
+    return builder.build()
+}
 
 class TextStyle internal constructor(
     private val fontFamily: Any,
@@ -56,10 +83,28 @@ class TextStyle internal constructor(
     private val fontHinting: FontHinting? = null,
     private val textDecoration: TextDecoration? = null,
     private val textAlignment: TextAlignment? = null,
-    private val stroke: Stroke? = null,
+    private val stroke: Boolean? = null,
     private val letterSpacing: Any? = null,
     private val lineSpacing: Any? = null
 ) {
+    private constructor(style: TextStyle) : this(
+        style.fontFamily,
+        style.fontSize,
+        style.fontWeight,
+        style.fontStyle,
+        style.fontAntialias,
+        style.fontHinting,
+        style.textDecoration,
+        style.textAlignment,
+        style.stroke,
+        style.letterSpacing,
+        style.lineSpacing
+    )
+
+    constructor(
+        fontFamily: Any,
+        fontSize: Any, options: (Builder.() -> Unit)? = null
+    ) : this(buildTextStyle(fontFamily, fontSize, options))
 
     override fun toString(): String {
         return listOfNotNull(
@@ -71,9 +116,9 @@ class TextStyle internal constructor(
             fontHinting?.let { "hinting_$fontHinting" },
             textDecoration,
             textAlignment,
-            stroke,
             letterSpacing?.let { "letter_spacing_$letterSpacing" },
-            lineSpacing?.let { "line_spacing_$lineSpacing" }
+            lineSpacing?.let { "line_spacing_$lineSpacing" },
+            if (stroke == true) "stroke" else null
         ).joinToString("_")
     }
 
@@ -86,7 +131,7 @@ class TextStyle internal constructor(
         private var fontHinting: FontHinting? = null
         private var textDecoration: TextDecoration? = null
         private var textAlignment: TextAlignment? = null
-        private var stroke: Stroke? = null
+        private var stroke: Boolean? = null
         private var letterSpacing: Any? = null
         private var lineSpacing: Any? = null
 
@@ -95,7 +140,7 @@ class TextStyle internal constructor(
         fun fontHinting(fontHinting: FontHinting) = apply { this.fontHinting = fontHinting }
         fun textDecoration(textDecoration: TextDecoration) = apply { this.textDecoration = textDecoration }
         fun textAlignment(textAlignment: TextAlignment) = apply { this.textAlignment = textAlignment }
-        fun stroke(stroke: Stroke) = apply { this.stroke = stroke }
+        fun stroke(stroke: Boolean = true) = apply { this.stroke = stroke }
         fun letterSpacing(letterSpacing: Any) = apply { this.letterSpacing = letterSpacing }
         fun lineSpacing(lineSpacing: Any) = apply { this.lineSpacing = lineSpacing }
         fun letterSpacing(letterSpacing: Float) = apply { this.letterSpacing = letterSpacing }
@@ -118,76 +163,105 @@ class TextStyle internal constructor(
     }
 }
 
-enum class FontWeight(private val value: String) {
-    NORMAL("normal"),
-    BOLD("bold"),
-    THIN("thin"),
-    LIGHT("light");
+
+class FontWeight private constructor(private val value: String) {
+    companion object {
+        private val normal = FontWeight("normal")
+        fun normal() = normal
+        private val bold = FontWeight("bold")
+        fun bold() = bold
+        private val thin = FontWeight("thin")
+        fun thin() = thin
+        private val light = FontWeight("light")
+        fun light() = light
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-enum class FontStyle(private val value: String) {
-    NORMAL("normal"),
-    ITALIC("italic");
+class FontStyle private constructor(private val value: String) {
+    companion object {
+        private val normal = FontStyle("normal")
+        fun normal() = normal
+        private val italic = FontStyle("italic")
+        fun italic() = italic
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-enum class TextDecoration(private val value: String) {
-    NORMAL("normal"),
-    UNDERLINE("underline"),
-    STRIKETHROUGH("strikethrough");
+class TextDecoration private constructor(private val value: String) {
+    companion object {
+        private val normal = TextDecoration("normal")
+        fun normal() = normal
+        private val underline = TextDecoration("underline")
+        fun underline() = underline
+        private val strikethrough = TextDecoration("strikethrough")
+        fun strikethrough() = strikethrough
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-enum class TextAlignment(private val value: String) {
-    LEFT("left"),
-    CENTER("center"),
-    RIGHT("right"),
-    END("end"),
-    START("start"),
-    JUSTIFY("justify");
+class TextAlignment private constructor(private val value: String) {
+    companion object {
+        private val left = TextAlignment("left")
+        fun left() = left
+        private val center = TextAlignment("center")
+        fun center() = center
+        private val right = TextAlignment("right")
+        fun right() = right
+        private val end = TextAlignment("end")
+        fun end() = end
+        private val start = TextAlignment("start")
+        fun start() = start
+        private val justify = TextAlignment("justify")
+        fun justify() = justify
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-enum class Stroke(private val value: String) {
-    NONE("none"),
-    STROKE("stroke");
+class FontAntialias private constructor(private val value: String) {
+    companion object {
+        private val none = FontAntialias("none")
+        fun none() = none
+        private val gray = FontAntialias("gray")
+        fun gray() = gray
+        private val subpixel = FontAntialias("subpixel")
+        fun subpixel() = subpixel
+        private val fast = FontAntialias("fast")
+        fun fast() = fast
+        private val good = FontAntialias("good")
+        fun good() = good
+        private val best = FontAntialias("best")
+        fun best() = best
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-enum class FontAntialias(private val value: String) {
-    NONE("none"),
-    GRAY("gray"),
-    SUBPIXEL("subpixel"),
-    FAST("fast"),
-    GOOD("good"),
-    BEST("best");
-
-    override fun toString(): String {
-        return value
+class FontHinting private constructor(private val value: String) {
+    companion object {
+        private val none = FontHinting("none")
+        fun none() = none
+        private val slight = FontHinting("slight")
+        fun slight() = slight
+        private val medium = FontHinting("medium")
+        fun medium() = medium
+        private val full = FontHinting("full")
+        fun full() = full
     }
-}
-
-enum class FontHinting(private val value: String) {
-    NONE("none"),
-    SLIGHT("slight"),
-    MEDIUM("medium"),
-    FULL("full");
 
     override fun toString(): String {
         return value

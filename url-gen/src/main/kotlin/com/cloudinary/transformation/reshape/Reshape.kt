@@ -3,7 +3,7 @@ package com.cloudinary.transformation.reshape
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
-import com.cloudinary.transformation.layer.source.LayerSource
+import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.layer.source.TextSource
 import java.beans.Expression
 
@@ -33,19 +33,25 @@ abstract class Reshape : Action {
         fun distortArc(degrees: Expression) = DistortArc(degrees)
         fun distortArc(degrees: Float) = DistortArc(degrees)
 
-        private fun cutByImage(source: LayerSource, options: (CutByImage.Builder.() -> Unit)? = null): CutByImage {
+        private fun cutByImage(source: Source, options: (CutByImage.Builder.() -> Unit)? = null): CutByImage {
             val builder = CutByImage.Builder(source)
             options?.let { builder.it() }
             return builder.build()
         }
 
         fun cutByImage(source: ImageSource, options: (CutByImage.Builder.() -> Unit)? = null) =
-            cutByImage(source as LayerSource, options)
+            cutByImage(source as Source, options)
 
         fun cutByImage(source: TextSource, options: (CutByImage.Builder.() -> Unit)? = null) =
-            cutByImage(source as LayerSource, options)
+            cutByImage(source as Source, options)
 
         fun cutByImage(source: FetchSource, options: (CutByImage.Builder.() -> Unit)? = null) =
-            cutByImage(source as LayerSource, options)
+            cutByImage(source as Source, options)
+
+        fun trim(options: (Trim.Builder.() -> Unit)? = null): Trim {
+            val builder = Trim.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
     }
 }

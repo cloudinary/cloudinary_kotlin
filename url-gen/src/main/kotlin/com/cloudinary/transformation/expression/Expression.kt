@@ -21,8 +21,10 @@ val OPERATORS = mapOf(
 val PREDEFINED_VARS = mapOf(
     "width" to "w",
     "height" to "h",
+    "initial_width" to "iw",
     "initialWidth" to "iw",
     "initialHeight" to "ih",
+    "initial_height" to "ih",
     "aspect_ratio" to "ar",
     "initial_aspect_ratio" to "iar",
     "aspectRatio" to "ar",
@@ -103,6 +105,10 @@ class Expression(private val values: List<Any> = listOf()) {
     }
 
     companion object {
+        fun expression(expression: String): Expression {
+            return Expression(expression)
+        }
+
         fun faceCount() = Expression("fc")
 
         /*

@@ -1,27 +1,31 @@
 package com.cloudinary.transformation.resize
 
 import com.cloudinary.transformation.background.Background
-import com.cloudinary.transformation.gravity.CompassGravity
+import com.cloudinary.transformation.gravity.AutoGravity
 
 class FillPad(
     dimensions: Dimensions,
     relative: Boolean? = null,
     regionRelative: Boolean? = null,
-    gravity: CompassGravity? = null,
+    gravity: AutoGravity? = null,
     x: Any? = null,
     y: Any? = null,
     background: Background? = null
-) : Pad(dimensions, relative, regionRelative, gravity, x, y, background) {
+) : BasePad(dimensions, relative, regionRelative, gravity, x, y, background) {
     override val actionType = "fill_pad"
 
-    class Builder : Pad.Builder() {
+    class Builder : BasePad.BasePadBuilder() {
+        private var gravity: AutoGravity? = null
+
+        fun gravity(gravity: AutoGravity) = apply { this.gravity = gravity }
+
         override fun build() = FillPad(
             Dimensions(width, height, aspectRatio),
             relative,
             regionRelative,
             gravity,
-            x,
-            y,
+            offsetX,
+            offsetY,
             background
         )
     }

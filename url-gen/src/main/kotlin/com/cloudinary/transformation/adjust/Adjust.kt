@@ -2,7 +2,7 @@ package com.cloudinary.transformation.adjust
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
-import com.cloudinary.util.cldRanged
+import com.cloudinary.transformation.TransformationComponentBuilder
 
 abstract class Adjust : Action {
     companion object {
@@ -10,65 +10,63 @@ abstract class Adjust : Action {
 
         fun tint(vararg values: Any?) = Tint(*values)
 
-        fun vibrance(level: Int? = null) = Vibrance(level)
+        fun vibrance(options: (Vibrance.Builder.() -> Unit)? = null) = buildAdjust(Vibrance.Builder(), options)
 
-        fun autoColor(level: Int? = null) = AutoColor(level)
+        fun autoColor(options: (AutoColor.Builder.() -> Unit)? = null) = buildAdjust(AutoColor.Builder(), options)
 
-        fun brightness(level: Int? = null) = Brightness(level)
+        fun brightness(options: (Brightness.Builder.() -> Unit)? = null) = buildAdjust(Brightness.Builder(), options)
 
-        fun autoBrightness(level: Int? = null) = AutoBrightness(level)
+        fun autoBrightness(options: (AutoBrightness.Builder.() -> Unit)? = null) =
+            buildAdjust(AutoBrightness.Builder(), options)
 
-        fun brightnessHSB(level: Int? = null) = BrightnessHSB(level)
+        fun brightnessHSB(options: (BrightnessHSB.Builder.() -> Unit)? = null) =
+            buildAdjust(BrightnessHSB.Builder(), options)
 
-        fun autoContrast(level: Int? = null) = AutoContrast(level)
+        fun autoContrast(options: (AutoContrast.Builder.() -> Unit)? = null) =
+            buildAdjust(AutoContrast.Builder(), options)
 
-        fun unsharpMask(level: Int? = null) = UnsharpMask(level)
+        fun unsharpMask(options: (UnsharpMask.Builder.() -> Unit)? = null) = buildAdjust(UnsharpMask.Builder(), options)
 
-        fun viesusCorrect(options: (ViesusCorrect.Builder.() -> Unit)? = null): ViesusCorrect {
-            val builder = ViesusCorrect.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun viesusCorrect(options: (ViesusCorrect.Builder.() -> Unit)? = null) =
+            buildAdjust(ViesusCorrect.Builder(), options)
 
-        fun hue(level: Int? = null) = Hue(level)
+        fun hue(options: (Hue.Builder.() -> Unit)? = null) = buildAdjust(Hue.Builder(), options)
 
-        fun gamma(level: Int? = null) = Gamma(level.cldRanged(-50, 150))
+        fun gamma(options: (Gamma.Builder.() -> Unit)? = null) = buildAdjust(Gamma.Builder(), options)
 
-        fun contrast(level: Int? = null) = Contrast(level)
+        fun contrast(options: (Contrast.Builder.() -> Unit)? = null) = buildAdjust(Contrast.Builder(), options)
 
-        fun blue(level: Int? = null) = Blue(level)
+        fun blue(options: (Blue.Builder.() -> Unit)? = null) = buildAdjust(Blue.Builder(), options)
 
-        fun green(level: Int? = null) = Green(level)
+        fun green(options: (Green.Builder.() -> Unit)? = null) = buildAdjust(Green.Builder(), options)
 
-        fun red(level: Int? = null) = Red(level)
+        fun red(options: (Red.Builder.() -> Unit)? = null) = buildAdjust(Red.Builder(), options)
 
-        fun opacityThreshold(level: Int? = null) = OpacityThreshold(level)
+        fun opacityThreshold(options: (OpacityThreshold.Builder.() -> Unit)? = null) =
+            buildAdjust(OpacityThreshold.Builder(), options)
 
-        fun saturation(level: Int? = null) = Saturation(level)
+        fun saturation(options: (Saturation.Builder.() -> Unit)? = null) = buildAdjust(Saturation.Builder(), options)
 
-        fun sharpen(strength: Int? = null) = Sharpen(strength)
+        fun sharpen(options: (Sharpen.Builder.() -> Unit)? = null) = buildAdjust(Sharpen.Builder(), options)
 
-        fun replaceColor(toColor: Color, options: (ReplaceColor.Builder.() -> Unit)? = null): Adjust {
-            val builder = ReplaceColor.Builder(toColor)
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun replaceColor(toColor: Color, options: (ReplaceColor.Builder.() -> Unit)? = null) =
+            buildAdjust(ReplaceColor.Builder(toColor), options)
 
-        fun recolor(colorMatrix: Array<FloatArray>) = Recolor(colorMatrix)
+        fun recolor(colorMatrix: List<List<Float>>) = Recolor(colorMatrix)
 
-        fun fillLight(options: (FillLight.Builder.() -> Unit)? = null): Adjust {
-            val builder = FillLight.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun recolor(vararg colorMatrix: Float) = Recolor(colorMatrix)
 
-        fun improve(options: (Improve.Builder.() -> Unit)? = null): Adjust {
-            val builder = Improve.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun fillLight(options: (FillLight.Builder.() -> Unit)? = null) = buildAdjust(FillLight.Builder(), options)
 
-        fun by3DLut(publicId: String) = By3DLut(publicId)
+        fun improve(options: (Improve.Builder.() -> Unit)? = null) = buildAdjust(Improve.Builder(), options)
+
+        fun by3dLut(publicId: String) = By3dLut(publicId)
     }
 }
 
+interface AdjustBuilder : TransformationComponentBuilder
+
+private fun <T : AdjustBuilder> buildAdjust(builder: T, options: (T.() -> Unit)?): Adjust {
+    options?.let { builder.it() }
+    return builder.build() as Adjust
+}

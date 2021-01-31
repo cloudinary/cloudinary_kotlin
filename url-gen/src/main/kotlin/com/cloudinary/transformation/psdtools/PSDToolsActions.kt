@@ -13,21 +13,22 @@ class Clip(private val clippingPath: Any?, private val evenOdd: Boolean = false)
         return "fl_clip$evenOdd$path"
     }
 
-    class Builder private constructor(private val clippingPath: Any?) : TransformationComponentBuilder {
-        constructor(clippingPath: String) : this(clippingPath as Any)
-        constructor(clippingPath: Int? = null) : this(clippingPath as Any?)
+    class Builder : TransformationComponentBuilder {
 
         private var evenOdd: Boolean = false
+        private var clippingPath: Any? = null
 
         fun evenOdd(evenOdd: Boolean = true) = apply { this.evenOdd = evenOdd }
+        fun byName(clippingPath: String) = apply { this.clippingPath = clippingPath }
+        fun byIndex(clippingPath: Int) = apply { this.clippingPath = clippingPath }
 
         override fun build() = Clip(clippingPath, evenOdd)
     }
 }
 
-class SmartObject(private val byIndex: List<Any>? = null, private val byFileName: List<String>? = null) : PSDTools() {
+class SmartObject(private val byIndex: List<Any>? = null, private val byLayerName: List<String>? = null) : PSDTools() {
     init {
-        require(isValidQualifier(byFileName) || isValidQualifier(byIndex)) { "At least one smart object qualifier is required (either byIndex or byFilename)." }
+        require(isValidQualifier(byLayerName) || isValidQualifier(byIndex)) { "At least one smart object qualifier is required (either byIndex or byLayerName)." }
     }
 
     private fun isValidQualifier(list: List<*>?): Boolean {
@@ -38,7 +39,7 @@ class SmartObject(private val byIndex: List<Any>? = null, private val byFileName
         return if (isValidQualifier(byIndex))
             byIndex!!.joinToString(";")
         else
-            "name:${byFileName!!.joinToString(";")}"
+            "name:${byLayerName!!.joinToString(";")}"
     }
 
     override fun toString(): String {
@@ -47,14 +48,14 @@ class SmartObject(private val byIndex: List<Any>? = null, private val byFileName
 
     class Builder : TransformationComponentBuilder {
         private val byIndex = mutableListOf<Any>()
-        private val byFilename = mutableListOf<String>()
+        private val byLayerName = mutableListOf<String>()
 
         fun byIndex(index: Int) = apply { this.byIndex.add(index) }
         fun byIndex(index: Any) = apply { this.byIndex.add(index) }
-        fun byFilename(filename: String) = apply { this.byFilename.add(filename) }
+        fun byLayerName(filename: String) = apply { this.byLayerName.add(filename) }
 
         override fun build(): SmartObject {
-            return SmartObject(byIndex, byFilename)
+            return SmartObject(byIndex, byLayerName)
         }
     }
 }

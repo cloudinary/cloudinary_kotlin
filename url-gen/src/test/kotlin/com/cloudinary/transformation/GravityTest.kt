@@ -7,32 +7,29 @@ import org.junit.Test
 class GravityTest {
     @Test
     fun testGravity() {
-        cldAssert("cat:bird", Gravity.focusOn(FocusOn.CAT, FocusOn.BIRD))
-        cldAssert("cat:bird:auto:microwave_30:bottle_avoid", Gravity.focusOn(FocusOn.CAT, FocusOn.BIRD) {
-            fallbackGravity(Gravity.auto(FocusOn.MICROWAVE.weight(30), FocusOn.BOTTLE.avoid()))
+        cldAssert("cat:bird", Gravity.focusOn(FocusOn.cat(), FocusOn.bird()))
+        cldAssert("cat:bird:auto:microwave_30:bottle_avoid", Gravity.focusOn(FocusOn.cat(), FocusOn.bird()) {
+            fallbackGravity(Gravity.autoGravity(FocusOn.microwave().weight(30), FocusOn.bottle().avoid()))
         })
         cldAssert("west", Gravity.west())
-        cldAssert("ocr_text", Gravity.ocr())
-        cldAssert("ocr_text_avoid", Gravity.ocr { avoid() })
-
     }
 
     @Test
     fun testAutoGravity() {
-        cldAssert("auto", Gravity.auto())
-        cldAssert("auto:face", Gravity.auto(FocusOn.FACE))
-        cldAssert("auto:cat", Gravity.auto(FocusOn.CAT))
-        cldAssert("auto:cat:dog", Gravity.auto(FocusOn.CAT, FocusOn.DOG))
+        cldAssert("auto", Gravity.autoGravity())
+        cldAssert("auto:face", Gravity.autoGravity(FocusOn.face()))
+        cldAssert("auto:cat", Gravity.autoGravity(FocusOn.cat()))
+        cldAssert("auto:cat:dog", Gravity.autoGravity(FocusOn.cat(), FocusOn.dog()))
         cldAssert(
-            "auto:cat_30:dog_avoid:bird", Gravity.auto(
-                FocusOn.CAT.weight(30),
-                FocusOn.DOG.avoid(),
-                FocusOn.BIRD
+            "auto:cat_30:dog_avoid:bird", Gravity.autoGravity(
+                FocusOn.cat().weight(30),
+                FocusOn.dog().avoid(),
+                FocusOn.bird()
             )
         )
         cldAssert("auto:cat_30:dog_avoid",
-            Gravity.auto(FocusOn.CAT.weight(30)) {
-                autoFocus(AutoFocus.focusOn(FocusOn.DOG) { avoid() })
+            Gravity.autoGravity(FocusOn.cat().weight(30)) {
+                autoFocus(AutoFocus.focusOn(FocusOn.dog()) { avoid() })
             }
         )
     }

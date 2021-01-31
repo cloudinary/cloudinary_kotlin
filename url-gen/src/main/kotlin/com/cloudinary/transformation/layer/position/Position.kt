@@ -5,25 +5,33 @@ import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.transformation.gravity.CompassGravity
 import com.cloudinary.transformation.gravity.FocusOnGravity
 import com.cloudinary.transformation.gravity.Gravity
-import com.cloudinary.transformation.gravity.OcrGravity
 
-class LayerPosition private constructor(
-    x: Any?,
-    y: Any?,
+class Position private constructor(
+    offsetX: Any?,
+    offsetY: Any?,
     gravity: Gravity?,
     private val tiled: Boolean?,
     private val allowOverflow: Boolean = false
-) : BaseLayerPosition(x, y, gravity) {
+) : BaseLayerPosition(offsetX, offsetY, gravity) {
     init {
         require(
             gravity == null ||
-                    gravity is OcrGravity ||
                     gravity is FocusOnGravity ||
                     gravity is CompassGravity
         ) {
-            "When provided, gravity must be one of OcrGravity, CompassGravity or FocusOnGravity"
+            "When provided, gravity must be either CompassGravity or FocusOnGravity"
         }
     }
+
+    private constructor(position: Position) : this(
+        position.offsetX,
+        position.offsetY,
+        position.gravity,
+        position.tiled,
+        position.allowOverflow
+    )
+
+    constructor(options: Builder.() -> Unit) : this(fromBuilder(options))
 
     override fun asParams(): List<Param> {
         return mutableListOf<Param>().apply {
@@ -36,12 +44,12 @@ class LayerPosition private constructor(
     @TransformationDsl
     class Builder {
         private var gravity: Gravity? = null
-        private var x: Any? = null
-        private var y: Any? = null
+        private var offsetX: Any? = null
+        private var offsetY: Any? = null
         private var tiled: Boolean? = null
         private var allowOverflow: Boolean = true
 
-        fun build() = LayerPosition(x, y, gravity, tiled, allowOverflow)
+        fun build() = Position(offsetX, offsetY, gravity, tiled, allowOverflow)
 
         fun gravity(gravity: CompassGravity) = apply {
             this.gravity = gravity
@@ -51,10 +59,10 @@ class LayerPosition private constructor(
             this.gravity = gravity
         }
 
-        fun x(x: Int) = apply { this.x = x }
-        fun x(x: Any) = apply { this.x = x }
-        fun y(y: Int) = apply { this.y = y }
-        fun y(y: Any) = apply { this.y = y }
+        fun offsetX(offsetX: Int) = apply { this.offsetX = offsetX }
+        fun offsetX(offsetX: Any) = apply { this.offsetX = offsetX }
+        fun offsetY(offsetY: Int) = apply { this.offsetY = offsetY }
+        fun offsetY(offsetY: Any) = apply { this.offsetY = offsetY }
 
         fun tiled() = apply { this.tiled = true }
 
@@ -64,3 +72,8 @@ class LayerPosition private constructor(
     }
 }
 
+private fun fromBuilder(options: Position.Builder.() -> Unit): Position {
+    val builder = Position.Builder()
+    builder.options()
+    return builder.build()
+}

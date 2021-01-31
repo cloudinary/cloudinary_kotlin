@@ -12,13 +12,19 @@ class PSDToolsTest {
             evenOdd()
         })
 
-        cldAssert("fl_clip,pg_3", PSDTools.clip(3))
-        cldAssert("fl_clip,pg_name:my_path", PSDTools.clip("my_path"))
-        cldAssert("fl_clip_evenodd,pg_3", PSDTools.clip(3) {
+        cldAssert("fl_clip,pg_3", PSDTools.clip {
+            byIndex(3)
+        })
+        cldAssert("fl_clip,pg_name:my_path", PSDTools.clip {
+            byName("my_path")
+        })
+        cldAssert("fl_clip_evenodd,pg_3", PSDTools.clip {
+            byIndex(3)
             evenOdd()
         })
 
-        cldAssert("fl_clip_evenodd,pg_name:my_path", PSDTools.clip("my_path") {
+        cldAssert("fl_clip_evenodd,pg_name:my_path", PSDTools.clip {
+            byName("my_path")
             evenOdd()
         })
     }
@@ -26,7 +32,7 @@ class PSDToolsTest {
     @Test
     fun testGetSmartObject() {
         cldAssert("pg_embedded:3", PSDTools.smartObject { this.byIndex(3) })
-        cldAssert("pg_embedded:name:foo;bar", PSDTools.smartObject { this.byFilename("foo").byFilename("bar") })
+        cldAssert("pg_embedded:name:foo;bar", PSDTools.smartObject { this.byLayerName("foo").byLayerName("bar") })
     }
 
     @Test

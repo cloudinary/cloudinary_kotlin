@@ -1,6 +1,6 @@
 package com.cloudinary.transformation.delivery
 
-import com.cloudinary.transformation.FormatType
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.joinWithValues
@@ -14,19 +14,19 @@ class Density(private val density: Any) : Delivery() {
     override fun toString() = "dn_$density"
 }
 
-class ColorSpace(private val colorSpace: ColorSpaceType) {
+class ColorSpaceAction(private val colorSpace: ColorSpace) : Delivery() {
     override fun toString(): String {
         return "cs_$colorSpace"
     }
 }
 
-class ColorSpaceFromIcc(private val publicId: String) {
+class ColorSpaceFromICC(private val publicId: String) : Delivery() {
     override fun toString(): String {
         return "cs_icc:$publicId"
     }
 }
 
-class Dpr private constructor(private val dpr: Any) {
+class Dpr private constructor(private val dpr: Any) : Delivery() {
     override fun toString(): String {
         return "dpr_$dpr"
     }
@@ -39,8 +39,8 @@ class Dpr private constructor(private val dpr: Any) {
     }
 }
 
-class Format(
-    private val format: FormatType,
+class DeliveryFormat(
+    private val format: Format,
     private val lossy: Boolean? = null,
     private val progressive: Progressive? = null,
     private val preserveTransparency: Boolean? = null
@@ -54,26 +54,25 @@ class Format(
         return "f_$format".joinWithValues(lossyStr, preserveTransparencyStr, progressiveStr, separator = ",")
     }
 
-    class Builder(private val format: FormatType) : TransformationComponentBuilder {
+    class Builder(private val format: Format) : TransformationComponentBuilder {
         private var lossy: Boolean? = null
         private var progressive: Progressive? = null
         private var preserveTransparency: Boolean? = null
 
-
         fun lossy(lossy: Boolean? = true) = apply { this.lossy = lossy }
-        fun progressive(mode: ProgressiveMode? = null) = apply {
-            this.progressive = Progressive(mode)
+        fun progressive(progressive: Progressive) = apply {
+            this.progressive = progressive
         }
 
         fun preserveTransparency() = apply { this.preserveTransparency = true }
 
-        override fun build(): Format {
-            return Format(format, lossy, progressive, preserveTransparency)
+        override fun build(): DeliveryFormat {
+            return DeliveryFormat(format, lossy, progressive, preserveTransparency)
         }
     }
 }
 
-class Quality private constructor(
+class QualityAction private constructor(
     private val level: Any,
     private val chromaSubSampling: ChromaSubSampling? = null,
     private val quantization: Any? = null,
@@ -87,23 +86,6 @@ class Quality private constructor(
     override fun toString(): String {
         val anyFormatStr = if (anyFormat) "fl_any_format," else ""
         return "${anyFormatStr}q_$level".joinWithValues(chromaSubSampling, quantization?.let { "qmax_$it" })
-    }
-
-    companion object {
-        fun auto(options: (Builder.() -> Unit)? = null) = build(QualityType.auto(), options)
-        fun autoEco(options: (Builder.() -> Unit)? = null) = build(QualityType.eco(), options)
-        fun autoGood(options: (Builder.() -> Unit)? = null) = build(QualityType.good(), options)
-        fun autoBest(options: (Builder.() -> Unit)? = null) = build(QualityType.best(), options)
-        fun autoLow(options: (Builder.() -> Unit)? = null) = build(QualityType.low(), options)
-        fun jpegminiHigh(options: (Builder.() -> Unit)? = null) = build(QualityType.jpegminiHigh(), options)
-        fun jpegminiMedium(options: (Builder.() -> Unit)? = null) = build(QualityType.jpegminiMedium(), options)
-        fun jpegminiBest(options: (Builder.() -> Unit)? = null) = build(QualityType.jpegminiBest(), options)
-
-        private fun build(level: Any, options: (Builder.() -> Unit)? = null): Quality {
-            val builder = Builder(level)
-            options?.let { builder.it() }
-            return builder.build()
-        }
     }
 
     class Builder internal constructor(private val level: Any) : TransformationComponentBuilder {
@@ -120,64 +102,92 @@ class Quality private constructor(
 
         fun anyFormat(anyFormat: Boolean = true) = apply { this.anyFormat = anyFormat }
 
-        override fun build() = Quality(level, chromaSubSampling, quantization, anyFormat)
+        override fun build() = QualityAction(level, chromaSubSampling, quantization, anyFormat)
     }
 }
 
-enum class ChromaSubSampling(private val value: String) {
-    chroma444("444"),
-    chroma420("420");
+class ChromaSubSampling private constructor(private val value: String) {
+    companion object {
+        private val chroma444 = ChromaSubSampling("444")
+        fun chroma444() = chroma444
+        private val chroma420 = ChromaSubSampling("420")
+        fun chroma420() = chroma420
+    }
 
     override fun toString() = value
 }
 
-enum class JpegMini(private val level: Int) {
-    HIGH(1),
-    MEDIUM(2),
-    BEST(0), ;
+internal class Quality(private vararg val values: String) {
 
-    override fun toString() = level.toString()
+    companion object {
+        private val auto = Quality("auto")
+        fun auto() = auto
+        private val autoEco = Quality("auto", "eco")
+        fun autoEco() = autoEco
+        private val autoGood = Quality("auto", "good")
+        fun autoGood() = autoGood
+        private val autoBest = Quality("auto", "best")
+        fun autoBest() = autoBest
+        private val autoLow = Quality("auto", "low")
+        fun autoLow() = autoLow
+        private val jpegmini = Quality("jpegmini")
+        fun jpegmini() = jpegmini
+        private val jpegminiHigh = Quality("jpegmini", "1")
+        fun jpegminiHigh() = jpegminiHigh
+        private val jpegminiMedium = Quality("jpegmini", "2")
+        fun jpegminiMedium() = jpegminiMedium
+        private val jpegminiBest = Quality("jpegmini", "0")
+        fun jpegminiBest() = jpegminiBest
+    }
+
+    override fun toString(): String {
+        return values.joinToString(separator = ":")
+    }
 }
 
-internal sealed class QualityType(private val value: String) {
-    class auto : QualityType("auto")
-    class eco : QualityType("auto:eco")
-    class good : QualityType("auto:good")
-    class best : QualityType("auto:best")
-    class low : QualityType("auto:low")
-    class jpegminiHigh : QualityType("jpegmini:1")
-    class jpegminiMedium : QualityType("jpegmini:2")
-    class jpegminiBest : QualityType("jpegmini:0")
+class ProgressiveMode(private val value: String) {
+    companion object {
+        private val none = ProgressiveMode("none")
+        fun none() = none
+        private val semi = ProgressiveMode("semi")
+        fun semi() = semi
+        private val steep = ProgressiveMode("steep")
+        fun steep() = steep
+    }
 
     override fun toString(): String {
         return value
     }
 }
 
-sealed class ProgressiveMode(private val value: String) {
-    class none : ProgressiveMode("none")
-    class semi : ProgressiveMode("semi")
-    class steep : ProgressiveMode("steep")
+class ColorSpace(private val value: Any) {
 
-    override fun toString(): String {
-        return value
+    companion object {
+        private val srgb = ColorSpace("srgb")
+        fun srgb() = srgb
+        private val tinySRgb = ColorSpace("tinysrgb")
+        fun tinySRgb() = tinySRgb
+        private val cmyk = ColorSpace("cmyk")
+        fun cmyk() = cmyk
+        private val noCmyk = ColorSpace("no_cmyk")
+        fun noCmyk() = noCmyk
+        private val keepCmyk = ColorSpace("keep_cmyk")
+        fun keepCmyk() = keepCmyk
     }
-}
-
-sealed class ColorSpaceType(private val value: Any) {
-
-    class SRgb : ColorSpaceType("srgb")
-    class TinySRgb : ColorSpaceType("tinysrgb")
-    class Cmyk : ColorSpaceType("cmyk")
-    class NoCmyk : ColorSpaceType("no_cmyk")
-    class KeepCmyk : ColorSpaceType("keep_cmyk")
 
     override fun toString(): String {
         return value.toString()
     }
 }
 
-class Progressive(private val mode: ProgressiveMode? = null) {
+class Progressive private constructor(private val mode: ProgressiveMode? = null) {
+    companion object {
+        fun semi() = Progressive(ProgressiveMode.semi())
+        fun steep() = Progressive(ProgressiveMode.steep())
+        fun none() = Progressive(ProgressiveMode.none())
+        fun progressive() = Progressive()
+    }
+
     override fun toString(): String {
         return "fl_progressive".joinWithValues(mode)
     }

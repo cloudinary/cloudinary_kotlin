@@ -16,18 +16,18 @@ class BorderTest {
         cldAssert(
             "bo_3px_solid_rgb:00390b",
             Transformation().border(Border.solid {
-                color(Color.Rgb("00390b"))
+                color(Color.rgb("00390b"))
                 width(3)
             })
         )
 
         cldAssert(
             "bo_3px_solid_rgb:00390b",
-            Transformation().border { color(Color.Rgb("00390b")).width(3) })
+            Transformation().border { color(Color.rgb("00390b")).width(3) })
 
         cldAssert(
             "bo_6px_solid_rgb:00390b60",
-            Transformation().border { color(Color.Rgb("00390b60")).width(6) })
+            Transformation().border { color(Color.rgb("00390b60")).width(6) })
     }
 
     @Test
@@ -37,7 +37,7 @@ class BorderTest {
             Transformation().border {
                 color(Color.BLACK)
                 width(4)
-                cornerRadius(20, 30)
+                roundCorners(RoundCorners.Companion.byRadius(20, 30))
             })
 
         cldAssert(
@@ -45,7 +45,7 @@ class BorderTest {
             Transformation().border {
                 color(Color.BLACK)
                 width(4)
-                cornerRadius(20, "30")
+                roundCorners(RoundCorners.Companion.byRadius(20, 30))
             })
 
         cldAssert(
@@ -53,7 +53,7 @@ class BorderTest {
             Transformation().border {
                 color(Color.BLACK)
                 width(4)
-                maxCornerRadius()
+                roundCorners(RoundCorners.max())
             })
     }
 }

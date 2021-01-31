@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.background
 
 import com.cloudinary.transformation.Color
+import com.cloudinary.transformation.TransformationDsl
 
 abstract class Background {
 
@@ -12,44 +13,42 @@ abstract class Background {
 
     companion object {
 
-        fun blurred(options: (BlurredBackground.Builder.() -> Unit)? = null): Background {
-            val builder = BlurredBackground.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun blurred(options: (BlurredBackground.Builder.() -> Unit)? = null) =
+            buildBackground(BlurredBackground.Builder(), options)
 
         fun auto() = AutoBackground()
 
         // auto:border
-        fun border(options: (BorderBackground.Builder.() -> Unit)? = null): Background {
-            val builder = BorderBackground.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun border(options: (BorderBackground.Builder.() -> Unit)? = null) =
+            buildBackground(BorderBackground.Builder(), options)
 
         // auto:border_gradient
-        fun borderGradient(options: (BorderGradientBackground.Builder.() -> Unit)? = null): Background {
-            val builder = BorderGradientBackground.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun borderGradient(options: (BorderGradientBackground.Builder.() -> Unit)? = null) =
+            buildBackground(BorderGradientBackground.Builder(), options)
 
         // auto:predominant
-        fun predominant(options: (PredominantBackground.Builder.() -> Unit)? = null): Background {
-            val builder = PredominantBackground.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun predominant(options: (PredominantBackground.Builder.() -> Unit)? = null) =
+            buildBackground(PredominantBackground.Builder(), options)
 
         // auto:predominant
-        fun predominantGradient(options: (PredominantGradientBackground.Builder.() -> Unit)? = null): Background {
-            val builder = PredominantGradientBackground.Builder()
-            options?.let { builder.it() }
-            return builder.build()
-        }
+        fun predominantGradient(options: (PredominantGradientBackground.Builder.() -> Unit)? = null) =
+            buildBackground(PredominantGradientBackground.Builder(), options)
 
         fun color(color: Color) = ColorBackground(color)
 
         fun color(color: String) = color(Color.parseString(color))
     }
+}
+
+@TransformationDsl
+interface BackgroundBuilder<T : Background> {
+    fun build(): T
+}
+
+private fun <P : Background, T : BackgroundBuilder<P>> buildBackground(
+    builder: T,
+    options: (T.() -> Unit)?
+): Background {
+    options?.let { builder.it() }
+    return builder.build()
 }

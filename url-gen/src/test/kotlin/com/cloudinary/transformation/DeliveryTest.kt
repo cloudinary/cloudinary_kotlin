@@ -25,15 +25,15 @@ class DeliveryTest {
 
     @Test
     fun testColorSpace() {
-        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpaceType.Cmyk()))
-        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpaceType.KeepCmyk()))
-        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpaceType.NoCmyk()))
-        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpaceType.SRgb()))
-        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpaceType.TinySRgb()))
+        cldAssert("cs_cmyk", Delivery.colorSpace(ColorSpace.cmyk()))
+        cldAssert("cs_keep_cmyk", Delivery.colorSpace(ColorSpace.keepCmyk()))
+        cldAssert("cs_no_cmyk", Delivery.colorSpace(ColorSpace.noCmyk()))
+        cldAssert("cs_srgb", Delivery.colorSpace(ColorSpace.srgb()))
+        cldAssert("cs_tinysrgb", Delivery.colorSpace(ColorSpace.tinySRgb()))
 
         cldAssert(
             "cs_icc:file.extension",
-            Delivery.colorSpaceFromIcc("file.extension")
+            Delivery.colorSpaceFromICC("file.extension")
         )
     }
 
@@ -42,11 +42,14 @@ class DeliveryTest {
 
         cldAssert("q_100", Delivery.quality(100))
         cldAssert("q_100:420", Delivery.quality(100) {
-            chromaSubSampling(ChromaSubSampling.chroma420)
+            chromaSubSampling(ChromaSubSampling.chroma420())
         })
 
-        cldAssert("q_auto", Quality.auto())
-        cldAssert("q_auto:low", Quality.autoLow())
+        cldAssert("q_auto", Delivery.quality(Quality.auto()))
+        cldAssert("q_auto:low", Delivery.quality(Quality.autoLow()))
+        cldAssert("q_auto:low:444", Delivery.quality(Quality.autoLow()) {
+            this.chromaSubSampling(ChromaSubSampling.chroma444())
+        })
 
         cldAssert("q_70:qmax_80", Delivery.quality(70) {
             quantization(80)
@@ -59,7 +62,7 @@ class DeliveryTest {
 
     @Test
     fun testAnyFormat() {
-        cldAssert("fl_any_format,q_auto", Quality.auto {
+        cldAssert("fl_any_format,q_auto", Delivery.quality(Quality.auto()) {
             anyFormat()
         })
     }
@@ -68,18 +71,18 @@ class DeliveryTest {
     fun testFormat() {
         cldAssert(
             "f_png",
-            Delivery.format(FormatType.png())
+            Delivery.format(Format.png())
         )
 
         cldAssert("f_jpg,fl_progressive:semi",
-            Delivery.format(FormatType.jpg()) {
-                progressive(ProgressiveMode.semi())
+            Delivery.format(Format.jpg()) {
+                progressive(Progressive.semi())
             })
 
         cldAssert("f_jpg,fl_lossy,fl_preserve_transparency,fl_progressive",
-            Delivery.format(FormatType.jpg()) {
+            Delivery.format(Format.jpg()) {
                 lossy()
-                progressive()
+                progressive(Progressive.progressive())
                 preserveTransparency()
             })
     }
