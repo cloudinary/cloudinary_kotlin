@@ -4,7 +4,7 @@ import com.cloudinary.config.Configuration
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
 private var instance: Cloudinary? = null
-const val SDK_VERSION = "0.0.1-beta.1"
+const val SDK_VERSION = "0.0.1-beta.3"
 
 class Cloudinary(val config: Configuration) {
     private val extensionsLock = Any()
