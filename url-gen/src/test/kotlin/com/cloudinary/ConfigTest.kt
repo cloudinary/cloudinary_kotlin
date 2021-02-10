@@ -10,7 +10,7 @@ class ConfigTest {
         val cloudinaryUrl =
             "cloudinary://123456123456123:3Sf3FAdasa2easdFGDS3afADFS2@cloudname?shorten=true&cname=custom.domain.com&chunk_size=5000"
 
-        val config = Configuration.fromUri(cloudinaryUrl)
+        val config = CloudinaryConfig.fromUri(cloudinaryUrl)
 
         assertEquals("cloudname", config.cloudName)
         assertEquals("123456123456123", config.apiKey)

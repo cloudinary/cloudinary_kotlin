@@ -1,7 +1,7 @@
 package com.cloudinary
 
 import com.cloudinary.config.AuthTokenConfig
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 class AuthTokenTest {
     private val authTokenConfig = AuthTokenConfig(key = KEY, duration = 300, startTime = 11111111)
-    private val tempConfig = Configuration.fromUri("cloudinary://a:b@test123")
+    private val tempConfig = CloudinaryConfig.fromUri("cloudinary://a:b@test123")
     private val cloudinary = Cloudinary(tempConfig.copy(authTokenConfig = authTokenConfig))
 
     @Test

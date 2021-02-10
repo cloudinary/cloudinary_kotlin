@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.response.UploadResult
 import com.cloudinary.util.buildRenameParams
@@ -15,8 +15,8 @@ class RenameRequest internal constructor(
     private val invalidate: Boolean?,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration
-) : AbstractUploaderRequest<UploadResult>(uploader, options, configuration) {
+    cloudinaryConfig: CloudinaryConfig
+) : AbstractUploaderRequest<UploadResult>(uploader, options, cloudinaryConfig) {
     override fun buildParams() = buildRenameParams(
         fromPublicId,
         toPublicId,
@@ -45,7 +45,7 @@ class RenameRequest internal constructor(
             invalidate,
             uploader,
             options,
-            configuration
+            cloudinaryConfig
         )
     }
 }

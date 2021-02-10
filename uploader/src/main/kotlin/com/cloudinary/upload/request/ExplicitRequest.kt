@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.request.params.UploadParams
 import com.cloudinary.upload.response.UploadResult
@@ -12,8 +12,8 @@ class ExplicitRequest internal constructor(
     private val params: UploadParams,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration
-) : AbstractUploaderRequest<UploadResult>(uploader, options, configuration) {
+    cloudinaryConfig: CloudinaryConfig
+) : AbstractUploaderRequest<UploadResult>(uploader, options, cloudinaryConfig) {
 
     // public Id is sent as part of params:
     override fun buildParams() = params.copy(publicId = publicId).toMap()
@@ -33,6 +33,6 @@ class ExplicitRequest internal constructor(
             this.params = builder.build()
         }
 
-        override fun build() = ExplicitRequest(publicId, params, uploader, options, configuration)
+        override fun build() = ExplicitRequest(publicId, params, uploader, options, cloudinaryConfig)
     }
 }

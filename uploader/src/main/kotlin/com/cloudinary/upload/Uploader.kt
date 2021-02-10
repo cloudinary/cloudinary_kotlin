@@ -36,7 +36,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
         val payload = request.payload
         val value = payload.value
 
-        val chunkSize = request.options.chunkSize ?: request.configuration.chunkSize
+        val chunkSize = request.options.chunkSize ?: request.cloudinaryConfig.chunkSize
         // if it's a remote url or the total size is known and smaller than chunk size we fallback to
         // a regular upload api (no need for chunks)
         if ((value is String && value.cldIsRemoteUrl()) || (payload.length in 1 until chunkSize.toLong())) {
@@ -163,7 +163,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
         ): NetworkRequest<T> {
             val paramsMap = request.buildParams()
 
-            val config = request.configuration
+            val config = request.cloudinaryConfig
             val prefix = config.uploadPrefix
             val cloudName = config.cloudName
             val resourceType =
@@ -172,7 +172,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
             if (requiresSigning(action, paramsMap, request)) {
                 config.apiKey?.let {
                     // no signature - we need to sign using api secret if present:
-                    val apiSecret = request.configuration.apiSecret
+                    val apiSecret = request.cloudinaryConfig.apiSecret
                         ?: throw IllegalArgumentException("Must supply api_secret")
 
                     paramsMap["timestamp"] = (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()

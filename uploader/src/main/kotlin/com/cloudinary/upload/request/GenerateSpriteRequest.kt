@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.delivery.Delivery
@@ -17,8 +17,8 @@ class GenerateSpriteRequest(
     private val format: Format?,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration
-) : AbstractUploaderRequest<GenerateSpriteResult>(uploader, options, configuration) {
+    cloudinaryConfig: CloudinaryConfig
+) : AbstractUploaderRequest<GenerateSpriteResult>(uploader, options, cloudinaryConfig) {
     override fun buildParams(): MutableMap<String, Any> {
         val transformation =
             if (format == null)
@@ -57,7 +57,7 @@ class GenerateSpriteRequest(
             format,
             uploader,
             options,
-            configuration
+            cloudinaryConfig
         )
     }
 }

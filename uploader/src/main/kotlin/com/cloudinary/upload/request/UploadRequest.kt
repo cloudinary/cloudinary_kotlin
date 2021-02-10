@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.http.ProgressCallback
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.request.params.UploadParams
@@ -16,10 +16,10 @@ open class UploadRequest(
     val params: UploadParams,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration,
+    cloudinaryConfig: CloudinaryConfig,
     payload: Payload<*>,
     progressCallback: ProgressCallback?
-) : AbstractUploaderRequest<UploadResult>(uploader, options, configuration, payload, progressCallback) {
+) : AbstractUploaderRequest<UploadResult>(uploader, options, cloudinaryConfig, payload, progressCallback) {
     override fun buildParams() = params.toMap()
     override fun execute() = uploader.doUpload(this)
 
@@ -55,7 +55,7 @@ open class UploadRequest(
             params,
             uploader,
             options,
-            configuration,
+            cloudinaryConfig,
             payload,
             progressCallback
         )

@@ -732,7 +732,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }.generate(publicId)!!
 
         val eagerUrl = explicitData.eager!!.first().secureUrl!!
-        val cloudName = cloudinary.config.cloudName
+        val cloudName = cloudinary.config.cloudName!!
         assertEquals(
             eagerUrl.substring(eagerUrl.indexOf(cloudName)),
             url.substring(url.indexOf(cloudName))
@@ -944,7 +944,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     private fun verifyError(uploader: Uploader, cld: Cloudinary) {
         val res = uploader.upload(srcTestImage) {
-            configuration =
+            cloudinaryConfig =
                 cld.config.copy(
                     cloudConfig = cld.config.cloudConfig.copy(
                         apiKey = "bad_secret"
