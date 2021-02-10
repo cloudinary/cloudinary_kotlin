@@ -1,14 +1,13 @@
 package com.cloudinary.transformation.layer.source
 
-import com.cloudinary.transformation.ITransformable
+import com.cloudinary.transformation.IBaseTransformable
 import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.Transformation
 import com.cloudinary.util.cldSmartUrlEncode
 import java.beans.Expression
 import java.util.regex.Pattern
 
 interface Source {
-    val transformation: ITransformable<Transformation>?
+    val transformation: IBaseTransformable<*>?
 
     companion object {
         fun text(text: String, options: (TextSource.Builder.() -> Unit)? = null) = text(text as Any, options)
