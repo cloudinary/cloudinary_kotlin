@@ -1,8 +1,9 @@
 package com.cloudinary.transformation.layer.source
 
 import com.cloudinary.transformation.Color
+import com.cloudinary.transformation.ITransformableImage
+import com.cloudinary.transformation.ImageTransformation
 import com.cloudinary.transformation.Param
-import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.expression.Expression
 
 class TextSource internal constructor(
@@ -10,7 +11,7 @@ class TextSource internal constructor(
     private val style: Any,
     private val backgroundColor: Color? = null,
     private val textColor: Color? = null,
-    override val transformation: Transformation? = null
+    override val transformation: ITransformableImage<*>? = null
 ) : Source {
 
     // CODE SMELL: since the container of this source may need to resort the params, we cannot fully encapsulate
@@ -46,6 +47,7 @@ class TextSource internal constructor(
         private var style: Any? = null
         private var backgroundColor: Color? = null
         private var textColor: Color? = null
+        private var transformation: ITransformableImage<*>? = null
 
         fun style(style: TextStyle) = apply { this.style = style }
         fun style(style: String) = apply { this.style = style }
@@ -62,11 +64,10 @@ class TextSource internal constructor(
 
         fun backgroundColor(background: Color) = apply { this.backgroundColor = background }
         fun textColor(textColor: Color) = apply { this.textColor = textColor }
-        private var transformation: Transformation? = null
 
-        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun transformation(transformation: Transformation.Builder.() -> Unit) = apply {
-            val builder = Transformation.Builder()
+        fun transformation(transformation: ITransformableImage<*>) = apply { this.transformation = transformation }
+        fun transformation(transformation: ImageTransformation.Builder.() -> Unit) = apply {
+            val builder = ImageTransformation.Builder()
             builder.transformation()
             this.transformation = builder.build()
         }

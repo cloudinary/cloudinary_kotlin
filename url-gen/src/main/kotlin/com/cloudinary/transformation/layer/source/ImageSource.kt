@@ -7,7 +7,7 @@ import com.cloudinary.util.cldJoinWithOrReturnOriginal
 class ImageSource internal constructor(
     private val publicId: String,
     private val format: Any? = null,
-    override val transformation: ITransformable<Transformation>? = null
+    override val transformation: ITransformableImage<*>? = null
 ) : Source {
     override fun extraComponents(): List<Param> {
         return emptyList()
@@ -28,16 +28,16 @@ class ImageSource internal constructor(
     @TransformationDsl
     class Builder(private val publicId: String) {
         private var format: Any? = null
-        private var transformation: ITransformable<Transformation>? = null
+        private var transformation: ITransformableImage<*>? = null
 
         fun format(format: Format) = apply { this.format = format }
         fun format(format: String) = apply { this.format = format }
 
-        fun transformation(transformation: ITransformable<Transformation>) =
+        fun transformation(transformation: ITransformableImage<*>) =
             apply { this.transformation = transformation }
 
-        fun transformation(transformation: Transformation.Builder.() -> Unit) = apply {
-            val builder = Transformation.Builder()
+        fun transformation(transformation: ImageTransformation.Builder.() -> Unit) = apply {
+            val builder = ImageTransformation.Builder()
             builder.transformation()
             this.transformation = builder.build()
         }
