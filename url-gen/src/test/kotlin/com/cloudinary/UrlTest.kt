@@ -1,6 +1,6 @@
 package com.cloudinary
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Rotate
@@ -519,18 +519,18 @@ class UrlTest {
     @Test
     fun testCloudinaryUrlValidScheme() {
         val cloudinaryUrl = "cloudinary://123456789012345:ALKJdjklLJAjhkKJ45hBK92baj3@test"
-        Configuration.fromUri(cloudinaryUrl)
+        CloudinaryConfig.fromUri(cloudinaryUrl)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testCloudinaryUrlInvalidScheme() {
         val cloudinaryUrl = "https://123456789012345:ALKJdjklLJAjhkKJ45hBK92baj3@test"
-        Configuration.fromUri(cloudinaryUrl)
+        CloudinaryConfig.fromUri(cloudinaryUrl)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testCloudinaryUrlEmptyScheme() {
         val cloudinaryUrl = " "
-        Configuration.fromUri(cloudinaryUrl)
+        CloudinaryConfig.fromUri(cloudinaryUrl)
     }
 }

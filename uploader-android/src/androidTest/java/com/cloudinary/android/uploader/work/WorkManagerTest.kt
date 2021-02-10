@@ -55,7 +55,7 @@ class WorkManagerTest {
             WorkManager.getInstance(appContext).cancelAllWork()
             val cloudinary = getCloudinary()
 
-            if (cloudinary.config.cloudName.isBlank()) {
+            if (cloudinary.config.cloudName.isNullOrBlank()) {
                 System.err.println("Please setup gradle-local.properties for tests to run")
             }
 
@@ -126,7 +126,7 @@ class WorkManagerTest {
         val paramsBuilder = UploadParams.Builder()
         paramsBuilder.autoTagging = "abc"
         paramsBuilder.eager = listOf(
-            EagerTransformation(Transformation().effect(Effect.sepia(12)))
+            EagerTransformation(Transformation().effect(Effect.sepia()))
         )
 
         val backgroundUploadConfig = AsyncUploadConfig.Builder()

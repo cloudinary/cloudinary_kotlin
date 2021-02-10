@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.request.params.ArchiveParams
 import com.cloudinary.upload.response.ArchiveResult
@@ -10,9 +10,9 @@ import com.cloudinary.util.toMap
 class ArchiveRequest internal constructor(
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration,
+    cloudinaryConfig: CloudinaryConfig,
     internal val params: ArchiveParams
-) : AbstractUploaderRequest<ArchiveResult>(uploader, options, configuration) {
+) : AbstractUploaderRequest<ArchiveResult>(uploader, options, cloudinaryConfig) {
     override fun buildParams() = params.toMap()
     override fun execute() = uploader.callApi(this, "generate_archive", ::toArchiveResult)
 
@@ -27,6 +27,6 @@ class ArchiveRequest internal constructor(
             this.params = builder.build()
         }
 
-        override fun build() = ArchiveRequest(uploader, options, configuration, params)
+        override fun build() = ArchiveRequest(uploader, options, cloudinaryConfig, params)
     }
 }

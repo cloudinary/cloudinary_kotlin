@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.response.MultiResult
@@ -15,8 +15,8 @@ class MultiRequest(
     private val format: String?,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration
-) : AbstractUploaderRequest<MultiResult>(uploader, options, configuration) {
+    cloudinaryConfig: CloudinaryConfig
+) : AbstractUploaderRequest<MultiResult>(uploader, options, cloudinaryConfig) {
     override fun buildParams() = buildMultiParams(
         tag,
         transformation,
@@ -46,7 +46,7 @@ class MultiRequest(
             format,
             uploader,
             options,
-            configuration
+            cloudinaryConfig
         )
     }
 }

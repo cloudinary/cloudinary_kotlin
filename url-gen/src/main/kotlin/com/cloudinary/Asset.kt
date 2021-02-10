@@ -1,7 +1,7 @@
 package com.cloudinary
 
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.transformation.*
 import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
@@ -20,8 +20,8 @@ internal const val DEFAULT_DELIVERY_TYPE = "upload"
 
 @TransformationDsl
 class Asset constructor(
-    private val config: Configuration,
-    private val cloudName: String = config.cloudName,
+    private val config: CloudinaryConfig,
+    private val cloudName: String? = config.cloudName,
     private val publicId: String? = null,
     private val deliveryType: String? = null,
     private val resourceType: String = DEFAULT_ASSET_TYPE,
@@ -42,7 +42,7 @@ class Asset constructor(
 ) {
 
     fun generate(source: String? = null): String? {
-        require(cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
+        require(!cloudName.isNullOrBlank()) { "Must supply cloud_name in configuration" }
         var mutableSource = source ?: publicId ?: this.source ?: return null
         var mutableTransformation = transformation ?: Transformation()
         var mutableExtension = extension
@@ -128,11 +128,11 @@ class Asset constructor(
 
     @TransformationDsl
     class AssetBuilder internal constructor(
-        private val config: Configuration,
+        private val config: CloudinaryConfig,
         private var assetType: String = DEFAULT_ASSET_TYPE
     ) :
         ITransformable<AssetBuilder> {
-        private var cloudName: String = config.cloudName
+        private var cloudName: String? = config.cloudName
         private var publicId: String? = null
         private var deliveryType: String? = null
         private var extension: Format? = null
@@ -287,7 +287,7 @@ private fun unsignedDownloadUrlPrefix(
     cname: String?,
     secure: Boolean,
     secureDistribution: String?
-): String? {
+): String {
     var mutableCloudName = cloudName
     var mutableSecureDistribution = secureDistribution
     mutableCloudName?.let {

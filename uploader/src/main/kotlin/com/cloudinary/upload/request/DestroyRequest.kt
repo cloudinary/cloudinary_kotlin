@@ -1,6 +1,6 @@
 package com.cloudinary.upload.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.response.StatusResult
 import com.cloudinary.util.buildDestroyParams
@@ -12,8 +12,8 @@ class DestroyRequest internal constructor(
     private val invalidate: Boolean,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration
-) : AbstractUploaderRequest<StatusResult>(uploader, options, configuration) {
+    cloudinaryConfig: CloudinaryConfig
+) : AbstractUploaderRequest<StatusResult>(uploader, options, cloudinaryConfig) {
 
     override fun execute() = uploader.callApi(this, "destroy", ::toGenericResult)
     override fun buildParams() = buildDestroyParams(publicId, type, invalidate)
@@ -25,7 +25,7 @@ class DestroyRequest internal constructor(
         var invalidate: Boolean = false
 
         override fun build() =
-            DestroyRequest(publicId, type, invalidate, uploader, options, configuration)
+            DestroyRequest(publicId, type, invalidate, uploader, options, cloudinaryConfig)
     }
 }
 

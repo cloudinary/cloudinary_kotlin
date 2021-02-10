@@ -113,7 +113,7 @@ internal class WorkManagerAsyncDispatcher : AsyncWorkDispatcher {
 
             // first worker: split into chunk-size files
             // second worker and onward: upload workers per chunk, sequential.
-            val chunkSize = request.options.chunkSize ?: request.configuration.apiConfig.chunkSize
+            val chunkSize = request.options.chunkSize ?: request.cloudinaryConfig.apiConfig.chunkSize
 
             // TODO - serialize pre-process chain to inputData
             val splitRequest = request.toSplitRequest(tag, chunkSize, length)

@@ -1,6 +1,6 @@
 package com.cloudinary.android.uploader.request
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.upload.Uploader
 import com.cloudinary.upload.request.BaseUploadRequestBuilder
 import com.cloudinary.upload.request.Payload
@@ -12,14 +12,14 @@ class UploadRequest(
     params: UploadParams,
     uploader: Uploader,
     options: UploaderOptions,
-    configuration: Configuration,
+    cloudinaryConfig: CloudinaryConfig,
     payload: Payload<*>,
     internal val asyncUploadConfig: AsyncUploadConfig
 ) : com.cloudinary.upload.request.UploadRequest(
     params,
     uploader,
     options,
-    configuration,
+    cloudinaryConfig,
     payload,
     null
 ) {
@@ -45,7 +45,7 @@ class UploadRequest(
             params,
             uploader,
             options,
-            configuration,
+            cloudinaryConfig,
             payload,
             asyncUploadConfig
         )

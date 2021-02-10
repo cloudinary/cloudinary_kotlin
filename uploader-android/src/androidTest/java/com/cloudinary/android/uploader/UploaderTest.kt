@@ -24,7 +24,7 @@ class UploaderTest {
         fun setUpClass() {
             val cloudinary = getCloudinary()
 
-            if (cloudinary.config.cloudName.isBlank()) {
+            if (cloudinary.config.cloudName.isNullOrBlank()) {
                 System.err.println("Please setup gradle-local.properties for tests to run")
             }
         }

@@ -1,16 +1,16 @@
 package com.cloudinary
 
-import com.cloudinary.config.Configuration
+import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
 private var instance: Cloudinary? = null
 const val SDK_VERSION = "0.0.1-beta.3"
 
-class Cloudinary(val config: Configuration) {
+class Cloudinary(val config: CloudinaryConfig) {
     private val extensionsLock = Any()
     private val extensions = mutableMapOf<String, Any>()
 
-    constructor(cloudinaryUrl: String) : this(Configuration.fromUri(cloudinaryUrl))
+    constructor(cloudinaryUrl: String) : this(CloudinaryConfig.fromUri(cloudinaryUrl))
     constructor() : this(
         cloudinaryUrlFromEnv() ?: throw
         IllegalArgumentException("A cloudinary url must be provided")

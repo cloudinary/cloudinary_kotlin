@@ -2,15 +2,15 @@ package com.cloudinary.config
 
 import java.net.URI
 
-data class Configuration(
-    val cloudConfig: CloudConfig,
-    val urlConfig: UrlConfig,
-    val apiConfig: ApiConfig,
-    val authTokenConfig: AuthTokenConfig?
+data class CloudinaryConfig(
+    val cloudConfig: CloudConfig = CloudConfig(),
+    val urlConfig: UrlConfig = UrlConfig(),
+    val apiConfig: ApiConfig = ApiConfig(),
+    val authTokenConfig: AuthTokenConfig? = null
 ) : IUrlConfig by urlConfig, ICloudConfig by cloudConfig, IApiConfig by apiConfig {
 
     companion object {
-        fun fromUri(uri: String): Configuration {
+        fun fromUri(uri: String): CloudinaryConfig {
 
             val params = parseConfigUrl(uri)
 
@@ -22,7 +22,7 @@ data class Configuration(
                 AuthTokenConfig(it)
             }
 
-            return Configuration(
+            return CloudinaryConfig(
                 cloudConfig,
                 urlConfig,
                 apiConfig,
