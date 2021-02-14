@@ -35,7 +35,7 @@ class OkHttpClientFactory(
                 .addInterceptor {
                     it.proceed(
                         it.request().newBuilder()
-                            .header("User-Agent", "$userAgent OkHttp/3.11")
+                            .header("User-Agent", "$userAgent OkHttp3")
                             .build()
                     )
                 }.build()

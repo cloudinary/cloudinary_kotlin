@@ -30,7 +30,7 @@ publishing {
         create<MavenPublication>(publicationName) {
             groupId = properties["publishGroupId"].toString()
             artifactId = publicationName
-            version = properties["publishVersion"].toString()
+            version = properties["publishUrlGenVersion"].toString()
             from(components["java"])
             artifact(sourcesJar)
             artifact(javadocJar)
@@ -72,25 +72,25 @@ bintray {
             include("*.jar.asc")
             rename(
                 "${project.name}-javadoc.jar.asc",
-                "${publicationName}-${properties["publishVersion"]}-javadoc.jar.asc"
+                "${publicationName}-${properties["publishUrlGenVersion"]}-javadoc.jar.asc"
             )
             rename(
                 "${project.name}-sources.jar.asc",
-                "${publicationName}-${properties["publishVersion"]}-sources.jar.asc"
+                "${publicationName}-${properties["publishUrlGenVersion"]}-sources.jar.asc"
             )
             rename(
                 "${project.name}.jar.asc",
-                "${publicationName}-${properties["publishVersion"]}.jar.asc"
+                "${publicationName}-${properties["publishUrlGenVersion"]}.jar.asc"
             )
 
         }
 
         from("$buildDir/publications/$publicationName") {
             include("pom-default.xml.asc")
-            rename("pom-default.xml.asc", "${publicationName}-${properties["publishVersion"]}.pom.asc")
+            rename("pom-default.xml.asc", "${publicationName}-${properties["publishUrlGenVersion"]}.pom.asc")
         }
 
-        into("com/cloudinary/${publicationName}/${properties["publishVersion"]}")
+        into("com/cloudinary/${publicationName}/${properties["publishUrlGenVersion"]}")
 
     })
 
@@ -102,10 +102,10 @@ bintray {
         websiteUrl = "https://cloudinary.com"
         githubRepo = "https://github.com/cloudinary/cloudinary_kotlin"
         version.apply {
-            name = findProperty("publishVersion").toString()
+            name = findProperty("publishUrlGenVersion").toString()
             desc = properties["publishDescription"].toString()
             released = Date().toString()
-            vcsTag = properties["publishVersion"].toString()
+            vcsTag = properties["publishUrlGenVersion"].toString()
         }
     }
 }

@@ -81,8 +81,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
         @Parameterized.Parameters
         fun data(): Collection<Any> {
             return listOf(
-//                NetworkLayer.UrlConnection,
-//                NetworkLayer.OkHttp,
+                NetworkLayer.UrlConnection,
+                NetworkLayer.OkHttp,
                 NetworkLayer.ApacheHttpClient
             )
         }
