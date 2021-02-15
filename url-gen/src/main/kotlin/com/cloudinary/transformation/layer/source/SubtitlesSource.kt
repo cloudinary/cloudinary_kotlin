@@ -2,6 +2,7 @@ package com.cloudinary.transformation.layer.source
 
 import com.cloudinary.transformation.*
 import com.cloudinary.transformation.expression.Expression
+import com.cloudinary.util.cldEncodePublicId
 
 class SubtitlesSource private constructor(
     private val publicId: String,
@@ -22,7 +23,7 @@ class SubtitlesSource private constructor(
 
     // See comment above - this method does not include the extras!
     override fun toString(): String {
-        return "subtitles".joinWithValues(style, publicId)
+        return "subtitles".joinWithValues(style, publicId.cldEncodePublicId())
     }
 
     companion object {
