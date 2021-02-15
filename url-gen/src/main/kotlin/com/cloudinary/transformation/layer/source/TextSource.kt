@@ -25,7 +25,7 @@ class TextSource internal constructor(
 
     // See comment above - this method does not include the extras!
     override fun toString(): String {
-        return "text:$style:$text"
+        return "text:$style:${encodeText(text)}"
     }
 
     companion object {
@@ -79,3 +79,5 @@ class TextSource internal constructor(
         }
     }
 }
+
+private fun encodeText(text: Any) = text.toString().replace(",", "%2c").replace("/", "%2f")

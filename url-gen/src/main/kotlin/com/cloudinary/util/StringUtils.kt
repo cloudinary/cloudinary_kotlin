@@ -126,7 +126,7 @@ internal fun String.cldToUrlSafeBase64() = encodeURLSafeString(this)
 /**
  * Encodes public id to be used in urls (such as wasm asset or layers)
  */
-internal fun String.cldEncodePublicId() = replace('/', ':')
+internal fun String.cldEncodePublicId() = replace('/', ':').replace(",", "%2c")
 
 /**
  * Replaces the unsafe characters in url with url-encoded values.

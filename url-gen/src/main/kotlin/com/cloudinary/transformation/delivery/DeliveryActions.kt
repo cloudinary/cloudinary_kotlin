@@ -4,10 +4,11 @@ import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.joinWithValues
+import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldRanged
 
 class DefaultImage(private val publicId: String) : Delivery() {
-    override fun toString() = "d_$publicId"
+    override fun toString() = "d_${publicId.cldEncodePublicId()}"
 }
 
 class Density(private val density: Any) : Delivery() {
@@ -22,7 +23,7 @@ class ColorSpaceAction(private val colorSpace: ColorSpace) : Delivery() {
 
 class ColorSpaceFromICC(private val publicId: String) : Delivery() {
     override fun toString(): String {
-        return "cs_icc:$publicId"
+        return "cs_icc:${publicId.cldEncodePublicId()}"
     }
 }
 

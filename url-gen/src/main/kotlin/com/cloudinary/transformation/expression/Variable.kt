@@ -13,9 +13,9 @@ class Variable private constructor(
     override fun toString(): String {
         val prefixStr = prefix?.let { "$prefix:" } ?: ""
         val valueStr = when (value) {
-            is Array<*> -> "!${value.joinToString(":")}!" // "!a:b:c!"
-            is Iterable<*> -> "!${value.joinToString(":")}!" // "!a:b:c!"
-            is String -> "!$value!" // "!a!"
+            is Array<*> -> "!${value.filterNotNull().joinToString(":", transform = { encode(it) })}!" // "!a:b:c!"
+            is Iterable<*> -> "!${value.filterNotNull().joinToString(":", transform = { encode(it) })}!" // "!a:b:c!"
+            is String -> "!${encode(value)}!" // "!a!"
             else -> value.toString()
         }
 
@@ -80,3 +80,12 @@ class Variable private constructor(
         }
     }
 }
+
+/**
+ * If the value is a string this methods encodes it s a variable value, otherwise returns the toString() value without
+ * further processing.
+ */
+private fun encode(value: Any) = if (value is String)
+    value.replace(",", "%2c").replace("/", "%2f").replace("!", "%21")
+else
+    value.toString()
