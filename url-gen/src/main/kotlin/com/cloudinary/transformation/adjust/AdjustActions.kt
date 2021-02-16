@@ -154,6 +154,9 @@ class FillLight(private val blend: Any? = null, private val bias: Any? = null) :
 }
 
 // TODO align with spec
+/**
+ * @suppress
+ */
 class Tint(vararg val values: Any?) : Adjust() {
     override fun toString(): String {
         return "e_tint".joinWithValues(*values)
@@ -214,6 +217,10 @@ class AutoBrightness(private val blend: Any? = null) : Adjust() {
         return "e_auto_brightness".joinWithValues(blend)
     }
 
+    /**
+     *
+     *
+     */
     class Builder : AdjustBuilder {
         private var blend: Any? = null
 
