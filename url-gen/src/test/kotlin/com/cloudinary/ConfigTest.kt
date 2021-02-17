@@ -82,12 +82,11 @@ class ConfigTest {
 
         assertEquals(null, config.secureDistribution)
         assertEquals(false, config.privateCdn)
-        assertEquals(false, config.cdnSubdomain)
         assertEquals(false, config.shorten)
         assertEquals(false, config.secureCdnSubdomain)
         assertEquals(false, config.useRootPath)
         assertEquals(null, config.cname)
-        assertEquals(false, config.secure)
+        assertEquals(true, config.secure)
     }
 
     @Test
@@ -98,7 +97,6 @@ class ConfigTest {
         val config = UrlConfig(
             secureDistribution = secureDistribution,
             privateCdn = true,
-            cdnSubdomain = true,
             shorten = true,
             secureCdnSubdomain = true,
             useRootPath = true,
@@ -108,7 +106,6 @@ class ConfigTest {
 
         assertEquals(secureDistribution, config.secureDistribution)
         assertEquals(true, config.privateCdn)
-        assertEquals(true, config.cdnSubdomain)
         assertEquals(true, config.shorten)
         assertEquals(true, config.secureCdnSubdomain)
         assertEquals(true, config.useRootPath)
@@ -122,7 +119,6 @@ class ConfigTest {
 
         assertEquals("copy.secure.distribution", copy.secureDistribution)
         assertEquals(true, copy.privateCdn)
-        assertEquals(true, copy.cdnSubdomain)
         assertEquals(false, copy.shorten)
         assertEquals(true, copy.secureCdnSubdomain)
         assertEquals(true, copy.useRootPath)
