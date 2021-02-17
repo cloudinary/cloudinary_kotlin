@@ -1,5 +1,6 @@
 package com.cloudinary
 
+import com.cloudinary.asset.Asset
 import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.transformation.Format
@@ -9,11 +10,37 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.regex.Pattern
 
-private const val DEFAULT_ROOT_PATH = "http://res.cloudinary.com/test123/"
+private const val DEFAULT_ROOT_PATH = "https://res.cloudinary.com/test123/"
 private const val DEFAULT_UPLOAD_PATH = DEFAULT_ROOT_PATH + "image/upload/"
 
 class UrlTest {
     private val cloudinary = Cloudinary("cloudinary://a:b@test123")
+    private val cloudinaryPrivateCdn = Cloudinary(
+        cloudinary.config.copy(
+            urlConfig = cloudinary.config.urlConfig.copy(
+                privateCdn = true
+            )
+        )
+    )
+
+    private val cloudinaryPrivateCdnUseRootPath = Cloudinary(
+        cloudinary.config.copy(
+            urlConfig = cloudinary.config.urlConfig.copy(
+                privateCdn = true, useRootPath = true
+            )
+        )
+    )
+
+    private val cloudinaryPrivateCdnSignUrl = Cloudinary(
+        cloudinary.config.copy(
+            urlConfig = cloudinary.config.urlConfig.copy(
+                privateCdn = true, signUrl = true
+            )
+        )
+    )
+
+    private val cloudinarySignedUrl =
+        Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(signUrl = true)))
 
     @Test
     fun testConfigValues() {
@@ -21,7 +48,6 @@ class UrlTest {
         val urlConfig = UrlConfig(
             secureDistribution = "secure.api.com",
             privateCdn = true,
-            cdnSubdomain = true,
             shorten = true,
             secureCdnSubdomain = true,
             useRootPath = true,
@@ -29,12 +55,13 @@ class UrlTest {
             secure = true
         )
 
-        val config = cloudinary.config.copy(
-            urlConfig = urlConfig
-        )
+        val cloudConfig = cloudinary.config.cloudConfig
 
-        assertEquals("https://secure.api.com/sample", Asset(config).generate("sample"))
-        assertEquals("http://my.domain.org/sample", Asset(config, secure = false).generate("sample"))
+        assertEquals("https://secure.api.com/sample", Asset(cloudConfig, urlConfig).generate("sample"))
+        assertEquals(
+            "http://my.domain.org/sample",
+            Asset(cloudConfig, urlConfig.copy(secure = false)).generate("sample")
+        )
     }
 
     @Test
@@ -82,39 +109,37 @@ class UrlTest {
 
     @Test
     fun testCloudNameOptions() { // should allow overriding cloud_name in options
-        val result = cloudinary.image {
-            cloudName("test321")
+        val cloudinaryDifferentCloud =
+            Cloudinary(cloudinary.config.copy(cloudConfig = cloudinary.config.cloudConfig.copy(cloudName = "test321")))
+        val result = cloudinaryDifferentCloud.image {
         }.generate("test")
-        assertEquals("http://res.cloudinary.com/test321/image/upload/test", result)
+        assertEquals("https://res.cloudinary.com/test321/image/upload/test", result)
     }
 
     @Test
     fun testSecureDistribution() { // should use default secure distribution if secure=TRUE
-        val result = cloudinary.image {
-            secure(true)
-        }.generate("test")
-        assertEquals("https://res.cloudinary.com/test123/image/upload/test", result)
+        val cloudinarySecureFalse =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secure = false)))
+
+        val result = cloudinarySecureFalse.image().generate("test")
+        assertEquals("http://res.cloudinary.com/test123/image/upload/test", result)
+
+        // should take secure distribution from config if secure=TRUE
+        val newConfig =
+            cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureDistribution = "config.secure.distribution.com"))
+
+        val result2 = Cloudinary(newConfig).image().generate("test")
+        assertEquals("https://config.secure.distribution.com/test123/image/upload/test", result2)
     }
 
     @Test
     fun testSecureDistributionOverwrite() { // should allow overwriting secure distribution if secure=TRUE
+        val cloudinarySecureDistribution =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureDistribution = "something.else.com")))
+
         val result =
-            cloudinary.image {
-                secure(true)
-                secureDistribution("something.else.com")
-            }.generate("test")
+            cloudinarySecureDistribution.image().generate("test")
         assertEquals("https://something.else.com/test123/image/upload/test", result)
-    }
-
-    @Test
-    fun testSecureDistibution() { // should take secure distribution from config if secure=TRUE
-        val newConfig =
-            cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureDistribution = "config.secure.distribution.com"))
-
-        val result = Cloudinary(newConfig).image {
-            secure(true)
-        }.generate("test")
-        assertEquals("https://config.secure.distribution.com/test123/image/upload/test", result)
     }
 
     @Test
@@ -145,7 +170,7 @@ class UrlTest {
         val config = cloudinary.config.copy(urlConfig = urlConfig)
         val result = Cloudinary(config).image().generate("test")
 
-        assertEquals("http://test123-res.cloudinary.com/image/upload/test", result)
+        assertEquals("https://test123-res.cloudinary.com/image/upload/test", result)
     }
 
     @Test
@@ -159,15 +184,15 @@ class UrlTest {
     @Test
     fun testType() { // should use type from options
         val result = cloudinary.image {
-            deliveryType("facebook")
+            storageType("facebook")
         }.generate("test")
-        assertEquals("http://res.cloudinary.com/test123/image/facebook/test", result)
+        assertEquals("https://res.cloudinary.com/test123/image/facebook/test", result)
     }
 
     @Test
     fun testResourceType() { // should use resource_type from options
         val result = cloudinary.raw().generate("test")
-        assertEquals("http://res.cloudinary.com/test123/raw/upload/test", result)
+        assertEquals("https://res.cloudinary.com/test123/raw/upload/test", result)
     }
 
     @Test
@@ -175,129 +200,123 @@ class UrlTest {
         var result = cloudinary.image().generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.image {
-            deliveryType("asset")
+            storageType("asset")
         }.generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.image {
-            deliveryType("fetch")
+            storageType("fetch")
         }.generate("http://test")
-        assertEquals("http://res.cloudinary.com/test123/image/fetch/http://test", result)
+        assertEquals("https://res.cloudinary.com/test123/image/fetch/http://test", result)
     }
 
     @Test
     fun testFetch() { // should escape fetch urls
         val result = cloudinary.image {
-            deliveryType("fetch")
+            storageType("fetch")
         }.generate("http://blah.com/hello?a=b")
         assertEquals(
-            "http://res.cloudinary.com/test123/image/fetch/http://blah.com/hello%3Fa%3Db",
+            "https://res.cloudinary.com/test123/image/fetch/http://blah.com/hello%3Fa%3Db",
             result
         )
     }
 
     @Test
     fun testCname() { // should support external cname
-        val result = cloudinary.image {
-            cname("hello.com")
-        }.generate("test")
+        val cloudinarySecureFalseWithCname = Cloudinary(
+            cloudinary.config.copy(
+                urlConfig = cloudinary.config.urlConfig.copy(
+                    secure = false,
+                    cname = "hello.com"
+                )
+            )
+        )
+
+        val result = cloudinarySecureFalseWithCname.image().generate("test")
         assertEquals("http://hello.com/test123/image/upload/test", result)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUrlSuffixInNonUploadTypes() {
-        cloudinary.media {
+        cloudinaryPrivateCdn.image {
             urlSuffix("hello")
-            privateCdn(true)
-            deliveryType("facebook")
+            storageType("facebook")
         }.generate("test")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUrlSuffixWithSlash() {
-        cloudinary.media {
-            assetType("image")
+        cloudinaryPrivateCdn.image {
             urlSuffix("hello/world")
-            privateCdn(true)
         }.generate("test")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUrlSuffixWithDot() {
-        cloudinary.image {
+        cloudinaryPrivateCdn.image {
             urlSuffix("hello.world")
-            privateCdn(true)
         }.generate("test")
     }
 
     @Test
     fun testSupportUrlSuffixForPrivateCdn() {
-        var actual = cloudinary.image {
+        var actual = cloudinaryPrivateCdn.image {
             urlSuffix("hello")
-            privateCdn(true)
         }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/images/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/images/test/hello", actual)
         actual =
-            cloudinary.image {
+            cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                privateCdn(true)
                 rotate(Rotate.byAngle(0))
             }
                 .generate("test")
-        assertEquals("http://test123-res.cloudinary.com/images/a_0/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/images/a_0/test/hello", actual)
     }
 
     @Test
     fun testPutFormatAfterUrlSuffix() {
         val actual =
-            cloudinary.image {
+            cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                privateCdn(true)
                 extension(Format.jpg())
             }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/images/test/hello.jpg", actual)
+        assertEquals("https://test123-res.cloudinary.com/images/test/hello.jpg", actual)
     }
 
     @Test
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
-        var url = cloudinary.image {
+        var url = cloudinarySignedUrl.image {
             extension(Format.jpg())
-            signUrl(true)
         }.generate("test")!!
         var matcher = pattern.matcher(url)
         matcher.find()
         var expectedSignature = url.substring(matcher.start(), matcher.end())
 
         var actual =
-            cloudinary.image {
+            cloudinaryPrivateCdnSignUrl.image {
                 extension(Format.jpg())
-                privateCdn(true)
-                signUrl(true)
                 urlSuffix("hello")
             }.generate("test")
 
         assertEquals(
-            "http://test123-res.cloudinary.com/images/$expectedSignature/test/hello.jpg",
+            "https://test123-res.cloudinary.com/images/$expectedSignature/test/hello.jpg",
             actual
         )
 
-        url = cloudinary.image {
+        url = cloudinarySignedUrl.image {
             extension(Format.jpg())
-            signUrl(true)
             rotate(Rotate.byAngle(0))
         }.generate("test")!!
         matcher = pattern.matcher(url)
         matcher.find()
         expectedSignature = url.substring(matcher.start(), matcher.end())
-        actual = cloudinary.image {
+        actual = cloudinaryPrivateCdnSignUrl.image {
             extension(Format.jpg())
-            privateCdn(true)
-            signUrl(true)
             urlSuffix("hello")
             rotate(Rotate.byAngle(0))
         }.generate("test")
         assertEquals(
-            "http://test123-res.cloudinary.com/images/$expectedSignature/a_0/test/hello.jpg",
+            "https://test123-res.cloudinary.com/images/$expectedSignature/a_0/test/hello.jpg",
             actual
         )
     }
@@ -305,115 +324,82 @@ class UrlTest {
     @Test
     fun testSupportUrlSuffixForRawUploads() {
         val actual =
-            cloudinary.image {
+            cloudinaryPrivateCdn.raw {
                 urlSuffix("hello")
-                privateCdn(true)
-                assetType("raw")
             }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/files/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/files/test/hello", actual)
     }
 
     @Test
     fun testSupportUrlSuffixForVideoUploads() {
         val actual =
-            cloudinary.video {
+            cloudinaryPrivateCdn.video {
                 urlSuffix("hello")
-                privateCdn(true)
             }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/videos/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/videos/test/hello", actual)
     }
 
     @Test
     fun testSupportUrlSuffixForAuthenticatedImages() {
         val actual =
-            cloudinary.image {
+            cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                privateCdn(true)
-                assetType("image")
-                deliveryType("authenticated")
+                storageType("authenticated")
             }
                 .generate("test")
-        assertEquals("http://test123-res.cloudinary.com/authenticated_images/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/authenticated_images/test/hello", actual)
     }
 
     @Test
     fun testSupportUrlSuffixForPrivateImages() {
         val actual =
-            cloudinary.image {
+            cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                privateCdn(true)
-                assetType("image")
-                deliveryType("private")
+                storageType("private")
             }
                 .generate("test")
-        assertEquals("http://test123-res.cloudinary.com/private_images/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/private_images/test/hello", actual)
     }
 
     @Test
     fun testSupportUseRootPathForPrivateCdn() {
-        var actual = cloudinary.image {
-            privateCdn(true)
-            useRootPath(true)
-        }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/test", actual)
+        var actual = cloudinaryPrivateCdnUseRootPath.image().generate("test")
+        assertEquals("https://test123-res.cloudinary.com/test", actual)
         actual =
-            cloudinary.image {
-                privateCdn(true)
+            cloudinaryPrivateCdnUseRootPath.image {
                 rotate(Rotate.byAngle(0))
-                useRootPath(true)
             }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/a_0/test", actual)
+        assertEquals("https://test123-res.cloudinary.com/a_0/test", actual)
     }
 
     @Test
     fun testSupportUseRootPathTogetherWithUrlSuffixForPrivateCdn() {
-        val actual = cloudinary.image {
-            privateCdn(true)
+        val actual = cloudinaryPrivateCdnUseRootPath.image {
             urlSuffix("hello")
-            useRootPath(true)
         }.generate("test")
-        assertEquals("http://test123-res.cloudinary.com/test/hello", actual)
+        assertEquals("https://test123-res.cloudinary.com/test/hello", actual)
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUseRootPathIfNotImageUploadForFacebook() {
-        cloudinary.image {
-            useRootPath(true)
-            privateCdn(true)
-            deliveryType("facebook")
+        cloudinaryPrivateCdnUseRootPath.image {
+            storageType("facebook")
         }.generate("test")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUseRootPathIfNotImageUploadForRaw() {
-        cloudinary.image {
-            useRootPath(true)
-            privateCdn(true)
-            assetType("raw")
-        }.generate("test")
+        cloudinaryPrivateCdnUseRootPath.raw().generate("test")
     }
 
     @Test
     fun testHttpEscape() { // should escape http urls
         val result =
             cloudinary.image {
-                deliveryType("youtube")
+                storageType("youtube")
             }.generate("http://www.youtube.com/watch?v=d9NF2edxy-M")
         assertEquals(
-            "http://res.cloudinary.com/test123/image/youtube/http://www.youtube.com/watch%3Fv%3Dd9NF2edxy-M",
-            result
-        )
-    }
-
-    @Test
-    fun testFetchFormat() { // should support format for fetch urls
-        val result =
-            cloudinary.image {
-                extension(Format.jpg())
-                deliveryType("fetch")
-            }.generate("http://cloudinary.com/images/old_logo.png")
-        assertEquals(
-            "http://res.cloudinary.com/test123/image/fetch/f_jpg/http://cloudinary.com/images/old_logo.png",
+            "https://res.cloudinary.com/test123/image/youtube/http://www.youtube.com/watch%3Fv%3Dd9NF2edxy-M",
             result
         )
     }
@@ -433,13 +419,13 @@ class UrlTest {
 
     @Test
     fun testFoldersWithExcludeVersion() { // should not add version if the user turned off forceVersion
-        var result = cloudinary.image {
-            forceVersion(false)
+        val cloudinaryForceVersionFalse =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(forceVersion = false)))
+        var result = cloudinaryForceVersionFalse.image {
         }.generate("folder/test")
         assertEquals(DEFAULT_UPLOAD_PATH + "folder/test", result)
         // should still show explicit version if passed by the user
-        result = cloudinary.image {
-            forceVersion(false)
+        result = cloudinaryForceVersionFalse.image {
             version("1234")
         }.generate("folder/test")
         assertEquals(
@@ -449,14 +435,8 @@ class UrlTest {
         // should add version if no value specified for forceVersion:
         result = cloudinary.image().generate("folder/test")
         assertEquals(DEFAULT_UPLOAD_PATH + "v1/folder/test", result)
-        // should add version if forceVersion is true
-        result = cloudinary.image {
-            forceVersion(true)
-        }.generate("folder/test")
-        assertEquals(DEFAULT_UPLOAD_PATH + "v1/folder/test", result)
         // should not use v1 if explicit version is passed
-        result = cloudinary.image {
-            forceVersion(true)
+        result = cloudinaryForceVersionFalse.image {
             version("1234")
         }.generate("folder/test")
         assertEquals(
@@ -473,10 +453,11 @@ class UrlTest {
 
     @Test
     fun testShorten() { // should allow to shorted image/upload urls
-        val result = cloudinary.image {
-            shorten(true)
-        }.generate("test")
-        assertEquals("http://res.cloudinary.com/test123/iu/test", result)
+        val cloudinaryShortenTrue =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(shorten = true)))
+
+        val result = cloudinaryShortenTrue.image().generate("test")
+        assertEquals("https://res.cloudinary.com/test123/iu/test", result)
     }
 
     @Test
@@ -495,24 +476,29 @@ class UrlTest {
     fun testSignedUrl() { // should correctly sign a url
         var expected: String =
             DEFAULT_UPLOAD_PATH + "s--Ai4Znfl3--/c_crop,h_20,w_10/v1234/image.jpg"
+
         var actual =
-            cloudinary.image {
+            cloudinarySignedUrl.image {
                 version("1234")
                 resize(Resize.crop { width(10); height(20) })
-                signUrl(true)
             }.generate("image.jpg")
+
         assertEquals(expected, actual)
+
         expected = DEFAULT_UPLOAD_PATH + "s----SjmNDA--/v1234/image.jpg"
-        actual = cloudinary.image {
+
+        actual = cloudinarySignedUrl.image {
             version("1234")
-            signUrl(true)
         }.generate("image.jpg")
+
         assertEquals(expected, actual)
+
         expected = DEFAULT_UPLOAD_PATH + "s--Ai4Znfl3--/c_crop,h_20,w_10/image.jpg"
-        actual = cloudinary.image {
+
+        actual = cloudinarySignedUrl.image {
             resize(Resize.crop { width(10); height(20) })
-            signUrl(true)
         }.generate("image.jpg")
+
         assertEquals(expected, actual)
     }
 

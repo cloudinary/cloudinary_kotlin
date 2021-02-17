@@ -3,10 +3,9 @@ package com.cloudinary.config
 import java.net.URI
 
 data class CloudinaryConfig(
-    val cloudConfig: CloudConfig = CloudConfig(),
+    val cloudConfig: CloudConfig,
     val urlConfig: UrlConfig = UrlConfig(),
-    val apiConfig: ApiConfig = ApiConfig(),
-    val authTokenConfig: AuthTokenConfig? = null
+    val apiConfig: ApiConfig = ApiConfig()
 ) : IUrlConfig by urlConfig, ICloudConfig by cloudConfig, IApiConfig by apiConfig {
 
     companion object {
@@ -18,15 +17,10 @@ data class CloudinaryConfig(
             val urlConfig = UrlConfig(params)
             val apiConfig = ApiConfig(params)
 
-            val authTokenConfig = (params["auth_token"] as? Map<*, *>)?.let {
-                AuthTokenConfig(it)
-            }
-
             return CloudinaryConfig(
                 cloudConfig,
                 urlConfig,
-                apiConfig,
-                authTokenConfig
+                apiConfig
             )
         }
     }

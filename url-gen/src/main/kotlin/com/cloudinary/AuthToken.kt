@@ -1,6 +1,5 @@
 package com.cloudinary
 
-import com.cloudinary.config.IAuthTokenConfig
 import com.cloudinary.util.cldHexStringToByteArray
 import com.cloudinary.util.cldUrlEncode
 import com.cloudinary.util.toHex
@@ -11,6 +10,13 @@ import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+
+const val KEY = "key"
+const val IP = "ip"
+const val ACL = "acl"
+const val START_TIME = "start_time"
+const val EXPIRATION = "expiration"
+const val DURATION = "duration"
 
 internal val NULL_AUTH_TOKEN = AuthToken(key = "", isNullToken = true)
 private const val AUTH_TOKEN_NAME = "__cld_token__"
@@ -27,13 +33,14 @@ data class AuthToken(
     val duration: Long = 0,
     private val isNullToken: Boolean = false
 ) {
-    constructor(config: IAuthTokenConfig) : this(
-        key = config.key,
-        ip = config.ip,
-        acl = config.acl,
-        startTime = config.startTime ?: 0,
-        expiration = config.expiration ?: 0,
-        duration = config.duration ?: 0
+
+    constructor(params: Map<*, *>) : this(
+        key = (params[KEY] ?: error("Must provide Auth Token key")).toString(),
+        startTime = params[START_TIME]?.toString()?.toLong() ?: 0,
+        expiration = params[EXPIRATION]?.toString()?.toLong() ?: 0,
+        ip = params[IP]?.toString(),
+        acl = params[ACL]?.toString(),
+        duration = params[DURATION]?.toString()?.toLong() ?: 0
     )
 
     /**

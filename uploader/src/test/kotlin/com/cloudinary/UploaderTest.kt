@@ -4,6 +4,7 @@ import com.cloudinary.http.ApacheHttpClient45Factory
 import com.cloudinary.http.HttpUrlConnectionFactory
 import com.cloudinary.http.OkHttpClientFactory
 import com.cloudinary.transformation.Format
+import com.cloudinary.transformation.ImageTransformation
 import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
@@ -712,7 +713,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
         val publicId = uploadResponse.resultOrThrow().publicId ?: throw Error("Public Id returned from upload is null")
 
-        val transformation = Transformation().resize(scale {
+        val transformation = ImageTransformation().resize(scale {
             width(2.0f)
         })
         val response = uploader.explicit(publicId) {
@@ -732,7 +733,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }.generate(publicId)!!
 
         val eagerUrl = explicitData.eager!!.first().secureUrl!!
-        val cloudName = cloudinary.config.cloudName!!
+        val cloudName = cloudinary.config.cloudName
         assertEquals(
             eagerUrl.substring(eagerUrl.indexOf(cloudName)),
             url.substring(url.indexOf(cloudName))
