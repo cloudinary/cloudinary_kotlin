@@ -1,9 +1,10 @@
-package com.cloudinary
+package com.cloudinary.asset
 
 
-import com.cloudinary.config.CloudinaryConfig
+import com.cloudinary.NULL_AUTH_TOKEN
+import com.cloudinary.config.CloudConfig
+import com.cloudinary.config.UrlConfig
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.URL
@@ -18,56 +19,100 @@ private const val SHARED_CDN = AKAMAI_SHARED_CDN
 internal const val DEFAULT_ASSET_TYPE = "image"
 internal const val DEFAULT_DELIVERY_TYPE = "upload"
 
-@TransformationDsl
-class Asset constructor(
-    private val config: CloudinaryConfig,
-    private val cloudName: String? = config.cloudName,
-    private val publicId: String? = null,
-    private val deliveryType: String? = null,
-    private val resourceType: String = DEFAULT_ASSET_TYPE,
-    private val extension: Format? = null,
-    private val version: String? = null,
-    private val transformation: Transformation? = null,
-    private val signUrl: Boolean = false,
-    private val authToken: AuthToken? = config.authTokenConfig?.let { AuthToken(it) },
-    private val source: String? = null,
-    private val urlSuffix: String? = null,
-    private val useRootPath: Boolean = config.useRootPath,
-    private val forceVersion: Boolean = true,
-    private val secureDistribution: String? = config.secureDistribution,
-    private val privateCdn: Boolean = config.privateCdn,
-    private val shorten: Boolean = config.shorten,
-    private val secure: Boolean = config.secure,
-    private val cname: String? = config.cname
+const val ASSET_TYPE_IMAGE = "image"
+const val ASSET_TYPE_VIDEO = "video"
+
+class Asset(
+    // config
+    cloudConfig: CloudConfig,
+    urlConfig: UrlConfig,
+
+    // fields
+    version: String? = null,
+    publicId: String? = null,
+    extension: Format? = null,
+    urlSuffix: String? = null,
+    assetType: String = DEFAULT_ASSET_TYPE,
+    storageType: String? = null,
+    private val transformation: Transformation? = null
+) : BaseAsset(
+    cloudConfig,
+    urlConfig,
+    version,
+    publicId,
+    extension,
+    urlSuffix,
+    assetType,
+    storageType
 ) {
 
+    override fun getTransformationString() = transformation?.toString()
+
+    class Builder(cloudConfig: CloudConfig, urlConfig: UrlConfig, assetType: String = DEFAULT_ASSET_TYPE) :
+        BaseAssetBuilder(cloudConfig, urlConfig, assetType), ITransformable<Builder> {
+
+        private var transformation: Transformation? = null
+
+        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
+        fun transformation(transform: Transformation.Builder.() -> Unit) = apply {
+            val builder = Transformation.Builder()
+            builder.transform()
+            this.transformation = builder.build()
+        }
+
+        override fun add(action: Action) = apply {
+            this.transformation = (this.transformation ?: Transformation()).add(action)
+        }
+
+        fun build() = Asset(
+            cloudConfig,
+            urlConfig,
+            version,
+            publicId,
+            extension,
+            urlSuffix,
+            assetType,
+            storageType,
+            transformation
+        )
+    }
+}
+
+@TransformationDsl
+abstract class BaseAsset constructor(
+    // config
+    private val cloudConfig: CloudConfig,
+    private val urlConfig: UrlConfig,
+
+    // fields
+    private val version: String? = null,
+    private val publicId: String? = null,
+    private val extension: Format? = null,
+    private val urlSuffix: String? = null,
+    private val assetType: String = DEFAULT_ASSET_TYPE,
+    private val storageType: String? = null
+) {
     fun generate(source: String? = null): String? {
-        require(!cloudName.isNullOrBlank()) { "Must supply cloud_name in configuration" }
-        var mutableSource = source ?: publicId ?: this.source ?: return null
-        var mutableTransformation = transformation ?: Transformation()
-        var mutableExtension = extension
+        require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
+
+        var mutableSource = source ?: publicId ?: return null
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
-        if (httpSource && (deliveryType.isNullOrBlank() || deliveryType == "asset")) {
+        if (httpSource && (storageType.isNullOrBlank() || storageType == "asset")) {
             return mutableSource
         }
 
-        if (deliveryType == "fetch" && mutableExtension != null) {
-            mutableTransformation = mutableTransformation.delivery(Delivery.format(mutableExtension))
-            mutableExtension = null
-        }
-
-        val transformationStr = mutableTransformation.toString()
         var signature = ""
 
         val finalizedSource =
-            finalizeSource(mutableSource, mutableExtension, urlSuffix)
+            finalizeSource(mutableSource, extension, urlSuffix)
+
         mutableSource = finalizedSource.source
         val sourceToSign = finalizedSource.sourceToSign
 
         var mutableVersion = version
-        if (forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
+        if (urlConfig.forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
             !httpSource && mutableVersion.isNullOrBlank()
         ) {
             mutableVersion = "1"
@@ -75,37 +120,35 @@ class Asset constructor(
 
         mutableVersion = if (mutableVersion == null) "" else "v$mutableVersion"
 
-        if (signUrl && (authToken == null || authToken == NULL_AUTH_TOKEN)) {
-            val md: MessageDigest?
-            md = try {
-                MessageDigest.getInstance("SHA-1")
-            } catch (e: NoSuchAlgorithmException) {
-                throw RuntimeException("Unexpected exception", e)
-            }
+        val transformationString = getTransformationString()
+        if (urlConfig.signUrl && (cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
+            val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
 
-            val toSign = listOf(transformationStr, sourceToSign)
+
+            val toSign = listOfNotNull(transformationString, sourceToSign)
                 .joinToString("/")
                 .cldRemoveStartingChars('/')
                 .cldMergeSlashedInUrl()
-            val digest = md.digest((toSign + config.apiSecret!!).toByteArray(Charset.forName("UTF-8")))
-            signature = Base64Coder.encodeURLSafeString(digest)
-            signature = "s--" + signature.substring(0, 8) + "--"
+
+            val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
+            signature = Base64Coder.encodeURLSafeString(hash)
+            signature = "s--" + signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8) + "--"
         }
 
         val finalizedResourceType = finalizeResourceType(
-            resourceType,
-            deliveryType,
+            assetType,
+            storageType,
             urlSuffix,
-            useRootPath,
-            shorten
+            urlConfig.useRootPath,
+            urlConfig.shorten
         )
 
         val prefix = unsignedDownloadUrlPrefix(
-            cloudName,
-            privateCdn,
-            cname,
-            secure,
-            secureDistribution
+            cloudConfig.cloudName,
+            urlConfig.privateCdn,
+            urlConfig.cname,
+            urlConfig.secure,
+            urlConfig.secureDistribution
         )
 
         val url =
@@ -113,91 +156,41 @@ class Asset constructor(
                 prefix,
                 finalizedResourceType,
                 signature,
-                transformationStr,
+                transformationString,
                 mutableVersion,
                 mutableSource
             ).joinToString("/").cldMergeSlashedInUrl()
 
-        return if (signUrl && authToken != null && authToken != NULL_AUTH_TOKEN) {
-            val token = authToken.generate(URL(url).path)
+        return if (urlConfig.signUrl && cloudConfig.authToken != null && cloudConfig.authToken != NULL_AUTH_TOKEN) {
+            val token = cloudConfig.authToken.generate(URL(url).path)
             "$url?$token"
         } else {
             url
         }
     }
 
+    abstract fun getTransformationString(): String?
+
     @TransformationDsl
-    class AssetBuilder internal constructor(
-        private val config: CloudinaryConfig,
-        private var assetType: String = DEFAULT_ASSET_TYPE
-    ) :
-        ITransformable<AssetBuilder> {
-        private var cloudName: String? = config.cloudName
-        private var publicId: String? = null
-        private var deliveryType: String? = null
-        private var extension: Format? = null
-        private var version: String? = null
-        private var transformation: Transformation? = null
-        private var signUrl: Boolean = false
-        private var authToken: AuthToken? = config.authTokenConfig?.let { AuthToken(it) }
-        private var source: String? = null
-        private var urlSuffix: String? = null
-        private var useRootPath: Boolean = config.useRootPath
-        private var forceVersion: Boolean = true
-        private var secureDistribution: String? = config.secureDistribution
-        private var privateCdn: Boolean = config.privateCdn
-        private var shorten: Boolean = config.shorten
-        private var secure: Boolean = config.secure
-        private var cname: String? = config.cname
+    abstract class BaseAssetBuilder
+    internal constructor(
+        protected val cloudConfig: CloudConfig,
+        protected val urlConfig: UrlConfig,
+        protected var assetType: String = DEFAULT_ASSET_TYPE
+    ) {
 
-        fun cloudName(cloudName: String) = apply { this.cloudName = cloudName }
+        protected var version: String? = null
+        protected var publicId: String? = null
+        protected var extension: Format? = null
+        protected var urlSuffix: String? = null
+
+        var storageType: String? = null
+
+        fun version(version: String) = apply { this.version = version }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
-        fun deliveryType(type: String?) = apply { this.deliveryType = type }
-        fun assetType(assetType: String) = apply { this.assetType = assetType }
         fun extension(extension: Format) = apply { this.extension = extension }
-        fun version(version: String?) = apply { this.version = version }
-        fun transformation(transformation: Transformation) = apply { this.transformation = transformation }
-        fun transformation(transformation: (Transformation.Builder.() -> Unit)? = null) = apply {
-            val builder = Transformation.Builder()
-            transformation?.let { builder.it() }
-            this.transformation = builder.build()
-        }
-
-        fun signUrl(signUrl: Boolean) = apply { this.signUrl = signUrl }
-        fun authToken(authToken: AuthToken) = apply { this.authToken = authToken }
-        fun source(source: String?) = apply { this.source = source }
         fun urlSuffix(urlSuffix: String) = apply { this.urlSuffix = urlSuffix }
-        fun useRootPath(useRootPath: Boolean) = apply { this.useRootPath = useRootPath }
-        fun forceVersion(forceVersion: Boolean) = apply { this.forceVersion = forceVersion }
-        fun secureDistribution(secureDistribution: String?) = apply { this.secureDistribution = secureDistribution }
-        fun privateCdn(privateCdn: Boolean) = apply { this.privateCdn = privateCdn }
-        fun shorten(shorten: Boolean) = apply { this.shorten = shorten }
-        fun secure(secure: Boolean) = apply { this.secure = secure }
-        fun cname(cname: String?) = apply { this.cname = cname }
-
-        override fun add(action: Action) = apply { transformation = (transformation ?: Transformation()).add(action) }
-
-        fun build() = Asset(
-            config,
-            cloudName,
-            publicId,
-            deliveryType,
-            assetType,
-            extension,
-            version,
-            transformation,
-            signUrl,
-            authToken,
-            source,
-            urlSuffix,
-            useRootPath,
-            forceVersion,
-            secureDistribution,
-            privateCdn,
-            shorten,
-            secure,
-            cname
-        )
+        fun storageType(storageType: String) = apply { this.storageType = storageType }
     }
 }
 
@@ -324,3 +317,18 @@ private fun unsignedDownloadUrlPrefix(
 }
 
 private class FinalizedSource(val source: String, val sourceToSign: String)
+
+/**
+ * Computes hash from input string using specified algorithm.
+ *
+ * @param input              string which to compute hash from
+ * @param signatureAlgorithm algorithm to use for computing hash (supports only SHA-1 and SHA-256)
+ * @return array of bytes of computed hash value
+ */
+private fun hash(input: String, signatureAlgorithm: String): ByteArray? {
+    return try {
+        MessageDigest.getInstance(signatureAlgorithm).digest(input.toByteArray(Charset.forName("UTF-8")))
+    } catch (e: NoSuchAlgorithmException) {
+        throw RuntimeException("Unexpected exception", e)
+    }
+}
