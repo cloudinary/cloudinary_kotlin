@@ -1,12 +1,7 @@
-import java.util.*
+val publicationName = "kotlin-url-gen"
 
-val publicationName by extra("kotlin-url-gen")
 plugins {
-    kotlin("jvm")
-    signing
-    `maven-publish`
-    id("com.jfrog.bintray") version "1.8.5"
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("cloudinary_lib")
 }
 
 dependencies {
@@ -22,7 +17,9 @@ val sourcesJar by tasks.creating(Jar::class) {
 
 val javadocJar by tasks.creating(Jar::class) {
     archiveClassifier.set("javadoc")
-    from("$buildDir/dokka/url-gen")
+    val s = "$buildDir/dokka/$publicationName"
+    println(s)
+    from(s)
 }
 
 publishing {
@@ -30,7 +27,7 @@ publishing {
         create<MavenPublication>(publicationName) {
             groupId = properties["publishGroupId"].toString()
             artifactId = publicationName
-            version = properties["publishUrlGenVersion"].toString()
+            version = properties["version"].toString()
             from(components["java"])
             artifact(sourcesJar)
             artifact(javadocJar)
@@ -59,53 +56,4 @@ publishing {
 
 signing {
     sign(publishing.publications[publicationName])
-}
-
-bintray {
-    user = findProperty("bintray.user").toString()
-    key = findProperty("bintray.key").toString()
-    setPublications(publicationName)
-
-    filesSpec(closureOf<com.jfrog.bintray.gradle.tasks.RecordingCopyTask> {
-
-        from("$buildDir/libs") {
-            include("*.jar.asc")
-            rename(
-                "${project.name}-javadoc.jar.asc",
-                "${publicationName}-${properties["publishUrlGenVersion"]}-javadoc.jar.asc"
-            )
-            rename(
-                "${project.name}-sources.jar.asc",
-                "${publicationName}-${properties["publishUrlGenVersion"]}-sources.jar.asc"
-            )
-            rename(
-                "${project.name}.jar.asc",
-                "${publicationName}-${properties["publishUrlGenVersion"]}.jar.asc"
-            )
-
-        }
-
-        from("$buildDir/publications/$publicationName") {
-            include("pom-default.xml.asc")
-            rename("pom-default.xml.asc", "${publicationName}-${properties["publishUrlGenVersion"]}.pom.asc")
-        }
-
-        into("com/cloudinary/${publicationName}/${properties["publishUrlGenVersion"]}")
-
-    })
-
-    pkg.apply {
-        repo = "cloudinary"
-        name = publicationName
-        userOrg = "cloudinary"
-        setLicenses("MIT")
-        websiteUrl = "https://cloudinary.com"
-        githubRepo = "https://github.com/cloudinary/cloudinary_kotlin"
-        version.apply {
-            name = findProperty("publishUrlGenVersion").toString()
-            desc = properties["publishDescription"].toString()
-            released = Date().toString()
-            vcsTag = properties["publishUrlGenVersion"].toString()
-        }
-    }
 }
