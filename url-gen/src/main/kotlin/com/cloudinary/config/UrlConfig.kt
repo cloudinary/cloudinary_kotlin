@@ -10,6 +10,7 @@ internal const val DEFAULT_SECURE_CDN_SUBDOMAIN = false
 internal const val DEFAULT_LONG_URL_SIGNATURE = false
 internal const val DEFAULT_SIGN_URL = false
 internal const val DEFAULT_SIGNATURE_ALGORITHM = "SHA-1"
+internal const val DEFAULT_ANALYTICS = true
 
 const val SIGN_URL = "sign_url"
 const val LONG_URL_SIGNATURE = "long_url_signature"
@@ -23,6 +24,7 @@ const val USE_ROOT_PATH = "use_root_path"
 const val CNAME = "cname"
 const val SECURE = "secure"
 const val SIGNATURE_ALGORITHM = "signature_algorithm"
+const val ANALYTICS = "analytics"
 
 interface IUrlConfig {
     val cname: String?
@@ -36,6 +38,7 @@ interface IUrlConfig {
     val secure: Boolean
     val forceVersion: Boolean
     val signatureAlgorithm: String?
+    val analytics: Boolean
 }
 
 data class UrlConfig(
@@ -49,7 +52,8 @@ data class UrlConfig(
     override val useRootPath: Boolean = DEFAULT_USE_ROOT_PATH,
     override val secure: Boolean = DEFAULT_SECURE,
     override val forceVersion: Boolean = DEFAULT_FORCE_VERSION,
-    override val signatureAlgorithm: String = DEFAULT_SIGNATURE_ALGORITHM
+    override val signatureAlgorithm: String = DEFAULT_SIGNATURE_ALGORITHM,
+    override val analytics: Boolean = DEFAULT_ANALYTICS
 ) : IUrlConfig {
     constructor(params: Map<String, Any>) : this(
         cname = params[CNAME]?.toString(),
@@ -62,6 +66,7 @@ data class UrlConfig(
         useRootPath = params.getBoolean(USE_ROOT_PATH) ?: DEFAULT_USE_ROOT_PATH,
         secure = params.getBoolean(SECURE) ?: DEFAULT_SECURE,
         forceVersion = params.getBoolean(FORCE_VERSION) ?: DEFAULT_FORCE_VERSION,
-        signatureAlgorithm = params[SIGNATURE_ALGORITHM]?.toString() ?: DEFAULT_SIGNATURE_ALGORITHM
+        signatureAlgorithm = params[SIGNATURE_ALGORITHM]?.toString() ?: DEFAULT_SIGNATURE_ALGORITHM,
+        analytics = params.getBoolean(ANALYTICS) ?: DEFAULT_ANALYTICS
     )
 }

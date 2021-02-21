@@ -7,7 +7,6 @@ import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.util.cloudinaryUrlFromEnv
 
 private var instance: Cloudinary? = null
-const val SDK_VERSION = "0.0.1-beta.6"
 
 class Cloudinary(val config: CloudinaryConfig) {
     private val extensionsLock = Any()
@@ -63,6 +62,8 @@ class Cloudinary(val config: CloudinaryConfig) {
     }
 
     companion object {
+        const val SDK_VERSION = "0.0.1-beta.6"
+
         /**
          * This flag determines whether to throw an error when a transformation is created with invalid arguments.
          * When false a warning is written to the log and no error is thrown.
