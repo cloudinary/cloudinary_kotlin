@@ -8,7 +8,7 @@ abstract class Adjust : Action {
     companion object {
         fun opacity(level: Int) = Opacity(level)
 
-        fun tint(vararg values: Any?) = Tint(*values)
+        fun tint(options: String? = null) = Tint(options)
 
         fun vibrance(options: (Vibrance.Builder.() -> Unit)? = null) = buildAdjust(Vibrance.Builder(), options)
 

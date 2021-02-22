@@ -27,8 +27,14 @@ abstract class Transcode : Action {
         fun audioFrequency(frequency: Int) = AudioFrequencyTranscode(frequency)
 
         fun audioCodec(codec: AudioCodec) = AudioCodecTranscode(codec)
-        fun toAnimated(options: (ToAnimated.Builder.() -> Unit)? = null): Transcode {
-            val builder = ToAnimated.Builder()
+        fun toAnimated(animatedFormat: String, options: (ToAnimated.Builder.() -> Unit)? = null) =
+            toAnimated(animatedFormat as Any, options)
+
+        fun toAnimated(animatedFormat: AnimatedFormat, options: (ToAnimated.Builder.() -> Unit)? = null) =
+            toAnimated(animatedFormat as Any, options)
+
+        private fun toAnimated(animatedFormat: Any, options: (ToAnimated.Builder.() -> Unit)? = null): Transcode {
+            val builder = ToAnimated.Builder(animatedFormat)
             options?.let { builder.it() }
             return builder.build()
         }

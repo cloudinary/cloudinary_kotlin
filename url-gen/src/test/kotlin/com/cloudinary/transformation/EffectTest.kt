@@ -371,4 +371,30 @@ class EffectTest {
             Effect.styleTransfer(Source.image("lighthouse")) { preserveColor() }
         )
     }
+
+    @Test
+    fun testRemoveBackground() {
+        cldAssert(
+            "e_bgremoval",
+            Effect.removeBackground()
+        )
+
+        cldAssert(
+            "e_bgremoval:screen",
+            Effect.removeBackground { screen() }
+        )
+
+        cldAssert(
+            "e_bgremoval:red",
+            Effect.removeBackground { colorToRemove(Color.RED) }
+        )
+
+        cldAssert(
+            "e_bgremoval:screen:red",
+            Effect.removeBackground {
+                colorToRemove(Color.RED)
+                screen()
+            }
+        )
+    }
 }

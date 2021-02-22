@@ -6,7 +6,7 @@ import com.cloudinary.util.cldToBase64
 
 class FetchSource internal constructor(
     private val remoteUrl: String,
-    private val format: Any? = null,
+    private val asFormat: Any? = null,
     override val transformation: ITransformableImage<*>? = null
 ) : Source {
     override fun extraComponents(): List<Param> {
@@ -14,7 +14,7 @@ class FetchSource internal constructor(
     }
 
     override fun toString(): String {
-        return "fetch:${remoteUrl.cldToBase64().cldJoinWithOrReturnOriginal(".", format)}"
+        return "fetch:${remoteUrl.cldToBase64().cldJoinWithOrReturnOriginal(".", asFormat)}"
     }
 
     companion object {
@@ -27,11 +27,11 @@ class FetchSource internal constructor(
 
     @TransformationDsl
     class Builder(private val remoteUrl: String) {
-        private var format: Any? = null
+        private var asFormat: Any? = null
         private var transformation: ITransformableImage<*>? = null
 
-        fun format(format: Format) = apply { this.format = format }
-        fun format(format: String) = apply { this.format = format }
+        fun asFormat(format: Format) = apply { this.asFormat = format }
+        fun asFormat(format: String) = apply { this.asFormat = format }
 
         fun transformation(transformation: ITransformableImage<*>) = apply { this.transformation = transformation }
         fun transformation(transformation: ImageTransformation.Builder.() -> Unit) = apply {
@@ -40,6 +40,6 @@ class FetchSource internal constructor(
             this.transformation = builder.build()
         }
 
-        fun build() = FetchSource(remoteUrl, format, transformation)
+        fun build() = FetchSource(remoteUrl, asFormat, transformation)
     }
 }

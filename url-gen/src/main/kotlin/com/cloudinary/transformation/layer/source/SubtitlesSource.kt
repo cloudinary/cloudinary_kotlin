@@ -65,8 +65,7 @@ class SubtitlesSource private constructor(
         }
 
         fun build(): SubtitlesSource {
-            val safeStyle = style
-            return SubtitlesSource(publicId, safeStyle, backgroundColor, textColor, transformation)
+            return SubtitlesSource(publicId, style, backgroundColor, textColor, transformation)
         }
     }
 }

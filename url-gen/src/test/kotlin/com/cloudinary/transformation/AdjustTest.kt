@@ -10,8 +10,6 @@ class AdjustTest {
     @Test
     fun testTint() {
         cldAssert("e_tint:50:red:blue", Adjust.tint("50:red:blue"))
-        cldAssert("e_tint:50:red:blue", Adjust.tint(50, "red", "blue"))
-        cldAssert("e_tint:50:red:blue", Adjust.tint(50, Color.RED, Color.BLUE))
     }
 
     @Test

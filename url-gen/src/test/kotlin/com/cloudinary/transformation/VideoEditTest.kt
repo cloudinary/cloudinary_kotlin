@@ -26,8 +26,8 @@ class VideoEditTest {
         cldAssert("du_2.63", trim { duration(2.63f) })
         cldAssert("du_35.0p", trim { duration("35.0p") })
 
-        cldAssert("du_2.63,so_3", trim {
-            startOffset(3)
+        cldAssert("du_2.63,so_3.0", trim {
+            startOffset(3.0f)
             duration(2.63f)
         })
         cldAssert("du_35.0p,so_auto", trim {

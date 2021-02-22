@@ -452,7 +452,6 @@ class SimulateColorBlind private constructor(internal val value: String) {
 class MakeTransparent private constructor(private val tolerance: Any?, private val colorToReplace: Any?) : Effect() {
     init {
         tolerance?.cldRanged(0, 100)
-        colorToReplace?.let { "co_$colorToReplace" }
     }
 
     override fun toString(): String {

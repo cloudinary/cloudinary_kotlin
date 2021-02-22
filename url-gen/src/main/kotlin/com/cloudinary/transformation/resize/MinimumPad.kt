@@ -8,10 +8,10 @@ class MinimumPad(
     relative: Boolean? = null,
     regionRelative: Boolean? = null,
     gravity: CompassGravity? = null,
-    x: Any? = null,
-    y: Any? = null,
+    offsetX: Any? = null,
+    offsetY: Any? = null,
     background: Background? = null
-) : BasePad(dimensions, relative, regionRelative, gravity, x, y, background) {
+) : BasePad(dimensions, relative, regionRelative, gravity, offsetX, offsetY, background) {
     override val actionType = "mpad"
 
     class Builder : BasePadBuilder() {

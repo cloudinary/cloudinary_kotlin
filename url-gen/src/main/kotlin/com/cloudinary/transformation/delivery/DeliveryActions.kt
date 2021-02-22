@@ -7,8 +7,8 @@ import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldRanged
 
-class DefaultImage(private val publicId: String) : Delivery() {
-    override fun toString() = "d_${publicId.cldEncodePublicId()}"
+class DefaultImage(private val publicIdWithExtension: String) : Delivery() {
+    override fun toString() = "d_${publicIdWithExtension.cldEncodePublicId()}"
 }
 
 class Density(private val density: Any) : Delivery() {

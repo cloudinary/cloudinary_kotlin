@@ -23,16 +23,12 @@ class TranscodeTest {
 
     @Test
     fun toAnimated() {
-        cldAssert("f_webp,fl_animated,fl_awebp", Transcode.toAnimated {
-            animatedFormat("webp")
-        })
-        cldAssert("dl_100,f_gif,fl_animated,vs_3", Transcode.toAnimated {
-            animatedFormat("gif")
+        cldAssert("f_webp,fl_animated,fl_awebp", Transcode.toAnimated("webp"))
+        cldAssert("dl_100,f_gif,fl_animated,vs_3", Transcode.toAnimated("gif") {
             delay(100)
             sampling(3)
         })
-        cldAssert("dl_100,f_webp,fl_animated,fl_awebp,vs_3", Transcode.toAnimated {
-            animatedFormat("webp")
+        cldAssert("dl_100,f_webp,fl_animated,fl_awebp,vs_3", Transcode.toAnimated(AnimatedFormat.webp()) {
             delay(100)
             sampling(3)
         })

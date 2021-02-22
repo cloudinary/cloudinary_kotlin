@@ -1,12 +1,13 @@
 package com.cloudinary.transformation.layer.source
 
-import com.cloudinary.transformation.*
+import com.cloudinary.transformation.ITransformableImage
+import com.cloudinary.transformation.ImageTransformation
+import com.cloudinary.transformation.Param
+import com.cloudinary.transformation.TransformationDsl
 import com.cloudinary.util.cldEncodePublicId
-import com.cloudinary.util.cldJoinWithOrReturnOriginal
 
 class ImageSource internal constructor(
     private val publicId: String,
-    private val format: Any? = null,
     override val transformation: ITransformableImage<*>? = null
 ) : Source {
     override fun extraComponents(): List<Param> {
@@ -14,7 +15,7 @@ class ImageSource internal constructor(
     }
 
     override fun toString(): String {
-        return publicId.cldEncodePublicId().cldJoinWithOrReturnOriginal(".", format)
+        return publicId.cldEncodePublicId()
     }
 
     companion object {
@@ -27,11 +28,7 @@ class ImageSource internal constructor(
 
     @TransformationDsl
     class Builder(private val publicId: String) {
-        private var format: Any? = null
         private var transformation: ITransformableImage<*>? = null
-
-        fun format(format: Format) = apply { this.format = format }
-        fun format(format: String) = apply { this.format = format }
 
         fun transformation(transformation: ITransformableImage<*>) =
             apply { this.transformation = transformation }
@@ -42,6 +39,6 @@ class ImageSource internal constructor(
             this.transformation = builder.build()
         }
 
-        fun build() = ImageSource(publicId, format, transformation)
+        fun build() = ImageSource(publicId, transformation)
     }
 }

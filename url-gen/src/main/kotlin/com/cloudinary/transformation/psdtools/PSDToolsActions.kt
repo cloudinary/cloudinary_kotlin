@@ -93,11 +93,11 @@ class GetLayer private constructor(
     }
 
     companion object {
-        fun byNumber(number: Int, options: (Builder.() -> Unit)? = null) =
-            byNumber(number as Any, options)
+        fun byIndex(index: Int, options: (Builder.() -> Unit)? = null) =
+            byIndex(index as Any, options)
 
-        fun byNumber(number: Any, options: (Builder.() -> Unit)? = null): GetLayer {
-            val builder = Builder().byNumber(number)
+        fun byIndex(index: Any, options: (Builder.() -> Unit)? = null): GetLayer {
+            val builder = Builder().byIndex(index)
             options?.let { builder.it() }
             return builder.build()
         }
@@ -128,8 +128,8 @@ class GetLayer private constructor(
 
         fun byName(name: String) = apply { names.add(name) }
         fun byName(name: Any) = apply { names.add(name) }
-        fun byNumber(number: Int) = apply { numbers.add(number) }
-        fun byNumber(number: Any) = apply { numbers.add(number) }
+        fun byIndex(index: Int) = apply { numbers.add(index) }
+        fun byIndex(index: Any) = apply { numbers.add(index) }
 
         fun byRange(from: Int?, to: Int?) = apply { numbers.add(Pair(from, to)) }
         fun byRange(from: Any?, to: Any?) = apply { numbers.add(Pair(from, to)) }
