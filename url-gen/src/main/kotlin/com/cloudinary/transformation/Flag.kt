@@ -6,7 +6,6 @@ class FlagAction(private val value: Any) : Action {
     override fun toString() = if (value is Flag) value.toString() else "fl_$value"
 }
 
-// Make these objects instead of classes
 class Flag(vararg values: Any?) {
 
     val values: List<Any> = values.toList().filterNotNull()

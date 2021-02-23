@@ -40,8 +40,8 @@ class PSDToolsTest {
         cldAssert("pg_name:abc", PSDTools.getLayer { byName("abc") })
         cldAssert("pg_name:abc;def", PSDTools.getLayer { byName("abc").byName("def") })
 
-        cldAssert("pg_3", PSDTools.getLayer { byNumber(3) })
+        cldAssert("pg_3", PSDTools.getLayer { byIndex(3) })
         cldAssert("pg_1-3", PSDTools.getLayer { byRange(1, 3) })
-        cldAssert("pg_1-3;5;7-", PSDTools.getLayer { byRange(1, 3).byNumber(5).byRange(7, null) })
+        cldAssert("pg_1-3;5;7-", PSDTools.getLayer { byRange(1, 3).byIndex(5).byRange(7, null) })
     }
 }

@@ -116,16 +116,6 @@ class TransformationTest {
     }
 
     @Test
-    fun testBorder() {
-        cldAssert(
-            "bo_4px_solid_black",
-            Transformation().border {
-                width(4)
-                color(Color.BLACK)
-            })
-    }
-
-    @Test
     fun testDisplace() {
         cldAssert(
             "l_radialize/e_displace,fl_layer_apply,x_50",
@@ -188,6 +178,7 @@ class TransformationTest {
     @Test
     fun testNamedTransformation() {
         cldAssert("t_named", Transformation().namedTransformation("named"))
+        cldAssert("t_named", Transformation().namedTransformation(NamedTransformation.Companion.name("named")))
     }
 
     @Test
@@ -279,10 +270,7 @@ class TransformationTest {
             transformation {
                 effect(Effect.gradientFade { strength(3) })
                 adjust(opacity(80))
-                border {
-                    width(4)
-                    color(Color.RED)
-                }
+                border(Border.solid(4, Color.RED))
                 overlay(Overlay.image {
                     source("sample") {
                         transformation {

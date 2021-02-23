@@ -6,7 +6,7 @@ import com.cloudinary.transformation.expression.Expression
 
 abstract class Delivery : Action {
     companion object {
-        fun defaultImage(publicId: String) = DefaultImage(publicId)
+        fun defaultImage(publicIdWithExtension: String) = DefaultImage(publicIdWithExtension)
         fun density(density: Int) = Density(density)
         fun density(density: Expression) = Density(density)
         fun density(density: String) = Density(density)

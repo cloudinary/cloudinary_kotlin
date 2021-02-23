@@ -154,9 +154,9 @@ class FillLight(private val blend: Any? = null, private val bias: Any? = null) :
 }
 
 // TODO align with spec
-class Tint(vararg val values: Any?) : Adjust() {
+class Tint(private val options: String? = null) : Adjust() {
     override fun toString(): String {
-        return "e_tint".joinWithValues(*values)
+        return "e_tint".joinWithValues(options)
     }
 }
 

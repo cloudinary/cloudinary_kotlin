@@ -87,7 +87,6 @@ interface IBaseTransformable<T> {
     fun roundCorners(radius: RoundCorners) = add(radius)
 
     fun border(border: Border) = add(border)
-    fun border(border: Border.Builder.() -> Unit) = addWithBuilder(Border.Builder(), border)
 
     fun displace(displace: Displace) = add(displace)
     fun displace(source: Source, options: (Displace.Builder.() -> Unit)? = null) =

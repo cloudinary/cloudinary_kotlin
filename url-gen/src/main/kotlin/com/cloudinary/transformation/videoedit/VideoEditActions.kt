@@ -30,10 +30,8 @@ class Trim(
         private var duration: Any? = null
 
         fun startOffset(offset: Float) = apply { this.startOffset = offset }
-        fun startOffset(offset: Int) = apply { this.startOffset = offset }
         fun startOffset(offset: String) = apply { this.startOffset = offset }
         fun endOffset(offset: Float) = apply { this.endOffset = offset }
-        fun endOffset(offset: Int) = apply { this.endOffset = offset }
         fun endOffset(offset: String) = apply { this.endOffset = offset }
         fun duration(duration: Float) = apply { this.duration = duration }
         fun duration(duration: String) = apply { this.duration = duration }
@@ -42,7 +40,6 @@ class Trim(
             return Trim(startOffset, endOffset, duration)
         }
     }
-
 }
 
 class Volume internal constructor(private val value: Any, private val suffix: String? = null) : VideoEdit() {
@@ -134,7 +131,7 @@ class Transition {
 class Preview private constructor(
     private val duration: Float?,
     private val maximumSegments: Int?,
-    private val minimumSegmentDuration: Int?
+    private val minimumSegmentDuration: Any?
 ) : VideoEdit() {
     override fun toString(): String {
         return "e_preview".joinWithValues(
@@ -148,11 +145,15 @@ class Preview private constructor(
 
         private var duration: Float? = null
         private var maximumSegments: Int? = null
-        private var minimumSegmentDuration: Int? = null
+        private var minimumSegmentDuration: Any? = null
 
         fun duration(duration: Float) = apply { this.duration = duration }
         fun maximumSegments(maximumSegments: Int) = apply { this.maximumSegments = maximumSegments }
-        fun minimumSegmentDuration(minimumSegmentDuration: Int) =
+
+        fun minimumSegmentDuration(minimumSegmentDuration: String) =
+            apply { this.minimumSegmentDuration = minimumSegmentDuration }
+
+        fun minimumSegmentDuration(minimumSegmentDuration: Any) =
             apply { this.minimumSegmentDuration = minimumSegmentDuration }
 
         override fun build() = Preview(duration, maximumSegments, minimumSegmentDuration)
