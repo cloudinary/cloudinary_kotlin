@@ -84,7 +84,7 @@ class GetLayer private constructor(
             return "pg_name:${
                 names.joinToString(separator = ";", transform = {
                     if (it is Pair<*, *>)
-                        (it.first?.toString() ?: "" + "-" + it.second?.toString() ?: "")
+                        it.first?.toString() ?: "" + "-" + it.second?.toString()
                     else
                         it.toString()
                 })
