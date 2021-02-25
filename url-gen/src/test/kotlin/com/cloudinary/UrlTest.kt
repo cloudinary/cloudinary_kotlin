@@ -14,7 +14,7 @@ private const val DEFAULT_ROOT_PATH = "https://res.cloudinary.com/test123/"
 private const val DEFAULT_UPLOAD_PATH = DEFAULT_ROOT_PATH + "image/upload/"
 
 class UrlTest {
-    private val cloudinary = Cloudinary("cloudinary://a:b@test123")
+    private val cloudinary = Cloudinary("cloudinary://a:b@test123?analytics=false")
     private val cloudinaryPrivateCdn = Cloudinary(
         cloudinary.config.copy(
             urlConfig = cloudinary.config.urlConfig.copy(
@@ -52,7 +52,8 @@ class UrlTest {
             secureCdnSubdomain = true,
             useRootPath = true,
             cname = "my.domain.org",
-            secure = true
+            secure = true,
+            analytics = false
         )
 
         val cloudConfig = cloudinary.config.cloudConfig
@@ -62,6 +63,21 @@ class UrlTest {
             "http://my.domain.org/sample",
             Asset(cloudConfig, urlConfig.copy(secure = false)).generate("sample")
         )
+    }
+
+    @Test
+    fun testUrlWithAnalytics() {
+        val cloudinaryWithAnalytics =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(analytics = true)))
+
+        val result = cloudinaryWithAnalytics.image().generate("test")
+
+        // note: This test validates the concatenation of analytics query param to the url.
+        // This is not meant to test the string generation - This is tested separately in its own test.
+        val expectedAnalytics = generateAnalyticsSignature()
+
+        assertEquals("https://res.cloudinary.com/test123/image/upload/test?_a=$expectedAnalytics", result)
+
     }
 
     @Test

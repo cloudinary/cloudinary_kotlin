@@ -735,8 +735,8 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val eagerUrl = explicitData.eager!!.first().secureUrl!!
         val cloudName = cloudinary.config.cloudName
         assertEquals(
-            eagerUrl.substring(eagerUrl.indexOf(cloudName)),
-            url.substring(url.indexOf(cloudName))
+            eagerUrl.substring(eagerUrl.indexOf(cloudName)).substringBefore("?_a"),
+            url.substring(url.indexOf(cloudName)).substringBefore("?_a")
         )
     }
 

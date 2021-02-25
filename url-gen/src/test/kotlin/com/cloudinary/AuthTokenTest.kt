@@ -9,7 +9,7 @@ import java.util.regex.Pattern
 
 class AuthTokenTest {
     private val authToken = AuthToken(key = KEY, duration = 300, startTime = 11111111)
-    private val tempConfig = CloudinaryConfig.fromUri("cloudinary://a:b@test123")
+    private val tempConfig = CloudinaryConfig.fromUri("cloudinary://a:b@test123?analytics=false")
     private val cloudinary =
         Cloudinary(tempConfig.copy(cloudConfig = tempConfig.cloudConfig.copy(authToken = authToken)))
 
@@ -145,5 +145,28 @@ class AuthTokenTest {
     companion object {
         const val KEY = "00112233FF99"
         const val ALT_KEY = "CCBB2233FF00"
+    }
+
+    @Test
+    fun testAuthTokenWithAnalytics() {
+        // note: This test validates the concatenation of analytics query param to the url.
+        // This is not meant to test the string generation - This is tested separately in its own test.
+        val expectedAnalytics = generateAnalyticsSignature()
+
+        val cloudinary =
+            Cloudinary(
+                cloudinary.config.copy(
+                    urlConfig = cloudinary.config.urlConfig.copy(
+                        signUrl = true,
+                        analytics = true
+                    )
+                )
+            )
+        val url =
+            cloudinary.image().generate("sample.jpg")
+        assertEquals(
+            "https://res.cloudinary.com/test123/image/upload/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=ec2d0e9a87f6dd5147c36f39c5e88c28fdaa53d1e04f3d70160f7ebe62a60c7a&_a=$expectedAnalytics",
+            url
+        )
     }
 }

@@ -4,6 +4,7 @@ package com.cloudinary.asset
 import com.cloudinary.NULL_AUTH_TOKEN
 import com.cloudinary.config.CloudConfig
 import com.cloudinary.config.UrlConfig
+import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
@@ -161,11 +162,13 @@ abstract class BaseAsset constructor(
                 mutableSource
             ).joinToString("/").cldMergeSlashedInUrl()
 
+        val analytics = if (urlConfig.analytics) "_a=${generateAnalyticsSignature()}" else null
+
         return if (urlConfig.signUrl && cloudConfig.authToken != null && cloudConfig.authToken != NULL_AUTH_TOKEN) {
             val token = cloudConfig.authToken.generate(URL(url).path)
-            "$url?$token"
+            "$url?$token".joinWithValues(analytics, separator = "&")
         } else {
-            url
+            url.joinWithValues(analytics, separator = "?")
         }
     }
 
