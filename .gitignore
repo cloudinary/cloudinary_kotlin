@@ -101,3 +101,7 @@ test-output/
 ### AppEngine template
 # Google App Engine generated folder
 appengine-generated/
+
+# Compilation tests
+url-gen/src/test/kotlin/com/cloudinary/CompilationTest.kt
+devTools/results.json
