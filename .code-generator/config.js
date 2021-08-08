@@ -35,7 +35,8 @@ module.exports = {
     closeQualifiersChar : ' }',
     openActionChar: '(',
     closeActionChar: ')',
-    unsupportedTxParams: [],
+    unsupportedTxParams: ['fl_waveform', 'fl_animated', 'e_tint', 'u_', 'e_theme', 'l_fetch', 'l_text', 'u_text', 'af_'],
+    unsupportedCode: ['.stroke(', '.textFit(', 'Animated.edit', '.RoundCorners(', 'getVideoFrame', 'Source.image', '.transcode('],
     mainTransformationString: {
       openSyntaxString: {
         image: 'cloudinary.image { publicId("#publicID")',
