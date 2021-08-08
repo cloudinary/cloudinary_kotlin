@@ -25,7 +25,7 @@ function CanonicalColorQualifier(payload) {
 
 
 module.exports = {
-  "SDKSpecVersion": "master",
+  "SDKSpecVersion": "feature/add-kotlin-support",
   "langConfig": {
     lang: 'Kotlin',
     methodDelimiter: ' ',
@@ -39,11 +39,11 @@ module.exports = {
     unsupportedCode: ['.stroke(', '.textFit(', 'Animated.edit', '.RoundCorners(', 'getVideoFrame', 'Source.image', '.transcode('],
     mainTransformationString: {
       openSyntaxString: {
-        image: 'cloudinary.image { publicId("#publicID")',
-        video: 'cloudinary.video { publicId("#publicID")',
-        media: 'cloudinary.media { publicId("#publicID")'
+        image: 'cloudinary.image { \n\tpublicId("#publicID")',
+        video: 'cloudinary.video { \n\tpublicId("#publicID")',
+        media: 'cloudinary.media { \n\tpublicId("#publicID")'
       },
-      closeSyntaxString : ' }.generate()',
+      closeSyntaxString : ' \n}.generate()',
     },
     closeTransformationChar: ' }', // Note how this is needed because the openSyntaxString contains an open transformation {
     overwritePreset: 'kotlin',
