@@ -6,17 +6,17 @@ function CanonicalColorQualifier(payload) {
 
   if (qualifierDTO.qualifiers && qualifierDTO.name === 'rgb') {
     return [
-      formatClassOrEnum(qualifierDTO.group, langConfig),
+      payload.formatClassOrEnum(qualifierDTO.group, langConfig),
       langConfig.groupDelimiter,
-      formatMethod(qualifierDTO.name, langConfig),
+      payload.formatMethod(qualifierDTO.name, langConfig),
       '(',
-      `'${qualifierDTO.qualifiers[0].value}'`.replace('#', ''),
+      `"${qualifierDTO.qualifiers[0].value}"`.replace('#', ''),
       ')'
     ].join('');
   } else {
     const simpleColorName = qualifierDTO.qualifiers ?  qualifierDTO.qualifiers[0].name : qualifierDTO.name;
     return [
-      formatClassOrEnum(qualifierDTO.group, langConfig),
+      payload.formatClassOrEnum(qualifierDTO.group, langConfig),
       langConfig.groupDelimiter,
       simpleColorName.toUpperCase()
     ].join('');
@@ -35,7 +35,7 @@ module.exports = {
     closeQualifiersChar : ' }',
     openActionChar: '(',
     closeActionChar: ')',
-    unsupportedTxParams: ['fl_waveform', 'fl_animated', 'e_tint', 'u_', 'e_theme', 'l_fetch', 'l_text', 'u_text', 'af_', 'l_video:', 'if_'],
+    unsupportedTxParams: ['fl_waveform', 'fl_animated', 'e_tint', 'u_', 'e_theme', 'l_fetch', 'l_text', 'u_text', 'af_', 'l_video:', 'if_', 'e_fade', 'c_fill', 'palette_f00'],
     unsupportedCode: ['stroke(', 'textFit(', 'Animated.edit', 'RoundCorners(', 'getVideoFrame', 'Source.image', 'transcode('],
     mainTransformationString: {
       openSyntaxString: {
