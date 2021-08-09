@@ -31,6 +31,9 @@ module.exports = {
     methodDelimiter: ' ',
     groupDelimiter: '.',
     hideActionGroups: false,
+    specialCharacterMapping: [
+      ['$', '\$']
+    ],
     openQualifiersChar : ' {',
     closeQualifiersChar : ' }',
     openActionChar: '(',
