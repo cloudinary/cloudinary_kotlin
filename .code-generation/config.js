@@ -25,7 +25,7 @@ function CanonicalColorQualifier(payload) {
 
 
 module.exports = {
-  "SDKSpecVersion": "feature/add-kotlin-support",
+  "SDKSpecVersion": "master",
   "langConfig": {
     lang: 'Kotlin',
     methodDelimiter: ' ',
