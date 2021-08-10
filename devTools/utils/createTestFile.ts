@@ -9,7 +9,7 @@ const prettier = require('prettier');
 function createTestFile(txs: IFrameworkResponse[]) {
     let file = `
         package com.cloudinary
-        
+
         import kotlin.test.assertEquals
         import org.junit.Test
         import com.cloudinary.*
@@ -29,79 +29,6 @@ function createTestFile(txs: IFrameworkResponse[]) {
         import com.cloudinary.transformation.psdtools.*
         import com.cloudinary.transformation.expression.*
         import com.cloudinary.transformation.extract.*
-        
-        
-        
-        
-        // import com.cloudinary.transformation.psdtools.PSDTools
-        // import com.cloudinary.transformation.layer.Overlay
-        
-        
-        // import com.cloudinary.asset.Asset
-        // import com.cloudinary.config.CloudinaryConfig
-        // import com.cloudinary.config.UrlConfig
-        // import com.cloudinary.transformation.Format
-        // import com.cloudinary.transformation.Rotate
-        // import com.cloudinary.transformation.resize.Resize
-        // import org.junit.Assert.*
-        // import java.util.regex.Pattern
-        // import com.cloudinary.cldAssert
-        // import com.cloudinary.transformation.BackgroundColor.Companion.color
-        // import com.cloudinary.transformation.CustomFunction.Companion.wasm
-        // import com.cloudinary.transformation.Transformation.Companion.transformation
-        // import com.cloudinary.transformation.adjust.Adjust
-        // import com.cloudinary.transformation.adjust.Adjust.Companion.opacity
-        
-        // import com.cloudinary.transformation.effect.Effect
-        // import com.cloudinary.transformation.effect.Effect.Companion.sepia
-        // import com.cloudinary.transformation.effect.GradientFade
-        // import com.cloudinary.transformation.background.Background
-        // import com.cloudinary.transformation.expression.Expression
-        // import com.cloudinary.transformation.expression.Variable
-        // import com.cloudinary.transformation.gravity.Gravity.Companion.east
-        // import com.cloudinary.transformation.gravity.Gravity.Companion.west
-        // import com.cloudinary.transformation.layer.BlendMode
-        // import com.cloudinary.transformation.layer.Overlay
-        // import com.cloudinary.transformation.layer.Overlay.Companion.source
-        // import com.cloudinary.transformation.layer.Underlay
-        // import com.cloudinary.transformation.layer.source.FontHinting
-        // import com.cloudinary.transformation.layer.source.FontWeight
-        // import com.cloudinary.transformation.layer.source.ImageSource
-        // import com.cloudinary.transformation.layer.source.Source.Companion.image
-        // import com.cloudinary.transformation.layer.source.Source.Companion.text
-        // import com.cloudinary.transformation.reshape.Reshape.Companion.distortArc
-        // import com.cloudinary.transformation.transcode.AudioCodec
-        // import com.cloudinary.transformation.transcode.Transcode
-        // import com.cloudinary.transformation.transcode.Transcode.Companion.videoCodec
-        // import com.cloudinary.transformation.videoedit.VideoEdit
-        // import com.cloudinary.cldAssert
-        // import com.cloudinary.transformation.Color
-        // import com.cloudinary.transformation.gravity.FocusOn
-        // import com.cloudinary.transformation.gravity.CompassGravity
-        // import com.cloudinary.transformation.gravity.FocusOnGravity
-        // import com.cloudinary.transformation.gravity.Gravity
-        // import com.cloudinary.transformation.layer.BlendMode.Companion.multiply
-        // import com.cloudinary.transformation.layer.position.Position
-        // import com.cloudinary.transformation.layer.source.Source.Companion.fetch
-        // import com.cloudinary.transformation.layer.source.Source.Companion.image
-        // import com.cloudinary.transformation.psdtools.PSDTools
-        // import com.cloudinary.transformation.delivery.*
-        // import com.cloudinary.cldAssert
-        // import com.cloudinary.transformation.layer.position.Position
-        // import com.cloudinary.transformation.layer.source.Source
-        // import com.cloudinary.transformation.reshape.Reshape
-        // import com.cloudinary.transformation.videoedit.Concatenate
-        // import com.cloudinary.transformation.videoedit.Transition
-        // import com.cloudinary.transformation.videoedit.VideoEdit
-        // import com.cloudinary.transformation.videoedit.VideoEdit.Companion.concatenate
-        // import com.cloudinary.transformation.videoedit.VideoEdit.Companion.trim
-        // import com.cloudinary.transformation.videoedit.Volume
-        //
-        // import com.cloudinary.transformation.*
-        // import com.cloudinary.transformation.expression.Expression
-        // import com.cloudinary.util.cldEncodePublicId
-        // import com.cloudinary.*
-  
       `;
 
     file += `class CompilationTests_${Date.now() + Math.ceil(Math.random() * 50)} {\n`;
