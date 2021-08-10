@@ -38,7 +38,7 @@ module.exports = {
     closeQualifiersChar : ' }',
     openActionChar: '(',
     closeActionChar: ')',
-    unsupportedTxParams: ['fl_waveform', 'fl_animated', 'e_tint', 'u_', 'e_theme', 'l_fetch', 'l_text', 'u_text', 'af_', 'l_video:', 'if_', 'e_fade', 'c_fill', 'palette_f00'],
+    unsupportedTxParams: ['fl_waveform', 'fl_animated', 'e_tint', 'u_', 'e_theme', 'l_fetch', 'l_text', 'u_text', 'af_', 'l_video:', 'if_', 'e_fade', 'c_fill', 'palette_f00', 'g_ocr_text'],
     unsupportedCode: ['stroke(', 'textFit(', 'Animated.edit', 'RoundCorners(', 'getVideoFrame', 'Source.image', 'transcode('],
     mainTransformationString: {
       openSyntaxString: {

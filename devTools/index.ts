@@ -2,44 +2,44 @@
 /* eslint-disable require-jsdoc */
 
 import {ISanityGeneratorResponse} from "sdk-sanity-generator";
+import {IFrameworkResponse} from "sdk-sanity-generator/dist/interfaces";
 
 
 const fs = require('fs');
 const sanityGenerator = require('sdk-sanity-generator').sanityGenerator;
-const createTestFile = require('./createTestFile');
-
-
-function filterNonImplemented(tx: { transformation:string }) {
-    if (tx.transformation.includes('dl_')) {
-        return false;
-    }
-
-    if (tx.transformation.includes('e_preview')) {
-        return false;
-    }
-
-    return true;
-}
-
-// Uncomment this to read from the cache and skip the fetching from the server
-// let data = JSON.parse(fs.readFileSync(`${__dirname}/results.json`));
-// data = data.filter(filterNonImplemented);
-// fs.writeFileSync(`${__dirname}/../url-gen/src/test/kotlin/com/cloudinary/CompilationTest.kt`, createTestFile(data));
-//
-// If this is block is uncommented, everything below should be commented
-
-
+const filterNonImplemented = require('./utils/filterNonImplemented');
+const createTestFile = require('./utils/createTestFile');
 
 sanityGenerator({
     framework: 'kotlin',
-    txList: ['c_lpad,w_480,h_320,vs_2,q_70,br_1400k,vc_h264:baseline:3.0', 'e_sepia', 'w_100', 'c_crop,g_west', 'f_auto', 'q_auto', 'bo_15px_solid_green', 'l_sample', 'u_foo'],
-    requestSpreading: 70,
-    codeSnippetsEndpointURL: 'http://localhost:8000/v1/generate-code'
+    // Uncomment to pass a list of transformations instead of using the default:
+    // txList: ['w_150,h_150,c_pad,b_pink'],
+    requestSpreading: 50,
+    // Uncomment to test against a local endpoint, else use the default staging environment
+    // codeSnippetsEndpointURL: 'http://localhost:8000/v1/generate-code',
+    filterFn: filterNonImplemented
 }).then((res: ISanityGeneratorResponse) => {
     console.log(`Successful transformations: ${res.success.length}`);
     console.log(`Failed transformations: ${res.error.length}`);
-    // Uncomment this create a cache of all the results
-    // fs.writeFileSync(`${__dirname}/results.json`, JSON.stringify(res.success));
-    console.log(process.cwd())
-    fs.writeFileSync(`${__dirname}/../url-gen/src/test/kotlin/com/cloudinary/CompilationTest.kt`, createTestFile(res.success));
+
+    // Store the results
+    fs.writeFileSync(`${__dirname}/success.json`, JSON.stringify(res.success));
+    fs.writeFileSync(`${__dirname}/error.json`, JSON.stringify(res.error));
+
+    const groups:IFrameworkResponse[][] = [];
+    let count = 0;
+
+    // Split the results into files, this helps the compiler to deal with very large files
+    res.success.forEach((item: IFrameworkResponse, i) => {
+        const GROUP_NUM = Math.floor(count / 100);
+
+        groups[GROUP_NUM] = groups[GROUP_NUM] || [];
+        groups[GROUP_NUM].push(item);
+
+        count ++;
+    });
+
+    groups.forEach((group,i) => {
+        fs.writeFileSync(`${__dirname}/../url-gen/src/test/kotlin/com/cloudinary/CompilationTest_${i}.kt`, createTestFile(group));
+    });
 });

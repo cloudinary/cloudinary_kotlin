@@ -104,15 +104,16 @@ function createTestFile(txs: IFrameworkResponse[]) {
   
       `;
 
-    file += `class CompilationTests {\n`;
+    file += `class CompilationTests_${Date.now() + Math.ceil(Math.random() * 50)} {\n`;
     file += `private val cloudinary = Cloudinary("cloudinary://a:b@test123?analytics=false")\n`;
 
 
     file += txs.map((txResult, i) => {
+        txResult.transformation = txResult.transformation.replace(/\$/g, "\\$")
         let test = '@Test\n';
         test += `fun testSomething_${i}() {\n`
         test += `// ${txResult.transformation}\n`
-        test += `var tAsset = ${txResult.code}`;
+        test += `val tAsset = ${txResult.code}`;
 
         if (txResult.transformation.startsWith('http')) {
             // For URLS, If not a demo cloud, we do not support the compilation test.
@@ -124,10 +125,10 @@ function createTestFile(txs: IFrameworkResponse[]) {
             // test += `tAsset.setURLConfig({analytics:false});`;
             // test += `assertEquals(tAsset.toURL(), '${txResult.transformation}');`;
         } else {
-            test += `\nvar parts = "${txResult.transformation}".replace("/", ",").split(",");\n\n`;
+            test += `\nval parts = "${txResult.transformation}".replace("/", ",").split(",")\n\n`;
             test += `
                     for (part in parts) {
-                          assertEquals(true, tAsset.toString().contains(part));
+                          cldAssertContains(tAsset.toString(), part)
                      }`
 
             // parts.forEach((part) => { assertEquals(tAsset.toString()).toContain(part)}, true)`;

@@ -194,6 +194,7 @@ abstract class BaseAsset constructor(
         fun extension(extension: Format) = apply { this.extension = extension }
         fun urlSuffix(urlSuffix: String) = apply { this.urlSuffix = urlSuffix }
         fun storageType(storageType: String) = apply { this.storageType = storageType }
+        fun assetType(assetType: String) = apply { this.assetType = assetType }
     }
 }
 

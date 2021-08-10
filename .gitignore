@@ -104,4 +104,6 @@ appengine-generated/
 
 # Compilation tests
 url-gen/src/test/kotlin/com/cloudinary/CompilationTest.kt
+devTools/error.json
+devTools/success.json
 devTools/results.json
