@@ -40,7 +40,7 @@ function createTestFile(txs: IFrameworkResponse[]) {
         let test = '@Test\n';
         test += `fun testSomething_${i}() {\n`
         test += `// ${txResult.transformation}\n`
-        test += `val tAsset = ${txResult.code}`;
+        test += `val tAsset = ${txResult.codeSnippet}`;
 
         if (txResult.transformation.startsWith('http')) {
             // For URLS, If not a demo cloud, we do not support the compilation test.

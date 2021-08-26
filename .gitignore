@@ -103,7 +103,7 @@ test-output/
 appengine-generated/
 
 # Compilation tests
-url-gen/src/test/kotlin/com/cloudinary/CompilationTest.kt
+url-gen/src/test/kotlin/com/cloudinary/CompilationTest*
 devTools/error.json
 devTools/success.json
 devTools/results.json
