@@ -1,29 +1,3 @@
-function CanonicalColorQualifier(payload) {
-  const {qualifierDTO, langConfig} = payload;
-  // This case supports two types of qualifiers
-  // TODO this structure needs to be aligned
-
-
-  if (qualifierDTO.qualifiers && qualifierDTO.name === 'rgb') {
-    return [
-      payload.formatClassOrEnum(qualifierDTO.group, langConfig),
-      langConfig.groupDelimiter,
-      payload.formatMethod(qualifierDTO.name, langConfig),
-      '(',
-      `"${qualifierDTO.qualifiers[0].value}"`.replace('#', ''),
-      ')'
-    ].join('');
-  } else {
-    const simpleColorName = qualifierDTO.qualifiers ?  qualifierDTO.qualifiers[0].name : qualifierDTO.name;
-    return [
-      payload.formatClassOrEnum(qualifierDTO.group, langConfig),
-      langConfig.groupDelimiter,
-      simpleColorName.toUpperCase()
-    ].join('');
-  }
-}
-
-
 module.exports = {
   "SDKSpecVersion": "master",
   "langConfig": {
@@ -91,8 +65,7 @@ module.exports = {
 
         // TODO Color - this should be streamlined with how we deal with color.
         return `.colorOverride(Color.${colorName.toUpperCase()})`
-      },
-      color: CanonicalColorQualifier // TODO Color this functionality should be embeded in the framework itself
+      }
     }
   }
 }
