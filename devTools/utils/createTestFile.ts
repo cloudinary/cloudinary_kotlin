@@ -47,6 +47,8 @@ function createTestFile(txs: IFrameworkResponse[]) {
             if (!txResult.transformation.includes('/demo/')) {
                 throw `Unsupported URL: ${txResult.transformation}`;
             }
+
+            test += `\n// Skipping deeper TX test (part in parts...) because the transformation is a URL`
             //
             // test += `tAsset.setCloudConfig({cloudName: 'demo'});`;
             // test += `tAsset.setURLConfig({analytics:false});`;
