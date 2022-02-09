@@ -70,11 +70,11 @@ A transformation is also added to the image - cropping and using the sepia effec
 
 ```kotlin
  val cloudinary = Cloudinary("cloudinary://@demo")
- val url = cloudinary.media{ 
+ val url = cloudinary.image {
    publicId("sample")
    resize(Resize.fill {
-       width(100)
-       height(150)
+     width(100)
+     height(150)
    })
  }
  println(url.generate())
