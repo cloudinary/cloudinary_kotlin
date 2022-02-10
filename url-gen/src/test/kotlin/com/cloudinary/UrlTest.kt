@@ -5,6 +5,9 @@ import com.cloudinary.config.CloudinaryConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.Rotate
+import com.cloudinary.transformation.gravity.AutoFocus
+import com.cloudinary.transformation.gravity.FocusOn
+import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Assert.*
 import org.junit.Test
@@ -534,5 +537,24 @@ class UrlTest {
     fun testCloudinaryUrlEmptyScheme() {
         val cloudinaryUrl = " "
         CloudinaryConfig.fromUri(cloudinaryUrl)
+    }
+
+    @Test
+    fun testOCR() {
+        val tAsset = cloudinary.image {
+            publicId("sample")
+            resize(Resize.crop() {
+                gravity(
+                    Gravity.autoGravity() {
+                        autoFocus(
+                            AutoFocus.focusOn(
+                                FocusOn.ocr()
+                            )
+                        )
+                    })
+            })
+        }.generate()
+        assertNotNull(tAsset)
+        tAsset?.let { cldAssert(it, "https://res.cloudinary.com/test123/image/upload/c_crop,g_auto:ocr_text/sample") }
     }
 }

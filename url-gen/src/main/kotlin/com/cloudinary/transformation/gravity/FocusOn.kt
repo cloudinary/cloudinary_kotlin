@@ -6,7 +6,7 @@ import com.cloudinary.transformation.joinWithValues
 class FocusOn(private val value: String) : IGravityObject, IAutoGravityObject {
 
     companion object {
-        private val ocr = FocusOn("ocr")
+        private val ocr = FocusOn("ocr_text")
         fun ocr() = ocr
         private val bicycle = FocusOn("bicycle")
         fun bicycle() = bicycle
