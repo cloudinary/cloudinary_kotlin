@@ -23,7 +23,7 @@ For the complete documentation, see the [Kotlin SDK Guide](https://cloudinary.co
 ## Version Support
 | SDK Version   |  Kotlin Version  |
 |---------------|------------------|
-|    1.0.0      |       > 1.0      | 
+|      1.x      |       > 1.0      | 
 
 ## Installation
 Add the SDK to your project as a dependency, we recommend using a build management tool such as Maven or Gradle to do this.
