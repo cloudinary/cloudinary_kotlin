@@ -200,7 +200,7 @@ private fun getPattern(): Pattern {
         sb.append(Pattern.quote(op)).append("|")
     }
     sb.deleteCharAt(sb.length - 1)
-    sb.append(")(?=[ _])|").append(PREDEFINED_VARS.keys.joinToString("|", transform = { "(?<!\\$)$it" })).append(")")
+    sb.append(")(?=[ _])|").append(PREDEFINED_VARS.keys.map {":${it}|${it}"}.joinToString("|", transform = { "(?<!\\$)$it" })).append(")")
     pattern = sb.toString()
     return Pattern.compile(pattern)
 }
