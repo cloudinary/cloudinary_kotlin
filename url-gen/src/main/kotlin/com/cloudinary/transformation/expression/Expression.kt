@@ -200,6 +200,8 @@ private fun getPattern(): Pattern {
         sb.append(Pattern.quote(op)).append("|")
     }
     sb.deleteCharAt(sb.length - 1)
+    // The :${it} part is to prevent normalization of vars with a preceding colon (such as :duration),
+    // It won't be found in PREDEFINED_VARS and so won't be normalized.
     sb.append(")(?=[ _])|").append(PREDEFINED_VARS.keys.map {":${it}|${it}"}.joinToString("|", transform = { "(?<!\\$)$it" })).append(")")
     pattern = sb.toString()
     return Pattern.compile(pattern)
