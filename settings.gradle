@@ -1,7 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
     }
 }
 rootProject.name = 'cloudinary_kotlin'

@@ -12,9 +12,8 @@ dependencies {
     orchidRuntime("io.github.javaeden.orchid:OrchidEditorial:0.21.0")
 }
 
-// 3. Get dependencies from JCenter and Kotlinx Bintray repo
+// 3. Get dependencies from Kotlinx Bintray repo
 repositories {
-    jcenter()
     maven { url = "https://kotlin.bintray.com/kotlinx/" }
 }
 
