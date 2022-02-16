@@ -263,6 +263,34 @@ class TransformationTest {
         cldAssert("fl_layer_apply", Transformation().addFlag(Flag.layerApply()))
     }
 
+    @Test
+    fun testAntiRemovalWithLevel() {
+        val transformation =
+            transformation {
+                overlay(Overlay.image {
+                    source("sample") {
+
+                    }.blendMode(BlendMode.antiRemoval(15))
+                })
+
+            }
+        cldAssert("l_sample/e_anti_removal:15,fl_layer_apply",transformation)
+    }
+
+    @Test
+    fun testAntiRemovalWithoutLevel() {
+        val transformation =
+            transformation {
+                overlay(Overlay.image {
+                    source("sample") {
+
+                    }.blendMode(BlendMode.antiRemoval())
+                })
+
+            }
+        cldAssert("l_sample/e_anti_removal,fl_layer_apply",transformation)
+    }
+
 
     @Test
     fun textComplexTransformation() {

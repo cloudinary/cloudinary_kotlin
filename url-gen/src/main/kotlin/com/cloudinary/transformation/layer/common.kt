@@ -49,7 +49,8 @@ class BlendMode(private val value: String) {
         private val mask = BlendMode("mask")
         fun mask() = mask
         private val antiRemoval = BlendMode("anti_removal")
-        fun antiRemoval() = antiRemoval
+        fun antiRemoval(level: Int? = null) = if (level != null) {BlendMode("anti_removal:$level")} else {
+            antiRemoval}
     }
 
     override fun toString(): String {
