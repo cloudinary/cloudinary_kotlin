@@ -47,13 +47,7 @@ class VideoEditTest {
     }
 
     @Test
-    fun testPreivewAsExpression() {
-        var string1 = VideoEdit.preview {
-            duration(2f)
-        }.toString()
-        var string2 = Expression.expression(VideoEdit.preview {
-            duration(2f)
-        }.toString())
+    fun testPreviewAsExpression() {
         cldAssert("e_preview:duration_2.0", Expression.expression(VideoEdit.preview {
             duration(2f)
         }.toString()))
