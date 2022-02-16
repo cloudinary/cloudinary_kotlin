@@ -2,6 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.videoedit.Concatenate
 import com.cloudinary.transformation.videoedit.Transition
 import com.cloudinary.transformation.videoedit.VideoEdit
@@ -43,6 +44,19 @@ class VideoEditTest {
             maximumSegments(3)
             minimumSegmentDuration(3)
         })
+    }
+
+    @Test
+    fun testPreivewAsExpression() {
+        var string1 = VideoEdit.preview {
+            duration(2f)
+        }.toString()
+        var string2 = Expression.expression(VideoEdit.preview {
+            duration(2f)
+        }.toString())
+        cldAssert("e_preview:duration_2.0", Expression.expression(VideoEdit.preview {
+            duration(2f)
+        }.toString()))
     }
 
     @Test
