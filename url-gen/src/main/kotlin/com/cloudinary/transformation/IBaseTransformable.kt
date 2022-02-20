@@ -45,27 +45,6 @@ interface IBaseTransformable<T> {
         addWithBuilder(Cutout.Builder(source), cutout)
 
     /**
-     * Add an overlay image blended using the 'anti-removal' blend mode.
-     *
-     * In this mode, the overlay is slightly distorted to prevent easy removal.
-     *
-     * @return TODO DOC new transformation
-     */
-    fun antiRemoval(antiRemoval: AntiRemoval) = add(antiRemoval)
-
-    /**
-     * Add an overlay image blended using the 'anti-removal' blend mode.
-     *
-     * In this mode, the overlay is slightly distorted to prevent easy removal.
-     *
-     * @param source The overlay image to use
-     * @param antiRemoval The anti-removal action to add TODO DOC builder receiver param
-     * @return TODO DOC new transformation
-     */
-    fun antiRemoval(source: Source, antiRemoval: (AntiRemoval.Builder.() -> Unit)? = null) =
-        addWithBuilder(AntiRemoval.Builder(source), antiRemoval)
-
-    /**
      * Inject a custom function into the image transformation pipeline.
      *
      * @param customFunction The custom function source
