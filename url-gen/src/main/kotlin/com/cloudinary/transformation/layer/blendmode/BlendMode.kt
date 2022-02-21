@@ -29,7 +29,7 @@ interface OverlayBlendModeBuilder : BlendModeComponentBuilder
 
 private fun <T : OverlayBlendModeBuilder> buildBlendMode(builder: T, options: (T.() -> Unit)?): BlendMode {
     options?.let { builder.it() }
-    return builder.build() as BlendMode
+    return builder.build()
 }
 
 @TransformationDsl
