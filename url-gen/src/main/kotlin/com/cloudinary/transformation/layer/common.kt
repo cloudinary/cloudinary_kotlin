@@ -1,7 +1,7 @@
 package com.cloudinary.transformation.layer
 
+import com.cloudinary.transformation.*
 import com.cloudinary.transformation.DEFAULT_COMPONENT_SEPARATOR
-import com.cloudinary.transformation.Param
 import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.transformation.layer.position.BaseLayerPosition
 import com.cloudinary.transformation.layer.position.Timeline
@@ -37,23 +37,3 @@ internal fun buildLayerComponent(
 
     return sourceComponent.joinWithValues(source.transformation, lastComponent, separator = DEFAULT_COMPONENT_SEPARATOR)
 }
-
-class BlendMode(private val value: String) {
-    companion object {
-        private val screen = BlendMode("screen")
-        fun screen() = screen
-        private val multiply = BlendMode("multiply")
-        fun multiply() = multiply
-        private val overlay = BlendMode("overlay")
-        fun overlay() = overlay
-        private val mask = BlendMode("mask")
-        fun mask() = mask
-        private val antiRemoval = BlendMode("anti_removal")
-        fun antiRemoval() = antiRemoval
-    }
-
-    override fun toString(): String {
-        return value
-    }
-}
-
