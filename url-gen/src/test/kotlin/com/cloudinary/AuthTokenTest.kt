@@ -149,9 +149,8 @@ class AuthTokenTest {
 
     @Test
     fun testAuthTokenWithAnalytics() {
-        // note: This test validates the concatenation of analytics query param to the url.
+        // note: This test validates no concatenation of analytics if query param already exists.
         // This is not meant to test the string generation - This is tested separately in its own test.
-        val expectedAnalytics = generateAnalyticsSignature()
 
         val cloudinary =
             Cloudinary(
@@ -165,7 +164,7 @@ class AuthTokenTest {
         val url =
             cloudinary.image().generate("sample.jpg")
         assertEquals(
-            "https://res.cloudinary.com/test123/image/upload/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=ec2d0e9a87f6dd5147c36f39c5e88c28fdaa53d1e04f3d70160f7ebe62a60c7a&_a=$expectedAnalytics",
+            "https://res.cloudinary.com/test123/image/upload/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=ec2d0e9a87f6dd5147c36f39c5e88c28fdaa53d1e04f3d70160f7ebe62a60c7a",
             url
         )
     }
