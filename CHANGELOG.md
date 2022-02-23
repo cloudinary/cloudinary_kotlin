@@ -1,3 +1,15 @@
+
+1.1.0 / 2022-02-23
+==================
+
+Other changes
+-------------
+  * Add level to anti_removal on overlay
+  * Fix expression normalization
+  * Remove jcenter dependency
+  * Update README.md
+  * Fix OCR text variable
+
 1.0.0 / 2021-02-25
 ==================
 
