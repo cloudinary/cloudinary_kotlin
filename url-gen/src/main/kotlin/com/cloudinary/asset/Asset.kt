@@ -162,10 +162,11 @@ abstract class BaseAsset constructor(
                 mutableSource
             ).joinToString("/").cldMergeSlashedInUrl()
 
+        var analytics: String? = null
         var urlObject = URL(url)
-        val analytics = if (urlConfig.analytics && cloudConfig.authToken == null && urlObject.query == null)
-            "_a=${generateAnalyticsSignature()}"
-        else null
+        if (urlConfig.analytics && cloudConfig.authToken == null && urlObject.query == null) {
+            analytics = "_a=${generateAnalyticsSignature()}"
+        }
 
 
         return if (urlConfig.signUrl && cloudConfig.authToken != null && cloudConfig.authToken != NULL_AUTH_TOKEN) {
