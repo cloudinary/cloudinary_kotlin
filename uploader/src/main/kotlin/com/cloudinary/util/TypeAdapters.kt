@@ -47,6 +47,7 @@ internal fun UploadParams.toMap(): MutableMap<String, Any> {
     params["timestamp"] = timestamp?.asCloudinaryTimestamp()
     params["quality_analysis"] = qualityAnalysis?.asCloudinaryBoolean()
     params["cinemagraph_analysis"] = cinemagraphAnalysis?.asCloudinaryBoolean()
+    params["accessibility_analysis"] = accessibilityAnalysis?.asCloudinaryBoolean()
 
     addWriteParams(params)
 
@@ -299,6 +300,15 @@ class ResponseColorsAdapter {
 
     @ToJson
     fun toJson(color: ResultColor) = arrayOf(color.color, color.percent.toString())
+}
+
+class ResponseAccessabilityAnalysis {
+    @FromJson
+    fun fromJson(json: Array<String>) =
+        ResultAccessabiltyAnalysis(json[0], json[1])
+
+    @ToJson
+    fun toJson(accessabilityAnalysis: ResultAccessabiltyAnalysis)
 }
 
 class ResponseRectangleAdapter {

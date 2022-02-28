@@ -385,6 +385,20 @@ class UploaderTest(networkLayer: NetworkLayer) {
     }
 
     @Test
+    fun testAccessibilityAnalysisResource() {
+        val response = uploader.upload(srcTestImage) {
+            params {
+                accessibilityAnalysis = true
+            }
+        }
+
+        val result = response.resultOrThrow()
+
+        assertNotNull(result.accessibilityAnalysis)
+        assertEquals(true, result.accessibilityAnalysis)
+    }
+
+    @Test
     fun testRawConvertRequest() {
         //should support requesting raw conversion
         val response = uploader.upload(srcTestImage) {

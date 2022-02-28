@@ -64,7 +64,10 @@ data class UploadResult(
     @Json(name = "delete_token")
     var deleteToken: String? = null,
     var context: ResultContext? = null,
-    var done: Boolean? = null
+    var done: Boolean? = null,
+    @Json(name = "accessibility_analysis")
+    var accessibilityAnalysis: ResultAccessabiltyAnalysis? = null
+
 )
 
 class ResultColor(val color: String, val percent: Float)
@@ -85,7 +88,10 @@ class ResultEager(
 data class ResultModeration(val kind: String, val status: String)
 
 @JsonClass(generateAdapter = true)
-data class ResultResponsiveBreakpoints(val breakpoints: List<ResultSingleBreakpointData>, val transformation: String?)
+data class ResultResponsiveBreakpoints(
+    val breakpoints: List<ResultSingleBreakpointData>,
+    val transformation: String?
+)
 
 @JsonClass(generateAdapter = true)
 data class ResultSingleBreakpointData(
@@ -102,4 +108,25 @@ data class ResultCinemagraphAnalysis(@Json(name = "cinemagraph_score") val score
 @JsonClass(generateAdapter = true)
 data class ResultContext(
     val custom: Map<String, String>?
+)
+
+@JsonClass(generateAdapter = true)
+data class ResultAccessabiltyAnalysis(
+    @Json(name = "colorblind_accessibility_analysis")
+    val colorblindAccessibilityAnalysis: ResultColorblindAccessibilityScore,
+    @Json(name = "colorblind_accessibility_score")
+    val colorblindAccessibilityScore: Float
+)
+
+
+@JsonClass(generateAdapter = true)
+data class ResultColorblindAccessibilityScore(
+    @Json(name = "distinct_edges")
+    val distinctEdges: Float,
+
+    @Json(name = "distinct_colors")
+    val distinctColors: Float,
+
+    @Json(name = "most_indistinct_pair")
+    val mostIndistinctPair: List<String>
 )
