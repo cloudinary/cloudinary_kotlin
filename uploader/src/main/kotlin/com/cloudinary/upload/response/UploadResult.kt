@@ -128,5 +128,5 @@ data class ResultColorblindAccessibilityScore(
     val distinctColors: Float,
 
     @Json(name = "most_indistinct_pair")
-    val mostIndistinctPair: List<String>
+    val mostIndistinctPair: Array<String>
 )

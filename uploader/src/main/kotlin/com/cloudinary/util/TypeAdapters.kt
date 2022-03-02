@@ -256,6 +256,7 @@ fun toUploadResult(httpContent: String): UploadResult? {
         .add(ResponseColorsAdapter())
         .add(ResponseRectangleAdapter())
         .add(ResponseCoordinatesAdapter())
+        .add(ResponseAccessabilityAnalysis())
         .add(DateAdapter())
         .build()
     val jsonAdapter = moshi.adapter<UploadResult>(
@@ -304,11 +305,13 @@ class ResponseColorsAdapter {
 
 class ResponseAccessabilityAnalysis {
     @FromJson
-    fun fromJson(json: Array<String>) =
-        ResultAccessabiltyAnalysis(json[0], json[1])
-
+    fun fromJson(json: ResultAccessabiltyAnalysis) =
+        ResultAccessabiltyAnalysis( ResultColorblindAccessibilityScore(json.colorblindAccessibilityAnalysis.distinctEdges,
+            json.colorblindAccessibilityAnalysis.distinctEdges,json.colorblindAccessibilityAnalysis.mostIndistinctPair),
+            json.colorblindAccessibilityScore)
     @ToJson
-    fun toJson(accessabilityAnalysis: ResultAccessabiltyAnalysis)
+    fun toJson(accessabilityAnalysis: ResultAccessabiltyAnalysis) =
+        arrayOf(accessabilityAnalysis.colorblindAccessibilityScore)
 }
 
 class ResponseRectangleAdapter {
