@@ -101,27 +101,27 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
             val setupTags = listOf(sdkTestTag, uploaderTag, archiveTag)
 
-//            cloudinary.uploader().upload(srcTestImage) {
-//                params {
-//                    tags = setupTags
-//                }
-//            }
-//
-//            cloudinary.uploader().upload(srcTestImage) {
-//                params {
-//                    tags = setupTags
-//                }
-//                options {
-//                    resourceType = "raw"
-//                }
-//            }
-//
-//            cloudinary.uploader().upload(srcTestImage) {
-//                params {
-//                    tags = setupTags
-//                    transformation { resize(scale { width(10) }) }
-//                }
-//            }
+            cloudinary.uploader().upload(srcTestImage) {
+                params {
+                    tags = setupTags
+                }
+            }
+
+            cloudinary.uploader().upload(srcTestImage) {
+                params {
+                    tags = setupTags
+                }
+                options {
+                    resourceType = "raw"
+                }
+            }
+
+            cloudinary.uploader().upload(srcTestImage) {
+                params {
+                    tags = setupTags
+                    transformation { resize(scale { width(10) }) }
+                }
+            }
         }
 
         @AfterClass
