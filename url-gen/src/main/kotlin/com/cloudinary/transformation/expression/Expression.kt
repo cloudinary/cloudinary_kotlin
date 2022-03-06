@@ -169,6 +169,12 @@ class Expression(private val values: List<Any> = listOf()) {
     }
 }
 
+/**
+ * Normalize an expression string, replace "nice names" with their coded values and spaces with "_".
+ *
+ * @param expression an expression
+ * @return a parsed expression
+ */
 internal fun Any.cldNormalize(): String {
     val expression = this
 
@@ -176,6 +182,7 @@ internal fun Any.cldNormalize(): String {
     val matcher = USER_VARIABLE_PATTERN.matcher(conditionStr)
     val result = StringBuffer(conditionStr.length)
 
+    // we first look for a user variable (starting with a $)
     var lastMatchEnd = 0
     while (matcher.find()) {
         var beforeMatch = conditionStr.substring(lastMatchEnd, matcher.start())
@@ -183,10 +190,18 @@ internal fun Any.cldNormalize(): String {
         result.append(matcher.group())
         lastMatchEnd = matcher.end()
     }
+
+    // we look to replace all "nice names" with their coded values.
     result.append(normalizeBuiltins(conditionStr.substring(lastMatchEnd)))
     return result.toString()
 }
 
+/**
+ * Normalize an expression string, replace "nice names" with their coded values and spaces with "_".
+ *
+ * @param input an expression
+ * @return a parsed expression
+ */
 internal fun normalizeBuiltins(input: String): String {
     var replacement: String? = null
     val matcher = PATTERN.matcher(input)
