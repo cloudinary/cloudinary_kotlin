@@ -395,6 +395,13 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val result = response.resultOrThrow()
 
         assertNotNull(result.accessibilityAnalysis)
+
+        result.accessibilityAnalysis?.let { it.colorblindAccessibilityScore > 0 }
+            ?.let { assert(it) }
+        result.accessibilityAnalysis?.let { it.colorblindAccessibilityAnalysis.distinctColors > 0 }
+            ?.let { assert(it) }
+        result.accessibilityAnalysis?.let { it.colorblindAccessibilityAnalysis.distinctEdges > 0 }
+            ?.let { assert(it) }
     }
 
     @Test
