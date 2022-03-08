@@ -47,6 +47,7 @@ internal fun UploadParams.toMap(): MutableMap<String, Any> {
     params["timestamp"] = timestamp?.asCloudinaryTimestamp()
     params["quality_analysis"] = qualityAnalysis?.asCloudinaryBoolean()
     params["cinemagraph_analysis"] = cinemagraphAnalysis?.asCloudinaryBoolean()
+    params["filename_override"] = filenameOverride
 
     addWriteParams(params)
 
