@@ -66,8 +66,7 @@ data class UploadResult(
     var context: ResultContext? = null,
     var done: Boolean? = null,
     @Json(name = "accessibility_analysis")
-    var accessibilityAnalysis: ResultAccessabiltyAnalysis? = null
-
+    var accessibilityAnalysis: ResultAccessibilityAnalysis? = null
 )
 
 class ResultColor(val color: String, val percent: Float)
@@ -111,22 +110,39 @@ data class ResultContext(
 )
 
 @JsonClass(generateAdapter = true)
-data class ResultAccessabiltyAnalysis(
+data class ResultAccessibilityAnalysis(
     @Json(name = "colorblind_accessibility_analysis")
     val colorblindAccessibilityAnalysis: ResultColorblindAccessibilityScore,
     @Json(name = "colorblind_accessibility_score")
     val colorblindAccessibilityScore: Float
 )
 
-
 @JsonClass(generateAdapter = true)
 data class ResultColorblindAccessibilityScore(
     @Json(name = "distinct_edges")
     val distinctEdges: Float,
-
     @Json(name = "distinct_colors")
     val distinctColors: Float,
-
     @Json(name = "most_indistinct_pair")
     val mostIndistinctPair: Array<String>
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ResultColorblindAccessibilityScore
+
+        if (distinctEdges != other.distinctEdges) return false
+        if (distinctColors != other.distinctColors) return false
+        if (!mostIndistinctPair.contentEquals(other.mostIndistinctPair)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = distinctEdges.hashCode()
+        result = 31 * result + distinctColors.hashCode()
+        result = 31 * result + mostIndistinctPair.contentHashCode()
+        return result
+    }
+}
