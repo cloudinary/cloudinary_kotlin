@@ -44,7 +44,7 @@ val PREDEFINED_VARS = mapOf(
 )
 
 val PATTERN = getPattern()
-var USER_VARIABLE_PATTERN = Pattern.compile("\\\$_*[^_]+")
+var USER_VARIABLE_PATTERN: Pattern = Pattern.compile("\\\$_*[^_]+")
 
 class Expression(private val values: List<Any> = listOf()) {
     constructor(value: Any) : this(listOf(value))
