@@ -305,12 +305,12 @@ class ResponseColorsAdapter {
 
 class ResponseAccessabilityAnalysis {
     @FromJson
-    fun fromJson(json: ResultAccessabiltyAnalysis) =
-        ResultAccessabiltyAnalysis( ResultColorblindAccessibilityScore(json.colorblindAccessibilityAnalysis.distinctEdges,
+    fun fromJson(json: ResultAccessibilityAnalysis) =
+        ResultAccessibilityAnalysis( ResultColorblindAccessibilityScore(json.colorblindAccessibilityAnalysis.distinctEdges,
             json.colorblindAccessibilityAnalysis.distinctEdges,json.colorblindAccessibilityAnalysis.mostIndistinctPair),
             json.colorblindAccessibilityScore)
     @ToJson
-    fun toJson(accessabilityAnalysis: ResultAccessabiltyAnalysis) =
+    fun toJson(accessabilityAnalysis: ResultAccessibilityAnalysis) =
         arrayOf(accessabilityAnalysis.colorblindAccessibilityScore)
 }
 
