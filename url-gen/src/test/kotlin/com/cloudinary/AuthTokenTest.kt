@@ -148,7 +148,7 @@ class AuthTokenTest {
     }
 
     @Test
-    fun testAuthTokenIgnoreAnalytics() {
+    fun testAuthTokenDisableAnalytics() {
         // note: This test validates no concatenation of analytics if query param already exists.
         // This is not meant to test the string generation - This is tested separately in its own test.
 
