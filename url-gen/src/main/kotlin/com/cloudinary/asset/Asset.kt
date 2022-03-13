@@ -8,6 +8,7 @@ import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
+import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -162,20 +163,21 @@ abstract class BaseAsset constructor(
                 mutableSource
             ).joinToString("/").cldMergeSlashedInUrl()
 
-
-        //REFACTOR this piece of code.split to 2 ifs if auth token return atuh token, if anaytivcs return with analytics else return url
-        var analytics: String? = null
-        var urlObject = URL(url) // Need to catch the exception here!
-        if (urlConfig.analytics && cloudConfig.authToken == null &&  urlObject.query == null) {
-            analytics = "_a=${generateAnalyticsSignature()}"
-        }
-
-        return if (urlConfig.signUrl && cloudConfig.authToken != null && cloudConfig.authToken != NULL_AUTH_TOKEN) {
+        if (urlConfig.signUrl && cloudConfig.authToken != null && cloudConfig.authToken != NULL_AUTH_TOKEN) {
             val token = cloudConfig.authToken.generate(URL(url).path)
-            "$url?$token".joinWithValues(analytics, separator = "&")
-        } else {
-            url.joinWithValues(analytics, separator = "?")
+            return "$url?$token"
         }
+        try {
+            var urlObject = URL(url)
+            if (urlConfig.analytics && cloudConfig.authToken == null &&  urlObject.query == null) {
+                val analytics = "_a=${generateAnalyticsSignature()}"
+                return url.joinWithValues(analytics, separator = "?")
+            }
+        } catch (exception: MalformedURLException) {
+            return url
+        }
+
+        return url
     }
 
     abstract fun getTransformationString(): String?
