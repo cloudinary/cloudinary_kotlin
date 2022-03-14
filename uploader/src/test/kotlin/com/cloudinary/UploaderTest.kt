@@ -947,6 +947,17 @@ class UploaderTest(networkLayer: NetworkLayer) {
         }.resultOrThrow()
     }
 
+    @Test
+    fun testFilenameOverrideOption() {
+        var result = Cloudinary().uploader().upload(srcTestImage) {
+            params {
+                useFilename = true
+                filenameOverride = "overridden"
+            }
+        }.resultOrThrow()
+        assertEquals("overridden", result.originalFilename)
+    }
+
     private fun validateSignature(result: UploadResult) {
         val toSign: MutableMap<String, Any> = HashMap()
         toSign["public_id"] = result.publicId!!

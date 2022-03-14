@@ -61,6 +61,7 @@ data class UploadParams( //45
     @Json(name = "background_removal") internal val backgroundRemoval: String? = null,
     @Json(name = "auto_tagging") internal val autoTagging: String? = null,
     @Json(name = "accessibility_analysis") internal var accessibilityAnalysis: Boolean? = null
+    @Json(name = "filename_override") internal val filenameOverride: String? = null
 ) {
 
     @Suppress("unused", "MemberVisibilityCanBePrivate")
@@ -113,6 +114,7 @@ data class UploadParams( //45
         var cinemagraphAnalysis: Boolean? = null
         var qualityAnalysis: Boolean? = null
         var accessibilityAnalysis: Boolean? = null
+        var filenameOverride: String? = null
 
         fun transformation(transform: Transformation.Builder.() -> Unit) {
             val builder = Transformation.Builder()
@@ -169,6 +171,7 @@ data class UploadParams( //45
                 backgroundRemoval,
                 autoTagging,
                 accessibilityAnalysis
+                filenameOverride
             )
         }
     }
