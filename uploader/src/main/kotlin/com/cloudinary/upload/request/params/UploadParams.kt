@@ -60,6 +60,7 @@ data class UploadParams( //45
     @Json(name = "similarity_search") internal val similaritySearch: String? = null,
     @Json(name = "background_removal") internal val backgroundRemoval: String? = null,
     @Json(name = "auto_tagging") internal val autoTagging: String? = null,
+    @Json(name = "accessibility_analysis") internal var accessibilityAnalysis: Boolean? = null,
     @Json(name = "filename_override") internal val filenameOverride: String? = null
 ) {
 
@@ -112,6 +113,7 @@ data class UploadParams( //45
         var autoTagging: String? = null
         var cinemagraphAnalysis: Boolean? = null
         var qualityAnalysis: Boolean? = null
+        var accessibilityAnalysis: Boolean? = null
         var filenameOverride: String? = null
 
         fun transformation(transform: Transformation.Builder.() -> Unit) {
@@ -168,6 +170,7 @@ data class UploadParams( //45
                 similaritySearch,
                 backgroundRemoval,
                 autoTagging,
+                accessibilityAnalysis,
                 filenameOverride
             )
         }

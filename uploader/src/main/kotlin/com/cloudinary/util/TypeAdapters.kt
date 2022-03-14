@@ -47,6 +47,7 @@ internal fun UploadParams.toMap(): MutableMap<String, Any> {
     params["timestamp"] = timestamp?.asCloudinaryTimestamp()
     params["quality_analysis"] = qualityAnalysis?.asCloudinaryBoolean()
     params["cinemagraph_analysis"] = cinemagraphAnalysis?.asCloudinaryBoolean()
+    params["accessibility_analysis"] = accessibilityAnalysis?.asCloudinaryBoolean()
     params["filename_override"] = filenameOverride
 
     addWriteParams(params)
@@ -256,6 +257,7 @@ fun toUploadResult(httpContent: String): UploadResult? {
         .add(ResponseColorsAdapter())
         .add(ResponseRectangleAdapter())
         .add(ResponseCoordinatesAdapter())
+        .add(ResponseAccessabilityAnalysis())
         .add(DateAdapter())
         .build()
     val jsonAdapter = moshi.adapter<UploadResult>(
@@ -300,6 +302,17 @@ class ResponseColorsAdapter {
 
     @ToJson
     fun toJson(color: ResultColor) = arrayOf(color.color, color.percent.toString())
+}
+
+class ResponseAccessabilityAnalysis {
+    @FromJson
+    fun fromJson(json: ResultAccessibilityAnalysis) =
+        ResultAccessibilityAnalysis( ResultColorblindAccessibilityScore(json.colorblindAccessibilityAnalysis.distinctEdges,
+            json.colorblindAccessibilityAnalysis.distinctEdges,json.colorblindAccessibilityAnalysis.mostIndistinctPair),
+            json.colorblindAccessibilityScore)
+    @ToJson
+    fun toJson(accessabilityAnalysis: ResultAccessibilityAnalysis) =
+        arrayOf(accessabilityAnalysis.colorblindAccessibilityScore)
 }
 
 class ResponseRectangleAdapter {
