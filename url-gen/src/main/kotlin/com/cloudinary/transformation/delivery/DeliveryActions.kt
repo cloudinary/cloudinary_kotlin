@@ -44,16 +44,21 @@ class DeliveryFormat(
     private val format: Format,
     private val lossy: Boolean? = null,
     private val progressive: Progressive? = null,
-    private val preserveTransparency: Boolean? = null
+    private val preserveTransparency: Boolean? = null,
+    private var ignoreMaskChannels: Boolean = false
+
 
 ) : Delivery() {
     override fun toString(): String {
         val lossyStr = if (lossy == true) "fl_lossy" else null
         val preserveTransparencyStr = if (preserveTransparency == true) "fl_preserve_transparency" else null
         val progressiveStr = progressive?.toString()
+        val ignoreMaskChannels = if(ignoreMaskChannels) "fl_ignore_mask_channels" else null
 
-        return "f_$format".joinWithValues(lossyStr, preserveTransparencyStr, progressiveStr, separator = ",")
+        return "f_$format".joinWithValues(lossyStr, preserveTransparencyStr, progressiveStr, ignoreMaskChannels, separator = ",")
     }
+
+    fun ignoreMaskChannels() = apply { this.ignoreMaskChannels = true }
 
     class Builder(private val format: Format) : TransformationComponentBuilder {
         private var lossy: Boolean? = null

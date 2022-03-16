@@ -86,4 +86,9 @@ class DeliveryTest {
                 preserveTransparency()
             })
     }
+
+    @Test
+    fun testIgnoreMaskChannels() {
+        cldAssert("f_tiff,fl_ignore_mask_channels", Delivery.format(Format.tiff()).ignoreMaskChannels())
+    }
 }
