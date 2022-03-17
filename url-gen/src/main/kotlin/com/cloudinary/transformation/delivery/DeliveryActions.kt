@@ -58,22 +58,23 @@ class DeliveryFormat(
         return "f_$format".joinWithValues(lossyStr, preserveTransparencyStr, progressiveStr, ignoreMaskChannels, separator = ",")
     }
 
-    fun ignoreMaskChannels() = apply { this.ignoreMaskChannels = true }
+
 
     class Builder(private val format: Format) : TransformationComponentBuilder {
         private var lossy: Boolean? = null
         private var progressive: Progressive? = null
         private var preserveTransparency: Boolean? = null
+        private var ignoreMaskChannels: Boolean? = null
 
         fun lossy(lossy: Boolean? = true) = apply { this.lossy = lossy }
         fun progressive(progressive: Progressive) = apply {
             this.progressive = progressive
         }
-
         fun preserveTransparency() = apply { this.preserveTransparency = true }
+        fun ignoreMaskChannels() = apply { this.ignoreMaskChannels = true }
 
         override fun build(): DeliveryFormat {
-            return DeliveryFormat(format, lossy, progressive, preserveTransparency)
+            return DeliveryFormat(format, lossy, progressive, preserveTransparency, ignoreMaskChannels)
         }
     }
 }
