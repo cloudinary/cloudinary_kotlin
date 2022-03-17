@@ -45,7 +45,7 @@ class DeliveryFormat(
     private val lossy: Boolean? = null,
     private val progressive: Progressive? = null,
     private val preserveTransparency: Boolean? = null,
-    private var ignoreMaskChannels: Boolean = false
+    private var ignoreMaskChannels: Boolean? = null
 
 
 ) : Delivery() {
@@ -53,7 +53,7 @@ class DeliveryFormat(
         val lossyStr = if (lossy == true) "fl_lossy" else null
         val preserveTransparencyStr = if (preserveTransparency == true) "fl_preserve_transparency" else null
         val progressiveStr = progressive?.toString()
-        val ignoreMaskChannels = if(ignoreMaskChannels) "fl_ignore_mask_channels" else null
+        val ignoreMaskChannels = if(ignoreMaskChannels == true) "fl_ignore_mask_channels" else null
 
         return "f_$format".joinWithValues(lossyStr, preserveTransparencyStr, progressiveStr, ignoreMaskChannels, separator = ",")
     }
