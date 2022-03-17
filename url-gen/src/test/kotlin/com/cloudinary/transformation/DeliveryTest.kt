@@ -79,11 +79,12 @@ class DeliveryTest {
                 progressive(Progressive.semi())
             })
 
-        cldAssert("f_jpg,fl_lossy,fl_preserve_transparency,fl_progressive",
+        cldAssert("f_jpg,fl_lossy,fl_preserve_transparency,fl_progressive,fl_ignore_mask_channels",
             Delivery.format(Format.jpg()) {
                 lossy()
                 progressive(Progressive.progressive())
                 preserveTransparency()
+                ignoreMaskChannels()
             })
     }
 }
