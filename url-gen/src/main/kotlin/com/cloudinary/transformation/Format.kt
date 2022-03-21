@@ -73,6 +73,8 @@ class Format private constructor(private val value: String) {
         fun tiff() = tiff
         private val avif = Format("avif")
         fun avif() = avif
+        private val usdz = Format("usdz")
+        fun usdz() = usdz
         private val video3g2 = Format("3g2")
         fun video3g2() = video3g2
         private val video3gp = Format("3gp")
