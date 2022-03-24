@@ -870,6 +870,48 @@ class UploaderTest(networkLayer: NetworkLayer) {
     }
 
     @Test
+    fun testTagsAsArray() {
+        var uploaderResponse = uploader.upload(srcTestImage)
+        var uploadResult = uploaderResponse.resultOrThrow()
+        val publicId1 = uploadResult.publicId!!
+
+        uploaderResponse = uploader.upload(srcTestImage)
+        uploadResult = uploaderResponse.data!!
+        val publicId2 = uploadResult.publicId!!
+
+        val tag1 = randomPublicId()
+        val tag2 = randomPublicId()
+        val tag3 = randomPublicId()
+        val tag4 = randomPublicId()
+        val tag5 = randomPublicId()
+        val tag6 = randomPublicId()
+        val tag7 = randomPublicId()
+
+        uploader.addTag(listOf(tag1,tag5), listOf(publicId1, publicId2))
+        uploader.addTag(listOf(tag2,tag6), listOf(publicId1, publicId2))
+        uploader.addTag(listOf(tag3,tag7), listOf(publicId1, publicId2))
+
+        uploader.removeTag(tag2, listOf(publicId2))
+
+
+        assertTrue(doResourcesHaveTag(cloudinary, tag1, publicId1, publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag5, publicId1, publicId2))
+        assertTrue(doResourcesHaveTag(cloudinary, tag2, publicId1))
+        assertTrue(doResourcesHaveTag(cloudinary, tag6, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag2, publicId2))
+
+        uploader.removeAllTags(listOf(publicId2))
+
+        assertTrue(doResourcesHaveTag(cloudinary, tag3, publicId1))
+        assertFalse(doResourcesHaveTag(cloudinary, tag3, publicId2))
+        assertFalse(doResourcesHaveTag(cloudinary, tag7, publicId2))
+
+        uploader.replaceTag(tag4, listOf(publicId1))
+
+        assertTrue(doResourcesHaveTag(cloudinary, tag4, publicId1))
+    }
+
+    @Test
     fun testEncodeContext() {
         val context = mapOf("caption" to "different = caption", "alt2" to "alt|alternative")
         val result: String = context.asContextParam()

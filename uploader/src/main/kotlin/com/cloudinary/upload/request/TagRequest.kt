@@ -19,10 +19,10 @@ class TagsRequest internal constructor(
     override fun execute() = uploader.callApi(this, "tags", ::toTagsResult)
     class Builder(private val command: TagsCommand, private val publicIds: List<String>, uploader: Uploader) :
         UploaderRequestsBuilder<TagsRequest>(uploader) {
-        var tag: String? = null
+        var tag: List<String>? = null
         var type: String? = null
 
-        override fun build() = TagsRequest(uploader, options, cloudinaryConfig, command, tag, type, publicIds)
+        override fun build() = TagsRequest(uploader, options, cloudinaryConfig, command, tag?.joinToString(","), type, publicIds)
     }
 }
 
