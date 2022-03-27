@@ -3,6 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.adjust.Adjust
 import com.cloudinary.transformation.adjust.ImproveMode
+import com.cloudinary.transformation.expression.Expression
 import org.junit.Test
 
 class AdjustTest {
@@ -170,6 +171,11 @@ class AdjustTest {
     @Test
     fun opacity() {
         cldAssert("o_30", Adjust.opacity(30))
+        cldAssert("e_opacity:30", Adjust.opacity(30))
+        cldAssert("e_opacity:w_mul_2", Adjust.opacity(Expression("width * 2")))
+        cldAssert("e_opacity:w_mul_2", Adjust.opacity {
+            level(Expression("width * 2"))
+        })
     }
 
     @Test

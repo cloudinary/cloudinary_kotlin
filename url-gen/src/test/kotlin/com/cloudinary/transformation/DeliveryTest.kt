@@ -2,6 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.delivery.*
+import com.cloudinary.transformation.expression.Expression
 import org.junit.Test
 
 class DeliveryTest {
@@ -21,6 +22,7 @@ class DeliveryTest {
         cldAssert("dpr_auto", Delivery.dpr(Dpr.auto()))
         cldAssert("dpr_2:3", Delivery.dpr("2:3"))
         cldAssert("dpr_1.5", Delivery.dpr(1.5f))
+        cldAssert("dpr_w_mul_2", Delivery.dpr(Expression("width * 2")))
     }
 
     @Test
@@ -58,6 +60,7 @@ class DeliveryTest {
         cldAssert("q_jpegmini:0", Delivery.quality(Quality.jpegminiBest()))
         cldAssert("q_jpegmini:1", Delivery.quality(Quality.jpegminiHigh()))
         cldAssert("q_jpegmini:2", Delivery.quality(Quality.jpegminiMedium()))
+        cldAssert("q_w_mul_2", Delivery.quality(Expression("width * 2")))
     }
 
     @Test

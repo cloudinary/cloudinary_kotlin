@@ -23,7 +23,12 @@ class VideoEditTest {
         cldAssert("eo_auto", trim { endOffset("auto") })
         cldAssert("eo_2.63", trim { endOffset(2.63f) })
         cldAssert("eo_35.0p", trim { endOffset("35.0p") })
-
+        cldAssert("so_w_mul_2", VideoEdit.trim {
+            startOffset(Expression("width * 2"))
+        })
+        cldAssert("eo_w_mul_2", VideoEdit.trim {
+            endOffset(Expression("width * 2"))
+        })
         cldAssert("du_2.63", trim { duration(2.63f) })
         cldAssert("du_35.0p", trim { duration("35.0p") })
 

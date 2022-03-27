@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.videoedit
 
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.layer.source.Source
@@ -31,8 +32,10 @@ class Trim(
 
         fun startOffset(offset: Float) = apply { this.startOffset = offset }
         fun startOffset(offset: String) = apply { this.startOffset = offset }
+        fun startOffset(offset: Expression) = apply { this.startOffset = offset }
         fun endOffset(offset: Float) = apply { this.endOffset = offset }
         fun endOffset(offset: String) = apply { this.endOffset = offset }
+        fun endOffset(offset: Expression) = apply { this.endOffset = offset }
         fun duration(duration: Float) = apply { this.duration = duration }
         fun duration(duration: String) = apply { this.duration = duration }
 
