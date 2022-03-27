@@ -3,6 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.RoundCorners.Companion.byRadius
 import com.cloudinary.transformation.RoundCorners.Companion.max
+import com.cloudinary.transformation.expression.Expression
 import org.junit.Test
 
 class BorderTest {
@@ -27,6 +28,13 @@ class BorderTest {
             "bo_4px_solid_black,r_max",
             Transformation().border(Border.solid(4, Color.BLACK) {
                 roundCorners(max())
+            })
+        )
+
+        cldAssert(
+            "bo_4px_solid_black,r_w_mul_2",
+            Transformation().border(Border.solid(4, Color.BLACK) {
+                roundCorners(byRadius(Expression("width * 2")))
             })
         )
     }
