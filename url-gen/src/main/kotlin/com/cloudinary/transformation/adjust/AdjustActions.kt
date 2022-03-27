@@ -24,6 +24,10 @@ class Opacity (level: Any? = null) : LevelAdjust("opacity", level?.cldRanged(0,1
         fun level(level: Expression) = apply { this.level = level }
 
         override fun build() = Opacity(level)
+
+    }
+    override fun toString(): String {
+        return "o_$level"
     }
 }
 
