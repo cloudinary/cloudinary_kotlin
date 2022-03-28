@@ -37,5 +37,19 @@ class BorderTest {
                 roundCorners(byRadius(Expression("width * 2")))
             })
         )
+
+        cldAssert(
+            "bo_4px_solid_black,r_max",
+            Transformation().border(Border.solid(4, Color.BLACK) {
+                roundCorners("max")
+            })
+        )
+
+        cldAssert(
+            "bo_4px_solid_black",
+            Transformation().border(Border.solid(4, Color.BLACK) {
+                roundCorners("")
+            })
+        )
     }
 }

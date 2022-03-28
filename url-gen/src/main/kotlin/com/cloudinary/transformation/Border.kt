@@ -29,7 +29,11 @@ class Border(
 
 
         fun roundCorners(roundCorners: RoundCorners) = apply { this.roundCorners = roundCorners }
-
+        fun roundCorners(roundCorners: String) = apply {
+            if (roundCorners == "max") {
+                this.roundCorners = RoundCorners.max()
+            }
+        }
         override fun build(): Border {
             val width = width
             val color = color
