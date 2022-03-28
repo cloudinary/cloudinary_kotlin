@@ -6,16 +6,6 @@ import com.cloudinary.transformation.joinWithValues
 import com.cloudinary.util.cldEncodePublicId
 import com.cloudinary.util.cldRanged
 
-//class Opacity internal constructor(val level: Any) : Adjust() {
-//    init {
-//        level.cldRanged(0, 100)
-//    }
-//
-//    override fun toString(): String {
-//        return "o_$level"
-//    }
-//}
-
 class Opacity (level: Any? = null) : LevelAdjust("opacity", level?.cldRanged(0,100)) {
     class Builder : AdjustBuilder {
         private var level: Any? = null
