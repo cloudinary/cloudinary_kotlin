@@ -49,12 +49,32 @@ class GradientFadeAction private constructor(
     }
 }
 
+class Theme internal constructor(private val color: Color, private val photosensitivity: Int? = null): Effect() {
+
+    init {
+        photosensitivity?.cldRanged(0, 100)
+    }
+
+    override fun toString(): String {
+        return "e_theme".joinWithValues(color?.let { "color_$it" }).joinWithValues(photosensitivity?.let { "photosensitivity_$it" })
+    }
+
+    inner class Builder: EffectBuilder {
+        private var photosensitivity: Int? = null
+
+        fun photosensitivity(photosensitivity: Int) = apply { this.photosensitivity = photosensitivity }
+
+        override fun build() = Theme(color, photosensitivity)
+    }
+}
+
 class Colorize internal constructor(private val level: Any?, private val color: Color?) : Effect() {
     init {
         level?.cldRanged(0, 100)
     }
 
     override fun toString(): String {
+        val s = (color?.let { "co_$it," } ?: "") + "e_colorize".joinWithValues(level)
         return (color?.let { "co_$it," } ?: "") + "e_colorize".joinWithValues(level)
     }
 

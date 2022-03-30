@@ -84,12 +84,20 @@ class EffectTest {
 
     @Test
     fun testColorize() {
-        Effect.colorize()
+        Effect.colorize().toString()
         cldAssert("e_colorize", Effect.colorize())
         cldAssert("e_colorize:80", Effect.colorize { level(80) })
         cldAssert(
             "co_blue,e_colorize:80",
             Effect.colorize { level(80).color(Color.BLUE) })
+    }
+
+    @Test
+    fun testTheme() {
+        cldAssert("e_theme:color_black", Effect.theme(Color.BLACK))
+        cldAssert("e_theme:color_black:photosensitivity_30", Effect.theme(Color.BLACK) {
+            photosensitivity(30)
+        })
     }
 
     @Test
