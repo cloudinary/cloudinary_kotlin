@@ -84,7 +84,6 @@ class EffectTest {
 
     @Test
     fun testColorize() {
-        Effect.colorize().toString()
         cldAssert("e_colorize", Effect.colorize())
         cldAssert("e_colorize:80", Effect.colorize { level(80) })
         cldAssert(

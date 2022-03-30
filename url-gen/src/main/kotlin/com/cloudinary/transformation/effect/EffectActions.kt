@@ -74,7 +74,6 @@ class Colorize internal constructor(private val level: Any?, private val color: 
     }
 
     override fun toString(): String {
-        val s = (color?.let { "co_$it," } ?: "") + "e_colorize".joinWithValues(level)
         return (color?.let { "co_$it," } ?: "") + "e_colorize".joinWithValues(level)
     }
 
