@@ -52,7 +52,7 @@ class GradientFadeAction private constructor(
 class Theme internal constructor(private val color: Color, private val photosensitivity: Int? = null): Effect() {
 
     init {
-        photosensitivity?.cldRanged(0, 100)
+        photosensitivity?.cldRanged(0, 200)
     }
 
     override fun toString(): String {
