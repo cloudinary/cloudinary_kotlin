@@ -1,6 +1,7 @@
 package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.layer.source.Source
 
@@ -65,6 +66,12 @@ abstract class Effect : Action {
             val builder = RemoveBackground.Builder()
             options?.let { builder.it() }
             return builder.build()
+        }
+        fun theme(color: Color, options: (Theme.Builder.() -> Unit)? = null): Effect {
+            if (options == null) {
+                return Theme(color)
+            }
+            return buildEffect(Theme(color).Builder(), options)
         }
     }
 }
