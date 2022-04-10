@@ -43,6 +43,10 @@ internal fun Float.cldRealPositive() = if (this <= 0) illegalArgument(this, "Not
 
 internal fun Long.cldPositiveNumber() = if (this <= 0) illegalArgument(this, "Not a positive number") else this
 
+internal fun Long.cldNegativeNumber() = if (this >= 0) {
+    illegalArgument(this, "Not a negative number")
+} else this
+
 internal fun validateAllNotNull(vararg values: Any?) {
     if (values.filterNotNull().size != values.size) illegalArgument(values, "Arguments cannot be null")
 }

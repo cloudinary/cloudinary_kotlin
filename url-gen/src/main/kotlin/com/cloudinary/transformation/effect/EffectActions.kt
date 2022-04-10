@@ -4,6 +4,7 @@ import com.cloudinary.transformation.*
 import com.cloudinary.transformation.effect.AssistColorblind.Type.STRIPES
 import com.cloudinary.transformation.effect.AssistColorblind.Type.XRAY
 import com.cloudinary.transformation.expression.Expression
+import com.cloudinary.util.cldNegativeNumber
 import com.cloudinary.util.cldPositiveNumber
 import com.cloudinary.util.cldRanged
 
@@ -676,7 +677,7 @@ class FadeIn internal constructor(private val duration: Long?) : Effect() {
 
 class FadeOut internal constructor(private val duration: Long?) : Effect() {
     init {
-        duration
+        duration?.cldNegativeNumber()
     }
 
     override fun toString(): String {
@@ -687,7 +688,7 @@ class FadeOut internal constructor(private val duration: Long?) : Effect() {
         private var duration: Long? = null
 
         fun duration(duration: Long) = apply { this.duration = duration }
-        override fun build() = FadeOut(duration?.times(-1))
+        override fun build() = FadeOut(duration)
 
     }
 }

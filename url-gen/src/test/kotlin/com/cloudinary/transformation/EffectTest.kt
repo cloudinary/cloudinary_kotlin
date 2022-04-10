@@ -50,7 +50,7 @@ class EffectTest {
             duration(2000)
         })
         cldAssert("e_fade:-2000", Effect.fadeOut {
-            duration(2000)
+            duration(-2000)
         })
     }
 
