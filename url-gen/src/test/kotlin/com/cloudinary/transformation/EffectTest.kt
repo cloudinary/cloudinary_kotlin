@@ -45,10 +45,13 @@ class EffectTest {
     @Test
     fun testFade() {
         cldAssert("e_fade", Effect.fadeIn())
+        cldAssert("e_fade", Effect.fadeOut())
         cldAssert("e_fade:2000", Effect.fadeIn {
             duration(2000)
         })
-        cldAssert("e_fade:-2000", Effect.fadeOut(2000))
+        cldAssert("e_fade:-2000", Effect.fadeOut {
+            duration(2000)
+        })
     }
 
     @Test

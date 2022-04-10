@@ -26,7 +26,12 @@ abstract class Effect : Action {
             return builder.build()
         }
 
-        fun fadeOut(duration: Long) = FadeOut(duration)
+        fun fadeOut(options: (FadeOut.Builder.() -> Unit)? = null): FadeOut {
+            val builder = FadeOut.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
         fun loop(options: (Loop.Builder.() -> Unit)? = null) = buildEffect(Loop.Builder(), options)
         fun sepia(options: (Sepia.Builder.() -> Unit)? = null) = buildEffect(Sepia.Builder(), options)
         fun blackwhite(options: (Blackwhite.Builder.() -> Unit)? = null) = buildEffect(Blackwhite.Builder(), options)

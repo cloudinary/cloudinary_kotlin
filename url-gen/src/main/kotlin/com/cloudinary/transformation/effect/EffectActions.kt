@@ -674,13 +674,21 @@ class FadeIn internal constructor(private val duration: Long?) : Effect() {
     }
 }
 
-class FadeOut internal constructor(private val duration: Long) : Effect() {
+class FadeOut internal constructor(private val duration: Long?) : Effect() {
     init {
-        duration.cldPositiveNumber()
+        duration
     }
 
     override fun toString(): String {
-        return "e_fade:-$duration"
+        return "e_fade".joinWithValues(duration)
+    }
+
+    class Builder : TransformationComponentBuilder {
+        private var duration: Long? = null
+
+        fun duration(duration: Long) = apply { this.duration = duration }
+        override fun build() = FadeOut(duration?.times(-1))
+
     }
 }
 
