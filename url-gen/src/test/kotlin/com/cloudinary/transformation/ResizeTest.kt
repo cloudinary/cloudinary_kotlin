@@ -144,6 +144,8 @@ class ResizeTest {
 
     @Test
     fun testFill() {
+        cldAssert("c_fill,x_100,y_100", Resize.fill { x(100)
+            y(100)})
         cldAssert("c_fill,w_100", Resize.fill { width(100) })
         cldAssert("c_fill,w_1.0", Resize.fill { width(1f) })
         cldAssert("c_fill,h_100,w_100", Resize.fill {
