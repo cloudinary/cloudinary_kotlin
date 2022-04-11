@@ -10,7 +10,7 @@ class TextSource internal constructor(
     private val text: Any,
     private val style: Any,
     private val backgroundColor: Color? = null,
-    private val textColor: Color? = null,
+    private val textColor: Any? = null,
     override val transformation: ITransformableImage<*>? = null
 ) : Source {
 
@@ -46,7 +46,7 @@ class TextSource internal constructor(
 
         private var style: Any? = null
         private var backgroundColor: Color? = null
-        private var textColor: Color? = null
+        private var textColor: Any? = null
         private var transformation: ITransformableImage<*>? = null
 
         fun style(style: TextStyle) = apply { this.style = style }
@@ -64,6 +64,7 @@ class TextSource internal constructor(
 
         fun backgroundColor(background: Color) = apply { this.backgroundColor = background }
         fun textColor(textColor: Color) = apply { this.textColor = textColor }
+        fun textColor(textColor: String) = apply {this.textColor = textColor }
 
         fun transformation(transformation: ITransformableImage<*>) = apply { this.transformation = transformation }
         fun transformation(transformation: ImageTransformation.Builder.() -> Unit) = apply {
