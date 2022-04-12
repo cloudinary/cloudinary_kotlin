@@ -11,7 +11,6 @@ import com.cloudinary.transformation.layer.source.Source.Companion.fetch
 import com.cloudinary.transformation.layer.source.Source.Companion.image
 import com.cloudinary.transformation.resize.Resize.Companion.scale
 import org.junit.Test
-import java.beans.Expression
 
 class OverlayTest {
     private val position = Position.Builder().gravity(Gravity.focusOn(FocusOn.cat())).offsetX(20).build()
