@@ -50,6 +50,15 @@ class TranscodeTest {
     }
 
     @Test
+    fun testVideoCodeWithoutBFrames() {
+        cldAssert("vc_h264:high:3.1:bframes_no", videoCodec(VideoCodec.h264 {
+            profile(VideoCodecProfile.high())
+            level(VideoCodecLevel.vcl31())
+            bFrames(false)
+        }))
+    }
+
+    @Test
     fun testBitRate() {
         cldAssert("br_250k", Transcode.bitRate("250k"))
     }

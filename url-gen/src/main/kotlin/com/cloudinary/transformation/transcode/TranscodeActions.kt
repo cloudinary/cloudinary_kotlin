@@ -261,23 +261,26 @@ open class VideoCodec(protected val codec: Any) {
     }
 }
 
-class H264Codec private constructor(private val profile: VideoCodecProfile? = null, private val level: Any? = null) :
+class H264Codec private constructor(private val profile: VideoCodecProfile? = null, private val level: Any? = null, private val bFrames: Boolean? = null) :
     VideoCodec("h264") {
     override fun toString(): String {
-        return codec.joinWithValues(profile, level)
+        return codec.joinWithValues(profile, level, bFrames?.let { if (!bFrames) {Param("bframes", "no") } else null})
     }
+
 
     @TransformationDsl
     class Builder {
         private var profile: VideoCodecProfile? = null
         private var level: Any? = null
+        private var bFrames: Boolean? = null
 
         fun profile(profile: VideoCodecProfile) = apply { this.profile = profile }
         fun level(level: VideoCodecLevel) = apply { this.level = level }
         fun level(level: Float) = apply { this.level = level }
         fun level(level: Expression) = apply { this.level = level }
+        fun bFrames(bFrames: Boolean) = apply {this.bFrames = bFrames }
 
-        fun build() = H264Codec(profile, level)
+        fun build() = H264Codec(profile, level, bFrames)
     }
 }
 
