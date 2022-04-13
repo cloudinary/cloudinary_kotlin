@@ -14,6 +14,7 @@ class TranscodeTest {
     @Test
     fun testAudioFrequency() {
         cldAssert("af_8000", Transcode.audioFrequency(AudioFrequency.freq8000()))
+        cldAssert("af_iaf", Transcode.audioFrequency(AudioFrequency.original()))
     }
 
     @Test

@@ -136,7 +136,7 @@ class AudioCodec private constructor(private val value: String) {
     }
 }
 
-class AudioFrequency private constructor(private val frequency: Int) {
+class AudioFrequency private constructor(private val frequency: Any) {
     companion object {
         private val freq8000 = AudioFrequency(8000)
         fun freq8000() = freq8000
@@ -166,6 +166,8 @@ class AudioFrequency private constructor(private val frequency: Int) {
         fun freq176400() = freq176400
         private val freq192000 = AudioFrequency(192000)
         fun freq192000() = freq192000
+        private val original = AudioFrequency("iaf")
+        fun original() = original
     }
 
     override fun toString(): String {
