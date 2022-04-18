@@ -3,6 +3,7 @@ package com.cloudinary.transformation
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.Region.Companion.custom
 import com.cloudinary.transformation.effect.*
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.layer.source.Source
 import com.cloudinary.transformation.resize.Resize
 import org.junit.Test
@@ -241,6 +242,7 @@ class EffectTest {
     @Test
     fun testBlur() {
         cldAssert("e_blur", Effect.blur())
+        cldAssert("e_blur:100_div_2", Effect.blur { strength(Expression("100 / 2")) })
         cldAssert("e_blur:300", Effect.blur {
             strength(300)
         })

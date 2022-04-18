@@ -3,10 +3,13 @@ package com.cloudinary.transformation.adjust
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
 import com.cloudinary.transformation.TransformationComponentBuilder
+import com.cloudinary.transformation.expression.Expression
 
 abstract class Adjust : Action {
     companion object {
         fun opacity(level: Int) = Opacity(level)
+        fun opacity(level: Expression) = Opacity(level)
+        fun opacity(options: (Opacity.Builder.() -> Unit)? = null) = buildAdjust(Opacity.Builder(), options)
 
         fun tint(options: String? = null) = Tint(options)
 

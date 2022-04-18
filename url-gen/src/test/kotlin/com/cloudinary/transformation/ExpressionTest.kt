@@ -1,7 +1,12 @@
 package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
+import com.cloudinary.transformation.adjust.Adjust
+import com.cloudinary.transformation.delivery.Delivery
+import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.expression.Expression
+import com.cloudinary.transformation.resize.Resize
+import com.cloudinary.transformation.videoedit.VideoEdit
 import org.junit.Test
 
 class ExpressionTest {
