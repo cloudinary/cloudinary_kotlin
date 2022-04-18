@@ -10,6 +10,8 @@ import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.resize.Resize.Companion.scale
 import com.cloudinary.upload.*
+import com.cloudinary.upload.request.TagsCommand
+import com.cloudinary.upload.request.TagsRequest
 import com.cloudinary.upload.request.params.AccessControlRule
 import com.cloudinary.upload.request.params.Coordinates
 import com.cloudinary.upload.request.params.Rectangle
@@ -882,33 +884,31 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val tag1 = randomPublicId()
         val tag2 = randomPublicId()
         val tag3 = randomPublicId()
-        val tag4 = randomPublicId()
-        val tag5 = randomPublicId()
-        val tag6 = randomPublicId()
-        val tag7 = randomPublicId()
 
-        uploader.addTag(listOf(tag1,tag5), listOf(publicId1, publicId2))
-        uploader.addTag(listOf(tag2,tag6), listOf(publicId1, publicId2))
-        uploader.addTag(listOf(tag3,tag7), listOf(publicId1, publicId2))
+        uploader.addTag(listOf(tag1,tag2), listOf(publicId1, publicId2))
+
+        assertTrue(doResourcesHaveTag(cloudinary, tag1, publicId1, publicId2))
 
         uploader.removeTag(tag2, listOf(publicId2))
 
-
-        assertTrue(doResourcesHaveTag(cloudinary, tag1, publicId1, publicId2))
-        assertTrue(doResourcesHaveTag(cloudinary, tag5, publicId1, publicId2))
-        assertTrue(doResourcesHaveTag(cloudinary, tag2, publicId1))
-        assertTrue(doResourcesHaveTag(cloudinary, tag6, publicId1))
         assertFalse(doResourcesHaveTag(cloudinary, tag2, publicId2))
 
-        uploader.removeAllTags(listOf(publicId2))
+        uploader.replaceTag(tag3, listOf(publicId1))
 
         assertTrue(doResourcesHaveTag(cloudinary, tag3, publicId1))
-        assertFalse(doResourcesHaveTag(cloudinary, tag3, publicId2))
-        assertFalse(doResourcesHaveTag(cloudinary, tag7, publicId2))
+    }
 
-        uploader.replaceTag(tag4, listOf(publicId1))
-
-        assertTrue(doResourcesHaveTag(cloudinary, tag4, publicId1))
+    @Test
+    fun testTagsBuilder() {
+        val tags = listOf(randomPublicId(), randomPublicId())
+        val publicIds = listOf(randomPublicId(), randomPublicId())
+        val builder = TagsRequest.Builder(TagsCommand.Add, publicIds, uploader)
+        builder.tag = tags
+        val request = builder.build()
+        val tagsField = TagsRequest::class.java.getDeclaredField("tag")
+        tagsField.isAccessible = true
+        val requestTags = tagsField.get(request) as String
+        Assert.assertTrue(requestTags.contains(tags.joinToString(",")))
     }
 
     @Test
