@@ -235,7 +235,7 @@ class EffectTest {
     @Test
     fun testBlur() {
         cldAssert("e_blur", Effect.blur())
-        cldAssert("e_blur:w_mul_2", Effect.blur { strength(Expression("width * 2")) })
+        cldAssert("e_blur:100_div_2", Effect.blur { strength(Expression("100 / 2")) })
         cldAssert("e_blur:300", Effect.blur {
             strength(300)
         })

@@ -172,9 +172,9 @@ class AdjustTest {
     fun opacity() {
         cldAssert("o_30", Adjust.opacity(30))
         cldAssert("o_30", Adjust.opacity(30))
-        cldAssert("o_w_mul_2", Adjust.opacity(Expression("width * 2")))
-        cldAssert("o_w_mul_2", Adjust.opacity {
-            level(Expression("width * 2"))
+        cldAssert("o_100_div_2", Adjust.opacity(Expression("100 / 2")))
+        cldAssert("o_100_div_2", Adjust.opacity {
+            level(Expression("100 / 2"))
         })
     }
 
