@@ -88,6 +88,15 @@ fun Uploader.addTag(
     exclusive: Boolean = false,
     request: (TagsRequest.Builder.() -> Unit)? = null
 ): UploaderResponse<TagsResult> {
+    return addTag(listOf(tag), publicIds, exclusive, request)
+}
+
+fun Uploader.addTag(
+    tag: List<String>,
+    publicIds: List<String>,
+    exclusive: Boolean = false,
+    request: (TagsRequest.Builder.() -> Unit)? = null
+): UploaderResponse<TagsResult> {
     val command = if (exclusive) TagsCommand.SetExclusive else TagsCommand.Add
     val builder = TagsRequest.Builder(command, publicIds, this)
     builder.tag = tag
@@ -97,6 +106,14 @@ fun Uploader.addTag(
 
 fun Uploader.removeTag(
     tag: String,
+    publicIds: List<String>,
+    request: (TagsRequest.Builder.() -> Unit)? = null
+): UploaderResponse<TagsResult> {
+    return removeTag(listOf(tag), publicIds, request)
+}
+
+fun Uploader.removeTag(
+    tag: List<String>,
     publicIds: List<String>,
     request: (TagsRequest.Builder.() -> Unit)? = null
 ): UploaderResponse<TagsResult> {
@@ -117,6 +134,14 @@ fun Uploader.removeAllTags(
 
 fun Uploader.replaceTag(
     tag: String,
+    publicIds: List<String>,
+    request: (TagsRequest.Builder.() -> Unit)? = null
+): UploaderResponse<TagsResult> {
+    return replaceTag(listOf(tag), publicIds, request)
+}
+
+fun Uploader.replaceTag(
+    tag: List<String>,
     publicIds: List<String>,
     request: (TagsRequest.Builder.() -> Unit)? = null
 ): UploaderResponse<TagsResult> {
