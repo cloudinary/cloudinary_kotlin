@@ -96,7 +96,7 @@ abstract class BaseAsset constructor(
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
     private val assetType: String = DEFAULT_ASSET_TYPE,
-    @Deprecated("this variable is deprecated and will be removed soon, use deliveryType instead")
+    @Deprecated("this variable is deprecated and will be removed soon, use deliveryType instead", replaceWith = ReplaceWith("deliveryType"))
     private val storageType: String? = null,
     private val deliveryType: String? = null
 ) {
@@ -200,7 +200,7 @@ abstract class BaseAsset constructor(
         protected var publicId: String? = null
         protected var extension: Format? = null
         protected var urlSuffix: String? = null
-        @Deprecated("this variable is deprecated and will be removed soon, use deliveryType instead")
+        @Deprecated("this variable is deprecated and will be removed soon, use deliveryType instead", replaceWith = ReplaceWith("deliveryType"))
         var storageType: String? = null
         var deliveryType: String? = null
 
