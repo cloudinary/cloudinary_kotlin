@@ -19,7 +19,8 @@ class Image(
     extension: Format? = null,
     urlSuffix: String? = null,
     storageType: String? = null,
-    private val transformation: ImageTransformation? = null
+    private val transformation: ImageTransformation? = null,
+    deliveryType: String? = null
 ) : BaseAsset(
     cloudConfig,
     urlConfig,
@@ -28,7 +29,8 @@ class Image(
     extension,
     urlSuffix,
     ASSET_TYPE_IMAGE,
-    storageType
+    storageType,
+    deliveryType
 ) {
     class Builder(cloudConfig: CloudConfig, urlConfig: UrlConfig) :
         BaseAssetBuilder(cloudConfig, urlConfig, ASSET_TYPE_IMAGE), ITransformable<Builder> {
@@ -54,7 +56,8 @@ class Image(
             extension,
             urlSuffix,
             storageType,
-            transformation
+            transformation,
+            deliveryType
         )
     }
 

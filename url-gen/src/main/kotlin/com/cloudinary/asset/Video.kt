@@ -18,7 +18,8 @@ class Video(
     extension: Format? = null,
     urlSuffix: String? = null,
     storageType: String? = null,
-    private val transformation: VideoTransformation? = null
+    private val transformation: VideoTransformation? = null,
+    deliveryType: String? = null
 ) : BaseAsset(
     cloudConfig,
     urlConfig,
@@ -27,7 +28,8 @@ class Video(
     extension,
     urlSuffix,
     ASSET_TYPE_VIDEO,
-    storageType
+    storageType,
+    deliveryType
 ) {
     class Builder(cloudConfig: CloudConfig, urlConfig: UrlConfig) :
         BaseAssetBuilder(cloudConfig, urlConfig, ASSET_TYPE_VIDEO), ITransformable<Builder> {
@@ -53,7 +55,8 @@ class Video(
             extension,
             urlSuffix,
             storageType,
-            transformation
+            transformation,
+            deliveryType
         )
     }
 

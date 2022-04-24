@@ -6,6 +6,7 @@ import com.cloudinary.config.CloudConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
@@ -36,7 +37,8 @@ class Asset(
     urlSuffix: String? = null,
     assetType: String = DEFAULT_ASSET_TYPE,
     storageType: String? = null,
-    private val transformation: Transformation? = null
+    private val transformation: Transformation? = null,
+    deliveryType: String? = null
 ) : BaseAsset(
     cloudConfig,
     urlConfig,
@@ -45,7 +47,8 @@ class Asset(
     extension,
     urlSuffix,
     assetType,
-    storageType
+    storageType,
+    deliveryType
 ) {
 
     override fun getTransformationString() = transformation?.toString()
@@ -75,7 +78,8 @@ class Asset(
             urlSuffix,
             assetType,
             storageType,
-            transformation
+            transformation,
+            deliveryType
         )
     }
 }
@@ -92,7 +96,8 @@ abstract class BaseAsset constructor(
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
     private val assetType: String = DEFAULT_ASSET_TYPE,
-    private val storageType: String? = null
+    private val storageType: String? = null,
+    private val deliveryType: String? = null
 ) {
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -101,7 +106,7 @@ abstract class BaseAsset constructor(
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
-        if (httpSource && (storageType.isNullOrBlank() || storageType == "asset")) {
+        if (httpSource && ((storageType.isNullOrBlank() || storageType == "asset") &&  (deliveryType.isNullOrBlank() || deliveryType == "asset"))) {
             return mutableSource
         }
 
@@ -139,7 +144,7 @@ abstract class BaseAsset constructor(
 
         val finalizedResourceType = finalizeResourceType(
             assetType,
-            storageType,
+            deliveryType ?: storageType,
             urlSuffix,
             urlConfig.useRootPath,
             urlConfig.shorten
@@ -196,12 +201,14 @@ abstract class BaseAsset constructor(
         protected var urlSuffix: String? = null
 
         var storageType: String? = null
+        var deliveryType: String? = null
 
         fun version(version: String) = apply { this.version = version }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
         fun extension(extension: Format) = apply { this.extension = extension }
         fun urlSuffix(urlSuffix: String) = apply { this.urlSuffix = urlSuffix }
         fun storageType(storageType: String) = apply { this.storageType = storageType }
+        fun deliveryType(deliveryType: String) = apply {this.deliveryType = deliveryType}
         fun assetType(assetType: String) = apply { this.assetType = assetType }
     }
 }

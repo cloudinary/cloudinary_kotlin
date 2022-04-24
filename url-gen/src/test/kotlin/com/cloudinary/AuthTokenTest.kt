@@ -82,6 +82,28 @@ class AuthTokenTest {
             "https://test123-res.cloudinary.com/image/public/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=c2b77d9f81be6d89b5d0ebc67b671557e88a40bcf03dd4a6997ff4b994ceb80e",
             url
         )
+
+        url =
+            cloudinary.image {
+                deliveryType("authenticated")
+                version("1486020273")
+            }.generate("sample.jpg")
+        assertEquals(
+            message,
+            "https://test123-res.cloudinary.com/image/authenticated/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=8db0d753ee7bbb9e2eaf8698ca3797436ba4c20e31f44527e43b6a6e995cfdb3",
+            url
+        )
+        message = "should add token for 'public' resource"
+        url = cloudinary.image {
+            deliveryType("public")
+            version("1486020273")
+        }.generate("sample.jpg")
+        assertEquals(
+            message,
+            "https://test123-res.cloudinary.com/image/public/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=c2b77d9f81be6d89b5d0ebc67b671557e88a40bcf03dd4a6997ff4b994ceb80e",
+            url
+        )
+
         message = "should not add token if signed is false"
 
         val cloudinaryNotSigned =
@@ -101,6 +123,31 @@ class AuthTokenTest {
         message = "should compute expiration as start time + duration"
         url = cloudinary.image {
             storageType("authenticated")
+            version("1486020273")
+        }.generate("sample.jpg")
+        assertEquals(
+            message,
+            "https://test123-res.cloudinary.com/image/authenticated/v1486020273/sample.jpg?__cld_token__=st=11111111~exp=11111411~hmac=8db0d753ee7bbb9e2eaf8698ca3797436ba4c20e31f44527e43b6a6e995cfdb3",
+            url
+        )
+
+        message = "should not add token if signed is false"
+
+        url =
+            cloudinaryNotSigned.image {
+                deliveryType("authenticated")
+                version("1486020273")
+            }
+                .generate("sample.jpg")
+        assertEquals(
+            message,
+            "https://test123-res.cloudinary.com/image/authenticated/v1486020273/sample.jpg",
+            url
+        )
+
+        message = "should compute expiration as start time + duration"
+        url = cloudinary.image {
+            deliveryType("authenticated")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(
