@@ -6,6 +6,7 @@ import com.cloudinary.config.CloudConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
+import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
@@ -35,8 +36,9 @@ class Asset(
     extension: Format? = null,
     urlSuffix: String? = null,
     assetType: String = DEFAULT_ASSET_TYPE,
-    storageType: String? = null,
+    deliveryType: String? = null,
     private val transformation: Transformation? = null
+
 ) : BaseAsset(
     cloudConfig,
     urlConfig,
@@ -45,7 +47,7 @@ class Asset(
     extension,
     urlSuffix,
     assetType,
-    storageType
+    deliveryType
 ) {
 
     override fun getTransformationString() = transformation?.toString()
@@ -74,8 +76,9 @@ class Asset(
             extension,
             urlSuffix,
             assetType,
-            storageType,
+            deliveryType,
             transformation
+
         )
     }
 }
@@ -92,7 +95,7 @@ abstract class BaseAsset constructor(
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
     private val assetType: String = DEFAULT_ASSET_TYPE,
-    private val storageType: String? = null
+    private val deliveryType: String? = null
 ) {
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -101,7 +104,7 @@ abstract class BaseAsset constructor(
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
-        if (httpSource && (storageType.isNullOrBlank() || storageType == "asset")) {
+        if (httpSource && ((deliveryType.isNullOrBlank() || deliveryType == "asset"))) {
             return mutableSource
         }
 
@@ -139,7 +142,7 @@ abstract class BaseAsset constructor(
 
         val finalizedResourceType = finalizeResourceType(
             assetType,
-            storageType,
+            deliveryType,
             urlSuffix,
             urlConfig.useRootPath,
             urlConfig.shorten
@@ -194,14 +197,15 @@ abstract class BaseAsset constructor(
         protected var publicId: String? = null
         protected var extension: Format? = null
         protected var urlSuffix: String? = null
-
-        var storageType: String? = null
+        var deliveryType: String? = null
 
         fun version(version: String) = apply { this.version = version }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
         fun extension(extension: Format) = apply { this.extension = extension }
         fun urlSuffix(urlSuffix: String) = apply { this.urlSuffix = urlSuffix }
-        fun storageType(storageType: String) = apply { this.storageType = storageType }
+        @Deprecated("This function will be removed in the next major version, use deliveryType instead", replaceWith = ReplaceWith("deliveryType(storageType)"))
+        fun storageType(storageType: String) = apply { this.deliveryType = storageType }
+        fun deliveryType(deliveryType: String) = apply {this.deliveryType = deliveryType}
         fun assetType(assetType: String) = apply { this.assetType = assetType }
     }
 }
