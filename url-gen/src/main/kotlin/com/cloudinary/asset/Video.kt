@@ -17,9 +17,8 @@ class Video(
     publicId: String? = null,
     extension: Format? = null,
     urlSuffix: String? = null,
-    storageType: String? = null,
-    private val transformation: VideoTransformation? = null,
-    deliveryType: String? = null
+    deliveryType: String? = null,
+    private val transformation: VideoTransformation? = null
 ) : BaseAsset(
     cloudConfig,
     urlConfig,
@@ -28,7 +27,6 @@ class Video(
     extension,
     urlSuffix,
     ASSET_TYPE_VIDEO,
-    storageType,
     deliveryType
 ) {
     class Builder(cloudConfig: CloudConfig, urlConfig: UrlConfig) :
@@ -54,9 +52,8 @@ class Video(
             publicId,
             extension,
             urlSuffix,
-            storageType,
-            transformation,
-            deliveryType
+            deliveryType,
+            transformation
         )
     }
 
