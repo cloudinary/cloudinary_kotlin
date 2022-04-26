@@ -5,5 +5,5 @@ pluginManagement {
     }
 }
 rootProject.name = 'cloudinary_kotlin'
-include 'url-gen'
+include 'url-gen', 'uploader'
 include ':docs'
