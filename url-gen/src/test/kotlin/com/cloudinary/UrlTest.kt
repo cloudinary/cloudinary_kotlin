@@ -224,17 +224,6 @@ class UrlTest {
         var result = cloudinary.image().generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.image {
-            storageType("asset")
-        }.generate("http://test")
-        assertEquals("http://test", result)
-        result = cloudinary.image {
-            storageType("fetch")
-        }.generate("http://test")
-        assertEquals("https://res.cloudinary.com/test123/image/fetch/http://test", result)
-
-        result = cloudinary.image().generate("http://test")
-        assertEquals("http://test", result)
-        result = cloudinary.image {
             deliveryType("asset")
         }.generate("http://test")
         assertEquals("http://test", result)
@@ -247,14 +236,6 @@ class UrlTest {
     @Test
     fun testFetch() { // should escape fetch urls
         var result = cloudinary.image {
-            storageType("fetch")
-        }.generate("http://blah.com/hello?a=b")
-        assertEquals(
-            "https://res.cloudinary.com/test123/image/fetch/http://blah.com/hello%3Fa%3Db",
-            result
-        )
-
-        result = cloudinary.image {
             deliveryType("fetch")
         }.generate("http://blah.com/hello?a=b")
         assertEquals(
@@ -280,11 +261,6 @@ class UrlTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUrlSuffixInNonUploadTypes() {
-        cloudinaryPrivateCdn.image {
-            urlSuffix("hello")
-            storageType("facebook")
-        }.generate("test")
-
         cloudinaryPrivateCdn.image {
             urlSuffix("hello")
             deliveryType("facebook")
@@ -392,14 +368,6 @@ class UrlTest {
         var actual =
             cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                storageType("authenticated")
-            }
-                .generate("test")
-        assertEquals("https://test123-res.cloudinary.com/authenticated_images/test/hello", actual)
-
-        actual =
-            cloudinaryPrivateCdn.image {
-                urlSuffix("hello")
                 deliveryType("authenticated")
             }
                 .generate("test")
@@ -409,14 +377,6 @@ class UrlTest {
     @Test
     fun testSupportUrlSuffixForPrivateImages() {
         var actual =
-            cloudinaryPrivateCdn.image {
-                urlSuffix("hello")
-                storageType("private")
-            }
-                .generate("test")
-        assertEquals("https://test123-res.cloudinary.com/private_images/test/hello", actual)
-
-        actual =
             cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
                 deliveryType("private")
@@ -447,10 +407,6 @@ class UrlTest {
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUseRootPathIfNotImageUploadForFacebook() {
         cloudinaryPrivateCdnUseRootPath.image {
-            storageType("facebook")
-        }.generate("test")
-
-        cloudinaryPrivateCdnUseRootPath.image {
             deliveryType("facebook")
         }.generate("test")
     }
@@ -463,15 +419,6 @@ class UrlTest {
     @Test
     fun testHttpEscape() { // should escape http urls
         var result =
-            cloudinary.image {
-                storageType("youtube")
-            }.generate("http://www.youtube.com/watch?v=d9NF2edxy-M")
-        assertEquals(
-            "https://res.cloudinary.com/test123/image/youtube/http://www.youtube.com/watch%3Fv%3Dd9NF2edxy-M",
-            result
-        )
-
-        result =
             cloudinary.image {
                 deliveryType("youtube")
             }.generate("http://www.youtube.com/watch?v=d9NF2edxy-M")
