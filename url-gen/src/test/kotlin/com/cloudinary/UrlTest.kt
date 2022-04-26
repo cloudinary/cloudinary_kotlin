@@ -526,7 +526,6 @@ class UrlTest {
 
         actual =
             cloudinaryLongSignedUrl.image {
-                //version("1")
             }.generate("sample.jpg")
         assertEquals(expected, actual)
     }
