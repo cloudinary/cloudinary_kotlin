@@ -44,6 +44,9 @@ class UrlTest {
 
     private val cloudinarySignedUrl =
         Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(signUrl = true)))
+    private val cloudinaryLongSignedUrl =
+        Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secure = false, signUrl = true, signatureAlgorithm = "SHA-256")))
+
 
     @Test
     fun testConfigValues() {
@@ -523,6 +526,12 @@ class UrlTest {
             resize(Resize.crop { width(10); height(20) })
         }.generate("image.jpg")
 
+        assertEquals(expected, actual)
+        expected = "http://res.cloudinary.com/test123/image/upload/s--2hbrSMPO--/sample.jpg"
+
+        actual =
+            cloudinaryLongSignedUrl.image {
+            }.generate("sample.jpg")
         assertEquals(expected, actual)
     }
 
