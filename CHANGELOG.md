@@ -1,4 +1,18 @@
 
+1.3.0 / 2022-05-01
+==================
+
+New functionality
+-----------------
+  * Add tags as array to `addTag`, `removeTag`, `replaceTag`
+  * Add verification for SHA-256 signature
+  * Add `AudioFrequencyType` original support
+
+Other changes
+-------------
+  * Deprecate `storageType` and replace with with `deliveryType`
+  * Verify normalize expression
+
 1.2.0 / 2022-04-05
 ==================
 
