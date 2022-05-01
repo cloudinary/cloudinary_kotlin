@@ -7,6 +7,7 @@ import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.ITransformable
 import com.cloudinary.transformation.VideoTransformation
 
+
 class Video(
     // config
     cloudConfig: CloudConfig,

@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    implementation(files("libs/transformation-builder-1.0.0.jar"))
     api(project(":url-gen"))
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
