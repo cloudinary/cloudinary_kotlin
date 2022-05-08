@@ -156,7 +156,8 @@ class EffectTest {
         cldAssert("fl_waveform", Effect.waveform())
 
         cldAssert(
-            "b_white,co_black,fl_waveform", Effect.waveform {
+            "b_white,co_black,f_png,fl_waveform", Effect.waveform {
+                format(Format.png())
                 color(Color.BLACK)
                 background(Color.WHITE)
             }
