@@ -506,6 +506,7 @@ class Waveform private constructor(private var color: Any?, private val backgrou
         fun color(color: Color) = apply { this.color = color }
         fun background(color: Color) = apply { this.backgroundColor = color }
         fun format(format: Format) = apply { this.format = format}
+
         override fun build() = Waveform(color, backgroundColor, format)
     }
 }
