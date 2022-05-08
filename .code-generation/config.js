@@ -12,8 +12,8 @@ module.exports = {
     closeQualifiersChar : ' }',
     openActionChar: '(',
     closeActionChar: ')',
-    unsupportedTxParams: ['fl_waveform', 'e_anti_removal:', 'fl_animated', 'u_', 'l_fetch', 'l_text', 'u_text', 'af_', 'if_', 'e_fade', 'c_fill', 'palette_f00', 'g_ocr_text', 'g_auto:ocr_text', '$overlaywidth_$mainvideowidth_div_3'],
-    unsupportedSyntaxList: ['stroke(', 'textFit(', 'Animated.edit', 'RoundCorners(', 'getVideoFrame', 'Source.image', 'transcode('],
+    unsupportedTxParams: ['fl_waveform', 'e_anti_removal:', 'fl_animated', 'l_fetch', 'l_text', 'u_text', 'af_', 'if_', 'e_fade', 'palette_f00', 'g_ocr_text', 'g_auto:ocr_text', '$overlaywidth_$mainvideowidth_div_3'],
+    unsupportedSyntaxList: ['stroke(', 'textFit(', 'Animated.edit', 'RoundCorners(', 'getVideoFrame', 'transcode('],
     mainTransformationString: {
       openSyntaxString: {
         image: 'cloudinary.image {\n\tpublicId("#publicID")',
