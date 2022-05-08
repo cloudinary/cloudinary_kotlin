@@ -307,17 +307,17 @@ class H265Codec private constructor(private val profile: VideoCodecProfile? = nu
         private var bFrames: Boolean = true
 
         fun bFrames(bFrames: Boolean) = apply {
-            setAutoProfileAndLevel(bFrames)
+            setAutoProfileAndLevel(!bFrames)
             this.bFrames = bFrames
         }
 
-        private fun setAutoProfileAndLevel(setAutoProfleAndLevel: Boolean) {
-            if (setAutoProfleAndLevel) {
-                this.profile = null;
-                this.level = null
-            } else {
+        private fun setAutoProfileAndLevel(setAutoProfileAndLevel: Boolean) {
+            if (setAutoProfileAndLevel) {
                 this.profile = VideoCodecProfile.auto()
                 this.level = "auto"
+            } else {
+                this.profile = null
+                this.level = null
             }
 
         }
