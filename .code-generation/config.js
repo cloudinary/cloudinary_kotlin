@@ -12,7 +12,7 @@ module.exports = {
     closeQualifiersChar : ' }',
     openActionChar: '(',
     closeActionChar: ')',
-    unsupportedTxParams: ['fl_waveform', 'e_anti_removal:', 'fl_animated', 'e_tint', 'u_', 'l_fetch', 'l_text', 'u_text', 'af_', 'l_video:', 'if_', 'e_fade', 'c_fill', 'palette_f00', 'g_ocr_text', 'g_auto:ocr_text', '$overlaywidth_$mainvideowidth_div_3'],
+    unsupportedTxParams: ['fl_waveform', 'e_anti_removal:', 'fl_animated', 'u_', 'l_fetch', 'l_text', 'u_text', 'af_', 'if_', 'e_fade', 'c_fill', 'palette_f00', 'g_ocr_text', 'g_auto:ocr_text', '$overlaywidth_$mainvideowidth_div_3'],
     unsupportedSyntaxList: ['stroke(', 'textFit(', 'Animated.edit', 'RoundCorners(', 'getVideoFrame', 'Source.image', 'transcode('],
     mainTransformationString: {
       openSyntaxString: {

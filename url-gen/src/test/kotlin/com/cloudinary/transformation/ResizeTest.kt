@@ -2,6 +2,7 @@ package com.cloudinary.transformation
 
 import com.cloudinary.cldAssert
 import com.cloudinary.transformation.background.Background
+import com.cloudinary.transformation.expression.Expression
 import com.cloudinary.transformation.gravity.Gravity
 import com.cloudinary.transformation.resize.AspectRatio
 import com.cloudinary.transformation.resize.Resize
@@ -52,6 +53,24 @@ class ResizeTest {
         cldAssert("c_scale,g_liquid,w_100", scale {
             width(100)
             liquidRescaling(true)
+        })
+        cldAssert("ar_w_mul_2,c_scale", Resize.scale {
+            aspectRatio(Expression("width * 2"))
+        })
+        cldAssert("c_scale,h_w_mul_2", Resize.scale {
+            height(Expression("width * 2"))
+        })
+        cldAssert("c_scale,w_w_mul_2", Resize.scale {
+            width(Expression("width * 2"))
+        })
+        cldAssert("c_crop,x_w_mul_2", Resize.crop {
+            x(Expression("width * 2"))
+        })
+        cldAssert("c_crop,y_w_mul_2", Resize.crop {
+            y(Expression("width * 2"))
+        })
+        cldAssert("c_crop,z_w_mul_2", Resize.crop {
+            zoom(Expression("width * 2"))
         })
     }
 

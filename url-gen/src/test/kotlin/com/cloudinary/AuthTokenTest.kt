@@ -64,7 +64,7 @@ class AuthTokenTest {
         var message = "should add token if authToken is globally set and signed = true"
         var url =
             cloudinary.image {
-                storageType("authenticated")
+                deliveryType("authenticated")
                 version("1486020273")
             }.generate("sample.jpg")
         assertEquals(
@@ -74,7 +74,7 @@ class AuthTokenTest {
         )
         message = "should add token for 'public' resource"
         url = cloudinary.image {
-            storageType("public")
+            deliveryType("public")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(
@@ -88,7 +88,7 @@ class AuthTokenTest {
             Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(signUrl = false)))
         url =
             cloudinaryNotSigned.image {
-                storageType("authenticated")
+                deliveryType("authenticated")
                 version("1486020273")
             }
                 .generate("sample.jpg")
@@ -100,7 +100,7 @@ class AuthTokenTest {
 
         message = "should compute expiration as start time + duration"
         url = cloudinary.image {
-            storageType("authenticated")
+            deliveryType("authenticated")
             version("1486020273")
         }.generate("sample.jpg")
         assertEquals(

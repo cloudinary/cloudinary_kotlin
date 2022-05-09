@@ -44,6 +44,9 @@ class UrlTest {
 
     private val cloudinarySignedUrl =
         Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(signUrl = true)))
+    private val cloudinaryLongSignedUrl =
+        Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secure = false, signUrl = true, signatureAlgorithm = "SHA-256")))
+
 
     @Test
     fun testConfigValues() {
@@ -202,8 +205,13 @@ class UrlTest {
 
     @Test
     fun testType() { // should use type from options
-        val result = cloudinary.image {
+        var result = cloudinary.image {
             storageType("facebook")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/facebook/test", result)
+
+        result = cloudinary.image {
+            deliveryType("facebook")
         }.generate("test")
         assertEquals("https://res.cloudinary.com/test123/image/facebook/test", result)
     }
@@ -219,19 +227,19 @@ class UrlTest {
         var result = cloudinary.image().generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.image {
-            storageType("asset")
+            deliveryType("asset")
         }.generate("http://test")
         assertEquals("http://test", result)
         result = cloudinary.image {
-            storageType("fetch")
+            deliveryType("fetch")
         }.generate("http://test")
         assertEquals("https://res.cloudinary.com/test123/image/fetch/http://test", result)
     }
 
     @Test
     fun testFetch() { // should escape fetch urls
-        val result = cloudinary.image {
-            storageType("fetch")
+        var result = cloudinary.image {
+            deliveryType("fetch")
         }.generate("http://blah.com/hello?a=b")
         assertEquals(
             "https://res.cloudinary.com/test123/image/fetch/http://blah.com/hello%3Fa%3Db",
@@ -258,7 +266,7 @@ class UrlTest {
     fun testDisallowUrlSuffixInNonUploadTypes() {
         cloudinaryPrivateCdn.image {
             urlSuffix("hello")
-            storageType("facebook")
+            deliveryType("facebook")
         }.generate("test")
     }
 
@@ -360,10 +368,10 @@ class UrlTest {
 
     @Test
     fun testSupportUrlSuffixForAuthenticatedImages() {
-        val actual =
+        var actual =
             cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                storageType("authenticated")
+                deliveryType("authenticated")
             }
                 .generate("test")
         assertEquals("https://test123-res.cloudinary.com/authenticated_images/test/hello", actual)
@@ -371,10 +379,10 @@ class UrlTest {
 
     @Test
     fun testSupportUrlSuffixForPrivateImages() {
-        val actual =
+        var actual =
             cloudinaryPrivateCdn.image {
                 urlSuffix("hello")
-                storageType("private")
+                deliveryType("private")
             }
                 .generate("test")
         assertEquals("https://test123-res.cloudinary.com/private_images/test/hello", actual)
@@ -402,7 +410,7 @@ class UrlTest {
     @Test(expected = IllegalArgumentException::class)
     fun testDisallowUseRootPathIfNotImageUploadForFacebook() {
         cloudinaryPrivateCdnUseRootPath.image {
-            storageType("facebook")
+            deliveryType("facebook")
         }.generate("test")
     }
 
@@ -413,9 +421,9 @@ class UrlTest {
 
     @Test
     fun testHttpEscape() { // should escape http urls
-        val result =
+        var result =
             cloudinary.image {
-                storageType("youtube")
+                deliveryType("youtube")
             }.generate("http://www.youtube.com/watch?v=d9NF2edxy-M")
         assertEquals(
             "https://res.cloudinary.com/test123/image/youtube/http://www.youtube.com/watch%3Fv%3Dd9NF2edxy-M",
@@ -518,6 +526,12 @@ class UrlTest {
             resize(Resize.crop { width(10); height(20) })
         }.generate("image.jpg")
 
+        assertEquals(expected, actual)
+        expected = "http://res.cloudinary.com/test123/image/upload/s--2hbrSMPO--/sample.jpg"
+
+        actual =
+            cloudinaryLongSignedUrl.image {
+            }.generate("sample.jpg")
         assertEquals(expected, actual)
     }
 
