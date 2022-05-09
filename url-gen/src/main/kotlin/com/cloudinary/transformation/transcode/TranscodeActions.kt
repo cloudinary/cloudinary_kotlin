@@ -214,6 +214,8 @@ class VideoCodecLevel private constructor(private val value: String) {
         fun vcl51() = vcl51
         private val vcl52 = VideoCodecLevel("5.2")
         fun vcl52() = vcl52
+        private val auto = VideoCodecLevel("auto")
+        fun auto() = auto
     }
 
     override fun toString(): String {
@@ -229,6 +231,8 @@ class VideoCodecProfile private constructor(private val value: String) {
         fun main() = main
         private val high = VideoCodecProfile("high")
         fun high() = high
+        private val auto = VideoCodecProfile("auto")
+        fun auto() = auto
     }
 
     override fun toString(): String {
@@ -246,6 +250,12 @@ open class VideoCodec(protected val codec: Any) {
         fun prores() = prores
         fun h264(options: (H264Codec.Builder.() -> Unit)? = null): H264Codec {
             val builder = H264Codec.Builder()
+            options?.let { builder.it() }
+            return builder.build()
+        }
+
+        fun h265(options: (H265Codec.Builder.() -> Unit)? = null): H265Codec {
+            val builder = H265Codec.Builder()
             options?.let { builder.it() }
             return builder.build()
         }
@@ -280,6 +290,41 @@ class H264Codec private constructor(private val profile: VideoCodecProfile? = nu
         fun level(level: Expression) = apply { this.level = level }
 
         fun build() = H264Codec(profile, level)
+    }
+}
+
+class H265Codec private constructor(private val profile: VideoCodecProfile? = null, private val level: Any? = null, private val bFrames: Boolean = true) :
+    VideoCodec("h265") {
+    override fun toString(): String {
+        var bFramesString: String? = null
+        if (!bFrames) {
+            bFramesString = "bframes_no"
+        }
+        return codec.joinWithValues(profile, level, bFramesString)
+    }
+
+    class Builder {
+        private var profile: VideoCodecProfile? = null
+        private var level: Any? = null
+        private var bFrames: Boolean = true
+
+        fun bFrames(bFrames: Boolean) = apply {
+            setAutoProfileAndLevel(!bFrames)
+            this.bFrames = bFrames
+        }
+
+        private fun setAutoProfileAndLevel(setAutoProfileAndLevel: Boolean) {
+            if (setAutoProfileAndLevel) {
+                this.profile = VideoCodecProfile.auto()
+                this.level = VideoCodecLevel.auto()
+            } else {
+                this.profile = null
+                this.level = null
+            }
+
+        }
+
+        fun build() = H265Codec(profile, level, bFrames)
     }
 }
 
