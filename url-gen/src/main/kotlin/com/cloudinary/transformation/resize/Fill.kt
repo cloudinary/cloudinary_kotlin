@@ -35,7 +35,7 @@ class Fill(
         private fun x(x: Any) = apply {
             this.x = x
         }
-
+        //Only used in conjunction with gravity(Gravity.xyCenter())
         fun x(x: String) = x(x as Any)
         fun x(x: Expression) = x(x as Any)
         fun x(x: Int) = x(x as Any)
@@ -53,7 +53,7 @@ class Fill(
         private fun y(y: Any) = apply {
             this.y = y
         }
-
+        //Only used in conjunction with gravity(Gravity.xyCenter())
         fun y(y: String) = y(y as Any)
         fun y(y: Expression) = y(y as Any)
         fun y(y: Int) = y(y as Any)
