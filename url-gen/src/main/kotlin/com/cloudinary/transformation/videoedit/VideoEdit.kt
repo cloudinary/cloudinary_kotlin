@@ -1,6 +1,10 @@
 package com.cloudinary.transformation.videoedit
 
 import com.cloudinary.transformation.Action
+import com.cloudinary.transformation.Format
+import com.cloudinary.transformation.effect.Effect
+import com.cloudinary.transformation.effect.Waveform
+import com.cloudinary.transformation.effect.buildEffect
 import com.cloudinary.transformation.layer.source.FetchSource
 import com.cloudinary.transformation.layer.source.ImageSource
 import com.cloudinary.transformation.layer.source.Source
@@ -39,5 +43,13 @@ abstract class VideoEdit : Action {
             options?.let { builder.it() }
             return builder.build()
         }
+
+        fun waveform(format: Format, options: (Waveform.Builder.() -> Unit)? = null) : Effect {
+            if (options == null) {
+                return Waveform(format)
+            }
+            return buildEffect(Waveform(format).Builder(), options)
+        }
     }
+
 }

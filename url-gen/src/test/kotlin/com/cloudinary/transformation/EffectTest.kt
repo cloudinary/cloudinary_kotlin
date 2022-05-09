@@ -153,11 +153,10 @@ class EffectTest {
 
     @Test
     fun testWaveform() {
-        cldAssert("fl_waveform", Effect.waveform())
+        cldAssert("f_jpg,fl_waveform", Effect.waveform(Format.jpg()))
 
         cldAssert(
-            "b_white,co_black,f_png,fl_waveform", Effect.waveform {
-                format(Format.png())
+            "b_white,co_black,f_png,fl_waveform", Effect.waveform(Format.png()) {
                 color(Color.BLACK)
                 background(Color.WHITE)
             }

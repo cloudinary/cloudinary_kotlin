@@ -488,26 +488,25 @@ class MakeTransparent private constructor(private val tolerance: Any?, private v
     }
 }
 
-class Waveform private constructor(private var color: Any?, private val backgroundColor: Color?, private val format: Format?) : Effect() {
+class Waveform internal constructor(private val format: Format, private var color: Any? = null, private val backgroundColor: Color? = null) : Effect() {
+
     override fun toString(): String {
         return asComponentString(
-            format?.let { "f_$format" },
+            "f_$format",
             backgroundColor?.let { "b_$backgroundColor" },
             color?.let { "co_$color" },
             Flag.waveform()
         )
     }
 
-    class Builder : EffectBuilder {
+    inner class Builder : EffectBuilder {
         private var color: Color? = null
         private var backgroundColor: Color? = null
-        private var format: Format? = null
 
         fun color(color: Color) = apply { this.color = color }
         fun background(color: Color) = apply { this.backgroundColor = color }
-        fun format(format: Format) = apply { this.format = format}
 
-        override fun build() = Waveform(color, backgroundColor, format)
+        override fun build() = Waveform(format, color, backgroundColor)
     }
 }
 

@@ -2,6 +2,7 @@ package com.cloudinary.transformation.effect
 
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Color
+import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.TransformationComponentBuilder
 import com.cloudinary.transformation.layer.source.Source
 
@@ -18,7 +19,13 @@ abstract class Effect : Action {
         fun makeTransparent(options: (MakeTransparent.Builder.() -> Unit)? = null) =
             buildEffect(MakeTransparent.Builder(), options)
 
-        fun waveform(options: (Waveform.Builder.() -> Unit)? = null) = buildEffect(Waveform.Builder(), options)
+        @Deprecated("This function will be removed in the next major version, use VideoEdit.waveform instead", replaceWith = ReplaceWith("VideoEdit.waveform(format)"))
+        fun waveform(format: Format, options: (Waveform.Builder.() -> Unit)? = null) : Effect {
+            if (options == null) {
+                return Waveform(format)
+            }
+            return buildEffect(Waveform(format).Builder(), options)
+        }
 
         fun fadeIn(options: (FadeIn.Builder.() -> Unit)? = null): FadeIn {
             val builder = FadeIn.Builder()
@@ -78,7 +85,7 @@ abstract class Effect : Action {
 
 interface EffectBuilder : TransformationComponentBuilder
 
-private fun <T : EffectBuilder> buildEffect(builder: T, options: (T.() -> Unit)?): Effect {
+fun <T : EffectBuilder> buildEffect(builder: T, options: (T.() -> Unit)?): Effect {
     options?.let { builder.it() }
     return builder.build() as Effect
 }

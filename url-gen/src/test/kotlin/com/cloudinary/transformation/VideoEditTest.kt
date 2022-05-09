@@ -100,4 +100,16 @@ class VideoEditTest {
         cldAssert("e_volume:10db", VideoEdit.volume(Volume.byDecibels(10)))
         cldAssert("e_volume:mute", VideoEdit.volume(Volume.mute()))
     }
+
+    @Test
+    fun testWaveform() {
+        cldAssert("f_jpg,fl_waveform", VideoEdit.waveform(Format.jpg()))
+
+        cldAssert(
+            "b_white,co_black,f_png,fl_waveform", VideoEdit.waveform(Format.png()) {
+                color(Color.BLACK)
+                background(Color.WHITE)
+            }
+        )
+    }
 }
