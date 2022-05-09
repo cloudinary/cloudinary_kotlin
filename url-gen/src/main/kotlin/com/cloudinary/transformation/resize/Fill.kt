@@ -41,6 +41,15 @@ class Fill(
         fun x(x: Int) = x(x as Any)
         fun x(x: Float) = x(x as Any)
 
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: String) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Expression) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Int) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Float) = x(x as Any)
+
         private fun y(y: Any) = apply {
             this.y = y
         }
@@ -49,6 +58,15 @@ class Fill(
         fun y(y: Expression) = y(y as Any)
         fun y(y: Int) = y(y as Any)
         fun y(y: Float) = y(y as Any)
+
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: String) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Expression) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Int) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Float) = y(y as Any)
 
         override fun getThis() = this
 
