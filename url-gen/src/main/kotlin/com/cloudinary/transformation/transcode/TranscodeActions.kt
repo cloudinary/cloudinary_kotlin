@@ -214,6 +214,8 @@ class VideoCodecLevel private constructor(private val value: String) {
         fun vcl51() = vcl51
         private val vcl52 = VideoCodecLevel("5.2")
         fun vcl52() = vcl52
+        private val auto = VideoCodecLevel("auto")
+        fun auto() = auto
     }
 
     override fun toString(): String {
@@ -314,7 +316,7 @@ class H265Codec private constructor(private val profile: VideoCodecProfile? = nu
         private fun setAutoProfileAndLevel(setAutoProfileAndLevel: Boolean) {
             if (setAutoProfileAndLevel) {
                 this.profile = VideoCodecProfile.auto()
-                this.level = "auto"
+                this.level = VideoCodecLevel.auto()
             } else {
                 this.profile = null
                 this.level = null
