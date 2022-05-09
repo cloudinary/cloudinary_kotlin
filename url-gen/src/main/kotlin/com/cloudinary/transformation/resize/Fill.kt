@@ -25,30 +25,48 @@ class Fill(
 
     class Builder : BaseBuilder<Builder>() {
         private var gravity: Gravity? = null
-        private var offsetX: Any? = null
-        private var offsetY: Any? = null
+        private var x: Any? = null
+        private var y: Any? = null
 
         fun gravity(gravity: Gravity) = apply {
             this.gravity = gravity
         }
 
-        private fun offsetX(x: Any) = apply {
-            this.offsetX = x
+        private fun x(x: Any) = apply {
+            this.x = x
         }
+        //Only used in conjunction with gravity(Gravity.xyCenter())
+        fun x(x: String) = x(x as Any)
+        fun x(x: Expression) = x(x as Any)
+        fun x(x: Int) = x(x as Any)
+        fun x(x: Float) = x(x as Any)
 
-        fun offsetX(x: String) = offsetX(x as Any)
-        fun offsetX(x: Expression) = offsetX(x as Any)
-        fun offsetX(x: Int) = offsetX(x as Any)
-        fun offsetX(x: Float) = offsetX(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: String) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Expression) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Int) = x(x as Any)
+        @Deprecated("This function will be removed in the next major version, use x instead", replaceWith = ReplaceWith("x(x)"))
+        fun offsetX(x: Float) = x(x as Any)
 
-        private fun offsetY(y: Any) = apply {
-            this.offsetY = y
+        private fun y(y: Any) = apply {
+            this.y = y
         }
+        //Only used in conjunction with gravity(Gravity.xyCenter())
+        fun y(y: String) = y(y as Any)
+        fun y(y: Expression) = y(y as Any)
+        fun y(y: Int) = y(y as Any)
+        fun y(y: Float) = y(y as Any)
 
-        fun offsetY(y: String) = offsetY(y as Any)
-        fun offsetY(y: Expression) = offsetY(y as Any)
-        fun offsetY(y: Int) = offsetY(y as Any)
-        fun offsetY(y: Float) = offsetY(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: String) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Expression) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Int) = y(y as Any)
+        @Deprecated("This function will be removed in the next major version, use y instead", replaceWith = ReplaceWith("y(y)"))
+        fun offsetY(y: Float) = y(y as Any)
 
         override fun getThis() = this
 
@@ -57,8 +75,8 @@ class Fill(
             relative,
             regionRelative,
             gravity,
-            offsetX,
-            offsetY
+            x,
+            y
         )
     }
 }

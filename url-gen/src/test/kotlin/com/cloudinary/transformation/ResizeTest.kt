@@ -163,6 +163,14 @@ class ResizeTest {
 
     @Test
     fun testFill() {
+        cldAssert("c_fill,g_xy_center,x_100,y_100", Resize.fill {
+            gravity(Gravity.xyCenter())
+            offsetX(100)
+            offsetY(100)})
+        cldAssert("c_fill,g_xy_center,x_100,y_100", Resize.fill {
+            gravity(Gravity.xyCenter())
+            x(100)
+            y(100)})
         cldAssert("c_fill,w_100", Resize.fill { width(100) })
         cldAssert("c_fill,w_1.0", Resize.fill { width(1f) })
         cldAssert("c_fill,h_100,w_100", Resize.fill {
