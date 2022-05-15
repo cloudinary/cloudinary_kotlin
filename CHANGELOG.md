@@ -1,4 +1,16 @@
 
+1.4.0 / 2022-05-11
+==================
+
+  * Fix `Resize.fill` variables names
+  * Add support to disable b-frames for h265 video codec
+  * Add `format` qualifier to `fl_waveform`
+  * Support text style and color as user variables
+  * Add support for `g_ocr_text`
+  * Add support for underlay, resize fill, `Source.image`
+  * Add support for video overlay in `config.js`
+  * Add support for tint effect
+
 1.3.0 / 2022-05-01
 ==================
 
