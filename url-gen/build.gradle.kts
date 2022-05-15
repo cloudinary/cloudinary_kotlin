@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(files("libs/transformation-builder-1.0.0.jar"))
+    implementation("com.cloudinary:kotlin-transformation-builder-sdk:1.0.0")
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
