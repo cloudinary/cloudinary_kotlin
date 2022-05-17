@@ -1,3 +1,12 @@
+1.5.0 / 2022-05-17
+==================
+
+* Add Transformation Builder as dependency
+* Support palette syntax
+* Support g_auto:ocr_text syntax
+* Add nexus publishing script
+* Add support for transcode
+
 
 1.4.0 / 2022-05-11
 ==================

@@ -62,7 +62,7 @@ class Cloudinary(val config: CloudinaryConfig) {
     }
 
     companion object {
-        const val SDK_VERSION = "1.4.0"
+        const val SDK_VERSION = "1.5.0"
 
         /**
          * This flag determines whether to throw an error when a transformation is created with invalid arguments.
