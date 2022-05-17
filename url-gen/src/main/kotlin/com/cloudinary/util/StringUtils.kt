@@ -1,7 +1,5 @@
 package com.cloudinary.util
 
-import com.cloudinary.util.Base64Coder.encodeString
-import com.cloudinary.util.Base64Coder.encodeURLSafeString
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.Charset
@@ -116,12 +114,12 @@ internal fun URI.cldQueryAsMap() =
 /**
  * Returns the base64 representation of this string
  */
-internal fun String.cldToBase64(): String = encodeString(this)
+internal fun String.cldToBase64(): String = Base64Coder.encodeString(this)
 
 /**
  * Returns the url-safe variant of the base64 representation of this string
  */
-internal fun String.cldToUrlSafeBase64() = encodeURLSafeString(this)
+internal fun String.cldToUrlSafeBase64() = Base64Coder.encodeURLSafeString(this)
 
 /**
  * Encodes public id to be used in urls (such as wasm asset or layers)
