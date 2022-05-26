@@ -2,7 +2,7 @@ Cloudinary Kotlin SDK
 =========================
 [![Build Status](https://api.travis-ci.com/cloudinary/cloudinary_kotlin.svg?branch=master)](https://app.travis-ci.com/github/cloudinary/cloudinary_kotlin)
 ## About
-The Cloudinary iOS SDK allows you to quickly and easily integrate your application with Cloudinary.
+The Cloudinary Kotlin SDK allows you to quickly and easily integrate your application with Cloudinary.
 Effortlessly optimize and transform your cloud's assets.
 
 ### Additional documentation
