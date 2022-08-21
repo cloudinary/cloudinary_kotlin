@@ -102,7 +102,7 @@ internal fun String.cldMergeToSingleUnderscore(): String {
 internal fun String.cldSmartUrlEncode() = URLEncoder.encode(this, "UTF-8")
     .replace("%2F", "/")
     .replace("%3A", ":")
-    .replace("+", "%20")
+    .replace("+", "%2B")
 
 
 /**
