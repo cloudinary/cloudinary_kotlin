@@ -313,21 +313,21 @@ class UrlTest {
     fun setSignature() {
         var actual = cloudinary.image {
             extension(Format.jpg())
-            signature("s--123456789")
+            signature("q123456789")
         }.generate("test")
-        assertEquals("https://res.cloudinary.com/test123/image/upload/s--123456789/test.jpg", actual)
+        assertEquals("https://res.cloudinary.com/test123/image/upload/q123456789/test.jpg", actual)
 
         actual = cloudinary.video {
             extension(Format.jpg())
-            signature("s--123456789")
+            signature("q123456789")
         }.generate("test")
-        assertEquals("https://res.cloudinary.com/test123/video/upload/s--123456789/test.jpg", actual)
+        assertEquals("https://res.cloudinary.com/test123/video/upload/q123456789/test.jpg", actual)
 
         actual = cloudinary.raw {
             extension(Format.jpg())
-            signature("s--123456789")
+            signature("q123456789")
         }.generate("test")
-        assertEquals("https://res.cloudinary.com/test123/raw/upload/s--123456789/test.jpg", actual)
+        assertEquals("https://res.cloudinary.com/test123/raw/upload/q123456789/test.jpg", actual)
     }
 
     @Test
