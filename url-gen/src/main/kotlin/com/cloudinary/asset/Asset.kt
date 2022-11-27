@@ -145,7 +145,6 @@ abstract class BaseAsset constructor(
             }
         }
 
-
         val finalizedResourceType = finalizeResourceType(
             assetType,
             deliveryType,
