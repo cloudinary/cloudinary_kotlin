@@ -310,6 +310,15 @@ class UrlTest {
     }
 
     @Test
+    fun setSignature() {
+        var actual = cloudinary.image {
+            extension(Format.jpg())
+            signature("s--123456789")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/s--123456789/test.jpg", actual)
+    }
+
+    @Test
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
         var url = cloudinarySignedUrl.image {

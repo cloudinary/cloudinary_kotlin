@@ -15,6 +15,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.security.Signature
 
 private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
@@ -37,6 +38,7 @@ class Asset(
     urlSuffix: String? = null,
     assetType: String = DEFAULT_ASSET_TYPE,
     deliveryType: String? = null,
+    signature: String? = null,
     private val transformation: Transformation? = null
 
 ) : BaseAsset(
@@ -47,7 +49,8 @@ class Asset(
     extension,
     urlSuffix,
     assetType,
-    deliveryType
+    deliveryType,
+    signature
 ) {
 
     override fun getTransformationString() = transformation?.toString()
@@ -77,6 +80,7 @@ class Asset(
             urlSuffix,
             assetType,
             deliveryType,
+            signature,
             transformation
 
         )
@@ -95,7 +99,8 @@ abstract class BaseAsset constructor(
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
     private val assetType: String = DEFAULT_ASSET_TYPE,
-    private val deliveryType: String? = null
+    private val deliveryType: String? = null,
+    private val signature: String? = null
 ) {
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -126,19 +131,22 @@ abstract class BaseAsset constructor(
         mutableVersion = if (mutableVersion == null) "" else "v$mutableVersion"
 
         val transformationString = getTransformationString()
-        if (urlConfig.signUrl && (cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
-            val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
+        if ((cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
+            if (!this.signature.isNullOrBlank()) {
+                signature = this.signature
+            } else if (urlConfig.signUrl) {
+                val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
+                val toSign = listOfNotNull(transformationString, sourceToSign)
+                    .joinToString("/")
+                    .cldRemoveStartingChars('/')
+                    .cldMergeSlashedInUrl()
 
-
-            val toSign = listOfNotNull(transformationString, sourceToSign)
-                .joinToString("/")
-                .cldRemoveStartingChars('/')
-                .cldMergeSlashedInUrl()
-
-            val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
-            signature = Base64Coder.encodeURLSafeString(hash)
-            signature = "s--" + signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8) + "--"
+                val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
+                signature = Base64Coder.encodeURLSafeString(hash)
+                signature = "s--" + signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8) + "--"
+            }
         }
+
 
         val finalizedResourceType = finalizeResourceType(
             assetType,
@@ -198,6 +206,7 @@ abstract class BaseAsset constructor(
         protected var extension: Format? = null
         protected var urlSuffix: String? = null
         var deliveryType: String? = null
+        var signature: String? = null
 
         fun version(version: String) = apply { this.version = version }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
@@ -207,6 +216,7 @@ abstract class BaseAsset constructor(
         fun storageType(storageType: String) = apply { this.deliveryType = storageType }
         fun deliveryType(deliveryType: String) = apply {this.deliveryType = deliveryType}
         fun assetType(assetType: String) = apply { this.assetType = assetType }
+        fun signature(signature: String) = apply {this.signature = signature}
     }
 }
 
