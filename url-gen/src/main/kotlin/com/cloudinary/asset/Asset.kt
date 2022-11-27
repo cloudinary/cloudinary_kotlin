@@ -6,7 +6,6 @@ import com.cloudinary.config.CloudConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
@@ -15,7 +14,6 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.security.Signature
 
 private const val OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
 private const val AKAMAI_SHARED_CDN = "res.cloudinary.com"
