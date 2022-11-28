@@ -131,7 +131,7 @@ abstract class BaseAsset constructor(
         val transformationString = getTransformationString()
         if ((cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
             if (!this.signature.isNullOrBlank()) {
-                signature = this.signature
+                signature = wrapString(this.signature)
             } else if (urlConfig.signUrl) {
                 val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
                 val toSign = listOfNotNull(transformationString, sourceToSign)
@@ -141,7 +141,7 @@ abstract class BaseAsset constructor(
 
                 val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
                 signature = Base64Coder.encodeURLSafeString(hash)
-                signature = "s--" + signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8) + "--"
+                signature = wrapString(signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8))
             }
         }
 
@@ -337,6 +337,10 @@ private fun unsignedDownloadUrlPrefix(
     }
 
     return prefix
+}
+
+private fun wrapString(signature: String) : String {
+    return "s--$signature--"
 }
 
 private class FinalizedSource(val source: String, val sourceToSign: String)
