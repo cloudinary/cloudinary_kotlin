@@ -6,7 +6,6 @@ import com.cloudinary.config.CloudConfig
 import com.cloudinary.config.UrlConfig
 import com.cloudinary.generateAnalyticsSignature
 import com.cloudinary.transformation.*
-import com.cloudinary.transformation.delivery.Delivery
 import com.cloudinary.util.*
 import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
@@ -37,6 +36,7 @@ class Asset(
     urlSuffix: String? = null,
     assetType: String = DEFAULT_ASSET_TYPE,
     deliveryType: String? = null,
+    signature: String? = null,
     private val transformation: Transformation? = null
 
 ) : BaseAsset(
@@ -47,7 +47,8 @@ class Asset(
     extension,
     urlSuffix,
     assetType,
-    deliveryType
+    deliveryType,
+    signature
 ) {
 
     override fun getTransformationString() = transformation?.toString()
@@ -77,6 +78,7 @@ class Asset(
             urlSuffix,
             assetType,
             deliveryType,
+            signature,
             transformation
 
         )
@@ -95,7 +97,8 @@ abstract class BaseAsset constructor(
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
     private val assetType: String = DEFAULT_ASSET_TYPE,
-    private val deliveryType: String? = null
+    private val deliveryType: String? = null,
+    private val signature: String? = null
 ) {
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
@@ -126,18 +129,20 @@ abstract class BaseAsset constructor(
         mutableVersion = if (mutableVersion == null) "" else "v$mutableVersion"
 
         val transformationString = getTransformationString()
-        if (urlConfig.signUrl && (cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
-            val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
+        if ((cloudConfig.authToken == null || cloudConfig.authToken == NULL_AUTH_TOKEN)) {
+            if (!this.signature.isNullOrBlank()) {
+                signature = formatSignature(this.signature)
+            } else if (urlConfig.signUrl) {
+                val signatureAlgorithm = if (urlConfig.longUrlSignature) "SHA-256" else urlConfig.signatureAlgorithm
+                val toSign = listOfNotNull(transformationString, sourceToSign)
+                    .joinToString("/")
+                    .cldRemoveStartingChars('/')
+                    .cldMergeSlashedInUrl()
 
-
-            val toSign = listOfNotNull(transformationString, sourceToSign)
-                .joinToString("/")
-                .cldRemoveStartingChars('/')
-                .cldMergeSlashedInUrl()
-
-            val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
-            signature = Base64Coder.encodeURLSafeString(hash)
-            signature = "s--" + signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8) + "--"
+                val hash = hash(toSign + cloudConfig.apiSecret, signatureAlgorithm)
+                signature = Base64Coder.encodeURLSafeString(hash)
+                signature = formatSignature(signature.substring(0, if (urlConfig.longUrlSignature) 32 else 8))
+            }
         }
 
         val finalizedResourceType = finalizeResourceType(
@@ -198,6 +203,7 @@ abstract class BaseAsset constructor(
         protected var extension: Format? = null
         protected var urlSuffix: String? = null
         var deliveryType: String? = null
+        var signature: String? = null
 
         fun version(version: String) = apply { this.version = version }
         fun publicId(publicId: String) = apply { this.publicId = publicId }
@@ -207,6 +213,7 @@ abstract class BaseAsset constructor(
         fun storageType(storageType: String) = apply { this.deliveryType = storageType }
         fun deliveryType(deliveryType: String) = apply {this.deliveryType = deliveryType}
         fun assetType(assetType: String) = apply { this.assetType = assetType }
+        fun signature(signature: String) = apply {this.signature = signature}
     }
 }
 
@@ -330,6 +337,10 @@ private fun unsignedDownloadUrlPrefix(
     }
 
     return prefix
+}
+
+private fun formatSignature(signature: String) : String {
+    return "s--$signature--"
 }
 
 private class FinalizedSource(val source: String, val sourceToSign: String)

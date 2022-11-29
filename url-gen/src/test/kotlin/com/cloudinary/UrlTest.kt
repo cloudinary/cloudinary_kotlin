@@ -310,6 +310,46 @@ class UrlTest {
     }
 
     @Test
+    fun setSignature() {
+        var actual = cloudinary.image {
+            extension(Format.jpg())
+            signature("q1234567")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/s--q1234567--/test.jpg", actual)
+
+        actual = cloudinary.video {
+            extension(Format.jpg())
+            signature("q1234567")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/video/upload/s--q1234567--/test.jpg", actual)
+
+        actual = cloudinary.raw {
+            extension(Format.jpg())
+            signature("q1234567")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/raw/upload/s--q1234567--/test.jpg", actual)
+
+        val authToken = AuthToken(key = AuthTokenTest.KEY, duration = 300, startTime = 11111111)
+        val tempConfig = CloudinaryConfig.fromUri("cloudinary://a:b@test123?analytics=false")
+        var cloudinaryWithAutoToken =
+            Cloudinary(tempConfig.copy(cloudConfig = tempConfig.cloudConfig.copy(authToken = authToken), urlConfig = cloudinary.config.urlConfig.copy(signUrl = true)))
+
+        actual = cloudinaryWithAutoToken.image {
+            extension(Format.jpg())
+            signature("q1234567")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/test.jpg?__cld_token__=st=11111111~exp=11111411~hmac=43940b2d1765865559bb62a54688cae0b88dff48ce6df1d03597c7197b4d5f88", actual)
+
+        cloudinaryWithAutoToken =
+            Cloudinary(tempConfig.copy(cloudConfig = tempConfig.cloudConfig.copy(authToken = authToken), urlConfig = cloudinary.config.urlConfig.copy(signUrl = false)))
+        actual = cloudinaryWithAutoToken.image {
+            extension(Format.jpg())
+            signature("q1234567")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/test.jpg", actual)
+    }
+
+    @Test
     fun testNotSignTheUrlSuffix() {
         val pattern = Pattern.compile("s--[0-9A-Za-z_-]{8}--")
         var url = cloudinarySignedUrl.image {
