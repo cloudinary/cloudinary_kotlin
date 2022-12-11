@@ -16,6 +16,7 @@ For the complete documentation, see the [Kotlin SDK Guide](https://cloudinary.co
 - [Usage](#usage)
     - [Setup](#Setup)
     - [Transform and Optimize Assets](#Transform-and-Optimize-Assets)
+    - [Uploading Asset](#Uploading-Assets)
 
 ## Key Features
 - [Transform](https://cloudinary.com/documentation/kotlin_media_transformations) and [optimize](https://cloudinary.com/documentation/kotlin_media_transformations#image_optimizations) assets.
@@ -82,6 +83,89 @@ A transformation is also added to the image - cropping and using the sepia effec
 
 This will output the following url:
 `https://res.cloudinary.com/demo/image/upload/c_fill,h_150,w_100/sample.jpg`
+
+### Uploading Assets
+
+The entry point for upload operations is the `cloudinary.uploader().upload()` call. All upload operations are dispatched to a background queue.
+
+The following examples uploads a `File` using the default settings, a request upload callback, and an upload preset (more about upload presets below):
+
+```kotlin
+cloudinary.uploader().upload(imageFile) { 
+    params {
+      uploadPreset = "sample_preset"
+    }
+    options {
+      unsigned = true
+    }
+}
+```
+
+The uploaded image is assigned a randomly generated public ID, which is returned as part of the response object.
+The image is immediately available for download through a CDN:
+
+    cloudinary.image().generate("generatedPublicId")
+      
+    http://res.cloudinary.com/demo/image/upload/generatedPublicId.jpg
+
+You can also specify your own public ID:
+
+```kotlin
+cloudinary.uploader().upload(uri) {
+        params {
+          uploadPreset = "sample_preset"
+          publicId = "sample_remote" 
+        }
+        options {
+            unsigned = true
+        }
+}
+```
+
+For security reasons, mobile applications cannot contain the full account credentials, and so they cannot freely upload resources to the cloud.
+Cloudinary provides two different mechanisms to enable end-users to upload resources without providing full credentials.
+
+##### 1. Unsigned uploads using [Upload Presets.](https://cloudinary.com/documentation/upload_presets)
+You can create an upload preset in your Cloudinary account console, defining rules that limit the formats, transformations, dimensions and more.
+Once the preset is defined, it's name is supplied when calling upload. An upload call will only succeed if the preset name is used and the resource is within the preset's pre-defined limits.
+
+The following example uploads a local resource, available as a Uri, assuming a preset named 'sample_preset' already exists in the account:
+
+```kotlin
+cloudinary.uploader().upload(uri) {
+        params {
+          uploadPreset = "sample_preset"
+        }
+        options {
+          unsigned = true
+        }
+}
+```
+
+##### 2. Signed uploads with server-based signature
+Another way to allow uploading without credentials is using signed uploads.
+It is recommended to generate the upload authentication signature on the server side, where it's safe to store the `api_secret`.
+
+Cloudinary's Kotlin SDK allows providing server-generated signature and any additional parameters that were generated on the server side (instead of signing using `api_secret` locally).
+
+Your server can use any Cloudinary libraries (Ruby on Rails, PHP, Python & Django, Java, Perl, .Net, etc.) for generating the signature. The following JSON in an example of a response of an upload authorization request to your server:
+
+	{
+	  "signature": "sgjfdoigfjdgfdogidf9g87df98gfdb8f7d6gfdg7gfd8",
+	  "public_id": "abdbasdasda76asd7sa789",
+	  "timestamp": 1346925631,
+	  "api_key": "123456789012345"
+	}
+
+When initializing `MediaManager`, a `SignatureProvider` can be sent. Whenever an upload requires signing, the library will call the provider's `provideSignature()` method,
+where you should implement the call to your server's signing endpoint. This callback runs on a background a thread so there's no need to handle threading:
+
+    MediaManager.init(this, new SignatureProvider() {
+        @Override
+        public Signature provideSignature(Map options) {
+            // call server signature endpoint
+        }
+    }, null);
 
 ## Contributions
 See [contributing guidelines](/CONTRIBUTING.md).
