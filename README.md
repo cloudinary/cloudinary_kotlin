@@ -106,7 +106,7 @@ The image is immediately available for download through a CDN:
 
     cloudinary.image().generate("generatedPublicId")
       
-    http://res.cloudinary.com/demo/image/upload/generatedPublicId.jpg
+    http://res.cloudinary.com/<your cloud>/image/upload/generatedPublicId.jpg
 
 You can also specify your own public ID:
 
