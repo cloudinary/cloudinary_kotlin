@@ -169,7 +169,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
             val resourceType =
                 if (action != "delete_by_token") (request.options.resourceType ?: DEFAULT_RESOURCE_TYPE) else null
 
-            if (requiresSigning(action, paramsMap, request)) {
+            if (requiresSigning(action, paramsMap, request) || paramsMap["signature"] != null)  {
                 config.apiKey?.let {
                     // no signature - we need to sign using api secret if present:
                     val apiSecret = request.cloudinaryConfig.apiSecret
@@ -177,7 +177,6 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
 
                     paramsMap["timestamp"] = (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()
                     paramsMap["signature"] = apiSignRequest(paramsMap, apiSecret)
-
                     paramsMap["api_key"] = it
                 }
             }

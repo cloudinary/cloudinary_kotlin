@@ -149,23 +149,24 @@ It is recommended to generate the upload authentication signature on the server 
 Cloudinary's Kotlin SDK allows providing server-generated signature and any additional parameters that were generated on the server side (instead of signing using `api_secret` locally).
 
 Your server can use any Cloudinary libraries (Ruby on Rails, PHP, Python & Django, Java, Perl, .Net, etc.) for generating the signature. The following JSON in an example of a response of an upload authorization request to your server:
-
+```json
 	{
 	  "signature": "sgjfdoigfjdgfdogidf9g87df98gfdb8f7d6gfdg7gfd8",
 	  "public_id": "abdbasdasda76asd7sa789",
 	  "timestamp": 1346925631,
 	  "api_key": "123456789012345"
 	}
+```
 
-When initializing `MediaManager`, a `SignatureProvider` can be sent. Whenever an upload requires signing, the library will call the provider's `provideSignature()` method,
-where you should implement the call to your server's signing endpoint. This callback runs on a background a thread so there's no need to handle threading:
+Use the signature field to put the signature you got from your server, when using signature api key is required as well as part of the Cloudinary initialization.
 
-    MediaManager.init(this, new SignatureProvider() {
-        @Override
-        public Signature provideSignature(Map options) {
-            // call server signature endpoint
+```kotlin
+        val response = uploader.upload(remoteTestImageUrl) {
+            params {
+                signature = <your signature>
+            }
         }
-    }, null);
+```
 
 ## Contributions
 See [contributing guidelines](/CONTRIBUTING.md).
