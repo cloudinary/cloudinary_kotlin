@@ -12,7 +12,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 jdk:
-  - oraclejdk13
+  - oraclejdk8
 
 before_script: >
   export CLOUDINARY_URL=$(bash tools/get_test_cloud.sh);
