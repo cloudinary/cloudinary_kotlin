@@ -1,3 +1,9 @@
+1.6.0 / 2022-12-15
+==================
+
+* Add support to set signature
+* Update transformation builder version
+
 1.5.1 / 2022-05-19
 ==================
 
