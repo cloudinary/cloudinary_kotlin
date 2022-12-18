@@ -16,7 +16,7 @@ For the complete documentation, see the [Kotlin SDK Guide](https://cloudinary.co
 - [Usage](#usage)
     - [Setup](#Setup)
     - [Transform and Optimize Assets](#Transform-and-Optimize-Assets)
-    - [Uploading Asset](#Uploading-Assets)
+    - [Uploading Assets](#Uploading-Assets)
 
 ## Key Features
 - [Transform](https://cloudinary.com/documentation/kotlin_media_transformations) and [optimize](https://cloudinary.com/documentation/kotlin_media_transformations#image_optimizations) assets.
