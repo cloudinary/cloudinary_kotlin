@@ -142,7 +142,7 @@ cloudinary.uploader().upload(uri) {
 }
 ```
 
-##### 2. Signed uploads with server-based signature
+##### 2. Signed uploads with server-generated signature
 Another way to allow uploading without credentials is using signed uploads.
 It is recommended to generate the upload authentication signature on the server side, where it's safe to store the `api_secret`.
 
