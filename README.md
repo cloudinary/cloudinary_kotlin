@@ -145,6 +145,7 @@ cloudinary.uploader().upload(uri) {
 ##### 2. Signed uploads with server-generated signature
 Another way to upload without including credentials is using signed uploads.
 You should generate the upload authentication signature on the server side, where it's safe to store the `api_secret`.
+For more information on how to sign upload you can visit our [documentation.](https://cloudinary.com/documentation/upload_images#generating_authentication_signatures)
 
 The Cloudinary Kotlin SDK allows you to provide a server-generated signature and any additional parameters that were generated on the server side (instead of signing using `api_secret` locally).
 
