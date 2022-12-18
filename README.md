@@ -88,7 +88,7 @@ This will output the following url:
 
 The entry point for upload operations is the `cloudinary.uploader().upload()` call. All upload operations are dispatched to a background queue.
 
-The following examples uploads a `File` using the default settings, a request upload callback, and an upload preset (more about upload presets below):
+The following example performs an unsigned upload of a `File` using the default settings, a request upload callback, and an upload preset (required for unsigned uploads):
 
 ```kotlin
 cloudinary.uploader().upload(imageFile) { 
