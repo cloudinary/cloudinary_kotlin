@@ -72,6 +72,29 @@ class UrlTest {
     }
 
     @Test
+    fun testConfigValuesWithSecureCname() {
+
+        val urlConfig = UrlConfig(
+            secureCname = "secure.api.com",
+            privateCdn = true,
+            shorten = true,
+            secureCdnSubdomain = true,
+            useRootPath = true,
+            cname = "my.domain.org",
+            secure = true,
+            analytics = false
+        )
+
+        val cloudConfig = cloudinary.config.cloudConfig
+
+        assertEquals("https://secure.api.com/sample", Asset(cloudConfig, urlConfig).generate("sample"))
+        assertEquals(
+            "http://my.domain.org/sample",
+            Asset(cloudConfig, urlConfig.copy(secure = false)).generate("sample")
+        )
+    }
+
+    @Test
     fun testUrlWithAnalytics() {
         val cloudinaryWithAnalytics =
             Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(analytics = true)))
@@ -155,12 +178,38 @@ class UrlTest {
     }
 
     @Test
+    fun testSecureCname() { // should use default secure distribution if secure=TRUE
+        val cloudinarySecureFalse =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secure = false)))
+
+        val result = cloudinarySecureFalse.image().generate("test")
+        assertEquals("http://res.cloudinary.com/test123/image/upload/test", result)
+
+        // should take secure distribution from config if secure=TRUE
+        val newConfig =
+            cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureCname = "config.secure.distribution.com"))
+
+        val result2 = Cloudinary(newConfig).image().generate("test")
+        assertEquals("https://config.secure.distribution.com/test123/image/upload/test", result2)
+    }
+
+    @Test
     fun testSecureDistributionOverwrite() { // should allow overwriting secure distribution if secure=TRUE
         val cloudinarySecureDistribution =
             Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureDistribution = "something.else.com")))
 
         val result =
             cloudinarySecureDistribution.image().generate("test")
+        assertEquals("https://something.else.com/test123/image/upload/test", result)
+    }
+
+    @Test
+    fun testSecureCnameOverwrite() { // should allow overwriting secure distribution if secure=TRUE
+        val cloudinarySecureCname =
+            Cloudinary(cloudinary.config.copy(urlConfig = cloudinary.config.urlConfig.copy(secureCname = "something.else.com")))
+
+        val result =
+            cloudinarySecureCname.image().generate("test")
         assertEquals("https://something.else.com/test123/image/upload/test", result)
     }
 
@@ -180,6 +229,19 @@ class UrlTest {
             secure = true,
             privateCdn = true,
             secureDistribution = "something.cloudfront.net"
+        )
+        val config = cloudinary.config.copy(urlConfig = urlConfig)
+        val result = Cloudinary(config).image().generate("test")
+        assertEquals("https://something.cloudfront.net/image/upload/test", result)
+    }
+
+    @Test
+    fun testSecureNonAkamaiWithCname() { // should not add cloud_name if private_cdn and secure non akamai
+// secure_distribution
+        val urlConfig = cloudinary.config.urlConfig.copy(
+            secure = true,
+            privateCdn = true,
+            secureCname = "something.cloudfront.net"
         )
         val config = cloudinary.config.copy(urlConfig = urlConfig)
         val result = Cloudinary(config).image().generate("test")
