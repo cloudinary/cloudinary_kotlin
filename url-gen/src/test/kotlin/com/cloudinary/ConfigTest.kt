@@ -81,6 +81,7 @@ class ConfigTest {
         val config = UrlConfig()
 
         assertEquals(null, config.secureDistribution)
+        assertEquals(null, config.secureCname)
         assertEquals(false, config.privateCdn)
         assertEquals(false, config.shorten)
         assertEquals(false, config.secureCdnSubdomain)
@@ -124,5 +125,23 @@ class ConfigTest {
         assertEquals(true, copy.useRootPath)
         assertEquals(cname, copy.cname)
         assertEquals(true, copy.secure)
+    }
+
+    @Test
+    fun testSecureCname() {
+        val secureCname = "secure.api.com"
+
+        val config = UrlConfig(
+            secureCname = secureCname
+        )
+
+        assertEquals(secureCname, config.secureCname)
+
+        val copy = config.copy(
+            secureCname = "copy.secure.distribution",
+            shorten = false
+        )
+
+        assertEquals("copy.secure.distribution", copy.secureCname)
     }
 }

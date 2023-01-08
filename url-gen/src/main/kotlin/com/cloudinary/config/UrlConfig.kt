@@ -16,6 +16,7 @@ const val SIGN_URL = "sign_url"
 const val LONG_URL_SIGNATURE = "long_url_signature"
 const val FORCE_VERSION = "force_version"
 const val SECURE_DISTRIBUTION = "secure_distribution"
+const val SECURE_CNAME = "secure_cname"
 const val PRIVATE_CDN = "private_cdn"
 const val CDN_SUBDOMAIN = "cdn_subdomain"
 const val SHORTEN = "shorten"
@@ -28,7 +29,9 @@ const val ANALYTICS = "analytics"
 
 interface IUrlConfig {
     val cname: String?
+    @Deprecated(message = "secureDistribution has been deprecated. Please use secureCname instead.", replaceWith = ReplaceWith("secureCname"))
     val secureDistribution: String?
+    val secureCname: String?
     val privateCdn: Boolean
     val signUrl: Boolean
     val longUrlSignature: Boolean
@@ -43,7 +46,12 @@ interface IUrlConfig {
 
 data class UrlConfig(
     override val cname: String? = null,
+    @Deprecated(
+        "secureDistribution has been deprecated. Please use secureCname instead.",
+        replaceWith = ReplaceWith("secureCname")
+    )
     override val secureDistribution: String? = null,
+    override val secureCname: String? = null,
     override val privateCdn: Boolean = DEFAULT_PRIVATE_CDN,
     override val signUrl: Boolean = DEFAULT_SIGN_URL,
     override val longUrlSignature: Boolean = DEFAULT_LONG_URL_SIGNATURE,
@@ -58,6 +66,7 @@ data class UrlConfig(
     constructor(params: Map<String, Any>) : this(
         cname = params[CNAME]?.toString(),
         secureDistribution = params[SECURE_DISTRIBUTION]?.toString(),
+        secureCname = params[SECURE_CNAME]?.toString(),
         privateCdn = params.getBoolean(PRIVATE_CDN) ?: DEFAULT_PRIVATE_CDN,
         signUrl = params.getBoolean(SIGN_URL) ?: DEFAULT_SIGN_URL,
         longUrlSignature = params.getBoolean(LONG_URL_SIGNATURE) ?: DEFAULT_LONG_URL_SIGNATURE,
