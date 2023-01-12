@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec
 const val KEY = "key"
 const val IP = "ip"
 const val ACL = "acl"
+const val ACLS = "acls"
 const val START_TIME = "start_time"
 const val EXPIRATION = "expiration"
 const val DURATION = "duration"
@@ -29,9 +30,11 @@ data class AuthToken(
     val startTime: Long = 0,
     private val expiration: Long = 0,
     private val ip: String? = null,
+    @Deprecated("This parameter will be removed in the next major version, use acls instead", replaceWith = ReplaceWith("acls"))
     val acl: String? = null,
     val duration: Long = 0,
-    private val isNullToken: Boolean = false
+    private val isNullToken: Boolean = false,
+    val acls: ArrayList<String> = arrayListOf()
 ) {
 
     constructor(params: Map<*, *>) : this(
@@ -40,7 +43,8 @@ data class AuthToken(
         expiration = params[EXPIRATION]?.toString()?.toLong() ?: 0,
         ip = params[IP]?.toString(),
         acl = params[ACL]?.toString(),
-        duration = params[DURATION]?.toString()?.toLong() ?: 0
+        duration = params[DURATION]?.toString()?.toLong() ?: 0,
+        acls = (if (params[ACLS] != null)  params[ACLS] as ArrayList<String> else arrayListOf())
     )
 
     /**
@@ -69,7 +73,10 @@ data class AuthToken(
         }
         tokenParts.add("exp=$expiration")
         if (acl != null) {
-            tokenParts.add("acl=" + escapeToLower(acl))
+            acls.add(acl)
+        }
+        if (acls.isNotEmpty()) {
+            tokenParts.add("acl=" + escapeToLower(acls.joinToString("!")))
         }
         val toSign = ArrayList(tokenParts)
         if (url != null && acl == null) {
