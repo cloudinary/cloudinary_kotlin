@@ -130,6 +130,17 @@ class AuthTokenTest {
     }
 
     @Test
+    fun testMultiplePatternsInAcl() {
+        val token = AuthToken(
+            key = KEY, duration = 300, acls = arrayListOf(
+            "/image/authenticated/*", "/image2/authenticated/*", "/image3/authenticated/*"), startTime = 222222222)
+        val cookieToken = token.generate()
+        assertEquals(
+            "__cld_token__=st=222222222~exp=222222522~acl=%2fimage%2fauthenticated%2f*!%2fimage2%2fauthenticated%2f*!%2fimage3%2fauthenticated%2f*~hmac=208a4e066b8cc5ed66dacdb19c7a0288a1993a910e0e795c64cd134fbbfa0b9c",
+            cookieToken)
+    }
+
+    @Test
     fun testIgnoreUrlIfAclIsProvided() {
         val user = "foobar" // username taken from elsewhere
         val token =
