@@ -169,17 +169,28 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
             val resourceType =
                 if (action != "delete_by_token") (request.options.resourceType ?: DEFAULT_RESOURCE_TYPE) else null
 
-            if (requiresSigning(action, paramsMap, request)) {
-                config.apiKey?.let {
-                    // no signature - we need to sign using api secret if present:
-                    val apiSecret = request.cloudinaryConfig.apiSecret
-                        ?: throw IllegalArgumentException("Must supply api_secret")
-
-                    paramsMap["timestamp"] = (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()
-                    paramsMap["signature"] = apiSignRequest(paramsMap, apiSecret)
-
-                    paramsMap["api_key"] = it
+            //Verify that signature has both timestamp and api_key
+            if (paramsMap["signature"] != null) {
+                if(paramsMap["timestamp"] == null) {
+                    throw IllegalArgumentException("Must supply timestamp")
                 }
+                if(config.apiKey == null) {
+                    throw IllegalArgumentException("Must supply api_key")
+                }
+            }
+
+            if (requiresSigning(action, paramsMap, request) || paramsMap["signature"] != null) {
+                // no signature - we need to sign using api secret if present:
+                val apiKey = config.apiKey
+                    ?: throw IllegalArgumentException("Must supply api_key")
+                val apiSecret = request.cloudinaryConfig.apiSecret
+                    ?: throw IllegalArgumentException("Must supply api_secret")
+
+                paramsMap["timestamp"] = paramsMap["timestamp"]
+                    ?: (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()
+                paramsMap["signature"] =
+                    paramsMap["signature"] ?: apiSignRequest(paramsMap, apiSecret)
+                paramsMap["api_key"] = apiKey
             }
 
             val url = listOfNotNull(prefix, API_VERSION, cloudName, resourceType, action).joinToString("/")
