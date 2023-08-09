@@ -158,7 +158,8 @@ abstract class BaseAsset constructor(
             urlConfig.privateCdn,
             urlConfig.cname,
             urlConfig.secure,
-            urlConfig.secureDistribution
+            urlConfig.secureDistribution,
+            urlConfig.secureCname
         )
 
         val url =
@@ -302,10 +303,11 @@ private fun unsignedDownloadUrlPrefix(
     privateCdn: Boolean,
     cname: String?,
     secure: Boolean,
-    secureDistribution: String?
+    secureDistribution: String?,
+    secureCname: String?
 ): String {
     var mutableCloudName = cloudName
-    var mutableSecureDistribution = secureDistribution
+    var mutableSecureDistribution = if(secureDistribution.isNullOrEmpty()) secureCname else secureDistribution
     mutableCloudName?.let {
         if (it.startsWith("/")) return "/res$mutableCloudName"
     }

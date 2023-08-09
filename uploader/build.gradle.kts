@@ -14,7 +14,7 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:3.11.0")
 
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
-    implementation("com.cloudinary:kotlin-transformation-builder-sdk:1.1.0")
+    api("com.cloudinary:kotlin-transformation-builder-sdk:1.2.1")
 
     testImplementation("org.apache.httpcomponents:httpclient:4.5.6")
     testImplementation("org.apache.httpcomponents:httpmime:4.5.6")

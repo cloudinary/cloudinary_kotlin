@@ -5,11 +5,12 @@ plugins {
 }
 
 // 2. Include Orchid dependencies
+// Package is un-usable and should replaced in order to create future doc reference
 dependencies {
-    orchidRuntime "io.github.javaeden.orchid:OrchidDocs:0.21.0"
-    orchidRuntime "io.github.javaeden.orchid:OrchidKotlindoc:0.21.0"
-    orchidRuntime "io.github.javaeden.orchid:OrchidPluginDocs:0.21.0"
-    orchidRuntime("io.github.javaeden.orchid:OrchidEditorial:0.21.0")
+//    orchidRuntime "io.github.javaeden.orchid:OrchidDocs:0.21.0"
+//    orchidRuntime "io.github.javaeden.orchid:OrchidKotlindoc:0.21.0"
+//    orchidRuntime "io.github.javaeden.orchid:OrchidPluginDocs:0.21.0"
+//    orchidRuntime("io.github.javaeden.orchid:OrchidEditorial:0.21.0")
 }
 
 // 3. Get dependencies from Kotlinx Bintray repo
