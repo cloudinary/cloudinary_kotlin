@@ -86,9 +86,7 @@ This will output the following url:
 
 ### Uploading Assets
 
-The entry point for upload operations is the `cloudinary.uploader().upload()` call. All upload operations are dispatched to a background queue.
-
-The following example performs an unsigned upload of a `File` using the default settings, a request upload callback, and an upload preset (required for unsigned uploads):
+To upload a file you need to call you `cloudinary` object with `uploader()`, here's an example:
 
 ```kotlin
 cloudinary.uploader().upload(imageFile) { 
@@ -99,74 +97,6 @@ cloudinary.uploader().upload(imageFile) {
       unsigned = true
     }
 }
-```
-
-The uploaded image is assigned a randomly generated public ID, which is returned as part of the response object.
-The image is immediately available for download through a CDN:
-
-    cloudinary.image().generate("generatedPublicId")
-      
-    http://res.cloudinary.com/<your cloud>/image/upload/generatedPublicId.jpg
-
-You can also specify your own public ID:
-
-```kotlin
-cloudinary.uploader().upload(uri) {
-        params {
-          uploadPreset = "sample_preset"
-          publicId = "sample_remote" 
-        }
-        options {
-            unsigned = true
-        }
-}
-```
-
-For security reasons, mobile applications cannot contain the full account credentials, and so they cannot freely upload resources to the cloud.
-Cloudinary provides two different mechanisms to enable end-users to upload resources without providing full credentials.
-
-##### 1. Unsigned uploads using [Upload Presets.](https://cloudinary.com/documentation/upload_presets)
-You can create an upload preset in your Cloudinary account console, defining rules that limit the formats, transformations, dimensions and more.
-Once the preset is defined, it's name is supplied when calling upload. An upload call will only succeed if the preset name is used and the resource is within the preset's pre-defined limits.
-
-The following example uploads a local resource, available as a Uri, assuming a preset named 'sample_preset' already exists in the account:
-
-```kotlin
-cloudinary.uploader().upload(uri) {
-        params {
-          uploadPreset = "sample_preset"
-        }
-        options {
-          unsigned = true
-        }
-}
-```
-
-##### 2. Signed uploads with server-generated signature
-Another way to upload without including credentials is using signed uploads.
-You should generate the upload authentication signature on the server side, where it's safe to store the `api_secret`.
-For more information on how to sign upload you can visit our [documentation.](https://cloudinary.com/documentation/upload_images#generating_authentication_signatures)
-
-The Cloudinary Kotlin SDK allows you to provide a server-generated signature and any additional parameters that were generated on the server side (instead of signing using `api_secret` locally).
-
-Your server can use any Cloudinary libraries (Ruby on Rails, PHP, Python & Django, Java, Perl, .Net, etc.) for generating the signature. The following JSON in an example of a response of an upload authorization request to your server:
-```json
-	{
-	  "signature": "sgjfdoigfjdgfdogidf9g87df98gfdb8f7d6gfdg7gfd8",
-	  "public_id": "abdbasdasda76asd7sa789",
-	  "timestamp": 1346925631,
-	  "api_key": "123456789012345"
-	}
-```
-
-Use the signature field to put the signature you got from your server, when using signature api key is required as well as part of the Cloudinary initialization.
-
-```kotlin
-        val response = uploader.upload(remoteTestImageUrl) {
-            params {
-                signature = <your signature>
-            }
-        }
 ```
 
 ## Contributions
