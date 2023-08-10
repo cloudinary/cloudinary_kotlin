@@ -14,8 +14,9 @@ For the complete documentation, see the [Kotlin SDK Guide](https://cloudinary.co
 - [Version Support](#Version-Support)
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Setup](#Setup)
-    - [Transform and Optimize Assets](#Transform-and-Optimize-Assets)
+  - [Setup](#Setup)
+  - [Transform and Optimize Assets](#Transform-and-Optimize-Assets)
+  - [Uploading Assets](#Uploading-Assets)
 
 ## Key Features
 - [Transform](https://cloudinary.com/documentation/kotlin_media_transformations) and [optimize](https://cloudinary.com/documentation/kotlin_media_transformations#image_optimizations) assets.
@@ -82,6 +83,21 @@ A transformation is also added to the image - cropping and using the sepia effec
 
 This will output the following url:
 `https://res.cloudinary.com/demo/image/upload/c_fill,h_150,w_100/sample.jpg`
+
+### Uploading Assets
+
+To upload a file you need to call you `cloudinary` object with `uploader()`, here's an example:
+
+```kotlin
+cloudinary.uploader().upload(imageFile) { 
+    params {
+      uploadPreset = "sample_preset"
+    }
+    options {
+      unsigned = true
+    }
+}
+```
 
 ## Contributions
 See [contributing guidelines](/CONTRIBUTING.md).
