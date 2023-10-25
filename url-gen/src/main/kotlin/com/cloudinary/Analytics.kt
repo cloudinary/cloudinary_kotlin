@@ -1,5 +1,7 @@
 package com.cloudinary
 
+import java.util.regex.Pattern
+
 private const val ALGO_VERSION = 'C'
 private const val PRODUCT = "A"
 private const val SDK = 'H'
@@ -67,10 +69,14 @@ private fun generateOsTypeString() : String {
     return "Z"
 }
 
-private fun generateOsVersionString(osType: String) : String {
+private fun generateOsVersionString(osType: String) : String { //5.15.41-android13-8-00055-g4f5025129fe8-ab8949913 5.4.86-android11-2-00006-gae78026f427c-ab7595864
     if(osType == "A") {
-        return generateVersionString(System.getProperty("os.version"))
-    } else {
-        return "AA";
+        var version = System.getProperty("os.version");
+        val pattern = Pattern.compile("android(\\d+)")
+        val matcher = pattern.matcher(version)
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
     }
+    return "AA";
 }
