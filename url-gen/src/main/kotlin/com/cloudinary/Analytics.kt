@@ -1,20 +1,26 @@
 package com.cloudinary
 
-private const val ALGO_VERSION = 'A'
+private const val ALGO_VERSION = 'C'
+private const val PRODUCT = "A"
 private const val SDK = 'H'
 private const val ERROR_SIGNATURE = "E"
 private const val NO_FEATURE_CHAR = '0'
 
 internal fun generateAnalyticsSignature(
     sdkVersion: String = Cloudinary.SDK_VERSION,
-    kotlinVersion: KotlinVersion = KotlinVersion.CURRENT
+    kotlinVersion: KotlinVersion = KotlinVersion.CURRENT,
+    osType: String = "Z",
+    osVersion: String = "AA"
+
 ): String {
     return try {
+        val osType = generateOsTypeString();
+        val osVersion = generateOsVersionString(osType);
         val kotlinVerString = with(kotlinVersion) {
             generateVersionString(major, minor) // ignore kotlin patch
         }
 
-        "$ALGO_VERSION$SDK${generateVersionString(sdkVersion)}$kotlinVerString$NO_FEATURE_CHAR"
+        "$ALGO_VERSION$PRODUCT$SDK${generateVersionString(sdkVersion)}$kotlinVerString$osType$osVersion$NO_FEATURE_CHAR"
     } catch (e: Exception) {
         ERROR_SIGNATURE
     }
@@ -51,5 +57,20 @@ private fun String.toAnalyticsVersionStr(): String {
             ('a' + num - 26).toString()
         }
         else -> ('0' + num - 52).toString()
+    }
+}
+
+private fun generateOsTypeString() : String {
+    if(System.getProperty("java.runtime.name").equals("Android Runtime")) {
+        return "A"
+    }
+    return "Z"
+}
+
+private fun generateOsVersionString(osType: String) : String {
+    if(osType == "A") {
+        return generateVersionString(System.getProperty("os.version"))
+    } else {
+        return "AA";
     }
 }
