@@ -1,20 +1,28 @@
 package com.cloudinary
 
-private const val ALGO_VERSION = 'A'
+import java.util.regex.Pattern
+
+private const val ALGO_VERSION = 'C'
+private const val PRODUCT = "A"
 private const val SDK = 'H'
 private const val ERROR_SIGNATURE = "E"
 private const val NO_FEATURE_CHAR = '0'
 
 internal fun generateAnalyticsSignature(
     sdkVersion: String = Cloudinary.SDK_VERSION,
-    kotlinVersion: KotlinVersion = KotlinVersion.CURRENT
+    kotlinVersion: KotlinVersion = KotlinVersion.CURRENT,
+    osType: String = "Z",
+    osVersion: String = "AA"
+
 ): String {
     return try {
+        val osType = generateOsTypeString();
+        val osVersion = generateOsVersionString(osType);
         val kotlinVerString = with(kotlinVersion) {
             generateVersionString(major, minor) // ignore kotlin patch
         }
 
-        "$ALGO_VERSION$SDK${generateVersionString(sdkVersion)}$kotlinVerString$NO_FEATURE_CHAR"
+        "$ALGO_VERSION$PRODUCT$SDK${generateVersionString(sdkVersion)}$kotlinVerString$osType$osVersion$NO_FEATURE_CHAR"
     } catch (e: Exception) {
         ERROR_SIGNATURE
     }
@@ -52,4 +60,23 @@ private fun String.toAnalyticsVersionStr(): String {
         }
         else -> ('0' + num - 52).toString()
     }
+}
+
+private fun generateOsTypeString() : String {
+    if(System.getProperty("java.runtime.name").equals("Android Runtime")) {
+        return "A"
+    }
+    return "Z"
+}
+
+private fun generateOsVersionString(osType: String) : String { //5.15.41-android13-8-00055-g4f5025129fe8-ab8949913 5.4.86-android11-2-00006-gae78026f427c-ab7595864
+    if(osType == "A") {
+        var version = System.getProperty("os.version");
+        val pattern = Pattern.compile("android(\\d+)")
+        val matcher = pattern.matcher(version)
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+    }
+    return "AA";
 }
