@@ -48,7 +48,7 @@ class Video(
             this.transformation = (this.transformation ?: VideoTransformation()).add(action)
         }
 
-        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: Transformation()).add(transformation.toString()) }
+        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: VideoTransformation()).add(transformation.toString()) }
 
         fun build() = Video(
             cloudConfig,

@@ -49,7 +49,7 @@ class Image(
             this.transformation = (this.transformation ?: ImageTransformation()).add(action)
         }
 
-        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: Transformation()).add(transformation.toString()) }
+        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: ImageTransformation()).add(transformation.toString()) }
 
 
         fun build() = Image(
