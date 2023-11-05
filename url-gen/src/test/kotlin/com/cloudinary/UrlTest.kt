@@ -673,4 +673,12 @@ class UrlTest {
         assertNotNull(tAsset)
         tAsset?.let { cldAssert(it, "https://res.cloudinary.com/test123/image/upload/c_crop,g_auto:ocr_text/sample") }
     }
+
+    @Test
+    fun testAddTransformation() {
+        val result = cloudinary.image(){
+            addTransformation("c_crop")
+        }.generate("test")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/c_crop/test", result)
+    }
 }

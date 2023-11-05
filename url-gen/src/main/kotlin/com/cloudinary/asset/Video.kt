@@ -5,6 +5,7 @@ import com.cloudinary.config.UrlConfig
 import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.ITransformable
+import com.cloudinary.transformation.Transformation
 import com.cloudinary.transformation.VideoTransformation
 
 class Video(
@@ -46,6 +47,8 @@ class Video(
         override fun add(action: Action) = apply {
             this.transformation = (this.transformation ?: VideoTransformation()).add(action)
         }
+
+        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: Transformation()).add(transformation.toString()) }
 
         fun build() = Video(
             cloudConfig,

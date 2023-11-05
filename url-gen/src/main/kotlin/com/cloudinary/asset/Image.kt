@@ -6,6 +6,7 @@ import com.cloudinary.transformation.Action
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.ITransformable
 import com.cloudinary.transformation.ImageTransformation
+import com.cloudinary.transformation.Transformation
 
 
 class Image(
@@ -47,6 +48,9 @@ class Image(
         override fun add(action: Action) = apply {
             this.transformation = (this.transformation ?: ImageTransformation()).add(action)
         }
+
+        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: Transformation()).add(transformation.toString()) }
+
 
         fun build() = Image(
             cloudConfig,
