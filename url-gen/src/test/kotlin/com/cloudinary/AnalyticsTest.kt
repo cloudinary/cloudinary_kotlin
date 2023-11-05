@@ -7,9 +7,10 @@ class AnalyticsTest {
     @Test
     fun testAnalyticsStringGeneration() {
         var s = generateAnalyticsSignature("1.24.0", KotlinVersion(12, 0))
-        assertEquals("AHAlhAM0", s)
+        assertEquals("CAHAlhAMZAA0", s)
 
         s = generateAnalyticsSignature("1.24.0-beta.6", KotlinVersion(12, 0))
-        assertEquals("AHAlhAM0", s)
+        assertEquals("CAHAlhAMZAA0", s)
+
     }
 }
