@@ -1,3 +1,12 @@
+1.7.0 / 23-11-06
+===============
+
+* Add support for multi pattern acls
+* Add `secureCname` support
+* Update transformation builder
+* Update analytics token
+* Fix Uploader signature
+
 1.6.0 / 2022-12-15
 ==================
 
