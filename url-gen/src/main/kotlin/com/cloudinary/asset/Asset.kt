@@ -69,6 +69,8 @@ class Asset(
             this.transformation = (this.transformation ?: Transformation()).add(action)
         }
 
+        override fun addTransformation(transformation: Transformation)= apply { (this.transformation ?: Transformation()).add(transformation.toString()) }
+
         fun build() = Asset(
             cloudConfig,
             urlConfig,
@@ -180,7 +182,7 @@ abstract class BaseAsset constructor(
             var urlObject = URL(url)
             if (urlConfig.analytics && cloudConfig.authToken == null &&  urlObject.query == null) {
                 val analytics = "_a=${generateAnalyticsSignature()}"
-                return url.joinWithValues(analytics, separator = "?")
+                return url.joinWithValues(analytics, actionSeparator = "?")
             }
         } catch (exception: MalformedURLException) {
             return url
