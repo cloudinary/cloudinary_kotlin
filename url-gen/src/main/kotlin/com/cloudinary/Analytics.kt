@@ -2,7 +2,7 @@ package com.cloudinary
 
 import java.util.regex.Pattern
 
-private const val ALGO_VERSION = 'C'
+private const val ALGO_VERSION = 'D'
 private const val PRODUCT = "A"
 private const val SDK = 'H'
 private const val ERROR_SIGNATURE = "E"
@@ -13,16 +13,19 @@ internal fun generateAnalyticsSignature(
     kotlinVersion: KotlinVersion = KotlinVersion.CURRENT,
     osType: String = "Z",
     osVersion: String = "AA"
-
 ): String {
     return try {
-        val osType = generateOsTypeString();
-        val osVersion = generateOsVersionString(osType);
+        val osTypeString = with(osType) {
+            generateOsTypeString(osType)
+        }
+        val osVersionString = with(osVersion) {
+            generateOsVersionString(osTypeString, osVersion)
+        }
         val kotlinVerString = with(kotlinVersion) {
             generateVersionString(major, minor) // ignore kotlin patch
         }
 
-        "$ALGO_VERSION$PRODUCT$SDK${generateVersionString(sdkVersion)}$kotlinVerString$osType$osVersion$NO_FEATURE_CHAR"
+        "$ALGO_VERSION$PRODUCT$SDK${generateVersionString(sdkVersion)}$kotlinVerString$osTypeString$osVersionString$NO_FEATURE_CHAR"
     } catch (e: Exception) {
         ERROR_SIGNATURE
     }
@@ -50,7 +53,16 @@ private fun generateVersionString(major: Any, minor: Any, patch: Any? = null): S
     return patchStr + minorStr + majorStr
 }
 
+private fun generateOSVersionString(major: Any, minor: Any? = "0", patch: Any? = null): String {
+    val patchStr = if (patch != null) patch.toString().toAnalyticsVersionStr() else ""
+    val minorStr = minor.toString().padStart(2, '0').toLong().toString(2).toAnalyticsVersionStr()
+    val majorStr = major.toString().padStart(2, '0').toLong().toString(2).toAnalyticsVersionStr()
+
+    return "$majorStr$minorStr"
+}
+
 private fun String.toAnalyticsVersionStr(): String {
+    val num = this.toInt(2)
     return when (val num = this.toInt(2)) {
         in 0..25 -> {
             ('A' + num).toString()
@@ -62,20 +74,29 @@ private fun String.toAnalyticsVersionStr(): String {
     }
 }
 
-private fun generateOsTypeString() : String {
+private fun generateOsTypeString(osType: String? = null) : String {
+    osType?.let{
+        return osType
+    }
     if(System.getProperty("java.runtime.name").equals("Android Runtime")) {
         return "A"
     }
     return "Z"
 }
 
-private fun generateOsVersionString(osType: String) : String { //5.15.41-android13-8-00055-g4f5025129fe8-ab8949913 5.4.86-android11-2-00006-gae78026f427c-ab7595864
+private fun generateOsVersionString(osType: String, osVersion: String? = null) : String { //5.15.41-android13-8-00055-g4f5025129fe8-ab8949913 5.4.86-android11-2-00006-gae78026f427c-ab7595864
     if(osType == "A") {
-        var version = System.getProperty("os.version");
+        var version = osVersion
+        if(version == null) {
+            version = System.getProperty("os.version");
+        }
+
         val pattern = Pattern.compile("android(\\d+)")
         val matcher = pattern.matcher(version)
         if (matcher.find()) {
-            return matcher.group(1);
+            val versionArray = matcher.group(1).split(".")
+                val versioString = generateOSVersionString(versionArray[0]);
+                return versioString
         }
     }
     return "AA";
