@@ -66,7 +66,9 @@ data class UploadResult(
     var context: ResultContext? = null,
     var done: Boolean? = null,
     @Json(name = "accessibility_analysis")
-    var accessibilityAnalysis: ResultAccessibilityAnalysis? = null
+    var accessibilityAnalysis: ResultAccessibilityAnalysis? = null,
+    @Json(name = "image_metadata")
+    var imageMetadata: Map<String, String>? = null
 )
 
 class ResultColor(val color: String, val percent: Float)

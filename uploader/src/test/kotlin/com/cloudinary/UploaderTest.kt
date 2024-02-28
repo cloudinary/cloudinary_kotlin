@@ -182,6 +182,18 @@ class UploaderTest(networkLayer: NetworkLayer) {
     }
 
     @Test
+    fun testUploadMediaMetadata() {
+        val response = uploader.upload(srcTestImage) {
+            params {
+                mediaMetadata = true
+            }
+        }
+        val result = response.resultOrThrow()
+        Assert.assertNotNull(result.imageMetadata)
+        validateSignature(result)
+    }
+
+    @Test
     fun testIsRemoteUrl() {
         val urls = arrayOf(
             "ftp://ftp.cloudinary.com/images/old_logo.png",
