@@ -72,7 +72,9 @@ data class UploadResult(
     @Json(name = "metadata")
     var metadata: Map<String, Any>? = null,
     @Json(name = "video")
-    var video: VideoResultObject? = null
+    var video: VideoResultObject? = null,
+    @Json(name = "audio")
+    var audio: AudioResultObject? = null
 )
 
 class ResultColor(val color: String, val percent: Float)
@@ -139,6 +141,20 @@ data class VideoResultObject(
     val timeBase: String?,
     @Json(name = "metadata")
     var metadata: Map<String, Any>?
+)
+
+@JsonClass(generateAdapter = true)
+data class AudioResultObject(
+    @Json(name = "codec")
+    val codec: String?,
+    @Json(name = "bit_rate")
+    val bitRate: String?,
+    @Json(name = "frequency")
+    val frequency: Int?,
+    @Json(name = "channels")
+    val channels: Int?,
+    @Json(name = "channel_layout")
+    val channelLayout: String?
 )
 
 
