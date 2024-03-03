@@ -14,6 +14,7 @@ data class UploadParams( //45
     @Json(name = "faces") internal val faces: Boolean? = null,
     @Json(name = "colors") internal val colors: Boolean? = null,
     @Json(name = "image_metadata") internal val imageMetadata: Boolean? = null,
+    @Json(name = "media_metadata") internal  val mediaMetadata: Boolean? = null,
     @Json(name = "use_filename") internal val useFilename: Boolean? = null,
     @Json(name = "unique_filename") internal val uniqueFilename: Boolean? = null,
     @Json(name = "eager_async") internal val eagerAsync: Boolean? = null,
@@ -71,7 +72,9 @@ data class UploadParams( //45
         var exif: Boolean? = null
         var faces: Boolean? = null
         var colors: Boolean? = null
+        @Deprecated(message = "The variable is deprecated, please use mediaMetadata instead", replaceWith = ReplaceWith("mediaMetadata"))
         var imageMetadata: Boolean? = null
+        var mediaMetadata: Boolean? = null
         var useFilename: Boolean? = null
         var uniqueFilename: Boolean? = null
         var eagerAsync: Boolean? = null
@@ -129,6 +132,7 @@ data class UploadParams( //45
                 faces,
                 colors,
                 imageMetadata,
+                mediaMetadata,
                 useFilename,
                 uniqueFilename,
                 eagerAsync,

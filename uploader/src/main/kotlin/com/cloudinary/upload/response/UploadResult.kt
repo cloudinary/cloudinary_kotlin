@@ -66,7 +66,15 @@ data class UploadResult(
     var context: ResultContext? = null,
     var done: Boolean? = null,
     @Json(name = "accessibility_analysis")
-    var accessibilityAnalysis: ResultAccessibilityAnalysis? = null
+    var accessibilityAnalysis: ResultAccessibilityAnalysis? = null,
+    @Json(name = "image_metadata")
+    var imageMetadata: Map<String, String>? = null,
+    @Json(name = "metadata")
+    var metadata: Map<String, Any>? = null,
+    @Json(name = "video")
+    var video: VideoResultObject? = null,
+    @Json(name = "audio")
+    var audio: AudioResultObject? = null
 )
 
 class ResultColor(val color: String, val percent: Float)
@@ -116,6 +124,39 @@ data class ResultAccessibilityAnalysis(
     @Json(name = "colorblind_accessibility_score")
     val colorblindAccessibilityScore: Float
 )
+
+@JsonClass(generateAdapter = true)
+data class VideoResultObject(
+    @Json(name = "pix_format")
+    val pixFormat: String?,
+    @Json(name = "codec")
+    val codec: String?,
+    @Json(name = "level")
+    val level: Float?,
+    @Json(name = "profile")
+    val profile: String?,
+    @Json(name = "bit_rate")
+    val bitRate: String?,
+    @Json(name = "time_base")
+    val timeBase: String?,
+    @Json(name = "metadata")
+    var metadata: Map<String, Any>?
+)
+
+@JsonClass(generateAdapter = true)
+data class AudioResultObject(
+    @Json(name = "codec")
+    val codec: String?,
+    @Json(name = "bit_rate")
+    val bitRate: String?,
+    @Json(name = "frequency")
+    val frequency: Int?,
+    @Json(name = "channels")
+    val channels: Int?,
+    @Json(name = "channel_layout")
+    val channelLayout: String?
+)
+
 
 @JsonClass(generateAdapter = true)
 data class ResultColorblindAccessibilityScore(

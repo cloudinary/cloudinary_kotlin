@@ -24,6 +24,7 @@ internal fun UploadParams.toMap(): MutableMap<String, Any> {
     params["faces"] = faces?.asCloudinaryBoolean()
     params["colors"] = colors?.asCloudinaryBoolean()
     params["image_metadata"] = imageMetadata?.asCloudinaryBoolean()
+    params["media_metadata"] = mediaMetadata?.asCloudinaryBoolean()
     params["use_filename"] = useFilename?.asCloudinaryBoolean()
     params["unique_filename"] = uniqueFilename?.asCloudinaryBoolean()
     params["eager_async"] = eagerAsync?.asCloudinaryBoolean()
