@@ -6,6 +6,7 @@ import com.cloudinary.http.OkHttpClientFactory
 import com.cloudinary.transformation.Format
 import com.cloudinary.transformation.ImageTransformation
 import com.cloudinary.transformation.Transformation
+import com.cloudinary.transformation.animated.Animated
 import com.cloudinary.transformation.effect.Effect
 import com.cloudinary.transformation.resize.Resize
 import com.cloudinary.transformation.resize.Resize.Companion.scale
@@ -829,10 +830,15 @@ class UploaderTest(networkLayer: NetworkLayer) {
                 resize(Resize.crop {
                     width(0.5f)
                 })
+                add(Animated.edit {
+                    delay(1)
+                })
             }
         }
 
         val result = response.resultOrThrow()
+
+        assertEquals(true, result.url?.contains("dl_1"))
 
         val pdfResponse = uploader.multi(multiTestTag) {
             transformation = Transformation().resize(scale { width(111) })
