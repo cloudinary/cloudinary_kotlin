@@ -147,7 +147,7 @@ abstract class BaseAsset constructor(
             }
         }
 
-        val finalizedResourceType = finalizeResourceType(
+        var finalizedResourceType = finalizeResourceType(
             assetType,
             deliveryType,
             urlSuffix,
@@ -163,6 +163,13 @@ abstract class BaseAsset constructor(
             urlConfig.secureDistribution,
             urlConfig.secureCname
         )
+
+        val components = extractComponents(mutableSource)
+        if (components.isNotEmpty()) {
+            finalizedResourceType = listOfNotNull(components["resourceType"], components["type"]).joinToString("/")
+            mutableVersion = listOfNotNull("v", components["version"]).joinToString("")
+            mutableSource = components["sourceName"] ?: mutableSource
+        }
 
         val url =
             listOfNotNull(

@@ -38,6 +38,26 @@ internal fun String.cldHasVersionString(): Boolean {
     return false
 }
 
+val preloadedRegexString = "^([^/]+)/([^/]+)/v([0-9]+)/([^#]+)(#[0-9a-f]+)?$"
+val preloadedRegex: Regex by lazy {
+    Regex(preloadedRegexString, RegexOption.IGNORE_CASE)
+}
+
+fun extractComponents(sourceName: String): Map<String, String> {
+    val preloadedComponentsMatch = preloadedRegex.find(sourceName)
+    val result = mutableMapOf<String, String>()
+
+    preloadedComponentsMatch?.let { matchResult ->
+        val groups = matchResult.groupValues
+        if (groups.size > 4) {
+            result["resourceType"] = groups[1]
+            result["type"] = groups[2]
+            result["version"] = groups[3]
+            result["sourceName"] = groups[4]
+        }
+    }
+    return result
+}
 /**
  * Returns this string with all duplicate slashes merged into a single slash (e.g. "abc///efg -> "abc/efg")
  */

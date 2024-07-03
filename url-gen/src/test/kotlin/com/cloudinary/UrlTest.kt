@@ -681,4 +681,10 @@ class UrlTest {
         }.generate("test")
         assertEquals("https://res.cloudinary.com/test123/image/upload/c_crop/test", result)
     }
+
+    @Test
+    fun testURLPathAsPublicId() {
+        var result = cloudinary.image().generate("image/upload/v1/testBucket/myProducts/externalId/test.jpg")
+        assertEquals("https://res.cloudinary.com/test123/image/upload/v1/testBucket/myProducts/externalId/test.jpg", result)
+    }
 }
