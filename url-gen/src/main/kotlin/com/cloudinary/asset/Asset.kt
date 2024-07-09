@@ -117,8 +117,8 @@ abstract class BaseAsset constructor(
         val components = extractComponents(mutableSource)
         if (components.isNotEmpty()) {
             mutableAssetType = components["resourceType"] ?: mutableAssetType
-            mutableDeliveryType = components["type"]
-            mutableVersion = components["version"]
+            mutableDeliveryType = components["type"] ?: mutableDeliveryType
+            mutableVersion = components["version"] ?: mutableVersion
             mutableSource = components["sourceName"] ?: mutableSource
         }
 
