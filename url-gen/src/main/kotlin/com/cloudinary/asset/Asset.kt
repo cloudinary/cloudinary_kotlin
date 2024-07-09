@@ -102,10 +102,25 @@ abstract class BaseAsset constructor(
     private val deliveryType: String? = null,
     private val signature: String? = null
 ) {
+
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
 
         var mutableSource = source ?: publicId ?: return null
+
+        var mutableVersion = version
+
+        var mutableAssetType = assetType
+
+        var mutableDeliveryType = deliveryType
+
+        val components = extractComponents(mutableSource)
+        if (components.isNotEmpty()) {
+            mutableAssetType = components["resourceType"] ?: mutableAssetType
+            mutableDeliveryType = components["type"] ?: mutableDeliveryType
+            mutableVersion = components["version"] ?: mutableVersion
+            mutableSource = components["sourceName"] ?: mutableSource
+        }
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
@@ -121,7 +136,6 @@ abstract class BaseAsset constructor(
         mutableSource = finalizedSource.source
         val sourceToSign = finalizedSource.sourceToSign
 
-        var mutableVersion = version
         if (urlConfig.forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
             !httpSource && mutableVersion.isNullOrBlank()
         ) {
@@ -148,8 +162,8 @@ abstract class BaseAsset constructor(
         }
 
         val finalizedResourceType = finalizeResourceType(
-            assetType,
-            deliveryType,
+            mutableAssetType,
+            mutableDeliveryType,
             urlSuffix,
             urlConfig.useRootPath,
             urlConfig.shorten
