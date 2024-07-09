@@ -98,8 +98,8 @@ abstract class BaseAsset constructor(
     private val publicId: String? = null,
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
-    private var assetType: String = DEFAULT_ASSET_TYPE,
-    private var deliveryType: String? = null,
+    private val assetType: String = DEFAULT_ASSET_TYPE,
+    private val deliveryType: String? = null,
     private val signature: String? = null
 ) {
 
@@ -110,18 +110,22 @@ abstract class BaseAsset constructor(
 
         var mutableVersion = version
 
+        var mutableAssetType = assetType
+
+        var mutableDeliveryType = deliveryType
+
+        val components = extractComponents(mutableSource)
+        if (components.isNotEmpty()) {
+            mutableAssetType = components["resourceType"] ?: mutableAssetType
+            mutableDeliveryType = components["type"]
+            mutableVersion = components["version"]
+            mutableSource = components["sourceName"] ?: mutableSource
+        }
+
         val httpSource = mutableSource.cldIsHttpUrl()
 
         if (httpSource && ((deliveryType.isNullOrBlank() || deliveryType == "asset"))) {
             return mutableSource
-        }
-
-        val components = extractComponents(mutableSource)
-        if (components.isNotEmpty()) {
-            assetType = components["resourceType"] ?: assetType
-            deliveryType = components["type"]
-            mutableVersion = components["version"]
-            mutableSource = components["sourceName"] ?: mutableSource
         }
 
         var signature = ""
@@ -158,8 +162,8 @@ abstract class BaseAsset constructor(
         }
 
         val finalizedResourceType = finalizeResourceType(
-            assetType,
-            deliveryType,
+            mutableAssetType,
+            mutableDeliveryType,
             urlSuffix,
             urlConfig.useRootPath,
             urlConfig.shorten
