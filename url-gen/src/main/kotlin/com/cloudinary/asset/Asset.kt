@@ -98,17 +98,17 @@ abstract class BaseAsset constructor(
     private val publicId: String? = null,
     private val extension: Format? = null,
     private val urlSuffix: String? = null,
-    private val assetType: String = DEFAULT_ASSET_TYPE,
-    private val deliveryType: String? = null,
+    private var assetType: String = DEFAULT_ASSET_TYPE,
+    private var deliveryType: String? = null,
     private val signature: String? = null
 ) {
 
     fun generate(source: String? = null): String? {
         require(cloudConfig.cloudName.isNotBlank()) { "Must supply cloud_name in configuration" }
 
-        var finalizedResourceType: String? = null
-
         var mutableSource = source ?: publicId ?: return null
+
+        var mutableVersion = version
 
         val httpSource = mutableSource.cldIsHttpUrl()
 
@@ -116,23 +116,21 @@ abstract class BaseAsset constructor(
             return mutableSource
         }
 
+        val components = extractComponents(mutableSource)
+        if (components.isNotEmpty()) {
+            assetType = components["resourceType"] ?: assetType
+            deliveryType = components["type"]
+            mutableVersion = components["version"]
+            mutableSource = components["sourceName"] ?: mutableSource
+        }
 
         var signature = ""
 
         val finalizedSource =
             finalizeSource(mutableSource, extension, urlSuffix)
 
-        var mutableVersion = version
-
-        val components = extractComponents(mutableSource)
-        if (components.isNotEmpty()) {
-            finalizedResourceType = listOfNotNull(components["resourceType"], components["type"]).joinToString("/")
-            mutableVersion =  components["version"]
-            mutableSource = components["sourceName"] ?: mutableSource
-        }
-
+        mutableSource = finalizedSource.source
         val sourceToSign = finalizedSource.sourceToSign
-
 
         if (urlConfig.forceVersion && sourceToSign.contains("/") && !sourceToSign.cldHasVersionString() &&
             !httpSource && mutableVersion.isNullOrBlank()
@@ -159,15 +157,13 @@ abstract class BaseAsset constructor(
             }
         }
 
-        if(finalizedResourceType == null) {
-            finalizedResourceType = finalizeResourceType(
-                assetType,
-                deliveryType,
-                urlSuffix,
-                urlConfig.useRootPath,
-                urlConfig.shorten
-            )
-        }
+        var finalizedResourceType = finalizeResourceType(
+            assetType,
+            deliveryType,
+            urlSuffix,
+            urlConfig.useRootPath,
+            urlConfig.shorten
+        )
 
         val prefix = unsignedDownloadUrlPrefix(
             cloudConfig.cloudName,
