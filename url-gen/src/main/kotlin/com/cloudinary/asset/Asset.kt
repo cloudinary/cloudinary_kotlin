@@ -157,7 +157,7 @@ abstract class BaseAsset constructor(
             }
         }
 
-        var finalizedResourceType = finalizeResourceType(
+        val finalizedResourceType = finalizeResourceType(
             assetType,
             deliveryType,
             urlSuffix,
