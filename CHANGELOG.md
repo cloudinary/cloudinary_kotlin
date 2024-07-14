@@ -1,10 +1,16 @@
-1.8.0 / 24-01-15
+1.9.0 / 2024-07-14
+==================
+
+* Fix generate url 
+* Add `media_metadata` supprot
+
+1.8.0 / 2024-01-15
 ================
 
 * Update analytics token
 * Update transformation builder
 
-1.7.0 / 23-11-06
+1.7.0 / 2023-11-06
 ===============
 
 * Add support for multi pattern acls
