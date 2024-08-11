@@ -18,8 +18,8 @@ nexusPublishing {
     repositories {
         sonatype {
             packageGroup.set(properties["publishGroupId"].toString())
-            username.set(properties["ossrhUsername"].toString())
-            password.set(properties["ossrhPassword"].toString())
+            username.set(properties["ossrhToken"].toString())
+            password.set(properties["ossrhTokenPassword"].toString())
         }
     }
 }

@@ -2,7 +2,7 @@
 ==================
 
 * Fix generate url 
-* Add `media_metadata` supprot
+* Add `media_metadata` support
 
 1.8.0 / 2024-01-15
 ================
