@@ -932,7 +932,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testEncodeContext() {
-        val context = mapOf("caption" to "some caption", "alt2" to "alt|alternative")
+        val context = mapOf("caption" to "different = caption", "alt2" to "alt|alternative")
         val result: String = context.asContextParam()
         Assert.assertTrue("caption=different \\= caption|alt2=alt\\|alternative" == result || "alt2=alt\\|alternative|caption=different \\= caption" == result)
     }
