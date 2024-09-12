@@ -49,6 +49,7 @@ private val defaultTags = listOf(sdkTestTag, uploaderTag)
 const val remoteTestImageUrlString = "http://cloudinary.com/images/old_logo.png"
 
 private val srcTestImage = UploaderTest::class.java.getResource("/old_logo.png").file
+private val srcTestVideo = "https://res.cloudinary.com/demo/video/upload/dog.mp4"
 const val SRC_TEST_IMAGE_W = 241
 const val SRC_TEST_IMAGE_H = 51
 const val UPLOAD_PRESET = "sdk-test-upload-preset"
@@ -1016,6 +1017,32 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }.resultOrThrow()
         assertEquals("overridden", result.originalFilename)
+    }
+
+    @Test
+    fun testAutoChaptering() {
+        var result = Cloudinary().uploader().upload(srcTestVideo) {
+            params {
+                autoChaptering = true
+            }
+            options {
+                resourceType = "video"
+            }
+        }.resultOrThrow()
+        assertNotNull(result.playbackUrl)
+    }
+
+    @Test
+    fun testAutoTranscription() {
+        var result = Cloudinary().uploader().upload(srcTestVideo) {
+            params {
+                autoTranscription = true
+            }
+            options {
+                resourceType = "video"
+            }
+        }.resultOrThrow()
+        assertNotNull(result.playbackUrl)
     }
 
     private fun validateSignature(result: UploadResult) {

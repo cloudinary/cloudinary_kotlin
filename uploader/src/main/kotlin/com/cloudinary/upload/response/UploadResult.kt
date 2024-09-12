@@ -74,7 +74,9 @@ data class UploadResult(
     @Json(name = "video")
     var video: VideoResultObject? = null,
     @Json(name = "audio")
-    var audio: AudioResultObject? = null
+    var audio: AudioResultObject? = null,
+    @Json(name = "playback_url")
+    var playbackUrl: String? = null
 )
 
 class ResultColor(val color: String, val percent: Float)
