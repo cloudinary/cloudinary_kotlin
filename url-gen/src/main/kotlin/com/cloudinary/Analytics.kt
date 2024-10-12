@@ -62,7 +62,6 @@ private fun generateOSVersionString(major: Any, minor: Any? = "0", patch: Any? =
 }
 
 private fun String.toAnalyticsVersionStr(): String {
-    val num = this.toInt(2)
     return when (val num = this.toInt(2)) {
         in 0..25 -> {
             ('A' + num).toString()
