@@ -54,15 +54,14 @@ private fun generateVersionString(major: Any, minor: Any, patch: Any? = null): S
 }
 
 private fun generateOSVersionString(major: Any, minor: Any? = "0", patch: Any? = null): String {
-    val patchStr = if (patch != null) patch.toString().toAnalyticsVersionStr() else ""
+    val patchStr = patch?.toString()?.toAnalyticsVersionStr() ?: ""
     val minorStr = minor.toString().padStart(2, '0').toLong().toString(2).toAnalyticsVersionStr()
     val majorStr = major.toString().padStart(2, '0').toLong().toString(2).toAnalyticsVersionStr()
 
-    return "$majorStr$minorStr"
+    return "$majorStr$minorStr$patchStr"
 }
 
 private fun String.toAnalyticsVersionStr(): String {
-    val num = this.toInt(2)
     return when (val num = this.toInt(2)) {
         in 0..25 -> {
             ('A' + num).toString()
