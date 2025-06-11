@@ -17,8 +17,15 @@ fun randomPublicId(): String {
     return bytes.toHex()
 }
 
+
 fun apiSignRequest(paramsToSign: MutableMap<String, Any>, apiSecret: String): String {
+    val escapeRegex = Regex("[&=%+#]")
     val params = ArrayList<String>()
+
+    val publicId = paramsToSign["public_id"]?.toString()
+    if (publicId != null && escapeRegex.containsMatchIn(publicId)) {
+        return ""
+    }
 
     for ((key, rawValue) in paramsToSign) {
         val value = if (rawValue is List<*>) {
@@ -26,9 +33,6 @@ fun apiSignRequest(paramsToSign: MutableMap<String, Any>, apiSecret: String): St
         } else {
             rawValue.toString()
         }
-
-        // Early exit if any value contains '&'
-        if (value.contains("&")) return ""
 
         params.add("$key=$value")
     }
