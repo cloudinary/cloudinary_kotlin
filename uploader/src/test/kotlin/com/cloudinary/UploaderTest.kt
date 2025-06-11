@@ -1045,6 +1045,18 @@ class UploaderTest(networkLayer: NetworkLayer) {
         assertNotNull(result.playbackUrl)
     }
 
+    @Test
+    fun testSignatureWithEscapingCharacters() {
+        val toSign = mutableMapOf<String, Any>(
+            "public_id" to "publicid&tags=blabla"
+        )
+        val apiSecret = "your_api_secret" // Replace with actual or mock secret
+
+        val signature = apiSignRequest(toSign, apiSecret)
+
+        assertEquals("", signature)
+    }
+
     private fun validateSignature(result: UploadResult) {
         val toSign: MutableMap<String, Any> = HashMap()
         toSign["public_id"] = result.publicId!!
