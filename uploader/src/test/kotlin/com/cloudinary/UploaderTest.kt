@@ -35,6 +35,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.test.Test
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -1043,6 +1044,19 @@ class UploaderTest(networkLayer: NetworkLayer) {
             }
         }.resultOrThrow()
         assertNotNull(result.playbackUrl)
+    }
+
+    @Test
+    fun testSignatureWithEscapingCharacters() {
+        val signatureWithEscapingCharacters = "c9e94ac9a6787698de868e387e26dc0f3422b2b2"
+        val toSign = mutableMapOf<String, Any>(
+            "public_id" to "publicid&tags=blabla"
+        )
+        val apiSecret = "your_api_secret" // Replace with actual or mock secret
+
+        val signature = apiSignRequest(toSign, apiSecret)
+
+        assertNotEquals(signature, signatureWithEscapingCharacters)
     }
 
     private fun validateSignature(result: UploadResult) {
