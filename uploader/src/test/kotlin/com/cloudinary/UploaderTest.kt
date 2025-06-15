@@ -1052,7 +1052,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         val toSign = mutableMapOf<String, Any>(
             "public_id" to "publicid&tags=blabla"
         )
-        val apiSecret = "your_api_secret" // Replace with actual or mock secret
+        val apiSecret = "your_api_secret"
 
         val signature = apiSignRequest(toSign, apiSecret)
 

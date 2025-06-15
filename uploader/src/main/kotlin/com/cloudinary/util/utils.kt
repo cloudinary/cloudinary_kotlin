@@ -17,7 +17,6 @@ fun randomPublicId(): String {
     return bytes.toHex()
 }
 
-
 fun apiSignRequest(paramsToSign: MutableMap<String, Any>, apiSecret: String): String {
     val params = ArrayList<String>()
 
@@ -42,7 +41,6 @@ fun apiSignRequest(paramsToSign: MutableMap<String, Any>, apiSecret: String): St
         .digest(toSign.toByteArray(Charsets.UTF_8))
         .toHex()
 }
-
 
 fun String.cldIsRemoteUrl() = this.matches(remoteUrlRegex)
 
