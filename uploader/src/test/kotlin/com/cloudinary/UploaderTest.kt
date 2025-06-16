@@ -1048,15 +1048,34 @@ class UploaderTest(networkLayer: NetworkLayer) {
 
     @Test
     fun testSignatureWithEscapingCharacters() {
-        val signatureWithEscapingCharacters = "c9e94ac9a6787698de868e387e26dc0f3422b2b2"
-        val toSign = mutableMapOf<String, Any>(
-            "public_id" to "publicid&tags=blabla"
+        val cloudName = "dn6ot3ged"
+        val apiSecret = "hdcixPpR2iKERPwqvH6sHdK9cyac"
+
+        val paramsWithAmpersand = mapOf(
+            "cloud_name" to cloudName,
+            "timestamp" to 1568810420,
+            "notification_url" to "https://fake.com/callback?a=1&tags=hello,world"
         )
-        val apiSecret = "your_api_secret"
 
-        val signature = apiSignRequest(toSign, apiSecret)
+        val signatureWithAmpersand = apiSignRequest(paramsWithAmpersand, apiSecret)
 
-        assertNotEquals(signature, signatureWithEscapingCharacters)
+        val paramsSmuggled = mapOf(
+            "cloud_name" to cloudName,
+            "timestamp" to 1568810420,
+            "notification_url" to "https://fake.com/callback?a=1",
+            "tags" to "hello,world"
+        )
+
+        val signatureSmuggled = apiSignRequest(paramsSmuggled, apiSecret)
+
+        assertNotEquals(signatureWithAmpersand, signatureSmuggled,
+            "Signatures should be different to prevent parameter smuggling")
+
+        val expectedSignature = "4fdf465dd89451cc1ed8ec5b3e314e8a51695704"
+        assertEquals(expectedSignature, signatureWithAmpersand)
+
+        val expectedSmuggledSignature = "7b4e3a539ff1fa6e6700c41b3a2ee77586a025f9"
+        assertEquals(expectedSmuggledSignature, signatureSmuggled)
     }
 
     private fun validateSignature(result: UploadResult) {
