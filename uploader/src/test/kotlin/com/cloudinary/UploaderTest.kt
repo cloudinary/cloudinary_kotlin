@@ -1057,7 +1057,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             "notification_url" to "https://fake.com/callback?a=1&tags=hello,world"
         )
 
-        val signatureWithAmpersand = apiSignRequest(paramsWithAmpersand, apiSecret)
+        val signatureWithAmpersand = apiSignRequest(paramsWithAmpersand, apiSecret, cloudinary.config.urlConfig.signatureVersion)
 
         val paramsSmuggled = mapOf(
             "cloud_name" to cloudName,
@@ -1066,7 +1066,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
             "tags" to "hello,world"
         )
 
-        val signatureSmuggled = apiSignRequest(paramsSmuggled, apiSecret)
+        val signatureSmuggled = apiSignRequest(paramsSmuggled, apiSecret, cloudinary.config.urlConfig.signatureVersion)
 
         assertNotEquals(signatureWithAmpersand, signatureSmuggled,
             "Signatures should be different to prevent parameter smuggling")
@@ -1084,7 +1084,7 @@ class UploaderTest(networkLayer: NetworkLayer) {
         toSign["version"] = result.version.toString()
 
         val expectedSignature: String =
-            apiSignRequest(toSign, cloudinary.config.apiSecret!!)
+            apiSignRequest(toSign, cloudinary.config.apiSecret!!, cloudinary.config.urlConfig.signatureVersion)
         assertEquals(result.signature, expectedSignature)
     }
 

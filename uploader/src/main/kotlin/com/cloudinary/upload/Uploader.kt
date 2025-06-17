@@ -189,7 +189,7 @@ class Uploader internal constructor(val cloudinary: Cloudinary, clientFactory: H
                 paramsMap["timestamp"] = paramsMap["timestamp"]
                     ?: (System.currentTimeMillis() / 1000L).asCloudinaryTimestamp()
                 paramsMap["signature"] =
-                    paramsMap["signature"] ?: apiSignRequest(paramsMap, apiSecret)
+                    paramsMap["signature"] ?: apiSignRequest(paramsMap, apiSecret, config.urlConfig.signatureVersion)
                 paramsMap["api_key"] = apiKey
             }
 

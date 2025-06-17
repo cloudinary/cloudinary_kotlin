@@ -17,9 +17,23 @@ fun randomPublicId(): String {
     return bytes.toHex()
 }
 
-fun apiSignRequest(paramsToSign: Map<String, Any>, apiSecret: String): String {
+fun apiSignRequest(paramsToSign: Map<String, Any>, apiSecret: String, signatureVersion: Int): String {
     val queryString = paramsToSign.entries
-        .map { "${it.key}=${(if (it.value is List<*>) (it.value as Collection<*>).joinToString(",") else it.value.toString()).replace("&", "%26")}" }
+        .map {
+            val valueStr = if (it.value is List<*>) {
+                (it.value as Collection<*>).joinToString(",")
+            } else {
+                it.value.toString()
+            }
+
+            val sanitizedValue = if (signatureVersion == 2) {
+                valueStr.replace("&", "%26")
+            } else {
+                valueStr
+            }
+
+            "${it.key}=$sanitizedValue"
+        }
         .filter { it.isNotBlank() }
         .sorted()
         .joinToString("&")
