@@ -17,19 +17,29 @@ fun randomPublicId(): String {
     return bytes.toHex()
 }
 
-fun apiSignRequest(paramsToSign: MutableMap<String, Any>, apiSecret: String): String {
-    val params = ArrayList<String>()
-    paramsToSign.entries.forEach {
-        val value = if (it.value is List<*>)
-            (it.value as Collection<*>).joinToString(",")
-        else
-            it.value
+fun apiSignRequest(paramsToSign: Map<String, Any>, apiSecret: String, signatureVersion: Int): String {
+    val queryString = paramsToSign.entries
+        .map {
+            val valueStr = if (it.value is List<*>) {
+                (it.value as Collection<*>).joinToString(",")
+            } else {
+                it.value.toString()
+            }
 
-        params.add("${it.key}=${value}")
-    }
+            val sanitizedValue = if (signatureVersion == 2) {
+                valueStr.replace("&", "%26")
+            } else {
+                valueStr
+            }
+
+            "${it.key}=$sanitizedValue"
+        }
+        .filter { it.isNotBlank() }
+        .sorted()
+        .joinToString("&")
 
     return MessageDigest.getInstance("SHA-1")
-        .digest((params.filter { it.isNotBlank() }.sorted().joinToString("&") + apiSecret).toByteArray(Charsets.UTF_8))
+        .digest((queryString + apiSecret).toByteArray(Charsets.UTF_8))
         .toHex()
 }
 

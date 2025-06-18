@@ -35,6 +35,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.test.Test
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -1045,13 +1046,45 @@ class UploaderTest(networkLayer: NetworkLayer) {
         assertNotNull(result.playbackUrl)
     }
 
+    @Test
+    fun testSignatureWithEscapingCharacters() {
+        val cloudName = "dn6ot3ged"
+        val apiSecret = "hdcixPpR2iKERPwqvH6sHdK9cyac"
+
+        val paramsWithAmpersand = mapOf(
+            "cloud_name" to cloudName,
+            "timestamp" to 1568810420,
+            "notification_url" to "https://fake.com/callback?a=1&tags=hello,world"
+        )
+
+        val signatureWithAmpersand = apiSignRequest(paramsWithAmpersand, apiSecret, cloudinary.config.urlConfig.signatureVersion)
+
+        val paramsSmuggled = mapOf(
+            "cloud_name" to cloudName,
+            "timestamp" to 1568810420,
+            "notification_url" to "https://fake.com/callback?a=1",
+            "tags" to "hello,world"
+        )
+
+        val signatureSmuggled = apiSignRequest(paramsSmuggled, apiSecret, cloudinary.config.urlConfig.signatureVersion)
+
+        assertNotEquals(signatureWithAmpersand, signatureSmuggled,
+            "Signatures should be different to prevent parameter smuggling")
+
+        val expectedSignature = "4fdf465dd89451cc1ed8ec5b3e314e8a51695704"
+        assertEquals(expectedSignature, signatureWithAmpersand)
+
+        val expectedSmuggledSignature = "7b4e3a539ff1fa6e6700c41b3a2ee77586a025f9"
+        assertEquals(expectedSmuggledSignature, signatureSmuggled)
+    }
+
     private fun validateSignature(result: UploadResult) {
         val toSign: MutableMap<String, Any> = HashMap()
         toSign["public_id"] = result.publicId!!
         toSign["version"] = result.version.toString()
 
         val expectedSignature: String =
-            apiSignRequest(toSign, cloudinary.config.apiSecret!!)
+            apiSignRequest(toSign, cloudinary.config.apiSecret!!, cloudinary.config.urlConfig.signatureVersion)
         assertEquals(result.signature, expectedSignature)
     }
 
