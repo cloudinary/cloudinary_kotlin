@@ -1,3 +1,10 @@
+1.11.0 / 2025-18-06
+===================
+
+* Fix API parameters signature 
+* Add `auto_chpatering` and `auto_transcription` to Upload API
+* Bump transformation builder
+
 1.10.0 / 2024-08-11
 ===================
 
